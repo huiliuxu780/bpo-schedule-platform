@@ -19,6 +19,15 @@
 
 ### 2026-06-24
 
+- task_id: `IM239`
+- source_ids:
+  - `R938`
+- story_ids:
+  - `US858`
+- action: 复核案例阶段 seed matrix 实现。
+- status: `done`
+- notes: PM 确认先扩展 seed 再做完整 live runtime 验收后，Qoder 实现 `seed_review_case_stage_matrix()`，Codex 复核并补齐 Harness。该函数在保留 `CASE-QUERY-001` ready_to_close 基线的同时新增 `CASE-SEED-ME-001`、`CASE-SEED-MC-001`、`CASE-SEED-CL-001`，分别覆盖缺证据、缺结论和 closure-backed 已关闭阶段。当前任务不启动 runtime，不新增 API，不修改 persistence/schema/frontend/依赖，也不声称 live runtime acceptance 已通过。
+
 - task_id: `IM238`
 - source_ids:
   - `R937`

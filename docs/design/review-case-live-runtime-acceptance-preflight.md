@@ -40,7 +40,8 @@ This is a **runtime read-acceptance** task. It does not add new features, fix co
 
 ### Seed Data
 
-- Seed function: `backend/app/review_demo_seed.py :: seed_review_case_demo()`
+- Base seed function: `backend/app/review_demo_seed.py :: seed_review_case_demo()`
+- Stage matrix seed function: `backend/app/review_demo_seed.py :: seed_review_case_stage_matrix()` (added by IM239)
 - Seed case ID: `CASE-QUERY-001`
 - Seed is **idempotent** (returns existing if already created)
 - Seed is **NOT auto-run** at backend startup — no `lifespan`, `on_event("startup")`, or similar hook exists in `backend/app/main.py`
@@ -54,10 +55,10 @@ This is a **runtime read-acceptance** task. It does not add new features, fix co
 | Frontend port | `127.0.0.1:3000` (Next.js dev server) |
 | Backend port | `127.0.0.1:8000` (FastAPI/uvicorn) |
 | Database | SQLite (default local path configured by backend) |
-| Seed invocation | Manual: `python -m backend.app.review_demo_seed` or equivalent before/during backend startup |
+| Seed invocation | Manual only. Base seed: `python -m backend.app.review_demo_seed`; full stage matrix: call `seed_review_case_stage_matrix()` explicitly before runtime smoke. |
 | Node.js | 22.x via `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin` |
 
-### Seed Stage Coverage (Current)
+### Seed Stage Coverage (After IM239)
 
 Processing stage derivation logic (`summarizeImportReviewCaseProcessingStage` in `import-center-review-model.ts`):
 
@@ -67,26 +68,26 @@ Processing stage derivation logic (`summarizeImportReviewCaseProcessingStage` in
 4. `conclusionCount === 0` → `missing_conclusion`
 5. Otherwise → `ready_to_close`
 
-| Processing Stage | Covered by Current Seed? | Reason |
+| Processing Stage | Covered by Stage Matrix Seed? | Reason |
 | --- | --- | --- |
-| `missing_evidence` | No | Seed creates case + evidence + conclusion; no case exists with zero evidence |
-| `missing_conclusion` | No | Seed creates case + evidence + conclusion; no case exists with evidence but zero conclusions |
+| `missing_evidence` | **Yes** | `CASE-SEED-ME-001`: status=open, 0 evidence, 0 conclusions, no closure record |
+| `missing_conclusion` | **Yes** | `CASE-SEED-MC-001`: status=open, 1 evidence, 0 conclusions, no closure record |
 | `ready_to_close` | **Yes** | `CASE-QUERY-001`: status=open, 1 evidence, 1 conclusion, no closure record |
-| `closed` | No | Seed does not pass `ReviewClosureInput`; no closure record exists |
+| `closed` | **Yes** | `CASE-SEED-CL-001`: status=open with evidence, conclusion, and closure record; frontend treats closure-backed cases as closed |
 
-### Seed Extension Recommendation (Future, Not Implemented)
+### Seed Extension Implementation (IM239)
 
-To cover all four stages in live acceptance, **3 additional cases** are needed. No backend implementation changes are required — only new seed fixture entries using existing `ReviewCaseCreateRequest`, `ReviewEvidenceInput`, `ReviewConclusionInput`, and `ReviewClosureInput` models.
+IM239 adds **3 additional cases** through a new explicit `seed_review_case_stage_matrix()` function. It uses existing `ReviewCaseCreateRequest`, `ReviewEvidenceInput`, `ReviewConclusionInput`, and `ReviewClosureInput` models only.
 
-| New Case ID | Target Stage | Minimum Records Needed |
+| Case ID | Target Stage | Records |
 | --- | --- | --- |
 | `CASE-SEED-ME-001` | `missing_evidence` | Case only (status=open, no evidence, no conclusion). Needs a valid `source_result_id` from a comparison run. |
 | `CASE-SEED-MC-001` | `missing_conclusion` | Case + 1 evidence (status=open, 1 evidence, no conclusion). |
-| `CASE-SEED-CL-001` | `closed` | Case + 1 evidence + 1 conclusion + `ReviewClosureInput(closure_id, case_id, closure_status="closed", closed_by)`. Can reuse `write_review_closure()` with the `closure` parameter populated. |
+| `CASE-SEED-CL-001` | `closed` | Case + 1 evidence + 1 conclusion + `ReviewClosureInput(closure_id, case_id, closure_status="closed", closed_by)`. `review_cases.status` remains open; closure record is the closed signal. |
 
 All three cases can share the same upstream `source_result_id` from the existing `_ensure_forecast_schedule_result()` helper, since it returns a valid `result_id` and is idempotent.
 
-Implementation note: the extension would be a new function in `review_demo_seed.py` (e.g. `seed_review_case_stage_matrix()`) that creates the three additional cases. No changes to `ReviewPersistenceRepository`, `write_review_closure()`, or any API endpoint are needed.
+Implementation note: IM239 did not change `ReviewPersistenceRepository`, `write_review_closure()`, API endpoints, schema, dependencies, startup hooks, or frontend code.
 
 ## 4. PM Manual Acceptance Checklist
 
@@ -112,7 +113,7 @@ These are candidates for future automation, not part of this preflight:
 | `frontend-api-utilities.test.mjs` | Unit | Already passing — confirms review-case URLs use shared helpers |
 | `shared-empty-state.test.mjs` | Unit | Already passing — confirms shared empty-state component |
 | `import-center-review-case-*.test.mjs` (17 files) | Unit | Already passing in `check.sh` — model/contract coverage |
-| `backend/tests/test_review_demo_seed.py` | Unit | Already passing — seed idempotency + detail creation |
+| `backend/tests/test_review_demo_seed.py` | Unit | Already passing — base seed + stage matrix idempotency and coverage |
 | `backend/tests/test_review_evidence_api.py` | Unit | Already passing — evidence write route + response |
 | `backend/tests/test_review_conclusion_api.py` | Unit | Already passing — conclusion write route + response |
 | Live route HTTP smoke | Integration | Not yet automated — would require running backend + frontend |
@@ -125,7 +126,7 @@ These are candidates for future automation, not part of this preflight:
 ### Prerequisites (Must Pass Before Step 1)
 
 - PM has confirmed both runtimes may be started.
-- Seed extension (Section 3, `CASE-SEED-ME-001`, `CASE-SEED-MC-001`, `CASE-SEED-CL-001`) is either implemented or explicitly deferred. If deferred, Steps 5b–5d are skipped.
+- Stage matrix seed (Section 3, `CASE-SEED-ME-001`, `CASE-SEED-MC-001`, `CASE-SEED-CL-001`) has been invoked explicitly before Steps 5b–5d.
 - `bash scripts/check.sh` has passed on the current branch before any runtime is started.
 
 ### Step 1 — Backend Health
@@ -140,15 +141,13 @@ These are candidates for future automation, not part of this preflight:
 
 ### Step 2 — Seed Invocation
 
-**Target:** Manual execution of `python -m backend.app.review_demo_seed` (or equivalent entry point).
+**Target:** Manual execution of the stage matrix seed, for example by calling `seed_review_case_stage_matrix()` from `backend.app.review_demo_seed`.
 
-**Expected:** Process exits 0, prints JSON containing `case_id: "CASE-QUERY-001"`.
+**Expected:** Process exits 0 and creates `CASE-QUERY-001`, `CASE-SEED-ME-001`, `CASE-SEED-MC-001`, and `CASE-SEED-CL-001`.
 
-**Idempotency check:** Run seed a second time; must exit 0 and return the same case without duplicating records.
+**Idempotency check:** Run seed a second time; must exit 0 and return the same cases without duplicating records.
 
-**Hard stop if:** seed exits non-zero, prints an error, or `CASE-QUERY-001` is not present in the output. Do not proceed to Step 3.
-
-**If seed extension is implemented:** also verify `CASE-SEED-ME-001`, `CASE-SEED-MC-001`, `CASE-SEED-CL-001` appear in subsequent `GET /api/v1/review-cases` response.
+**Hard stop if:** seed exits non-zero, prints an error, or any of the four expected case IDs is absent from the subsequent `GET /api/v1/review-cases` response. Do not proceed to Step 3.
 
 ### Step 3 — List Page
 
@@ -178,9 +177,9 @@ These are candidates for future automation, not part of this preflight:
 
 ### Step 5 — Processing-Stage Filters
 
-Each sub-step below targets a different `processingStage` filter. Steps 5b–5d require extended seed data; if seed extension is deferred, only Step 5a is executable.
+Each sub-step below targets a different `processingStage` filter. Steps 5b–5d require the IM239 stage matrix seed to be invoked before runtime smoke.
 
-#### 5a. `ready_to_close` (current seed)
+#### 5a. `ready_to_close`
 
 **Target:** `GET http://127.0.0.1:3000/data-quality/review-cases?processingStage=ready_to_close`
 
@@ -192,7 +191,7 @@ Each sub-step below targets a different `processingStage` filter. Steps 5b–5d 
 
 **Expected:** HTTP 200, body contains `CASE-SEED-ME-001`.
 
-**Skip if:** seed extension not implemented.
+**Hard stop if:** stage matrix seed was not invoked before this check.
 
 #### 5c. `missing_conclusion` (requires `CASE-SEED-MC-001`)
 
@@ -200,7 +199,7 @@ Each sub-step below targets a different `processingStage` filter. Steps 5b–5d 
 
 **Expected:** HTTP 200, body contains `CASE-SEED-MC-001`.
 
-**Skip if:** seed extension not implemented.
+**Hard stop if:** stage matrix seed was not invoked before this check.
 
 #### 5d. `closed` (requires `CASE-SEED-CL-001`)
 
@@ -208,7 +207,7 @@ Each sub-step below targets a different `processingStage` filter. Steps 5b–5d 
 
 **Expected:** HTTP 200, body contains `CASE-SEED-CL-001`.
 
-**Skip if:** seed extension not implemented.
+**Hard stop if:** stage matrix seed was not invoked before this check.
 
 ### Step 6 — URL Feedback Parameters
 
@@ -234,16 +233,16 @@ These steps verify that the detail page renders action-feedback UI from URL sear
 
 ### Smoke Sequence Summary
 
-| Step | Target | Current Seed Sufficient? | PM Runtime Required? |
+| Step | Target | Stage Matrix Seed Sufficient? | PM Runtime Required? |
 | --- | --- | --- | --- |
 | 1. Backend health | `GET :8000/docs` | N/A | Yes |
-| 2. Seed invocation | `python -m backend.app.review_demo_seed` | Yes (base) | Yes |
+| 2. Seed invocation | explicit `seed_review_case_stage_matrix()` call | Yes | Yes |
 | 3. List page | `GET :3000/data-quality/review-cases` | Yes | Yes |
 | 4. Detail page | `GET :3000/.../CASE-QUERY-001` | Yes | Yes |
 | 5a. `ready_to_close` filter | `?processingStage=ready_to_close` | Yes | Yes |
-| 5b. `missing_evidence` filter | `?processingStage=missing_evidence` | **No** — needs `CASE-SEED-ME-001` | Yes |
-| 5c. `missing_conclusion` filter | `?processingStage=missing_conclusion` | **No** — needs `CASE-SEED-MC-001` | Yes |
-| 5d. `closed` filter | `?processingStage=closed` | **No** — needs `CASE-SEED-CL-001` | Yes |
+| 5b. `missing_evidence` filter | `?processingStage=missing_evidence` | Yes — `CASE-SEED-ME-001` | Yes |
+| 5c. `missing_conclusion` filter | `?processingStage=missing_conclusion` | Yes — `CASE-SEED-MC-001` | Yes |
+| 5d. `closed` filter | `?processingStage=closed` | Yes — `CASE-SEED-CL-001` | Yes |
 | 6a. `?evidence=failed` | Detail page + URL param | Yes | Yes |
 | 6b. `?conclusion=failed` | Detail page + URL param | Yes | Yes |
 | 6c. `?closure=success` | Detail page + URL param | Yes | Yes |
@@ -399,24 +398,24 @@ Return:
 - Future seed extension recommendation.
 - Confirmation that no backend code was changed and no runtime was started.
 
-## 11. Future Gate: Review Case Stage Seed Extension (Draft, Not Confirmed)
+## 11. Implemented Gate: Review Case Stage Seed Extension (IM239)
 
-> This section is a **design draft** for a potential future task. It is not a confirmed Gate, not in `docs/current/**`, and not in `tasks/backlog.yaml`. PM must explicitly confirm before any implementation begins.
+> This section records the IM239 seed extension implementation. It prepares live runtime acceptance data only; it does not start runtime services and does not claim live acceptance has passed.
 
 ### 11.1 Why Seed Extension Is Needed
 
-The current `seed_review_case_demo()` creates a single case (`CASE-QUERY-001`) that covers only `ready_to_close`. The review-case list workspace supports four processing-stage filters (`missing_evidence`, `missing_conclusion`, `ready_to_close`, `closed`), but live runtime acceptance can only verify one of them with existing seed data.
+The base `seed_review_case_demo()` creates a single case (`CASE-QUERY-001`) that covers only `ready_to_close`. The review-case list workspace supports four processing-stage filters (`missing_evidence`, `missing_conclusion`, `ready_to_close`, `closed`), so live runtime acceptance needs a seed matrix to verify all four.
 
-Without extension, PM live acceptance of the other three stage filters will always show empty results, which cannot distinguish between "filter works correctly and returns zero matches" and "filter is broken."
+Without the matrix, PM live acceptance of the other three stage filters would show empty results, which cannot distinguish between "filter works correctly and returns zero matches" and "filter is broken."
 
 ### 11.2 Target Coverage
 
-| Processing Stage | Current Coverage | Extension Needed? |
+| Processing Stage | IM239 Coverage | Evidence |
 | --- | --- | --- |
-| `missing_evidence` | No case exists with zero evidence | Yes — new case with case record only |
-| `missing_conclusion` | No case exists with evidence but zero conclusions | Yes — new case with case + 1 evidence |
-| `ready_to_close` | `CASE-QUERY-001` already covers this | No |
-| `closed` | No case exists with a closure record | Yes — new case with full records + `ReviewClosureInput` |
+| `missing_evidence` | Covered | `CASE-SEED-ME-001` has no evidence, no conclusion, no closure |
+| `missing_conclusion` | Covered | `CASE-SEED-MC-001` has evidence, no conclusion, no closure |
+| `ready_to_close` | Covered | `CASE-QUERY-001` has evidence and conclusion, no closure |
+| `closed` | Covered | `CASE-SEED-CL-001` has a closure record |
 
 ### 11.3 Proposed Seed Extension Cases
 
@@ -424,18 +423,16 @@ Without extension, PM live acceptance of the other three stage filters will alwa
 | --- | --- | --- | --- |
 | `CASE-SEED-ME-001` | `missing_evidence` | Case only (status=open, no evidence, no conclusion) | `repository.create_review_case(ReviewCaseCreateRequest(...))` with valid `source_result_id` from `_ensure_forecast_schedule_result()` |
 | `CASE-SEED-MC-001` | `missing_conclusion` | Case + 1 evidence (status=open, 1 evidence, no conclusion) | `create_review_case()` + `add_evidence()` |
-| `CASE-SEED-CL-001` | `closed` | Case + 1 evidence + 1 conclusion + closure record | `write_review_closure(ReviewClosureWriteRequest(case=..., evidence=[...], conclusions=[...], closure=ReviewClosureInput(...)))` |
+| `CASE-SEED-CL-001` | `closed` | Case + 1 evidence + 1 conclusion + closure record | `write_review_closure(ReviewClosureWriteRequest(case=..., evidence=[...], conclusions=[...], closure=ReviewClosureInput(...)))`; `review_cases.status` remains open |
 
 All three cases share the same `source_result_id` from `_ensure_forecast_schedule_result()` (idempotent).
 
-### 11.4 Allowed Files (When Implemented)
+### 11.4 Implemented Files
 
-If PM confirms this task in the future:
+- `backend/app/review_demo_seed.py` — added `seed_review_case_stage_matrix()`
+- `backend/tests/test_review_demo_seed.py` — added unit tests for stage coverage, idempotency, and `created_at` stability
 
-- `backend/app/review_demo_seed.py` — add new seed function (e.g. `seed_review_case_stage_matrix()`)
-- `backend/tests/test_review_demo_seed.py` — add tests for new seed function idempotency and stage coverage
-
-### 11.5 Forbidden Files and Behaviors (When Implemented)
+### 11.5 Forbidden Files and Behaviors Preserved
 
 - No changes to `backend/app/review_persistence.py`, `review_closure.py`, `review_evidence.py`, `review_conclusion.py`, or `main.py`
 - No changes to `app/**`, `components/**`, `hooks/**`, `lib/**`
@@ -445,16 +442,16 @@ If PM confirms this task in the future:
 - No approval, permission, export, batch operations, production formulas, settlement rules, or charge factors
 - No auto-startup hooks (`lifespan`, `on_event("startup")`) that would run seed without explicit PM confirmation
 
-### 11.6 Future Acceptance Commands (Candidates)
+### 11.6 Acceptance Commands
 
-These are candidates for when the seed extension is implemented and a PM-confirmed runtime is available:
+These commands remain the acceptance surface:
 
 - `node --test scripts/tests/import-center-review-case-*.test.mjs` — frontend model tests (no runtime needed)
 - `python -m unittest backend.tests.test_review_demo_seed -v` — seed unit tests (no runtime needed)
 - `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` — full gate (no runtime needed)
 - Smoke sequence from Section 6 — live runtime acceptance (PM-confirmed runtime required)
 
-### 11.7 Stop Conditions
+### 11.7 Stop Conditions For Next Runtime Task
 
 - Seed extension fails to create expected cases or breaks existing `CASE-QUERY-001` idempotency.
 - New seed function introduces side effects outside `review_demo_seed.py`.
@@ -467,11 +464,11 @@ These are candidates for when the seed extension is implemented and a PM-confirm
 
 PM must decide:
 
-1. **Accept partial runtime smoke now**: Run only Steps 1-4 and Step 5a (Section 6) with the current seed. The three uncovered stage filters (`missing_evidence`, `missing_conclusion`, `closed`) remain unverified in live acceptance and are explicitly deferred.
+1. **Run full runtime smoke**: Start the PM-confirmed backend/frontend runtime and execute Section 6 with the stage matrix seed.
 
-2. **Extend seed first, then do full runtime acceptance**: Confirm the seed extension task, implement the three additional cases, re-run `bash scripts/check.sh`, then execute the full smoke sequence (Steps 1-6) including all stage filters.
+2. **Defer runtime smoke**: Keep IM238/IM239 as preflight + seed evidence only, without claiming live seeded acceptance.
 
-3. **Defer seed extension indefinitely**: Accept that live runtime acceptance covers only `ready_to_close`, and rely on the existing automated unit test surface (17 frontend test files + backend test suite) for the other three stages.
+3. **Add automation before runtime**: Define a separate task for an executable smoke script; do not add it inside IM239.
 
 ## 12. Unblock Path
 

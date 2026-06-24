@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-06-24 - IM239 复核案例阶段 Seed Matrix
+
+#### 审计结论
+
+- `IM239/US858/R938` 已补齐 review-case live runtime smoke 前需要的本地 seed 阶段矩阵。
+- `seed_review_case_demo()` 保持既有 `CASE-QUERY-001` 行为；新增 `seed_review_case_stage_matrix()` 显式创建四个目标案例。
+- 四个案例覆盖：`CASE-SEED-ME-001` 缺证据、`CASE-SEED-MC-001` 缺结论、`CASE-QUERY-001` 可关闭、`CASE-SEED-CL-001` closure-backed 已关闭。
+- closed 阶段由 closure 记录支撑，`review_cases.status` 保持既有 open 语义；前端 processing-stage 推导已按 `status === "closed" || closure !== null` 处理。
+- 本轮未启动 runtime，未新增 API route，未修改 persistence/service/main route、schema/migration、前端、依赖、package/lockfile、权限、审批、导出、批量、公式、结算或收费因子。
+
+#### 风险
+
+- IM239 只提供 seed 数据基线，不代表 `/data-quality/review-cases` live runtime smoke 已通过。
+- 后续 smoke 仍需 PM 明确允许使用 backend `127.0.0.1:8000` 和 frontend `127.0.0.1:3000`。
+- 如果后续希望用 `python -m backend.app.review_demo_seed` 直接创建四阶段矩阵，需要另行确认 CLI 行为；当前完整矩阵通过显式 `seed_review_case_stage_matrix()` 调用生成。
+
+#### 验证
+
+- Focused seed unittest：`backend_python=$(bash scripts/verify-backend-runtime.sh --print-path); "$backend_python" -m unittest backend.tests.test_review_demo_seed -v` 通过，8 tests OK。
+- `bash scripts/check-state.sh --strict`：通过。
+- `bash scripts/check-state.sh --repair-scope`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、433 个 Node script subtests（432 pass、1 skip）、shadcn check、lint、typecheck、Next build、backend 221 unittest OK，最终输出 `project Harness check passed`。
+
 ### 2026-06-24 - IM238 复核案例 Live Runtime 验收准备
 
 #### 审计结论

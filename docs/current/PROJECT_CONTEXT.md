@@ -12,15 +12,15 @@ The active product boundary remains local MVP and operator-facing workflow scaff
 
 ## Current Queue
 
-`US857 / IM238` is the only ready story/task in the current layer.
+No ready story/task is currently queued in the current layer.
 
-The task is a QA preflight for review-case live runtime acceptance. It may refine documentation and Harness traceability only. It must not start backend 8000, seed data, run live runtime acceptance, or modify business code until PM confirms the Gate Plan.
+IM238 prepared the review-case live runtime acceptance boundary. IM239 added the review-case stage seed matrix needed for complete processing-stage runtime acceptance. The next executable task must be defined before work continues.
 
 ## Recent State Summary
 
 - The current integration branch combines the compact Harness state-governance pass with the review-case processing-path branch so future work can start from one baseline.
 - The latest product work added operator-facing review-case processing paths without exposing Codex/Gate/PM acceptance language in product pages.
-- Future live review-case acceptance still requires an approved 8000/API runtime; IM238 prepares that acceptance boundary without claiming it has passed.
+- Future live review-case acceptance still requires an approved 8000/API runtime; IM238/IM239 prepare the acceptance boundary and seed data without claiming runtime acceptance has passed.
 - Harness state optimization is now the active maintenance concern: current context must stay compact, default reads must use the current layer, and history must be queried on demand through registry/legacy references.
 
 ## Current Execution Rules
@@ -48,4 +48,4 @@ The task is a QA preflight for review-case live runtime acceptance. It may refin
 
 ## Current Recommendation
 
-Confirm the IM238 Gate Plan before any runtime action. Recommended order: finish preflight documentation and task packets, then decide whether PM or Codex will run manual live acceptance on `codex/im237-harness-review-case-integration`, then separately confirm any seed extension for intermediate processing stages.
+Define the next task as review-case live runtime smoke only after PM confirms backend 8000 and frontend 3000 may be used. Until then, do not start runtime services or claim live seeded acceptance.

@@ -2,6 +2,24 @@
 
 ## 2026-06-24
 
+### IM239 Review Case Stage Seed Matrix
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `bf779b8`
+- stacked_on: `IM238 review-case live runtime acceptance preflight`
+- remote_status: `not_pushed after IM239 local seed implementation`
+- scope: Add a local review-case stage seed matrix so future PM-confirmed live runtime smoke can verify `missing_evidence`, `missing_conclusion`, `ready_to_close`, and closure-backed `closed` processing stages with real seeded cases.
+- allowed_files_check: `backend/app/review_demo_seed.py`, `backend/tests/test_review_demo_seed.py`, `docs/design/review-case-live-runtime-acceptance-preflight.md`, current Harness files, trace index, raw requirements, user stories, backlog, task log, audit report, and this branch-log entry only.
+- scope_diff_check: expected seed helper, focused unittest coverage, and traceability updates only; no runtime startup, API route, persistence/service/main route, schema/migration, app, components, hooks, lib, scripts/check.sh, package/lockfile, dependency, auth, permission, approval, export, batch, production formula, settlement, or charge-factor changes.
+- check_result: Focused `backend_python=$(bash scripts/verify-backend-runtime.sh --print-path); "$backend_python" -m unittest backend.tests.test_review_demo_seed -v` passed with 8 tests. `bash scripts/check-state.sh --strict`, `bash scripts/check-state.sh --repair-scope`, and `git diff --check` passed. Full `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, 433 Node script subtests (432 pass, 1 skip), shadcn check, lint, typecheck, Next build, and backend 221 unittest OK.
+- local_commit_sha: pending after final check and commit.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM238 Review Case Live Runtime Acceptance Preflight
 
 - branch_name: `codex/im237-harness-review-case-integration`
