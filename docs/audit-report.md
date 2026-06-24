@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-06-24 - IM240 复核案例 Live Runtime Smoke
+
+#### 审计结论
+
+- `IM240/US859/R939` 已完成 PM-confirmed local runtime smoke。
+- 隔离数据库 `.local/im240-runtime-smoke.db` 已加载 `seed_review_case_stage_matrix()`，四个案例覆盖缺证据、缺结论、可关闭和 closure-backed 已关闭阶段。
+- 后端运行在 `127.0.0.1:8000`；前端运行在 `127.0.0.1:3002`。`3000` 的旧 BPO Next dev 进程无响应且持有 `.next/dev/lock`，已只停止该旧进程；`3001` 的 WikiNode Vite 进程未触碰。
+- Live smoke 覆盖 backend docs/API、复核案例列表、`CASE-QUERY-001` 详情、四个 processing-stage filter、`evidence=failed`、`conclusion=failed`、`closure=success` 三类 feedback URL。
+- 本轮未修改业务 UI、组件、后端实现、API route、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 该证据只代表本地 runtime smoke 通过，不代表生产 readiness、权限/审批边界、写入 POST 动作验收或 PR 合并。
+- `python -m backend.app.review_demo_seed` 仍只执行基础 seed；完整四阶段矩阵需要显式调用 `seed_review_case_stage_matrix()`。
+- 当前 smoke 没有执行真实 POST 写入动作，只验证页面读取、过滤和 URL feedback 渲染。
+
+#### 验证
+
+- Seed 输出：`CASE-QUERY-001 open 1 1 False`、`CASE-SEED-ME-001 open 0 0 False`、`CASE-SEED-MC-001 open 1 0 False`、`CASE-SEED-CL-001 open 1 1 True`。
+- HTTP smoke：backend docs/API、列表、详情、四阶段 filter 和三类 feedback URL 全部 200 且命中预期 case ID 或反馈文案。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、433 个 Node script subtests（432 pass、1 skip）、shadcn check、lint、typecheck、Next build、backend 221 unittest OK，最终输出 `project Harness check passed`。
+
 ### 2026-06-24 - IM239 复核案例阶段 Seed Matrix
 
 #### 审计结论

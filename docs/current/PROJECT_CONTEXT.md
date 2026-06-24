@@ -12,15 +12,15 @@ The active product boundary remains local MVP and operator-facing workflow scaff
 
 ## Current Queue
 
-No ready story/task is currently queued in the current layer.
+No ready or in-progress story is currently queued.
 
-IM238 prepared the review-case live runtime acceptance boundary. IM239 added the review-case stage seed matrix needed for complete processing-stage runtime acceptance. The next executable task must be defined before work continues.
+IM240 completed the PM-confirmed review-case live runtime smoke on the current branch using an isolated `.local/im240-runtime-smoke.db` runtime artifact. The smoke used backend `127.0.0.1:8000` and frontend `127.0.0.1:3002` because the existing `3000` BPO Next dev process was stale and unresponsive. It did not add product features or modify business UI/backend implementation beyond acceptance traceability.
 
 ## Recent State Summary
 
 - The current integration branch combines the compact Harness state-governance pass with the review-case processing-path branch so future work can start from one baseline.
 - The latest product work added operator-facing review-case processing paths without exposing Codex/Gate/PM acceptance language in product pages.
-- Future live review-case acceptance still requires an approved 8000/API runtime; IM238/IM239 prepare the acceptance boundary and seed data without claiming runtime acceptance has passed.
+- IM240 has live-smoked the review-case list/detail, four processing-stage filters, and three URL feedback states against the IM239 stage matrix seed. This is local runtime evidence only, not production readiness or merge approval.
 - Harness state optimization is now the active maintenance concern: current context must stay compact, default reads must use the current layer, and history must be queried on demand through registry/legacy references.
 
 ## Current Execution Rules
@@ -48,4 +48,4 @@ IM238 prepared the review-case live runtime acceptance boundary. IM239 added the
 
 ## Current Recommendation
 
-Define the next task as review-case live runtime smoke only after PM confirms backend 8000 and frontend 3000 may be used. Until then, do not start runtime services or claim live seeded acceptance.
+Define the next requirement/story/Gate before further development. Good candidates are a PM manual walkthrough of the same review-case runtime path, a bounded review-case action POST smoke, or the next product workflow slice; do not add runtime automation, production readiness claims, permissions, approval, export, batch operations, formulas, settlement rules, or charge factors without a new task.

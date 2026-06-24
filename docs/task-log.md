@@ -19,6 +19,15 @@
 
 ### 2026-06-24
 
+- task_id: `IM240`
+- source_ids:
+  - `R939`
+- story_ids:
+  - `US859`
+- action: 复核案例 live runtime smoke。
+- status: `done`
+- notes: PM 确认可启动 runtime 并在端口占用时换端口后，Codex 使用隔离数据库 `.local/im240-runtime-smoke.db` 调用 `seed_review_case_stage_matrix()`。后端运行在 `127.0.0.1:8000`，现有 BPO Next `3000` 进程无响应且持有 Next dev lock，已只停止该旧 BPO Next 进程并在 `127.0.0.1:3002` 重启前端；`3001` 的 WikiNode 进程未触碰。HTTP smoke 覆盖 backend docs/API、列表页、CASE-QUERY-001 详情页、四个 processing-stage filter 和三类 feedback URL，均返回 200 且命中预期内容。本轮不新增业务功能、API、schema、依赖、权限、审批、导出、批量、生产公式、结算或收费因子。
+
 - task_id: `IM239`
 - source_ids:
   - `R938`

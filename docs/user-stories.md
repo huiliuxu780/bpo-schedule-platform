@@ -20,6 +20,30 @@
 status: "draft"
 ```
 
+### US859 - 复核案例 Live Runtime Smoke
+
+```yaml
+id: US859
+requirement_ids:
+  - R939
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望用真实本地前后端 runtime 和四阶段 seed 数据检查复核案例列表、详情和阶段筛选，以便确认它不只是模型测试通过，而是在 live runtime 下可访问、可筛选、可展示反馈。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "使用隔离本地数据库加载 `seed_review_case_stage_matrix()`，不污染默认业务数据库。"
+  - "启动本地 backend/frontend runtime；默认 `8000/3000` 被占用时可使用替代端口，并记录实际端口。"
+  - "验证 `/data-quality/review-cases` 和 `/data-quality/review-cases/CASE-QUERY-001` 返回 200 且包含预期案例内容。"
+  - "验证 `missing_evidence`、`missing_conclusion`、`ready_to_close`、`closed` 四个 processing-stage filter 均能返回对应 case。"
+  - "验证详情页 URL feedback 参数 `evidence=failed`、`conclusion=failed`、`closure=success` 返回 200 并出现对应反馈。"
+  - "不新增业务功能、API route、schema/migration、依赖、权限、审批、导出、批量或生产规则。"
+dependencies:
+  - "US858"
+status: "done"
+notes: "IM240 已完成：使用隔离 DB 和 live backend/frontend runtime 验证复核案例列表、详情、四阶段 processing-stage filter 和 URL feedback。该证据只代表本地 runtime smoke 通过，不代表生产验收或 PR 合并。"
+```
+
 ### US858 - 复核案例阶段 Seed Matrix
 
 ```yaml
