@@ -1,8 +1,19 @@
 version: 1
-updated_at: "2026-06-17"
+updated_at: "2026-06-24"
 source_of_truth: "current_story_queue"
 notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US857
+    requirement_ids:
+      - R937
+    task_ids:
+      - IM238
+    module: "复核案例工作区"
+    task_type: "qa"
+    priority: P0
+    status: ready
+    summary: "复核案例 live runtime 验收准备：定义页面、API、seed、手工验收、自动化 smoke 候选和 hard stop，不启动 runtime。"
+    requires_pm_confirmation: true

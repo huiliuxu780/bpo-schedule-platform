@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-06-24 - IM238 复核案例 Live Runtime 验收准备
+
+#### 审计结论
+
+- `IM238/US857/R937` 已作为当前唯一 ready task 入队，目标是 live runtime 验收前置准备，不是业务功能开发。
+- Qoder 交回的 runtime 入口梳理已落到 `docs/design/review-case-live-runtime-acceptance-preflight.md`，覆盖 `/data-quality/review-cases`、详情页、5 个 review-case API、`CASE-QUERY-001` seed、PM 手工验收清单和自动化 smoke 候选。
+- 本轮明确区分 3000-only 可完成的页面壳/错误态/model contract 检查，以及必须等待 8000 runtime 的 seeded list/detail/action deck/stage filter 验收。
+- `CASE-QUERY-001` 当前 seed 是 `ready_to_close` 案例：有证据和结论，但没有 closure 记录；如需 live 验收 `missing_evidence`、`missing_conclusion` 或 `closed` 阶段，需要后续单独确认 seed 扩展或显式关闭动作。
+- Qoder 后续只能执行 bounded packets，且不得直接写 `docs/current/**` 或 `docs/registry/**`。
+
+#### 风险
+
+- 启动 backend 8000、执行 seed、或做 live smoke 都属于 Gate 后动作；本轮未启动服务。
+- 如果直接在未合并的 PR #2 分支上验收，报告必须明确基线是 `codex/im237-harness-review-case-integration`，不是 `main`。
+- 如果不扩展 seed 或执行显式关闭动作，`missing_evidence`、`missing_conclusion` 和 `closed` 阶段只能靠现有模型/contract 测试覆盖，不能声称 live seeded UI 已覆盖全部阶段。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过。
+- `bash scripts/check-state.sh --repair-scope`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、433 个 Node script subtests（432 pass、1 skip）、shadcn check、lint、typecheck、Next build、backend 215 unittest OK，最终输出 `project Harness check passed`。
+
 ### 2026-06-22 - IM237 Harness 与 Review Case 集成
 
 #### 审计结论

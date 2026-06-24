@@ -15,6 +15,19 @@
 notes: "补充说明"
 ```
 
+### R937 - 复核案例 Live Runtime 验收准备
+
+```yaml
+id: R937
+module: "复核案例工作区"
+description: "IM215 只能在 3000-only 环境下完成 no-new-env model/contract-only QA，IM236/IM237 已把复核案例处理路径和新 Harness 统一到同一基线。当前需要把 live runtime 验收重新定义为一个受控 Gate：明确页面入口、后端 API、seed 前置条件、PM 手工验收清单、自动化 smoke 候选和 hard stop，避免把未跑通的 8000 seeded runtime 误报为已验收。"
+source: "PM 指令：IM237 先作为统一基线，下一轮业务开发先定义新的 requirement/story/Gate；Qoder 只读梳理 review-case runtime 入口后交回"
+submitted_at: "2026-06-24"
+version: "1.0"
+status: "ready"
+notes: "本需求只定义 live runtime 验收准备与执行边界，不新增复核案例产品能力；启动后端 8000、加载 seed、扩展 seed 中间态或新增自动化 runtime smoke 均需 Gate 确认后再执行。"
+```
+
 ### R936 - 复核案例处理路径收口
 
 ```yaml
