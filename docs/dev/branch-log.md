@@ -7,17 +7,17 @@
 - branch_name: `codex/im237-harness-review-case-integration`
 - base_main_commit: `36b38a0`
 - stacked_on: `IM237 integration branch after compact Harness governance and review-case processing-path integration`
-- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- remote_status: `pushed to origin/codex/im237-harness-review-case-integration; draft PR #2 open against main.`
 - scope: PM-confirmed reusable Harness template export. Add a project-neutral `harness-template/` package with template files, bootstrap script, and self-test so other projects can initialize the same current/registry/state-check workflow without copying product history.
 - allowed_files_check: `harness-template/**`, `scripts/tests/harness-template.test.mjs`, `docs/dev/branch-log.md`, and verification files already covered by dynamic `scripts/check.sh`; no business app code, backend/database/schema/migration, package/lockfile, dependency, auth, permission, approval, export, batch, production formula, settlement, or charge-factor changes.
 - scope_diff_check: expected template package and test only; no project state queue seeding, no product implementation, no BPO history copied into generated template output.
 - check_result: TDD RED `node --test scripts/tests/harness-template.test.mjs` first failed because `harness-template/scripts/init-harness.sh` was missing. After implementation, the test initialized a temporary project, verified required Harness files, confirmed placeholder replacement, and passed target `scripts/check-state.sh --strict`. `git diff --check` passed, `bash scripts/check-state.sh --strict` passed with `PROJECT_CONTEXT.md` at 51/160 lines, and final `bash scripts/check.sh` passed with strict state, 433 Node subtests, shadcn check, lint, typecheck, Next build, and backend 215 unittests.
-- local_commit_sha: to be reported in Done Report after local commit creation.
-- integration_status: `not_started`
+- local_commit_sha: `62206fb`
+- integration_status: `pushed_in_pr_2`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `pending PM decision after local commit`
+- push_decision: `PM confirmed push; draft PR #2 opened`
 - blocked_reason: `N/A`
 
 ### IM237 Harness And Review Case Integration
@@ -26,17 +26,17 @@
 - base_main_commit: `1a18763`
 - stacked_on: `codex/harness-state-hygiene`
 - merged_branch: `codex/review-case-acceptance-block`
-- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- remote_status: `pushed to origin/codex/im237-harness-review-case-integration; draft PR #2 open against main.`
 - scope: PM-confirmed integration Gate. Bring the compact Harness state-governance pass and the IM220-IM236 product/test-gate chain onto one branch, preserving the empty-current-queue rule, dynamic script-test gate, and review-case processing-path UI/model work.
 - allowed_files_check: merge result from `codex/harness-state-hygiene` plus `codex/review-case-acceptance-block`; conflict edits limited to `docs/current/PROJECT_CONTEXT.md`, `docs/dev/branch-log.md`, and `scripts/check.sh`. `.local/` and `.qoder/` remain untracked and untouched.
 - scope_diff_check: expected merge integration only; no new product behavior beyond the merged branches, no package/lockfile changes, no backend/database/schema/migration expansion, no auth, permissions, approval, export, batch operation, automatic scheduling, formula, settlement, or charge-factor scope.
 - check_result: Conflict-resolution verification passed: `bash scripts/check-state.sh --strict`, `bash scripts/check-state.sh --repair-scope`, and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with dynamic Node script tests, shadcn check, lint, typecheck, Next build, and backend 215 tests OK.
 - local_commit_sha: `417963a`
-- integration_status: `verified; trace follow-up pending local commit`
+- integration_status: `pushed_in_pr_2`
 - integration_method: `merge codex/review-case-acceptance-block into codex/harness-state-hygiene-derived integration branch`
 - integration_commit_sha: `417963a`
 - merge_to_main_commit: `N/A`
-- push_decision: `pending PM decision after local commit`
+- push_decision: `PM confirmed push; draft PR #2 opened`
 - blocked_reason: `N/A`
 
 ### H029 Harness State Hygiene
