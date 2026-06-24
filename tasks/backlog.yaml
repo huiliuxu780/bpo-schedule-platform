@@ -13913,7 +13913,7 @@ tasks:
   - id: IM238
     title: "复核案例 Live Runtime 验收准备"
     priority: P0
-    status: ready
+    status: done
     required_workflow: qa
     dependencies: ["IM237"]
     story_ids: ["US857"]
@@ -13960,4 +13960,60 @@ tasks:
       - "需要新增审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
-    done_notes: "pending"
+    done_notes: "已完成：live runtime preflight 文档、bounded Qoder packets、seed coverage gap、future smoke sequence 和 seed extension Gate 草案均已记录；未启动 runtime，未修改业务代码。"
+  - id: IM239
+    title: "复核案例阶段 Seed Matrix"
+    priority: P0
+    status: done
+    required_workflow: backend-mvp
+    dependencies: ["IM238"]
+    story_ids: ["US858"]
+    requirement_ids: ["R938"]
+    allowed_files:
+      - "backend/app/review_demo_seed.py"
+      - "backend/tests/test_review_demo_seed.py"
+      - "docs/design/review-case-live-runtime-acceptance-preflight.md"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+    forbidden_files:
+      - "backend/app/review_persistence.py"
+      - "backend/app/review_closure.py"
+      - "backend/app/review_evidence.py"
+      - "backend/app/review_conclusion.py"
+      - "backend/app/main.py"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "scripts/check.sh"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - ".local/**"
+      - ".qoder/**"
+    acceptance:
+      - "`seed_review_case_demo()` 保持 `CASE-QUERY-001` 现有行为和返回值。"
+      - "新增 `seed_review_case_stage_matrix()`，生成四个阶段案例：ready_to_close、missing_evidence、missing_conclusion 和 closure-backed closed。"
+      - "stage matrix seed 复用 `_ensure_forecast_schedule_result()`，不新增 route、startup hook、schema/migration 或依赖。"
+      - "`backend.tests.test_review_demo_seed` 覆盖四个案例组合、幂等性和 `created_at` 不变。"
+      - "`bash scripts/check-state.sh --strict`、`bash scripts/check-state.sh --repair-scope`、`git diff --check`、focused unittest、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要启动新的测试环境或后端/API runtime"
+      - "需要修改 review persistence/service/main route、数据库 schema/migration、依赖或 package/lockfile"
+      - "需要修改 app、components、hooks、lib 或任何业务 UI/业务模型代码"
+      - "需要新增审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：新增 review-case stage matrix seed 和 unittest 覆盖，为后续 PM-confirmed live runtime smoke 提供四阶段 seed 数据；未启动 runtime，未新增 API，未修改 persistence/schema/frontend。"

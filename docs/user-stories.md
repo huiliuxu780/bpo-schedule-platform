@@ -20,6 +20,29 @@
 status: "draft"
 ```
 
+### US858 - 复核案例阶段 Seed Matrix
+
+```yaml
+id: US858
+requirement_ids:
+  - R938
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望本地 review-case seed 能同时生成缺证据、缺结论、可关闭和已关闭四类案例，以便后续 live runtime 验收可以真实检查 processing-stage filter，而不是把空结果误判为通过。"
+task_type: "backend-mvp"
+priority: "P0"
+acceptance:
+  - "`seed_review_case_demo()` 保持现有 `CASE-QUERY-001` 行为和返回值。"
+  - "新增显式 `seed_review_case_stage_matrix()`，生成四个目标案例：`CASE-QUERY-001`、`CASE-SEED-ME-001`、`CASE-SEED-MC-001`、`CASE-SEED-CL-001`。"
+  - "四个案例分别覆盖 `ready_to_close`、`missing_evidence`、`missing_conclusion` 和 closure-backed `closed`。"
+  - "seed 可重复调用且不重复写入证据、结论或关闭记录，也不改变既有 `created_at`。"
+  - "不启动 runtime，不新增 API route，不修改 persistence/service/main route、schema/migration、依赖、package/lockfile、前端或产品 UI。"
+dependencies:
+  - "US857"
+status: "done"
+notes: "IM239 已完成；closed stage 由 closure 记录支撑，`review_cases.status` 仍保持既有 open 语义。"
+```
+
 ### US857 - 复核案例 Live Runtime 验收准备
 
 ```yaml
@@ -39,8 +62,8 @@ acceptance:
   - "不启动新的测试环境，不修改业务 UI、组件实现、后端、数据库、依赖或 package/lockfile。"
 dependencies:
   - "US856"
-status: "ready"
-notes: "IM238 当前只进入 QA preflight；runtime 执行、后端启动、seed 扩展和自动化 smoke 需要 PM 在 Gate Plan 后另行确认。"
+status: "done"
+notes: "IM238 已完成 QA preflight；runtime 执行、后端启动和自动化 smoke 仍需要 PM 在 Gate Plan 后另行确认。"
 ```
 
 ### US856 - 复核案例处理路径收口

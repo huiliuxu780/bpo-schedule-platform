@@ -18,6 +18,7 @@ from backend.app.models import (
     PersonnelScheduleVersionRequest,
     ReviewCaseCreateRequest,
     ReviewCaseDetail,
+    ReviewClosureInput,
     ReviewClosureWriteRequest,
     ReviewConclusionInput,
     ReviewEvidenceInput,
@@ -31,6 +32,10 @@ from backend.app.review_persistence import ReviewPersistenceRepository
 
 DEMO_CASE_ID = "CASE-QUERY-001"
 DEMO_RUN_ID = "RUN-DEMO-FS-20260511"
+
+STAGE_MATRIX_MISSING_EVIDENCE_ID = "CASE-SEED-ME-001"
+STAGE_MATRIX_MISSING_CONCLUSION_ID = "CASE-SEED-MC-001"
+STAGE_MATRIX_CLOSED_ID = "CASE-SEED-CL-001"
 
 
 def seed_review_case_demo(database_url: str | None = None) -> ReviewCaseDetail:
@@ -75,6 +80,107 @@ def seed_review_case_demo(database_url: str | None = None) -> ReviewCaseDetail:
         ),
         repository,
     )
+
+
+def seed_review_case_stage_matrix(
+    database_url: str | None = None,
+) -> list[ReviewCaseDetail]:
+    repository = ReviewPersistenceRepository(database_url)
+    repository.init_schema()
+    seed_review_case_demo(database_url)
+    source_result_id = _ensure_forecast_schedule_result(database_url)
+
+    if repository.get_review_case(STAGE_MATRIX_MISSING_EVIDENCE_ID) is None:
+        repository.create_review_case(
+            ReviewCaseCreateRequest(
+                case_id=STAGE_MATRIX_MISSING_EVIDENCE_ID,
+                source_result_type="forecast_schedule",
+                source_result_id=source_result_id,
+                business_date="2026-05-11",
+                owner_id="supervisor-01",
+                severity="high",
+                status="open",
+            )
+        )
+
+    if repository.get_review_case(STAGE_MATRIX_MISSING_CONCLUSION_ID) is None:
+        repository.create_review_case(
+            ReviewCaseCreateRequest(
+                case_id=STAGE_MATRIX_MISSING_CONCLUSION_ID,
+                source_result_type="forecast_schedule",
+                source_result_id=source_result_id,
+                business_date="2026-05-11",
+                owner_id="supervisor-01",
+                severity="medium",
+                status="open",
+            )
+        )
+        repository.add_evidence(
+            ReviewEvidenceInput(
+                evidence_id="EVD-SEED-MC-001",
+                case_id=STAGE_MATRIX_MISSING_CONCLUSION_ID,
+                evidence_type="note",
+                evidence_uri="local://review/CASE-SEED-MC-001/note",
+                submitted_by="supervisor-01",
+                note="补充证据",
+            )
+        )
+
+    if repository.get_review_case(STAGE_MATRIX_CLOSED_ID) is None:
+        write_review_closure(
+            ReviewClosureWriteRequest(
+                case=ReviewCaseCreateRequest(
+                    case_id=STAGE_MATRIX_CLOSED_ID,
+                    source_result_type="forecast_schedule",
+                    source_result_id=source_result_id,
+                    business_date="2026-05-11",
+                    owner_id="supervisor-01",
+                    severity="low",
+                    status="open",
+                ),
+                evidence=[
+                    ReviewEvidenceInput(
+                        evidence_id="EVD-SEED-CL-001",
+                        case_id=STAGE_MATRIX_CLOSED_ID,
+                        evidence_type="note",
+                        evidence_uri="local://review/CASE-SEED-CL-001/note",
+                        submitted_by="supervisor-01",
+                        note="关闭案例证据",
+                    )
+                ],
+                conclusions=[
+                    ReviewConclusionInput(
+                        conclusion_id="CON-SEED-CL-001",
+                        case_id=STAGE_MATRIX_CLOSED_ID,
+                        conclusion_type="confirmed_gap",
+                        risk_level="low",
+                        conclusion_text="确认并关闭。",
+                        decided_by="ops-lead-01",
+                    )
+                ],
+                closure=ReviewClosureInput(
+                    closure_id="CLO-SEED-CL-001",
+                    case_id=STAGE_MATRIX_CLOSED_ID,
+                    closure_status="closed",
+                    closed_by="ops-lead-01",
+                    closure_note="已关闭。",
+                ),
+            ),
+            repository,
+        )
+
+    details: list[ReviewCaseDetail] = []
+    for case_id in [
+        DEMO_CASE_ID,
+        STAGE_MATRIX_MISSING_EVIDENCE_ID,
+        STAGE_MATRIX_MISSING_CONCLUSION_ID,
+        STAGE_MATRIX_CLOSED_ID,
+    ]:
+        detail = repository.get_review_case(case_id)
+        if detail is None:
+            raise RuntimeError(f"seeded review case could not be read back: {case_id}")
+        details.append(detail)
+    return details
 
 
 def _ensure_forecast_schedule_result(database_url: str | None) -> int:

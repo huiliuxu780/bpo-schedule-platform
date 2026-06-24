@@ -15,6 +15,19 @@
 notes: "补充说明"
 ```
 
+### R938 - 复核案例阶段 Seed Matrix
+
+```yaml
+id: R938
+module: "复核案例工作区"
+description: "IM238 已确认当前 `CASE-QUERY-001` 只覆盖 ready_to_close，导致 live runtime 验收无法证明 missing_evidence、missing_conclusion 和 closed 三个 processing-stage filter。需要补齐本地 demo seed 的阶段矩阵，让后续 PM-confirmed runtime smoke 能看到四个处理阶段的真实案例。"
+source: "PM 确认：先扩展 seed，再做完整 live runtime 验收；Qoder 执行 IM239 Packet A 后由 Codex 复核和收口"
+submitted_at: "2026-06-24"
+version: "1.0"
+status: "done"
+notes: "IM239 已新增 `seed_review_case_stage_matrix()`，覆盖 CASE-QUERY-001、CASE-SEED-ME-001、CASE-SEED-MC-001、CASE-SEED-CL-001。该需求不启动 runtime，不新增 API route，不修改 persistence/schema/dependency，也不代表 live runtime acceptance 已通过。"
+```
+
 ### R937 - 复核案例 Live Runtime 验收准备
 
 ```yaml
@@ -24,8 +37,8 @@ description: "IM215 只能在 3000-only 环境下完成 no-new-env model/contrac
 source: "PM 指令：IM237 先作为统一基线，下一轮业务开发先定义新的 requirement/story/Gate；Qoder 只读梳理 review-case runtime 入口后交回"
 submitted_at: "2026-06-24"
 version: "1.0"
-status: "ready"
-notes: "本需求只定义 live runtime 验收准备与执行边界，不新增复核案例产品能力；启动后端 8000、加载 seed、扩展 seed 中间态或新增自动化 runtime smoke 均需 Gate 确认后再执行。"
+status: "done"
+notes: "IM238 已完成 live runtime 验收准备与执行边界定义，不新增复核案例产品能力；启动后端 8000、加载 seed 或新增自动化 runtime smoke 仍需 Gate 确认后再执行。"
 ```
 
 ### R936 - 复核案例处理路径收口
