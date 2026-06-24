@@ -974,6 +974,9 @@ requirements:
   R900: {file: "docs/raw-requirements.md", story_ids: ["US820"], task_ids: ["IM200"]}
   R901: {file: "docs/raw-requirements.md", story_ids: ["US821"], task_ids: ["IM201"]}
   R902: {file: "docs/raw-requirements.md", story_ids: ["US822"], task_ids: ["IM202"]}
+  US857: {file: "docs/user-stories.md", requirement_ids: ["R937"], task_ids: ["IM238"], archive_refs: []}
+  IM238: {file: "tasks/backlog.yaml", story_ids: ["US857"], gate: "qa"}
+  R937: {file: "docs/raw-requirements.md", story_ids: ["US857"], task_ids: ["IM238"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

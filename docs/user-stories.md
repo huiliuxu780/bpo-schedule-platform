@@ -20,6 +20,29 @@
 status: "draft"
 ```
 
+### US857 - 复核案例 Live Runtime 验收准备
+
+```yaml
+id: US857
+requirement_ids:
+  - R937
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望在启动 live runtime 验收前先看到明确的页面、API、seed、验收清单和 stop condition，以便确认复核案例工作区是真实数据可验收，而不是仅靠模型测试或页面壳可达。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "新增或完善复核案例 live runtime 验收 preflight 文档，覆盖列表页、详情页、processing-stage filter、URL feedback、action deck 和 owner context。"
+  - "明确 5 个后端 API 端点、`CASE-QUERY-001` seed 前置条件，以及 seed 当前只覆盖 ready_to_close 状态的限制。"
+  - "明确无 8000 runtime 可完成的检查与必须等待 runtime 的检查，不能把 3000-only 结果当成 live seeded 验收通过。"
+  - "给出可手动发给 Qoder 的 bounded task packets，且 Qoder 不得直接写 `docs/current/**` 或 `docs/registry/**`。"
+  - "不启动新的测试环境，不修改业务 UI、组件实现、后端、数据库、依赖或 package/lockfile。"
+dependencies:
+  - "US856"
+status: "ready"
+notes: "IM238 当前只进入 QA preflight；runtime 执行、后端启动、seed 扩展和自动化 smoke 需要 PM 在 Gate Plan 后另行确认。"
+```
+
 ### US856 - 复核案例处理路径收口
 
 ```yaml

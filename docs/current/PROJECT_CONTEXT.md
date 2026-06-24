@@ -12,15 +12,15 @@ The active product boundary remains local MVP and operator-facing workflow scaff
 
 ## Current Queue
 
-`docs/current/STORY_QUEUE.yaml` and `docs/current/ACTIVE_TASKS.yaml` are empty. There is no executable ready story in the current layer.
+`US857 / IM238` is the only ready story/task in the current layer.
 
-When the queue is empty, the next worker must not guess the next implementation task. It must first create or confirm a candidate requirement/story/Gate, then seed the current queue only after the scope is approved.
+The task is a QA preflight for review-case live runtime acceptance. It may refine documentation and Harness traceability only. It must not start backend 8000, seed data, run live runtime acceptance, or modify business code until PM confirms the Gate Plan.
 
 ## Recent State Summary
 
 - The current integration branch combines the compact Harness state-governance pass with the review-case processing-path branch so future work can start from one baseline.
 - The latest product work added operator-facing review-case processing paths without exposing Codex/Gate/PM acceptance language in product pages.
-- Future live review-case acceptance still requires an approved 8000/API runtime.
+- Future live review-case acceptance still requires an approved 8000/API runtime; IM238 prepares that acceptance boundary without claiming it has passed.
 - Harness state optimization is now the active maintenance concern: current context must stay compact, default reads must use the current layer, and history must be queried on demand through registry/legacy references.
 
 ## Current Execution Rules
@@ -48,4 +48,4 @@ When the queue is empty, the next worker must not guess the next implementation 
 
 ## Current Recommendation
 
-Start the next product-development chain only after a PM-confirmed requirement is converted into a small ready story with a matching active task. For Harness maintenance, prefer narrow state-hygiene tasks that keep current files compact, reconcile conflicting rules, and strengthen verification before adding new process documents.
+Confirm the IM238 Gate Plan before any runtime action. Recommended order: finish preflight documentation and task packets, then decide whether PM or Codex will run manual live acceptance on `codex/im237-harness-review-case-integration`, then separately confirm any seed extension for intermediate processing stages.

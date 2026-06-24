@@ -1,5 +1,25 @@
 # Branch Log
 
+## 2026-06-24
+
+### IM238 Review Case Live Runtime Acceptance Preflight
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `5cbaad3`
+- stacked_on: `IM237 integration branch and draft PR #2`
+- remote_status: `not_pushed after IM238 local documentation/current-state changes`
+- scope: Define and seed the next current-layer QA task for review-case live runtime acceptance preflight. Formalize R937/US857/IM238, record page/API/seed/runtime acceptance boundaries, and provide bounded Qoder packets without starting runtime.
+- allowed_files_check: `docs/design/review-case-live-runtime-acceptance-preflight.md`, current Harness queue/task files, trace index, raw requirements, user stories, backlog, task log, audit report, and this branch-log entry only.
+- scope_diff_check: expected docs/current/traceability updates only; no app, components, hooks, lib, backend, scripts/check.sh, package/lockfile, dependency, database/schema/migration, auth, permission, approval, export, batch, production formula, settlement, or charge-factor changes. `.local/` and `.qoder/` must remain untouched.
+- check_result: `bash scripts/check-state.sh --strict` passed; `bash scripts/check-state.sh --repair-scope` passed; `git diff --check` passed; `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, 433 Node script subtests (432 pass, 1 skip), shadcn check, lint, typecheck, Next build, and backend 215 unittest OK.
+- local_commit_sha: pending after final check and commit.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ## 2026-06-22
 
 ### H030 Harness Template Export
