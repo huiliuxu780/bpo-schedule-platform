@@ -2838,3 +2838,12 @@
   action: 项目理解需求基线校准。
   status: `done`
   notes: 新增 `docs/design/project-understanding-requirements-calibration.md`，把 2026-06-14 外部项目理解与需求文档校准为产品北极星和需求地图，而不是当前实现状态或自动 backlog。校准结果明确：业务背景、核心概念、五大业务域、用户角色和目标 IA 仍有效；错误边界、loading、详情页 Tab 化、空状态组件化、数据质量/复核链路等状态判断已经被后续迭代改变；认证、权限、审批、导出、批量、生产公式、结算和收费因子仍需新 Gate。本轮未修改 UI 组件、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM243`
+  source_ids:
+    - `R942`
+  story_ids:
+    - `US862`
+  action: 复核案例写入动作手工浏览器验收。
+  status: `done`
+  notes: 使用 `BPO_DATABASE_URL` 指向 `.local/im243-review-case-form-click-smoke.db` 并加载 `seed_review_case_stage_matrix()`；backend `127.0.0.1:8000` 与 frontend `127.0.0.1:3002` 启动后，浏览器手工验证 `CASE-SEED-ME-001` 补证据、`CASE-SEED-MC-001` 补结论、`CASE-QUERY-001` 关闭案例三条表单链路均触发 server action、跳转 success URL、显示成功反馈，并通过 detail API 回读确认写入；`CASE-SEED-CL-001` 显示已关闭 blocker，面包屑可返回列表。本轮未新增自动化 E2E，未修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

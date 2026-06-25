@@ -651,3 +651,58 @@ This minimum scope is sufficient because the three panels share identical code p
 - No changes to `scripts/check.sh` or gate configuration.
 - No production readiness claim.
 - No permission, approval, export, batch-operation, production formula, settlement, or charge-factor coverage.
+
+## 16. Manual Browser Walkthrough Evidence (IM243)
+
+> This section records the IM243 local browser walkthrough for the three review-case write forms. It is acceptance evidence only; it does not add automation, modify product code, or claim production readiness.
+
+### 16.1 Runtime Setup
+
+| Item | Value |
+| --- | --- |
+| Database | `.local/im243-review-case-form-click-smoke.db` |
+| Database routing | `BPO_DATABASE_URL=sqlite+pysqlite:///./.local/im243-review-case-form-click-smoke.db` |
+| Seed function | `seed_review_case_stage_matrix()` |
+| Backend | `127.0.0.1:8000` |
+| Frontend | `127.0.0.1:3002` |
+| API base | `NEXT_PUBLIC_BPO_API_BASE_URL=http://127.0.0.1:8000` and `BPO_API_BASE_URL=http://127.0.0.1:8000` |
+
+Seed output before the walkthrough:
+
+| Case ID | Status | Evidence | Conclusions | Closure |
+| --- | --- | ---: | ---: | --- |
+| `CASE-QUERY-001` | `open` | 1 | 1 | false |
+| `CASE-SEED-ME-001` | `open` | 0 | 0 | false |
+| `CASE-SEED-MC-001` | `open` | 1 | 0 | false |
+| `CASE-SEED-CL-001` | `open` | 1 | 1 | true |
+
+### 16.2 Browser Walkthrough Results
+
+| Step | Result |
+| --- | --- |
+| Visit `CASE-SEED-ME-001`, open `处理动作`, submit evidence form | Redirected to `?evidence=success`; `补证据提交成功` was visible in the action tab |
+| Read back `CASE-SEED-ME-001` detail API | Response included `evidence_uri=local://im243/browser-evidence` and `note=IM243 browser evidence` |
+| Visit `CASE-SEED-MC-001`, open `处理动作`, submit conclusion form | Redirected to `?conclusion=success`; `补结论提交成功` was visible in the action tab |
+| Read back `CASE-SEED-MC-001` detail API | Response included `conclusion_text=IM243 browser conclusion` |
+| Visit `CASE-QUERY-001`, open `处理动作`, submit closure form | Redirected to `?closure=success`; `关闭案例提交成功` was visible in the action tab |
+| Read back `CASE-QUERY-001` detail API | Response included `closure_status=closed` and `closure_note=IM243 browser closure` |
+| Visit `CASE-SEED-CL-001`, open `处理动作` | Existing closure was visible; evidence and conclusion actions showed `案例已关闭` blocker text; closure panel showed closed state |
+| Click breadcrumb `复核案例` | Returned to `/data-quality/review-cases` |
+
+### 16.3 Observations
+
+- The success feedback is rendered inside the `处理动作` tab. After a server-action redirect, the detail page may initially show another tab; opening `处理动作` displays the feedback notice.
+- `CASE-SEED-CL-001` has `case.status=open` while `closure` is present. The action deck correctly treats the case as closed because closure presence is part of the frontend closed-state summary.
+- No product code, backend code, scripts, dependency files, package/lockfiles, schema/migration, permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors were changed.
+
+### 16.4 Acceptance Decision
+
+IM243 passes the intended local browser walkthrough:
+
+1. Browser form submit triggers the existing Next server action.
+2. The server action writes through the existing backend API.
+3. The page redirects to the expected success URL.
+4. The success feedback appears in the existing action deck.
+5. Backend detail API read-back confirms persistence in the isolated local runtime database.
+
+This closes the current review-case runtime acceptance block for local MVP evidence. It does not imply production readiness, permissions readiness, external integration readiness, or automated E2E coverage.

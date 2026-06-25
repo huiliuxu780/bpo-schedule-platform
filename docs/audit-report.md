@@ -5657,3 +5657,21 @@
 - 结论：外部文档的业务背景、核心概念、五大业务域、用户角色和目标 IA 仍可作为产品基线。
 - 结论：外部文档中的当前状态和待实现排序必须按当前 Harness 重校准；错误边界、loading、Tab 化、空状态、数据质量和复核链路已有后续推进。
 - 结论：认证、权限、审批、导出、批量、自动排班、生产公式、结算和收费因子仍是硬边界，需要单独 Gate。
+
+### 2026-06-25 - IM243 复核案例写入动作手工浏览器验收
+
+#### 审计计划
+
+- 只做本地 QA 验收，不新增产品能力或自动化 E2E。
+- 使用 `BPO_DATABASE_URL` 指向 `.local/im243-review-case-form-click-smoke.db`，显式加载 `seed_review_case_stage_matrix()`。
+- 启动 backend `127.0.0.1:8000` 和 frontend `127.0.0.1:3002`，用浏览器手工提交补证据、补结论、关闭案例三个表单。
+- 通过 URL success 参数、页面反馈文本和 detail API 回读确认 server action -> backend write -> redirect 链路。
+- 不修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- `CASE-SEED-ME-001` 补证据提交后跳转 `?evidence=success`，动作页签显示 `补证据提交成功`，detail API 回读到 `local://im243/browser-evidence` 和 `IM243 browser evidence`。
+- `CASE-SEED-MC-001` 补结论提交后跳转 `?conclusion=success`，动作页签显示 `补结论提交成功`，detail API 回读到 `IM243 browser conclusion`。
+- `CASE-QUERY-001` 关闭案例提交后跳转 `?closure=success`，动作页签显示 `关闭案例提交成功`，detail API 回读到 `closure_status=closed` 和 `IM243 browser closure`。
+- `CASE-SEED-CL-001` 显示已关闭 blocker，证据/结论入口提示 `案例已关闭`，面包屑 `复核案例` 可返回列表页。
+- 该证据关闭当前 review-case 本地 runtime acceptance block；不代表 production-ready、权限验收、外部集成验收或自动化 E2E 覆盖。

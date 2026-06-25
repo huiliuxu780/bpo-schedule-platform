@@ -20,6 +20,31 @@
 status: "draft"
 ```
 
+### US862 - 复核案例写入动作手工浏览器验收
+
+```yaml
+id: US862
+requirement_ids:
+  - R942
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望在浏览器中手工提交复核案例补证据、补结论和关闭案例表单，以便确认运营人员在页面上能完成这些已实现动作，并看到正确的成功或阻塞反馈。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "使用 `BPO_DATABASE_URL` 指向隔离数据库 `.local/im243-review-case-form-click-smoke.db`，不污染默认业务数据库。"
+  - "加载 `seed_review_case_stage_matrix()` 后，启动 backend `127.0.0.1:8000` 和 frontend `127.0.0.1:3002`。"
+  - "浏览器访问 `CASE-SEED-ME-001`，提交补证据表单后出现 `?evidence=success` 和 `补证据提交成功`。"
+  - "浏览器访问 `CASE-SEED-MC-001`，提交补结论表单后出现 `?conclusion=success` 和 `补结论提交成功`。"
+  - "浏览器访问 `CASE-QUERY-001`，提交关闭案例表单后出现 `?closure=success` 和 `关闭案例提交成功`。"
+  - "浏览器访问 `CASE-SEED-CL-001`，确认已关闭案例不允许补证据或补结论。"
+  - "不新增自动化 E2E、不修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量或生产规则。"
+dependencies:
+  - "US861"
+status: "done"
+notes: "IM243 已完成：浏览器手工提交补证据、补结论和关闭案例均跳转到对应 success URL 并显示成功反馈；已关闭案例显示 blocker；证据写入、结论写入和关闭写入均通过 detail API 回读确认。"
+```
+
 ### US861 - 复核案例 Form-Click E2E 自动化决策
 
 ```yaml

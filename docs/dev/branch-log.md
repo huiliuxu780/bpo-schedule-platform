@@ -5414,3 +5414,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM243 Review Case Manual Browser Walkthrough
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `carried forward from the IM237 integration branch`
+- stacked_on: `codex/im237-harness-review-case-integration`
+- remote_status: `not_pushed after IM243 local commit; push remains PM-controlled.`
+- scope: PM-confirmed QA walkthrough for the remaining review-case form-click glue. Use isolated `BPO_DATABASE_URL` runtime DB, backend `127.0.0.1:8000`, and frontend `127.0.0.1:3002` to validate evidence, conclusion, and closure browser form submission. Do not add E2E automation or modify product/backend code.
+- allowed_files_check: current Harness files, registry trace index, raw requirements, user stories, task log, audit report, branch log, backlog, and `docs/design/review-case-live-runtime-acceptance-preflight.md` only. Runtime DB `.local/im243-review-case-form-click-smoke.db` is allowed as a local smoke artifact and must not be committed.
+- scope_diff_check: expected QA evidence and Harness closeout only; no changes to `app/**`, `components/**`, `backend/**`, `scripts/**`, package/lockfiles, dependencies, schema/migration, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor files.
+- check_result: Browser walkthrough passed for `CASE-SEED-ME-001` evidence submit, `CASE-SEED-MC-001` conclusion submit, `CASE-QUERY-001` closure submit, and `CASE-SEED-CL-001` closed blocker plus breadcrumb return. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 433 frontend node tests (1 skipped), lint, typecheck, Next build, and 221 backend unittest tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

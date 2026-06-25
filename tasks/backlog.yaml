@@ -14179,3 +14179,74 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已完成：新增 IM242 form-click E2E feasibility decision，结论为当前 qa gate 不建议自动化 E2E；不安装 Playwright，不改 package/lockfile，不新增 E2E 目录、运行脚本或 check.sh 门禁。推荐使用 IM241 HTTP smoke 证据加 PM 手工浏览器验收清单覆盖剩余低风险胶水层。"
+  - id: IM243
+    title: "复核案例写入动作手工浏览器验收"
+    priority: P0
+    status: done
+    required_workflow: qa
+    dependencies: ["IM242"]
+    story_ids: ["US862"]
+    requirement_ids: ["R942"]
+    task_packets:
+      - id: "Packet A"
+        title: "Harness 入队"
+        owner: "Codex"
+        scope: "写入 R942/US862/IM243/current/trace，建立当前 QA Gate。"
+      - id: "Packet B"
+        title: "Runtime 与浏览器 walkthrough"
+        owner: "Codex"
+        scope: "使用隔离 DB、backend 8000、frontend 3002 验证三个页面表单提交和已关闭 blocker。"
+      - id: "Packet C"
+        title: "审计收口"
+        owner: "Codex"
+        scope: "记录证据、清空 current queue、跑完整门禁、提交；push 等 PM 确认。"
+    allowed_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/design/review-case-live-runtime-acceptance-preflight.md"
+      - ".local/im243-review-case-form-click-smoke.db"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "backend/migrations/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - ".qoder/**"
+      - "node_modules/**"
+    acceptance:
+      - "隔离数据库 `.local/im243-review-case-form-click-smoke.db` 通过 `BPO_DATABASE_URL` 成功加载 `seed_review_case_stage_matrix()`。"
+      - "backend `127.0.0.1:8000` 和 frontend `127.0.0.1:3002` 成功启动；如端口不可用，必须记录并获得 PM 确认后换端口。"
+      - "`CASE-SEED-ME-001` 在浏览器中提交补证据表单后跳转到 `?evidence=success` 并显示 `补证据提交成功`。"
+      - "`CASE-SEED-MC-001` 在浏览器中提交补结论表单后跳转到 `?conclusion=success` 并显示 `补结论提交成功`。"
+      - "`CASE-QUERY-001` 在浏览器中提交关闭案例表单后跳转到 `?closure=success` 并显示 `关闭案例提交成功`。"
+      - "`CASE-SEED-CL-001` 在浏览器中显示已关闭 blocker，不允许补证据或补结论。"
+      - "记录 runtime/browser 证据，不声明 production-ready，不新增自动化 E2E。"
+      - "`bash scripts/check-state.sh --strict`、`git diff --check`、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "isolated runtime database cannot be guaranteed through BPO_DATABASE_URL"
+      - "stage matrix seed cannot be loaded into the isolated runtime database"
+      - "backend or frontend runtime cannot start on the confirmed local ports"
+      - "browser walkthrough cannot reach expected pages, controls, feedback URLs, or blocker text"
+      - "需要安装 E2E 自动化依赖、修改 package/lockfile、新增脚本或修改 check.sh"
+      - "需要修改业务代码、API route、schema/migration、依赖或 package/lockfile"
+      - "需要新增审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：使用 `BPO_DATABASE_URL` 指向 `.local/im243-review-case-form-click-smoke.db` 并加载 `seed_review_case_stage_matrix()`；backend `127.0.0.1:8000` 与 frontend `127.0.0.1:3002` 启动后，浏览器手工验证 `CASE-SEED-ME-001` 补证据、`CASE-SEED-MC-001` 补结论、`CASE-QUERY-001` 关闭案例三条表单链路均触发 Next server action、写入后端、跳转 success URL 并显示成功反馈；`CASE-SEED-CL-001` 显示已关闭 blocker，面包屑可返回列表。本轮未新增自动化 E2E，未修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
