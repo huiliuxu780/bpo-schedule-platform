@@ -20,6 +20,29 @@
 status: "draft"
 ```
 
+### US863 - 复核案例验收块收口摘要
+
+```yaml
+id: US863
+requirement_ids:
+  - R943
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望获得一份复核案例本地 MVP 验收块的收口摘要，以便清楚知道 IM239-IM243 已证明什么、还没有证明什么、PR/交接时应该如何表述边界，以及下一步该从哪里继续。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "整理 IM239-IM243 的证据索引：stage matrix seed、read live smoke、write API smoke、E2E feasibility decision、manual browser walkthrough。"
+  - "明确已验证范围只覆盖本地 MVP runtime，不声明 production-ready、权限、审批、导出、批量、外部集成、自动排班、生产公式、结算或收费因子。"
+  - "形成 PR/交接摘要草案，说明用户可见能力、验证命令、运行端口、隔离 DB 和 hard boundary。"
+  - "拆出后续 2-3 个候选任务，但不直接进入开发。"
+  - "不启动 runtime，不新增自动化 E2E，不修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration。"
+dependencies:
+  - "US862"
+status: "ready"
+notes: "IM244 已定义为下一块 QA 收口任务，等待 PM 指派 Qoder 或确认 Codex 执行。"
+```
+
 ### US862 - 复核案例写入动作手工浏览器验收
 
 ```yaml

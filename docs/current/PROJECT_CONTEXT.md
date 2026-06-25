@@ -12,7 +12,7 @@ The active product boundary remains local MVP and operator-facing workflow scaff
 
 ## Current Queue
 
-No executable story is currently queued. The review-case runtime acceptance block has been closed through IM243, and the next development slice must be defined explicitly before implementation.
+US863 / IM244 is ready: review-case acceptance closeout summary. 该任务整理 IM239-IM243 的本地 MVP 验收证据、PR/交接边界和后续候选任务；不启动 runtime，不修改产品 UI、后端、脚本、依赖或 package/lockfile。
 
 IM240 completed the PM-confirmed review-case live runtime smoke on the current branch using an isolated `.local/im240-runtime-smoke.db` runtime artifact. The smoke used backend `127.0.0.1:8000` and frontend `127.0.0.1:3002` because the existing `3000` BPO Next dev process was stale and unresponsive. It did not add product features or modify business UI/backend implementation beyond acceptance traceability.
 
@@ -29,6 +29,7 @@ IM243 completed the PM-confirmed manual browser walkthrough for that remaining g
 - IM240 has live-smoked the review-case list/detail, four processing-stage filters, and three URL feedback states against the IM239 stage matrix seed. IM241 extended that evidence to the existing evidence/conclusion/closure write endpoints without changing implementation code.
 - IM242 decided not to automate form-click E2E inside the current `qa` gate because the repo has no Playwright infrastructure and adding one would require a separate dependency Gate.
 - IM243 completed the final manual browser path for the three review-case write forms: evidence, conclusion, and closure.
+- IM244 is queued as a documentation-only QA closeout so the review-case acceptance block can be handed off without overstating production readiness.
 - Harness state optimization is now the active maintenance concern: current context must stay compact, default reads must use the current layer, and history must be queried on demand through registry/legacy references.
 
 ## Current Execution Rules
@@ -56,4 +57,4 @@ IM243 completed the PM-confirmed manual browser walkthrough for that remaining g
 
 ## Current Recommendation
 
-Define the next product workflow slice before implementation. Recommended candidates are: (1) close the review-case acceptance block with a concise release note / PR summary, (2) define the next operator workflow slice adjacent to review-case, or (3) return to the import-center/data-quality downstream chain. Do not claim production readiness, add runtime automation, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.
+Execute IM244 next if PM confirms. After IM244, recommended candidates are: (1) define the next operator workflow slice adjacent to review-case, (2) return to the import-center/data-quality downstream chain, or (3) pause for PR review/merge planning. Do not claim production readiness, add runtime automation, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.
