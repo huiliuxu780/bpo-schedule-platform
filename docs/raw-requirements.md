@@ -15,6 +15,19 @@
 notes: "补充说明"
 ```
 
+### R940 - 复核案例写入动作 Live Runtime Smoke
+
+```yaml
+id: R940
+module: "复核案例工作区"
+description: "IM240 已证明复核案例读路径、四阶段筛选和 URL feedback 在 live runtime 下可用。当前需要继续用隔离本地数据库验证已实现的三个写入动作：补证据、补结论、关闭案例，以及已关闭案例拒绝补写和关闭幂等行为。该任务只做本地 runtime smoke 和验收留证，不新增业务能力或修改实现代码。"
+source: "PM 确认：执行 IM241"
+submitted_at: "2026-06-25"
+version: "1.0"
+status: "done"
+notes: "IM241 已完成本地 runtime smoke：必须使用且实际使用 `BPO_DATABASE_URL` 指向 `.local/im241-review-case-action-smoke.db`，backend `127.0.0.1:8000`、frontend `127.0.0.1:3002`。POST evidence、POST conclusion、POST closure、closed case 拒绝补写、closure 幂等和 feedback URL 均通过。本需求未新增业务功能、API route、schema/migration、依赖、权限、审批、导出、批量或生产规则。"
+```
+
 ### R939 - 复核案例 Live Runtime Smoke
 
 ```yaml

@@ -17,6 +17,17 @@
 
 ## Log
 
+### 2026-06-25
+
+- task_id: `IM241`
+- source_ids:
+  - `R940`
+- story_ids:
+  - `US860`
+- action: 复核案例写入动作 live runtime smoke。
+- status: `done`
+- notes: PM 确认执行后，Codex 使用 `BPO_DATABASE_URL=sqlite+pysqlite:///./.local/im241-review-case-action-smoke.db` 创建隔离 runtime DB 并加载 `seed_review_case_stage_matrix()`。后端运行在 `127.0.0.1:8000`，前端运行在 `127.0.0.1:3002`。HTTP smoke 覆盖补证据、补结论、关闭案例、closed case 拒绝补写、closed case 重复关闭幂等，以及 success/failed feedback URL，均返回预期状态和内容。本轮不新增业务功能、API、schema、依赖、权限、审批、导出、批量、生产公式、结算或收费因子。
+
 ### 2026-06-24
 
 - task_id: `IM240`

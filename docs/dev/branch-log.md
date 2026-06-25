@@ -1,5 +1,27 @@
 # Branch Log
 
+## 2026-06-25
+
+### IM241 Review Case Write Action Runtime Smoke
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `76b1685`
+- stacked_on: `IM240 review-case read-path runtime smoke`
+- remote_status: `not_pushed after IM241 local write-action runtime smoke`
+- scope: Execute the PM-confirmed local runtime smoke for existing review-case write actions. Verify evidence write, conclusion write, closure write, closed-case rejection, idempotent closure, and feedback URLs without changing product UI, backend implementation, API routes, schema, dependencies, or check scripts.
+- allowed_files_check: current Harness files, trace index, raw requirements, user stories, backlog, task log, audit report, branch log, review-case runtime preflight document, and isolated `.local/im241-review-case-action-smoke.db` runtime artifact only.
+- scope_diff_check: expected acceptance traceability and local smoke artifact only; no app, components, hooks, lib, backend code, migrations, scripts/check.sh, package/lockfile, dependency, schema, auth, permission, approval, export, batch, production formula, settlement, or charge-factor changes.
+- runtime_result: Loaded `seed_review_case_stage_matrix()` into `.local/im241-review-case-action-smoke.db` through `BPO_DATABASE_URL=sqlite+pysqlite:///./.local/im241-review-case-action-smoke.db`. Backend ran on `127.0.0.1:8000`; frontend ran on `127.0.0.1:3002`.
+- smoke_result: POST evidence on `CASE-SEED-ME-001` returned 200 and detail readback showed `EVD-SMOKE-ME-001`; POST conclusion on `CASE-SEED-MC-001` returned 200 and detail readback showed `CON-SMOKE-MC-001`; POST closure on `CASE-QUERY-001` returned 200 and detail readback showed `CLO-SMOKE-001`; closed `CASE-SEED-CL-001` rejected evidence and conclusion with 400 `REVIEW_EVIDENCE_INVALID` / `REVIEW_CONCLUSION_INVALID`; repeated closure kept original `CLO-SEED-CL-001`; feedback pages returned 200 and showed success/failed messages.
+- check_result: Runtime smoke passed. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, 433 Node script subtests (432 pass, 1 skip), shadcn check, lint, typecheck, Next build, and backend 221 unittest OK.
+- local_commit_sha: `recorded in Done Report and git log after commit creation`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ## 2026-06-24
 
 ### IM240 Review Case Live Runtime Smoke

@@ -14069,3 +14069,59 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已完成：使用隔离数据库 `.local/im240-runtime-smoke.db` 加载 `seed_review_case_stage_matrix()`；backend `127.0.0.1:8000`、frontend `127.0.0.1:3002`。HTTP smoke 覆盖 `/docs`、review-case API、列表、CASE-QUERY-001 详情、四个 processing-stage filter 和 `evidence=failed`/`conclusion=failed`/`closure=success` feedback，全部 200 且命中预期内容。未改业务代码、API route、schema/migration、依赖、package/lockfile 或产品 UI。"
+  - id: IM241
+    title: "复核案例写入动作 Live Runtime Smoke"
+    priority: P0
+    status: done
+    required_workflow: qa
+    dependencies: ["IM240"]
+    story_ids: ["US860"]
+    requirement_ids: ["R940"]
+    allowed_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/design/review-case-live-runtime-acceptance-preflight.md"
+      - ".local/im241-review-case-action-smoke.db"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "backend/migrations/**"
+      - "scripts/check.sh"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - ".qoder/**"
+    acceptance:
+      - "隔离数据库 `.local/im241-review-case-action-smoke.db` 通过 `BPO_DATABASE_URL` 成功加载 `seed_review_case_stage_matrix()`。"
+      - "`CASE-SEED-ME-001` POST evidence 成功，GET detail 可见新增 evidence。"
+      - "`CASE-SEED-MC-001` POST conclusion 成功，GET detail 可见新增 conclusion。"
+      - "`CASE-QUERY-001` POST closure 成功，GET detail 可见 closure。"
+      - "`CASE-SEED-CL-001` POST evidence 返回 `400 REVIEW_EVIDENCE_INVALID`，POST conclusion 返回 `400 REVIEW_CONCLUSION_INVALID`。"
+      - "`CASE-SEED-CL-001` 重复 closure 返回 200 且原 closure 不变。"
+      - "成功/失败 feedback URL 返回 200 并显示对应文案。"
+      - "`bash scripts/check-state.sh --strict`、`git diff --check`、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "isolated runtime database cannot be guaranteed through BPO_DATABASE_URL"
+      - "stage matrix seed cannot be loaded into the isolated runtime database"
+      - "backend or frontend runtime cannot start on default or alternate local ports"
+      - "evidence, conclusion, closure, closed-case rejection, idempotent closure, or feedback smoke returns an unexpected status or missing expected content"
+      - "需要新增或修改业务代码、API route、schema/migration、依赖或 package/lockfile"
+      - "需要新增审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：使用 `BPO_DATABASE_URL=sqlite+pysqlite:///./.local/im241-review-case-action-smoke.db` 加载 `seed_review_case_stage_matrix()`；backend `127.0.0.1:8000`、frontend `127.0.0.1:3002`。HTTP smoke 覆盖 POST evidence、GET evidence detail、POST conclusion、GET conclusion detail、POST closure、GET closure detail、closed case evidence/conclusion 400 拒绝、closed case closure 幂等，以及 success/failed feedback URL，全部命中预期。未改业务代码、API route、schema/migration、依赖、package/lockfile 或产品 UI。"

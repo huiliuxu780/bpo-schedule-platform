@@ -515,7 +515,56 @@ This section records the PM-confirmed local runtime smoke. It is local runtime e
 - No production readiness claim.
 - No permission, approval, export, batch-operation, production formula, settlement, or charge-factor coverage.
 
-## 13. Unblock Path
+## 13. Write Action Runtime Smoke Evidence (IM241)
+
+This section records the PM-confirmed local write-action runtime smoke. It is local runtime evidence only; it does not claim production readiness, permission coverage, approval coverage, PR merge readiness, or external integration readiness.
+
+### 13.1 Runtime Setup
+
+- Branch: `codex/im237-harness-review-case-integration`
+- Database: isolated `.local/im241-review-case-action-smoke.db`
+- Database environment: `BPO_DATABASE_URL=sqlite+pysqlite:///./.local/im241-review-case-action-smoke.db`
+- Seed call: explicit `seed_review_case_stage_matrix()`
+- Backend: `http://127.0.0.1:8000`
+- Frontend: `http://127.0.0.1:3002`
+
+### 13.2 Seed Evidence
+
+| Case ID | Status | Evidence | Conclusions | Closure |
+| --- | --- | ---: | ---: | --- |
+| `CASE-QUERY-001` | `open` | 1 | 1 | false |
+| `CASE-SEED-ME-001` | `open` | 0 | 0 | false |
+| `CASE-SEED-MC-001` | `open` | 1 | 0 | false |
+| `CASE-SEED-CL-001` | `open` | 1 | 1 | true |
+
+### 13.3 Smoke Checks
+
+| Check | Result |
+| --- | --- |
+| `GET /docs` | 200 |
+| `GET /api/v1/review-cases` | 200 and contains all four seed case IDs |
+| `POST /api/v1/review-cases/CASE-SEED-ME-001/evidence` | 200 and returns `EVD-SMOKE-ME-001` |
+| `GET /api/v1/review-cases/CASE-SEED-ME-001` | 200 and detail includes `IM241 smoke evidence` |
+| `POST /api/v1/review-cases/CASE-SEED-MC-001/conclusion` | 200 and returns `CON-SMOKE-MC-001` |
+| `GET /api/v1/review-cases/CASE-SEED-MC-001` | 200 and detail includes `IM241 smoke conclusion` |
+| `POST /api/v1/review-cases/write-closure` for `CASE-QUERY-001` | 200 and returns `CLO-SMOKE-001` |
+| `GET /api/v1/review-cases/CASE-QUERY-001` | 200 and closure remains visible without duplicating evidence/conclusions |
+| `POST /api/v1/review-cases/CASE-SEED-CL-001/evidence` | 400 and returns `REVIEW_EVIDENCE_INVALID` |
+| `POST /api/v1/review-cases/CASE-SEED-CL-001/conclusion` | 400 and returns `REVIEW_CONCLUSION_INVALID` |
+| Repeated `POST /api/v1/review-cases/write-closure` for `CASE-SEED-CL-001` | 200 and keeps original `CLO-SEED-CL-001` |
+| `?evidence=success` | 200 and contains `补证据提交成功` |
+| `?conclusion=success` | 200 and contains `补结论提交成功` |
+| `?closure=success` | 200 and contains `关闭案例提交成功` |
+| `?evidence=failed` | 200 and contains `补证据提交失败` |
+
+### 13.4 Non-Goals Preserved
+
+- No product UI, backend implementation, API route, schema, dependency, or package/lockfile changes.
+- No Playwright form-click E2E smoke.
+- No production readiness claim.
+- No permission, approval, export, batch-operation, production formula, settlement, or charge-factor coverage.
+
+## 14. Unblock Path
 
 If PM wants to proceed with this acceptance:
 
