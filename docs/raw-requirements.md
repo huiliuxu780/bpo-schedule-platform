@@ -24,8 +24,8 @@ description: "IM239-IM243 已补齐复核案例四阶段 seed、读路径 live s
 source: "PM 确认：来吧，记得拆分出来任务"
 submitted_at: "2026-06-25"
 version: "1.0"
-status: "ready"
-notes: "IM244 仅做文档/验收证据收口，不启动 runtime，不修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量或生产规则。"
+status: "done"
+notes: "IM244 已完成：新增 `docs/design/review-case-acceptance-closeout.md`，收口 IM239-IM243 的本地 MVP 验收证据、PR/交接边界和后续候选任务。不启动 runtime，不修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量或生产规则。"
 ```
 
 ### R942 - 复核案例写入动作手工浏览器验收

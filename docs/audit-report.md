@@ -5675,3 +5675,19 @@
 - `CASE-QUERY-001` 关闭案例提交后跳转 `?closure=success`，动作页签显示 `关闭案例提交成功`，detail API 回读到 `closure_status=closed` 和 `IM243 browser closure`。
 - `CASE-SEED-CL-001` 显示已关闭 blocker，证据/结论入口提示 `案例已关闭`，面包屑 `复核案例` 可返回列表页。
 - 该证据关闭当前 review-case 本地 runtime acceptance block；不代表 production-ready、权限验收、外部集成验收或自动化 E2E 覆盖。
+
+### 2026-06-25 - IM244 复核案例验收块收口摘要
+
+#### 审计计划
+
+- 复核 Qoder Packet A/B 的证据索引和边界风险输出。
+- 修正容易误读的点：IM239 确实新增了 backend seed 函数；`.local/*.db` 是本地 smoke artifact，不是 PR 可复现工件。
+- 新增收口文档，明确 IM239-IM243 已验证范围、未验证范围、PR 摘要草案和下一阶段候选。
+- 不启动 runtime，不修改产品 UI、后端实现、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 新增 `docs/design/review-case-acceptance-closeout.md`。
+- 结论：review-case local MVP acceptance block 已收口；已验证四阶段 seed、读路径 runtime、写入 API、E2E 不自动化决策和三条浏览器表单链路。
+- 结论：该证据不代表 production-ready、权限、审批、导出、批量、外部集成、自动排班、生产公式、结算、收费因子、多用户并发或 PR 合并完成。
+- 推荐下一步优先做 PR review / merge planning；之后再定义相邻 operator workflow 或 import-center/data-quality downstream chain。

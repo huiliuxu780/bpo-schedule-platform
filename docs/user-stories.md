@@ -39,8 +39,8 @@ acceptance:
   - "不启动 runtime，不新增自动化 E2E，不修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration。"
 dependencies:
   - "US862"
-status: "ready"
-notes: "IM244 已定义为下一块 QA 收口任务，等待 PM 指派 Qoder 或确认 Codex 执行。"
+status: "done"
+notes: "IM244 已完成：已形成复核案例验收块收口摘要，明确本地 MVP 已验证范围、未验证边界、PR 摘要草案和下一阶段候选。"
 ```
 
 ### US862 - 复核案例写入动作手工浏览器验收

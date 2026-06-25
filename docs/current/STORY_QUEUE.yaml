@@ -5,14 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: "US863"
-    module: "复核案例工作区"
-    status: "ready"
-    priority: "P0"
-    task_type: "qa"
-    requirement_ids:
-      - "R943"
-    task_ids:
-      - "IM244"
-    summary: "收口 IM239-IM243 复核案例本地 MVP 验收证据，形成 PR/交接摘要和后续候选任务。"
+stories: []
