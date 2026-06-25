@@ -6,7 +6,7 @@ Use this gate for every non-trivial task.
 
 Checks:
 
-- Has Codex read `AGENTS.md`, `docs/PROJECT_STATE.md`, `tasks/backlog.yaml`, and this file?
+- Has Codex read the current Harness entry set from `AGENTS.md`: `docs/current/PROJECT_CONTEXT.md`, `docs/current/STORY_QUEUE.yaml`, `docs/current/ACTIVE_TASKS.yaml`, `docs/current/BLOCKERS.md`, this file, and any current task files?
 - Is the requested task documented in the backlog or clearly specified by the PM?
 - Are allowed files and forbidden files explicit?
 - Does the task require PM confirmation?
@@ -53,27 +53,24 @@ Backlog `required_workflow` values must map to one of the gates below. If a task
 | `state-hygiene` | State Hygiene Gate | Current/registry state model, state checks, default read set, archive boundary, trace indexes | Business implementation, dependency/package changes, database, real integrations, auth, permissions, approval, export, batch operations |
 | `state-repair` | State Repair Gate | Repair inconsistent current/registry/archive index state | Business code, package/lockfile changes, new dependencies, database, real integrations, product feature work |
 
-## No Database MVP Mode
+## Unconfirmed Production Expansion Block
 
-PM confirmed on 2026-05-12 that database work should stay out of scope until the local MVP feature chain is developed and verified.
+The project has already entered a PM-confirmed database Gate for specific local MVP persistence slices. Database work is no longer globally forbidden, but it is still forbidden outside the exact confirmed task and named entity slice.
 
-Allowed without a database Gate:
+Allowed without a new production-expansion confirmation:
 
-- local FastAPI seed data or process-memory state
-- frontend fallback data that matches existing local contracts
-- frontend-only navigation, drilldown, table parity, and acceptance audit work
-- documentation that records database work as deferred
+- Local MVP frontend, backend, database, and QA work that is explicitly covered by the active task and its Gate.
+- Read-only planning or documentation that records future production needs as deferred.
+- Local fallback, seed, or test data that matches existing local contracts and is allowed by the active task.
 
-Hard stop until PM confirms a later database Gate:
+Hard stop unless PM separately confirms the concrete task:
 
-- database connection setup
-- ORM models, repositories, or adapters
-- migration files
-- schema implementation
-- production persistence configuration
-- real external data-source integration
+- Additional database connection, ORM, repository, migration, schema, or production persistence work beyond the active task.
+- Real CORN, HR, WFM, Excel, or third-party integrations.
+- Authentication, permission boundaries, supplier isolation, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors.
+- Package or lockfile changes outside a confirmed dependency decision.
 
-This rule applies to `frontend-scaffold`, `backend`, `backend-mvp`, `backend-vertical`, and `qa` tasks. A task may mention future database needs in documentation, but it must not implement database persistence or prepare production persistence files unless a specific PM-confirmed database task allows it.
+This rule applies to `frontend-scaffold`, `backend`, `backend-mvp`, `backend-vertical`, `qa`, `database-planning`, and `database-persistence` tasks. A task may mention future needs in documentation, but it must not implement or prepare unconfirmed production expansion.
 
 ## Harness Documentation Gate
 
@@ -83,7 +80,7 @@ Allowed:
 
 - Update Harness rules and workflow documentation.
 - Update branch/worktree/integration workflow documentation.
-- Update backlog, raw requirements, user stories, task log, decision log, audit report, branch log, and project state.
+- Update current Harness state, registry indexes, backlog, raw requirements, user stories, task log, decision log, audit report, branch log, and project state when the active Gate requires traceability.
 - Update check scripts only when the task explicitly concerns verification mechanics.
 
 Forbidden unless explicitly confirmed by PM:

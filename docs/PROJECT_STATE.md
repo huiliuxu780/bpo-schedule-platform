@@ -13,6 +13,20 @@ For current execution context, default next step, active queue, active tasks, an
 
 This file is now long-term project state only. It must not maintain the ready queue or a running list of completed stories.
 
+## 2026-06-22 IM237 Harness And Review Case Integration
+
+`IM237` integrates the compact Harness state-governance pass with the IM220-IM236 product/test-gate branch. The integrated baseline keeps the new empty-current-queue rule, dynamic `scripts/tests/*.test.mjs` check gate, and the operator-facing review-case processing-path work from IM236.
+
+This is a branch integration task. It does not add new product behavior beyond the merged branches and does not add package/lockfile, backend, database, schema/migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, or charge-factor scope.
+
+## 2026-06-22 IM236 Review Case Processing Path
+
+`IM236` resumes product development after the IM225-IM235 test-gate cleanup chain. It adds operator-facing processing path summaries to the existing review-case list and detail workspaces: the list shows queue stage coverage and the next case to process, while the detail overview shows source, evidence, conclusion, closure, and continuation states for the current case.
+
+This slice also codifies a UI-language correction: Codex/Gate/PM acceptance language must not become visible product page content. Gate plans, acceptance matrices, stop conditions, and non-goal explanations belong in specs, tests, audit records, and Done Reports; product UI should use queue state, processing path, evidence state, source trace, next action, and blocked-data language.
+
+No backend, database, schema/migration, dependency, package/lockfile, new route, approval, permission, export, batch-operation, automatic scheduling, production formula, settlement, or charge-factor scope is added by this task.
+
 ## 2026-06-22 IM235 Structure And Maintenance Gate Split
 
 `IM235` continues the post-IM234 test-gate cleanup without changing product behavior. Product-structure app-shell/master-data and master-data maintenance agent-list/workplace-detail gates are split into eight medium-grained gates, while the old files remain thin entrypoints for compatibility.

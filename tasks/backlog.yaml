@@ -13814,3 +13814,99 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已完成：Qoder 并行执行三组受控拆分但返回 max-turns，Codex 审查实际 diff 后保留合规产物，并将八个绿色默认门禁接入 `scripts/check.sh`，未修改业务实现。"
+  - id: IM236
+    title: "复核案例处理路径收口"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM235"]
+    allowed_files:
+      - "components/import-center-types.ts"
+      - "components/import-center-review-model.ts"
+      - "components/import-center-model.ts"
+      - "components/import-center-review-cases-workspace.tsx"
+      - "components/import-center-review-case-detail-workspace.tsx"
+      - "scripts/tests/import-center-review-case-acceptance-model.test.mjs"
+      - "scripts/tests/product-structure-review-case-processing-path.test.mjs"
+      - "scripts/check.sh"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/superpowers/specs/2026-06-22-review-case-acceptance-block-design.md"
+      - "docs/superpowers/plans/2026-06-22-review-case-acceptance-block.md"
+    forbidden_files:
+      - "app/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "复核案例列表显示队列处理路径，包含阶段分布、优先处理入口和读取/空队列状态。"
+      - "复核案例详情总览显示单案例处理路径，包含来源、证据、结论、关闭和续办五步状态。"
+      - "无下一条同 owner 待办时表达为当前队列已清空，不作为错误阻塞。"
+      - "模型测试覆盖正常队列、读取失败、空列表、缺证据、缺结论、可关闭、已关闭和队列已清空。"
+      - "结构测试防止页面暴露 Gate、PM 验收、停机条件、审批、导出、批量、权限等项目治理语言。"
+      - "不新增后端、数据库、依赖、package/lockfile、页面路由、审批、权限、导出、批量、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要启动新的测试环境或后端/API runtime"
+      - "需要新增后端 route、数据库、schema/migration、依赖或修改 package/lockfile"
+      - "需要新增页面路由、查询参数契约、审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "页面文案需要展示 Codex/Gate/PM 验收矩阵/停机条件/非目标等项目治理语言"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：复核案例列表和详情页新增运营处理路径；模型与结构测试约束处理状态和 UI 语言边界，未新增后端、数据库、依赖、路由或生产能力。"
+  - id: IM237
+    title: "Harness 与 Review Case 成果集成"
+    priority: P0
+    status: done
+    required_workflow: state-hygiene
+    dependencies: ["IM236"]
+    allowed_files:
+      - "merge result from codex/harness-state-hygiene"
+      - "merge result from codex/review-case-acceptance-block"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/dev/branch-log.md"
+      - "scripts/check.sh"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - ".local/**"
+      - ".qoder/**"
+    acceptance:
+      - "将 `codex/harness-state-hygiene` 与 `codex/review-case-acceptance-block` 集成到同一分支。"
+      - "保留新 Harness 的精简 current context、空队列不得猜任务规则、repair-scope 检查和动态脚本测试门禁。"
+      - "保留 IM220-IM236 产品与测试门禁链，尤其是 IM236 复核案例处理路径。"
+      - "冲突只在 `docs/current/PROJECT_CONTEXT.md`、`docs/dev/branch-log.md`、`scripts/check.sh` 解决。"
+      - "`bash scripts/check-state.sh --strict`、`bash scripts/check-state.sh --repair-scope`、`git diff --check`、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+      - "不启动新的测试环境，不新增业务能力、后端、数据库、依赖、package/lockfile、权限、审批、导出、批量、公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要丢弃任一已验证分支成果"
+      - "冲突涉及产品语义且无法从现有分支判断"
+      - "需要启动新的测试环境或后端/API runtime"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增业务能力、后端、数据库、权限、审批、导出、批量、公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：集成新 Harness 治理分支和 review-case 产品/门禁分支，保留两边成果并通过完整门禁。"

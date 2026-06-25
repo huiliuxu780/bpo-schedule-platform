@@ -2,6 +2,7 @@ import Link from "next/link"
 import {
   ArrowLeft,
   ArrowRight,
+  ClipboardCheck,
   ClipboardList,
   Filter,
   RotateCcw,
@@ -15,6 +16,7 @@ import {
   type ImportReviewCasesWorkspaceFilters,
   buildImportReviewCaseDetailWorkspaceHref,
   filterImportReviewCases,
+  summarizeImportReviewCaseAcceptanceBlock,
   summarizeImportReviewCaseProcessingStage,
   summarizeImportReviewCasesWorkspace,
   summarizeImportReviewOwnerFirstPendingEntries,
@@ -53,11 +55,18 @@ export function ImportCenterReviewCasesWorkspace({
     error,
     processingStages,
   })
+  const processingPath = summarizeImportReviewCaseAcceptanceBlock({
+    cases,
+    filters,
+    processingStages,
+    error,
+  })
 
   return (
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
       <ReviewCasesHeader filters={filters} summary={summary} />
       <ReviewCaseSummaryCards summary={summary} />
+      <ReviewCaseProcessingPath summary={processingPath} />
       <ImportCenterReviewOwnerStageMatrix
         cases={cases}
         filters={filters}
@@ -78,6 +87,55 @@ export function ImportCenterReviewCasesWorkspace({
         />
       </section>
     </main>
+  )
+}
+
+function ReviewCaseProcessingPath({
+  summary,
+}: {
+  summary: ReturnType<typeof summarizeImportReviewCaseAcceptanceBlock>
+}) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <ClipboardCheck className="size-4 text-muted-foreground" />
+            队列处理路径
+          </CardTitle>
+          <p className="mt-1 text-sm text-muted-foreground">{summary.detail}</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant={summary.tone === "blocked" ? "destructive" : "outline"}>
+            {summary.statusLabel}
+          </Badge>
+          <Button asChild size="sm" variant="outline">
+            <Link href={summary.primaryHref}>
+              {summary.primaryActionLabel}
+              <ArrowRight data-icon="inline-end" />
+            </Link>
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="grid gap-3">
+        <div className="grid gap-2 md:grid-cols-5">
+          {summary.stageCoverage.map((stage) => (
+            <div
+              key={stage.key}
+              className="rounded-md border bg-muted/30 p-3"
+            >
+              <div className="text-sm font-medium">{stage.label}</div>
+              <div className="mt-1 text-2xl font-semibold tracking-normal">
+                {stage.count.toLocaleString("zh-CN")}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground">
+          {summary.nextAction}
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 

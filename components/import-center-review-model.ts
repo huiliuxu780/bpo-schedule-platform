@@ -22,7 +22,10 @@ import type {
   ImportReviewCaseActionFeedbackSummary,
   ImportReviewCaseActionContinuationSummary,
   ImportReviewCaseActionRetrySummary,
+  ImportReviewCaseAcceptanceBlockSummary,
+  ImportReviewCaseAcceptanceStageCoverage,
   ImportReviewCaseClosureActionSummary,
+  ImportReviewCaseDetailAcceptanceSummary,
   ImportReviewCaseEvidenceActionSummary,
   ImportReviewCaseConclusionActionSummary,
   ImportReviewEvidenceWritePayload,
@@ -250,6 +253,91 @@ export function summarizeImportReviewCaseProcessingStage(
     label: "可关闭",
     nextAction: "证据和结论已齐，进入关闭入口。",
     evidenceLabel,
+  }
+}
+
+export function summarizeImportReviewCaseAcceptanceBlock({
+  cases,
+  filters,
+  processingStages = {},
+  error,
+}: {
+  cases: ImportReviewCaseRecord[]
+  filters: ImportReviewCasesWorkspaceFilters
+  processingStages?: Record<string, ImportReviewCaseProcessingStageSnapshot | undefined>
+  error: string | null
+}): ImportReviewCaseAcceptanceBlockSummary {
+  if (error) {
+    return {
+      tone: "blocked",
+      title: "复核案例读取受阻",
+      statusLabel: "读取受阻",
+      detail: error,
+      primaryActionLabel: "返回复核列表",
+      primaryHref: "/data-quality/review-cases",
+      stageCoverage: [],
+      nextAction: "先恢复复核案例读取，再判断队列处理路径。",
+    }
+  }
+
+  const filteredCases = filterImportReviewCases(cases, filters, processingStages)
+
+  if (filteredCases.length === 0) {
+    return {
+      tone: "empty",
+      title: "暂无复核案例",
+      statusLabel: "空队列",
+      detail: "当前筛选条件下没有需要处理的复核案例。",
+      primaryActionLabel: "返回复核列表",
+      primaryHref: "/data-quality/review-cases",
+      stageCoverage: buildReviewCaseAcceptanceStageCoverage([], processingStages),
+      nextAction: "放宽筛选条件或回到复核列表查看全部案例。",
+    }
+  }
+
+  const stageItems = filteredCases.map((reviewCase) => {
+    const stage = summarizeImportReviewCaseProcessingStage(
+      reviewCase,
+      processingStages[reviewCase.case_id]
+    )
+
+    return { reviewCase, stage }
+  })
+  const actionableItems = stageItems.filter((item) => item.stage.key !== "closed")
+  const primaryItem = [...actionableItems].sort(
+    (a, b) =>
+      getReviewCaseProcessingStageRank(a.stage.key) -
+        getReviewCaseProcessingStageRank(b.stage.key) ||
+      getReviewCaseSeverityRank(a.reviewCase.severity) -
+        getReviewCaseSeverityRank(b.reviewCase.severity) ||
+      a.reviewCase.created_at.localeCompare(b.reviewCase.created_at) ||
+      a.reviewCase.case_id.localeCompare(b.reviewCase.case_id)
+  )[0]
+
+  const openCount = actionableItems.length
+
+  if (!primaryItem) {
+    return {
+      tone: "ready",
+      title: "队列处理路径",
+      statusLabel: "当前队列已清空",
+      detail: `当前筛选结果有 ${filteredCases.length.toLocaleString("zh-CN")} 个复核案例，暂无待处理案例。`,
+      primaryActionLabel: "回看已关闭案例",
+      primaryHref: buildImportReviewCaseDetailWorkspaceHref(filteredCases[0].case_id),
+      stageCoverage: buildReviewCaseAcceptanceStageCoverage(filteredCases, processingStages),
+      nextAction: "可以回看已关闭案例的来源、证据和结论。",
+    }
+  }
+
+  return {
+    tone: isHighRiskReviewSeverity(primaryItem.reviewCase.severity) ? "blocked" : "warning",
+    title: "队列处理路径",
+    statusLabel: `优先处理${primaryItem.stage.label}`,
+    detail: `当前筛选结果有 ${filteredCases.length.toLocaleString("zh-CN")} 个复核案例，${openCount.toLocaleString("zh-CN")} 个仍待处理；优先进入${primaryItem.stage.label}案例。`,
+    primaryActionLabel: `处理 ${primaryItem.reviewCase.case_id}`,
+    primaryHref: buildImportReviewCaseDetailWorkspaceHref(primaryItem.reviewCase.case_id),
+    stageCoverage: buildReviewCaseAcceptanceStageCoverage(filteredCases, processingStages),
+    nextAction: primaryItem.stage.nextAction,
   }
 }
 
@@ -788,6 +876,121 @@ export function summarizeImportReviewCaseDetail({
         ? `结论 ${detail.conclusions[0].conclusion_id} · ${detail.conclusions[0].risk_level} · ${detail.conclusions[0].decided_by}`
         : "结论 0 条",
     ],
+  }
+}
+
+export function summarizeImportReviewCaseDetailAcceptance({
+  detail,
+  error,
+  navigation,
+}: {
+  detail: ImportReviewCaseDetailResponse | null
+  error: string | null
+  navigation: ImportReviewOwnerNavigationSummary
+}): ImportReviewCaseDetailAcceptanceSummary {
+  if (error || !detail) {
+    return {
+      tone: error ? "blocked" : "empty",
+      title: error ? "复核案例读取受阻" : "等待复核案例",
+      statusLabel: error ? "读取受阻" : "等待案例",
+      detail: error ?? "先从复核案例列表选择一个案例。",
+      primaryActionLabel: "返回复核列表",
+      primaryHref: "/data-quality/review-cases",
+      steps: [],
+      nextAction: error
+        ? "先恢复复核案例读取，再判断单案例处理路径。"
+        : "先从复核案例列表选择一个案例。",
+    }
+  }
+
+  const isClosed = detail.case.status === "closed" || detail.closure !== null
+  const hasSource = detail.source_result !== null && detail.source_result !== undefined
+  const evidenceCount = detail.evidence.length
+  const conclusionCount = detail.conclusions.length
+  const hasEvidence = evidenceCount > 0
+  const hasConclusion = conclusionCount > 0
+  const continuationStep = buildReviewCaseDetailContinuationStep(navigation)
+  const primaryAction = isClosed
+    ? {
+        label: "回看关闭依据",
+        href: buildImportReviewCaseDetailWorkspaceHref(detail.case.case_id),
+        status: "已关闭",
+        tone: "ready" as const,
+        nextAction: "案例已关闭；继续回看来源、证据、结论和关闭记录。",
+      }
+    : !hasEvidence
+      ? {
+          label: "补充复核证据",
+          href: buildImportReviewCaseDetailWorkspaceHref(detail.case.case_id),
+          status: "等待证据",
+          tone: "blocked" as const,
+          nextAction: "先补充证据，再补充复核结论。",
+        }
+      : !hasConclusion
+        ? {
+            label: "补充复核结论",
+            href: buildImportReviewCaseDetailWorkspaceHref(detail.case.case_id),
+            status: "等待结论",
+            tone: "blocked" as const,
+            nextAction: "已有证据，继续补充复核结论。",
+          }
+        : {
+            label: "关闭复核案例",
+            href: buildImportReviewCaseDetailWorkspaceHref(detail.case.case_id),
+            status: "可关闭",
+            tone: "warning" as const,
+            nextAction: "证据和结论已齐，复核无误后关闭案例。",
+          }
+
+  return {
+    tone: primaryAction.tone,
+    title: "单案例处理路径",
+    statusLabel: primaryAction.status,
+    detail: `${detail.case.case_id} 当前处于${primaryAction.status}状态。`,
+    primaryActionLabel: primaryAction.label,
+    primaryHref: primaryAction.href,
+    steps: [
+      {
+        key: "source",
+        label: "来源",
+        statusLabel: hasSource ? "可追溯" : "来源待确认",
+        detail: hasSource
+          ? `来源结果 ${detail.case.source_result_type} #${detail.case.source_result_id} 可回看。`
+          : "暂未读取到来源结果，先确认来源链路。",
+      },
+      {
+        key: "evidence",
+        label: "证据",
+        statusLabel: hasEvidence ? `证据 ${evidenceCount.toLocaleString("zh-CN")} 条` : "缺证据",
+        detail: hasEvidence ? "已有复核证据，可继续判断结论。" : "先补充可追溯的复核证据。",
+      },
+      {
+        key: "conclusion",
+        label: "结论",
+        statusLabel: hasConclusion
+          ? `结论 ${conclusionCount.toLocaleString("zh-CN")} 条`
+          : hasEvidence
+            ? "缺结论"
+            : "等待证据",
+        detail: hasConclusion
+          ? "已有复核结论，可继续判断关闭条件。"
+          : hasEvidence
+            ? "已有证据，继续补充复核结论。"
+            : "证据补齐后再补充复核结论。",
+      },
+      {
+        key: "closure",
+        label: "关闭",
+        statusLabel: isClosed ? "已关闭" : hasEvidence && hasConclusion ? "可关闭" : "不可关闭",
+        detail: isClosed
+          ? "案例已关闭，可回看关闭依据。"
+          : hasEvidence && hasConclusion
+            ? "证据和结论已齐，可进入关闭判断。"
+            : "关闭前需要先补齐证据和结论。",
+      },
+      continuationStep,
+    ],
+    nextAction: primaryAction.nextAction,
   }
 }
 
@@ -1785,6 +1988,52 @@ function getReviewCaseProcessingStageRank(
   return IMPORT_REVIEW_OWNER_STAGE_MATRIX_COLUMNS.findIndex(
     (column) => column.key === stageKey
   )
+}
+
+function buildReviewCaseAcceptanceStageCoverage(
+  cases: ImportReviewCaseRecord[],
+  processingStages: Record<string, ImportReviewCaseProcessingStageSnapshot | undefined>
+): ImportReviewCaseAcceptanceStageCoverage[] {
+  return IMPORT_REVIEW_OWNER_STAGE_MATRIX_COLUMNS.map((column) => ({
+    key: column.key,
+    label: column.label,
+    count: cases.filter(
+      (reviewCase) =>
+        summarizeImportReviewCaseProcessingStage(
+          reviewCase,
+          processingStages[reviewCase.case_id]
+        ).key === column.key
+    ).length,
+  }))
+}
+
+function buildReviewCaseDetailContinuationStep(
+  navigation: ImportReviewOwnerNavigationSummary
+): ImportReviewCaseDetailAcceptanceSummary["steps"][number] {
+  if (navigation.current) {
+    return {
+      key: "continuation",
+      label: "续办",
+      statusLabel: "当前案例仍待处理",
+      detail: `继续处理 ${navigation.current.caseId}，再进入同 owner 队列。`,
+    }
+  }
+
+  if (navigation.next) {
+    return {
+      key: "continuation",
+      label: "续办",
+      statusLabel: "存在下一条待办",
+      detail: `当前案例处理后可继续处理 ${navigation.next.caseId}。`,
+    }
+  }
+
+  return {
+    key: "continuation",
+    label: "续办",
+    statusLabel: "当前队列已清空",
+    detail: "当前 owner 队列暂无下一条待处理案例。",
+  }
 }
 
 function getReviewCaseSeverityRank(severity: string): number {

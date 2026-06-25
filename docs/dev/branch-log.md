@@ -2,6 +2,78 @@
 
 ## 2026-06-22
 
+### H030 Harness Template Export
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `36b38a0`
+- stacked_on: `IM237 integration branch after compact Harness governance and review-case processing-path integration`
+- remote_status: `pushed to origin/codex/im237-harness-review-case-integration; draft PR #2 open against main.`
+- scope: PM-confirmed reusable Harness template export. Add a project-neutral `harness-template/` package with template files, bootstrap script, and self-test so other projects can initialize the same current/registry/state-check workflow without copying product history.
+- allowed_files_check: `harness-template/**`, `scripts/tests/harness-template.test.mjs`, `docs/dev/branch-log.md`, and verification files already covered by dynamic `scripts/check.sh`; no business app code, backend/database/schema/migration, package/lockfile, dependency, auth, permission, approval, export, batch, production formula, settlement, or charge-factor changes.
+- scope_diff_check: expected template package and test only; no project state queue seeding, no product implementation, no BPO history copied into generated template output.
+- check_result: TDD RED `node --test scripts/tests/harness-template.test.mjs` first failed because `harness-template/scripts/init-harness.sh` was missing. After implementation, the test initialized a temporary project, verified required Harness files, confirmed placeholder replacement, and passed target `scripts/check-state.sh --strict`. `git diff --check` passed, `bash scripts/check-state.sh --strict` passed with `PROJECT_CONTEXT.md` at 51/160 lines, and final `bash scripts/check.sh` passed with strict state, 433 Node subtests, shadcn check, lint, typecheck, Next build, and backend 215 unittests.
+- local_commit_sha: `62206fb`
+- integration_status: `pushed_in_pr_2`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `PM confirmed push; draft PR #2 opened`
+- blocked_reason: `N/A`
+
+### IM237 Harness And Review Case Integration
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `1a18763`
+- stacked_on: `codex/harness-state-hygiene`
+- merged_branch: `codex/review-case-acceptance-block`
+- remote_status: `pushed to origin/codex/im237-harness-review-case-integration; draft PR #2 open against main.`
+- scope: PM-confirmed integration Gate. Bring the compact Harness state-governance pass and the IM220-IM236 product/test-gate chain onto one branch, preserving the empty-current-queue rule, dynamic script-test gate, and review-case processing-path UI/model work.
+- allowed_files_check: merge result from `codex/harness-state-hygiene` plus `codex/review-case-acceptance-block`; conflict edits limited to `docs/current/PROJECT_CONTEXT.md`, `docs/dev/branch-log.md`, and `scripts/check.sh`. `.local/` and `.qoder/` remain untracked and untouched.
+- scope_diff_check: expected merge integration only; no new product behavior beyond the merged branches, no package/lockfile changes, no backend/database/schema/migration expansion, no auth, permissions, approval, export, batch operation, automatic scheduling, formula, settlement, or charge-factor scope.
+- check_result: Conflict-resolution verification passed: `bash scripts/check-state.sh --strict`, `bash scripts/check-state.sh --repair-scope`, and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with dynamic Node script tests, shadcn check, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: `417963a`
+- integration_status: `pushed_in_pr_2`
+- integration_method: `merge codex/review-case-acceptance-block into codex/harness-state-hygiene-derived integration branch`
+- integration_commit_sha: `417963a`
+- merge_to_main_commit: `N/A`
+- push_decision: `PM confirmed push; draft PR #2 opened`
+- blocked_reason: `N/A`
+
+### H029 Harness State Hygiene
+
+- branch_name: `codex/harness-state-hygiene`
+- base_main_commit: `66193b1d694dabcd7621935262fbcddc7a0d2fa7`
+- remote_status: `pushed to origin/codex/harness-state-hygiene before IM237 integration.`
+- scope: PM-requested Harness hygiene pass. Compact current context, align default Harness entry rules, replace stale global no-database wording with unconfirmed-production-expansion blocking, add strict current-context history guard, and make `check.sh` run all `scripts/tests/*.test.mjs` dynamically.
+- allowed_files_check: `AGENTS.md`, `docs/current/PROJECT_CONTEXT.md`, `docs/quality/GATE_REGISTRY.md`, `docs/quality/GIT_BRANCH_WORKFLOW.md`, `docs/quality/STATE_MANAGEMENT.md`, `scripts/check-state.sh`, `scripts/check.sh`, `scripts/tests/check-state.test.mjs`, `scripts/tests/check-script-coverage.test.mjs`, and this branch-log entry only; no business code, package/lockfile, dependency, database schema, integration, auth, permission, approval, export, batch, production formula, settlement, or charge-factor changes.
+- scope_diff_check: expected Harness docs and verification-script changes only; `.local/` and `.qoder/` remain untracked and untouched.
+- check_result: TDD RED check-state test first failed because accumulated done-history markers in `PROJECT_CONTEXT.md` were not blocked; TDD RED check-script coverage test first failed because `check.sh` manually listed only part of `scripts/tests`. After implementation, `node --test scripts/tests/check-state.test.mjs scripts/tests/check-script-coverage.test.mjs` passed with 10 tests, `bash scripts/check-state.sh --strict` passed with `PROJECT_CONTEXT.md` at 50/160 lines, `git diff --check` passed, and `bash scripts/check.sh` passed with strict state, 205 Node subtests, shadcn check, lint, typecheck, Next build, and backend 215 unittests.
+- local_commit_sha: `1a18763`
+- integration_status: `merged into IM237 integration branch`
+- integration_method: `base branch for IM237`
+- integration_commit_sha: `pending IM237`
+- merge_to_main_commit: `N/A`
+- push_decision: `PM confirmed continuation into IM237; push pending after integration commit`
+- blocked_reason: `N/A`
+
+### IM236 Review Case Processing Path
+
+- branch_name: `codex/review-case-acceptance-block`
+- base_main_commit: `54a8cc5`
+- stacked_on: `codex/im235-structure-maintenance-gate-split`
+- remote_status: `pushed to origin/codex/review-case-acceptance-block after PM confirmation.`
+- scope: Product Design corrected review-case module block. Add operator-facing queue processing path and single-case processing path to existing review-case workspaces while keeping Codex/Gate/PM acceptance language out of product UI.
+- allowed_files_check: `components/import-center-types.ts`, `components/import-center-review-model.ts`, `components/import-center-model.ts`, `components/import-center-review-cases-workspace.tsx`, `components/import-center-review-case-detail-workspace.tsx`, new focused tests, `scripts/check.sh`, current Harness files, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected processing-path model summaries, compact existing-shadcn UI sections, model/structure tests, check wiring, and traceability updates only; no backend, database, schema/migration, dependency, package/lockfile, new route, approval, permission, export, batch operation, automatic scheduling, production formula, settlement, or charge-factor changes. Product UI must not expose Gate, PM acceptance matrix, stop conditions, or non-goal governance copy.
+- check_result: TDD RED `node --test scripts/tests/import-center-review-case-acceptance-model.test.mjs` first failed because new summary functions were missing. Structure RED `node --test scripts/tests/product-structure-review-case-processing-path.test.mjs` first failed because the UI did not render processing path sections. GREEN focused model + structure tests passed with 6/6 tests. `bash scripts/check-state.sh --strict` passed, `git diff --check` passed, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK. Existing `127.0.0.1:3000` did not return within 3 seconds, so no browser smoke was claimed and no new environment was started.
+- local_commit_sha: `bc8b7b9`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `PM confirmed push; pushed to origin/codex/review-case-acceptance-block`
+- blocked_reason: `N/A`
+
 ### IM235 Structure And Maintenance Gate Split
 
 - branch_name: `codex/im235-structure-maintenance-gate-split`

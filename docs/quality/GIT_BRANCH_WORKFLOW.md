@@ -7,11 +7,16 @@
 每个非 trivial 任务开始前必须读取：
 
 - `AGENTS.md`
-- `docs/PROJECT_STATE.md`
-- `tasks/backlog.yaml`
+- `docs/current/PROJECT_CONTEXT.md`
+- `docs/current/STORY_QUEUE.yaml`
+- `docs/current/ACTIVE_TASKS.yaml`
+- `docs/current/BLOCKERS.md`
 - `docs/quality/GATE_REGISTRY.md`
+- 当前任务文件
 
-如果任务不在 backlog、scope 不清、或没有明确 allowed/forbidden 文件，先输出 Gate Plan，不直接开发。
+Legacy 文件如 `docs/PROJECT_STATE.md`、`tasks/backlog.yaml`、`docs/task-log.md`、`docs/dev/branch-log.md` 只在 History-On-Demand、审计、迁移、修复、或当前 Gate 明确需要 traceability 时读取。
+
+如果任务不在 current queue、scope 不清、或没有明确 allowed/forbidden 文件，先输出 Gate Plan，不直接开发。ready queue 为空时，不得自动猜下一步；必须先补候选 requirement/story/Gate。
 
 ## 2. Branch Creation
 
@@ -67,6 +72,7 @@ ready queue 为空时，不得自动猜下一步；必须先补 ready 项。
 - `docs/task-log.md`
 - `docs/dev/branch-log.md`
 - `docs/audit-report.md`
+- `docs/current/**` 和 `docs/registry/**`，仅限当前任务确实改变执行状态或索引关系时
 
 开发过程中可以运行局部预检，但最终完成前必须运行全量：
 
@@ -81,7 +87,7 @@ bash scripts/check.sh
 完成实现后：
 
 1. 运行 `bash scripts/check.sh`
-2. 更新 task log、branch log、audit report 和必要的 project state
+2. 更新 task log、branch log、audit report，以及必要的 current state、registry index 或 project state
 3. 运行最终 `git diff --check`
 4. 再次运行最终 `bash scripts/check.sh`
 5. 检查 scope diff

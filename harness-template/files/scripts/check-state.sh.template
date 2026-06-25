@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -u
 
-ROOT_DIR="${BPO_STATE_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+ROOT_DIR="${HARNESS_STATE_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 MODE="warning"
 
 for arg in "$@"; do
@@ -113,7 +113,7 @@ if [[ -f "$project_context_file" ]]; then
     grep -Eic 'current queue returned to empty|current queue is empty after|completed .*then current queue returned to empty' "$project_context_file" || true
   )"
   if (( done_history_markers > 3 )); then
-    warn "docs/current/PROJECT_CONTEXT.md contains accumulated done-history markers ($done_history_markers); move history to legacy/archive and keep only current state"
+    warn "docs/current/PROJECT_CONTEXT.md contains accumulated done-history markers ($done_history_markers); move history to archive and keep only current state"
   else
     pass "PROJECT_CONTEXT.md keeps done-history markers within current-state budget"
   fi
