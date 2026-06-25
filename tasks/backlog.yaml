@@ -2,6 +2,72 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: IM244
+    title: "复核案例验收块收口摘要"
+    priority: P0
+    status: ready
+    required_workflow: qa
+    dependencies: ["IM243"]
+    story_ids: ["US863"]
+    requirement_ids: ["R943"]
+    task_packets:
+      - id: "Packet A"
+        title: "证据索引"
+        owner: "Qoder"
+        scope: "只读梳理 IM239-IM243 已有文档和日志，列出证据文件、验证命令、runtime/DB 信息和明确通过项。"
+      - id: "Packet B"
+        title: "边界与风险"
+        owner: "Qoder"
+        scope: "只读梳理未覆盖范围和 hard boundary，确认不能把本地 QA 证据表述为 production-ready。"
+      - id: "Packet C"
+        title: "收口文档与后续候选"
+        owner: "Codex"
+        scope: "Codex 复核 Packet A/B，写入收口摘要、更新 Harness，提出 2-3 个后续候选任务并跑全量门禁。"
+    allowed_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/design/review-case-live-runtime-acceptance-preflight.md"
+      - "docs/design/review-case-acceptance-closeout.md"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "backend/migrations/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - ".qoder/**"
+      - "node_modules/**"
+      - ".local/**"
+    acceptance:
+      - "新增或更新收口文档，按 IM239、IM240、IM241、IM242、IM243 分段列出证据和结果。"
+      - "明确本地 MVP 已验证范围、未验证范围、PR/交接措辞和生产边界。"
+      - "输出下一阶段 2-3 个候选任务，按依赖、业务价值和风险排序。"
+      - "不启动 runtime，不新增自动化 E2E，不修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration。"
+      - "`bash scripts/check-state.sh --strict`、`git diff --check`、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要启动 frontend/backend runtime"
+      - "需要新增自动化 E2E、测试脚本、运行脚本或 check.sh 门禁"
+      - "需要修改业务代码、API route、schema/migration、依赖或 package/lockfile"
+      - "需要新增审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "pending"
   - id: IM171
     title: "登录/状态日志导入大弹窗"
     priority: P0

@@ -15,6 +15,19 @@
 notes: "补充说明"
 ```
 
+### R943 - 复核案例验收块收口摘要
+
+```yaml
+id: R943
+module: "复核案例工作区"
+description: "IM239-IM243 已补齐复核案例四阶段 seed、读路径 live smoke、写入 API smoke、form-click E2E 决策和手工浏览器 walkthrough。当前需要把这一组本地 MVP 验收证据整理成一个可审阅的收口摘要，明确已验证、未验证、非生产就绪边界和下一阶段候选，方便 PR/交接时不把 QA 证据误解为生产能力。"
+source: "PM 确认：来吧，记得拆分出来任务"
+submitted_at: "2026-06-25"
+version: "1.0"
+status: "ready"
+notes: "IM244 仅做文档/验收证据收口，不启动 runtime，不修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量或生产规则。"
+```
+
 ### R942 - 复核案例写入动作手工浏览器验收
 
 ```yaml
