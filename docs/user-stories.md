@@ -20,6 +20,31 @@
 status: "draft"
 ```
 
+### US860 - 复核案例写入动作 Live Runtime Smoke
+
+```yaml
+id: US860
+requirement_ids:
+  - R940
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望用隔离本地 runtime 验证复核案例补证据、补结论和关闭案例写入动作，以便确认这些已有本地 MVP 能力不只是单元测试通过，而是在真实 API runtime 下可写入、可回读、可拒绝非法写入。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "使用 `BPO_DATABASE_URL` 指向隔离数据库 `.local/im241-review-case-action-smoke.db`，不污染默认业务数据库。"
+  - "加载 `seed_review_case_stage_matrix()` 后，验证 `CASE-SEED-ME-001` 可以成功补证据并在 detail API 回读。"
+  - "验证 `CASE-SEED-MC-001` 可以成功补结论并在 detail API 回读。"
+  - "验证 `CASE-QUERY-001` 可以成功关闭并在 detail API 回读 closure。"
+  - "验证 `CASE-SEED-CL-001` 拒绝补证据、拒绝补结论，且重复关闭保持原 closure 不变。"
+  - "验证成功/失败 feedback URL 文案可见。"
+  - "不新增业务功能、API route、schema/migration、依赖、权限、审批、导出、批量或生产规则。"
+dependencies:
+  - "US859"
+status: "done"
+notes: "IM241 已完成：使用隔离 DB 和 live backend/frontend runtime 验证补证据、补结论、关闭案例、closed case 拒绝补写、closure 幂等和 feedback URL。本故事只代表本地 runtime smoke 通过，不代表生产验收、权限验收或 PR 合并。"
+```
+
 ### US859 - 复核案例 Live Runtime Smoke
 
 ```yaml

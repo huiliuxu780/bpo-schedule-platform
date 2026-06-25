@@ -16,11 +16,13 @@ No ready or in-progress story is currently queued.
 
 IM240 completed the PM-confirmed review-case live runtime smoke on the current branch using an isolated `.local/im240-runtime-smoke.db` runtime artifact. The smoke used backend `127.0.0.1:8000` and frontend `127.0.0.1:3002` because the existing `3000` BPO Next dev process was stale and unresponsive. It did not add product features or modify business UI/backend implementation beyond acceptance traceability.
 
+IM241 completed the review-case write-action runtime smoke using `BPO_DATABASE_URL` and an isolated `.local/im241-review-case-action-smoke.db` database. It did not add new product behavior, implementation code, schema/migration, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors.
+
 ## Recent State Summary
 
 - The current integration branch combines the compact Harness state-governance pass with the review-case processing-path branch so future work can start from one baseline.
 - The latest product work added operator-facing review-case processing paths without exposing Codex/Gate/PM acceptance language in product pages.
-- IM240 has live-smoked the review-case list/detail, four processing-stage filters, and three URL feedback states against the IM239 stage matrix seed. This is local runtime evidence only, not production readiness or merge approval.
+- IM240 has live-smoked the review-case list/detail, four processing-stage filters, and three URL feedback states against the IM239 stage matrix seed. IM241 extended that evidence to the existing evidence/conclusion/closure write endpoints without changing implementation code.
 - Harness state optimization is now the active maintenance concern: current context must stay compact, default reads must use the current layer, and history must be queried on demand through registry/legacy references.
 
 ## Current Execution Rules
@@ -48,4 +50,4 @@ IM240 completed the PM-confirmed review-case live runtime smoke on the current b
 
 ## Current Recommendation
 
-Define the next requirement/story/Gate before further development. Good candidates are a PM manual walkthrough of the same review-case runtime path, a bounded review-case action POST smoke, or the next product workflow slice; do not add runtime automation, production readiness claims, permissions, approval, export, batch operations, formulas, settlement rules, or charge factors without a new task.
+Define the next requirement/story/Gate before further development. Good candidates are a PM manual walkthrough of the review-case runtime path, a bounded review-case action E2E form smoke, or the next product workflow slice; do not claim production readiness, add runtime automation, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.

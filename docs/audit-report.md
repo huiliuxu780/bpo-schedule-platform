@@ -4,6 +4,32 @@
 
 ## Current Audit
 
+### 2026-06-25 - IM241 复核案例写入动作 Live Runtime Smoke
+
+#### 审计结论
+
+- `IM241/US860/R940` 已完成 PM-confirmed local write-action runtime smoke。
+- 隔离数据库 `.local/im241-review-case-action-smoke.db` 通过 `BPO_DATABASE_URL` 加载 `seed_review_case_stage_matrix()`，避免污染默认业务数据库。
+- 后端运行在 `127.0.0.1:8000`；前端运行在 `127.0.0.1:3002`。runtime smoke 完成后已停止服务。
+- Live smoke 覆盖 POST evidence、POST conclusion、POST closure、closed case evidence/conclusion 拒绝、closed case closure 幂等，以及 success/failed feedback URL。
+- 本轮未修改业务 UI、组件、后端实现、API route、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 该证据只代表本地 runtime smoke 通过，不代表生产 readiness、权限/审批边界、PR 合并或真实外部集成验收。
+- 本轮使用 curl/API 验证写入链路，未使用 Playwright 执行真实表单点击；前端 feedback URL 文案已通过 GET 页面验证。
+- `python -m backend.app.review_demo_seed` 仍只执行基础 seed；完整四阶段矩阵需要显式调用 `seed_review_case_stage_matrix()` 或传入相同 seed helper。
+
+#### 验证
+
+- Seed 输出：`CASE-QUERY-001 open 1 1 False`、`CASE-SEED-ME-001 open 0 0 False`、`CASE-SEED-MC-001 open 1 0 False`、`CASE-SEED-CL-001 open 1 1 True`。
+- API write smoke：`CASE-SEED-ME-001` evidence 写入 200 且 detail 回读 `EVD-SMOKE-ME-001`；`CASE-SEED-MC-001` conclusion 写入 200 且 detail 回读 `CON-SMOKE-MC-001`；`CASE-QUERY-001` closure 写入 200 且 detail 回读 `CLO-SMOKE-001`。
+- Rejection/idempotency smoke：`CASE-SEED-CL-001` evidence 写入返回 400 `REVIEW_EVIDENCE_INVALID`，conclusion 写入返回 400 `REVIEW_CONCLUSION_INVALID`，重复 closure 返回 200 且保持 `CLO-SEED-CL-001`。
+- Feedback smoke：`evidence=success`、`conclusion=success`、`closure=success`、`evidence=failed` 页面均 200 且显示对应反馈文案。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、433 个 Node script subtests（432 pass、1 skip）、shadcn check、lint、typecheck、Next build、backend 221 unittest OK，最终输出 `project Harness check passed`。
+
 ### 2026-06-24 - IM240 复核案例 Live Runtime Smoke
 
 #### 审计结论

@@ -977,12 +977,15 @@ requirements:
   US857: {file: "docs/user-stories.md", requirement_ids: ["R937"], task_ids: ["IM238"], archive_refs: []}
   US858: {file: "docs/user-stories.md", requirement_ids: ["R938"], task_ids: ["IM239"], archive_refs: []}
   US859: {file: "docs/user-stories.md", requirement_ids: ["R939"], task_ids: ["IM240"], archive_refs: []}
+  US860: {file: "docs/user-stories.md", requirement_ids: ["R940"], task_ids: ["IM241"], archive_refs: []}
   IM238: {file: "tasks/backlog.yaml", story_ids: ["US857"], gate: "qa"}
   IM239: {file: "tasks/backlog.yaml", story_ids: ["US858"], gate: "backend-mvp"}
   IM240: {file: "tasks/backlog.yaml", story_ids: ["US859"], gate: "qa"}
+  IM241: {file: "tasks/backlog.yaml", story_ids: ["US860"], gate: "qa"}
   R937: {file: "docs/raw-requirements.md", story_ids: ["US857"], task_ids: ["IM238"]}
   R938: {file: "docs/raw-requirements.md", story_ids: ["US858"], task_ids: ["IM239"]}
   R939: {file: "docs/raw-requirements.md", story_ids: ["US859"], task_ids: ["IM240"]}
+  R940: {file: "docs/raw-requirements.md", story_ids: ["US860"], task_ids: ["IM241"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"
