@@ -15,6 +15,19 @@
 notes: "补充说明"
 ```
 
+### R942 - 复核案例写入动作手工浏览器验收
+
+```yaml
+id: R942
+module: "复核案例工作区"
+description: "IM240 已验证复核案例读路径，IM241 已验证写入 API，IM242 已决定当前不引入 Playwright 自动化。当前需要在隔离本地 runtime 下手工走完页面表单点击链路，验证补证据、补结论、关闭案例是否能从浏览器触发 Next server action、跳转到 feedback URL，并在页面上显示正确反馈。"
+source: "PM 确认：可以，记得拆分出来任务"
+submitted_at: "2026-06-25"
+version: "1.0"
+status: "done"
+notes: "IM243 已完成本地手工浏览器验收：使用隔离数据库 `.local/im243-review-case-form-click-smoke.db`、backend `127.0.0.1:8000`、frontend `127.0.0.1:3002`，验证补证据、补结论、关闭案例三条页面表单提交链路、成功 feedback 和已关闭 blocker。本需求未新增自动化 E2E，未修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量或生产规则。"
+```
+
 ### R941 - 复核案例 Form-Click E2E 自动化决策
 
 ```yaml

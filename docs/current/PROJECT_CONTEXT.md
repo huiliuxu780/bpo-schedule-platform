@@ -12,7 +12,7 @@ The active product boundary remains local MVP and operator-facing workflow scaff
 
 ## Current Queue
 
-No ready or in-progress story is currently queued.
+No executable story is currently queued. The review-case runtime acceptance block has been closed through IM243, and the next development slice must be defined explicitly before implementation.
 
 IM240 completed the PM-confirmed review-case live runtime smoke on the current branch using an isolated `.local/im240-runtime-smoke.db` runtime artifact. The smoke used backend `127.0.0.1:8000` and frontend `127.0.0.1:3002` because the existing `3000` BPO Next dev process was stale and unresponsive. It did not add product features or modify business UI/backend implementation beyond acceptance traceability.
 
@@ -20,12 +20,15 @@ IM241 completed the review-case write-action runtime smoke using `BPO_DATABASE_U
 
 IM242 completed the review-case form-click E2E feasibility decision. Current `qa` scope will not add Playwright or other browser automation dependencies; the remaining server-action submit glue is treated as low risk and should be covered by IM241 HTTP smoke plus PM manual browser walkthrough if PM wants final human acceptance evidence.
 
+IM243 completed the PM-confirmed manual browser walkthrough for that remaining glue. It used `BPO_DATABASE_URL` and isolated `.local/im243-review-case-form-click-smoke.db`, ran only local backend/frontend runtimes, and recorded evidence without changing product UI, backend implementation, scripts, dependencies, or package/lockfiles.
+
 ## Recent State Summary
 
 - The current integration branch combines the compact Harness state-governance pass with the review-case processing-path branch so future work can start from one baseline.
 - The latest product work added operator-facing review-case processing paths without exposing Codex/Gate/PM acceptance language in product pages.
 - IM240 has live-smoked the review-case list/detail, four processing-stage filters, and three URL feedback states against the IM239 stage matrix seed. IM241 extended that evidence to the existing evidence/conclusion/closure write endpoints without changing implementation code.
 - IM242 decided not to automate form-click E2E inside the current `qa` gate because the repo has no Playwright infrastructure and adding one would require a separate dependency Gate.
+- IM243 completed the final manual browser path for the three review-case write forms: evidence, conclusion, and closure.
 - Harness state optimization is now the active maintenance concern: current context must stay compact, default reads must use the current layer, and history must be queried on demand through registry/legacy references.
 
 ## Current Execution Rules
@@ -53,4 +56,4 @@ IM242 completed the review-case form-click E2E feasibility decision. Current `qa
 
 ## Current Recommendation
 
-Define the next requirement/story/Gate before further development. Good candidates are a PM manual browser walkthrough of the review-case write-action path, or the next product workflow slice; do not claim production readiness, add runtime automation, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.
+Define the next product workflow slice before implementation. Recommended candidates are: (1) close the review-case acceptance block with a concise release note / PR summary, (2) define the next operator workflow slice adjacent to review-case, or (3) return to the import-center/data-quality downstream chain. Do not claim production readiness, add runtime automation, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.
