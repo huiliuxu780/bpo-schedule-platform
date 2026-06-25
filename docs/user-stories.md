@@ -20,6 +20,29 @@
 status: "draft"
 ```
 
+### US861 - 复核案例 Form-Click E2E 自动化决策
+
+```yaml
+id: US861
+requirement_ids:
+  - R941
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望明确复核案例页面表单点击链路是否值得自动化 E2E，以便在已有 HTTP smoke 和模型测试基础上控制验收成本，避免为低风险胶水层引入新依赖或扩大当前 QA Gate。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "复核 Qoder Packet A 的只读可行性结论，并在 preflight 文档记录 IM242 决策。"
+  - "明确当前 `qa` gate 不安装 Playwright，不修改 `package.json` 或 lockfile，不新增 E2E 目录或 `scripts/check.sh` 门禁。"
+  - "明确唯一剩余缝隙是浏览器 form submit 触发 Next server action、后端 fetch 和 redirect feedback 的薄胶水层，风险等级为低。"
+  - "明确替代 Gate 为 IM241 HTTP smoke 证据加 PM 手工浏览器验收清单。"
+  - "不启动 runtime，不修改业务 UI、组件、后端、测试代码、运行脚本、依赖、权限、审批、导出、批量或生产规则。"
+dependencies:
+  - "US860"
+status: "done"
+notes: "IM242 已完成：文档新增 Form-Click E2E Feasibility Decision，结论为当前不做自动化 E2E；如未来 PM 决定安装 Playwright，需要另开 dependency Gate。"
+```
+
 ### US860 - 复核案例写入动作 Live Runtime Smoke
 
 ```yaml

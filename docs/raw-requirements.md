@@ -15,6 +15,19 @@
 notes: "补充说明"
 ```
 
+### R941 - 复核案例 Form-Click E2E 自动化决策
+
+```yaml
+id: R941
+module: "复核案例工作区"
+description: "IM240 已覆盖复核案例 live read path，IM241 已覆盖写入 API 和 feedback URL。当前需要评估是否应继续把页面表单点击到 Next server action、后端 fetch、redirect feedback 的链路自动化为 E2E，并把结论记录为受控 QA 决策，避免为了低风险胶水层引入新依赖或扩大 Gate。"
+source: "PM 确认：继续拆分；Qoder 完成 IM242 Packet A/B 后由 Codex 复核和收口"
+submitted_at: "2026-06-25"
+version: "1.0"
+status: "done"
+notes: "IM242 已完成：当前 qa gate 不建议自动化 form-click E2E，不安装 Playwright，不修改 package/lockfile，不新增 E2E 目录或 check.sh 门禁。剩余 server action -> fetch -> redirect 胶水层风险评估为低，推荐用 IM241 HTTP smoke 证据加 PM 手工浏览器验收清单覆盖。"
+```
+
 ### R940 - 复核案例写入动作 Live Runtime Smoke
 
 ```yaml

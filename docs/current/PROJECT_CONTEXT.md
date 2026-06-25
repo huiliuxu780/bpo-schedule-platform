@@ -18,11 +18,14 @@ IM240 completed the PM-confirmed review-case live runtime smoke on the current b
 
 IM241 completed the review-case write-action runtime smoke using `BPO_DATABASE_URL` and an isolated `.local/im241-review-case-action-smoke.db` database. It did not add new product behavior, implementation code, schema/migration, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors.
 
+IM242 completed the review-case form-click E2E feasibility decision. Current `qa` scope will not add Playwright or other browser automation dependencies; the remaining server-action submit glue is treated as low risk and should be covered by IM241 HTTP smoke plus PM manual browser walkthrough if PM wants final human acceptance evidence.
+
 ## Recent State Summary
 
 - The current integration branch combines the compact Harness state-governance pass with the review-case processing-path branch so future work can start from one baseline.
 - The latest product work added operator-facing review-case processing paths without exposing Codex/Gate/PM acceptance language in product pages.
 - IM240 has live-smoked the review-case list/detail, four processing-stage filters, and three URL feedback states against the IM239 stage matrix seed. IM241 extended that evidence to the existing evidence/conclusion/closure write endpoints without changing implementation code.
+- IM242 decided not to automate form-click E2E inside the current `qa` gate because the repo has no Playwright infrastructure and adding one would require a separate dependency Gate.
 - Harness state optimization is now the active maintenance concern: current context must stay compact, default reads must use the current layer, and history must be queried on demand through registry/legacy references.
 
 ## Current Execution Rules
@@ -50,4 +53,4 @@ IM241 completed the review-case write-action runtime smoke using `BPO_DATABASE_U
 
 ## Current Recommendation
 
-Define the next requirement/story/Gate before further development. Good candidates are a PM manual walkthrough of the review-case runtime path, a bounded review-case action E2E form smoke, or the next product workflow slice; do not claim production readiness, add runtime automation, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.
+Define the next requirement/story/Gate before further development. Good candidates are a PM manual browser walkthrough of the review-case write-action path, or the next product workflow slice; do not claim production readiness, add runtime automation, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.

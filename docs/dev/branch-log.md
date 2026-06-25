@@ -2,24 +2,43 @@
 
 ## 2026-06-25
 
-### IM241 Review Case Write Action Runtime Smoke
+### IM242 Review Case Form-Click E2E Decision
 
 - branch_name: `codex/im237-harness-review-case-integration`
-- base_main_commit: `76b1685`
-- stacked_on: `IM240 review-case read-path runtime smoke`
-- remote_status: `not_pushed after IM241 local write-action runtime smoke`
-- scope: Execute the PM-confirmed local runtime smoke for existing review-case write actions. Verify evidence write, conclusion write, closure write, closed-case rejection, idempotent closure, and feedback URLs without changing product UI, backend implementation, API routes, schema, dependencies, or check scripts.
-- allowed_files_check: current Harness files, trace index, raw requirements, user stories, backlog, task log, audit report, branch log, review-case runtime preflight document, and isolated `.local/im241-review-case-action-smoke.db` runtime artifact only.
-- scope_diff_check: expected acceptance traceability and local smoke artifact only; no app, components, hooks, lib, backend code, migrations, scripts/check.sh, package/lockfile, dependency, schema, auth, permission, approval, export, batch, production formula, settlement, or charge-factor changes.
-- runtime_result: Loaded `seed_review_case_stage_matrix()` into `.local/im241-review-case-action-smoke.db` through `BPO_DATABASE_URL=sqlite+pysqlite:///./.local/im241-review-case-action-smoke.db`. Backend ran on `127.0.0.1:8000`; frontend ran on `127.0.0.1:3002`.
-- smoke_result: POST evidence on `CASE-SEED-ME-001` returned 200 and detail readback showed `EVD-SMOKE-ME-001`; POST conclusion on `CASE-SEED-MC-001` returned 200 and detail readback showed `CON-SMOKE-MC-001`; POST closure on `CASE-QUERY-001` returned 200 and detail readback showed `CLO-SMOKE-001`; closed `CASE-SEED-CL-001` rejected evidence and conclusion with 400 `REVIEW_EVIDENCE_INVALID` / `REVIEW_CONCLUSION_INVALID`; repeated closure kept original `CLO-SEED-CL-001`; feedback pages returned 200 and showed success/failed messages.
-- check_result: Runtime smoke passed. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, 433 Node script subtests (432 pass, 1 skip), shadcn check, lint, typecheck, Next build, and backend 221 unittest OK.
+- base_main_commit: `141e6e6`
+- stacked_on: `IM241 review-case write-action runtime smoke`
+- remote_status: `not_pushed after IM242 local decision record`
+- scope: Record the PM-confirmed decision not to automate review-case form-click E2E inside the current QA gate. Preserve IM241 HTTP smoke evidence, add a PM manual browser walkthrough checklist, and avoid new dependencies, E2E infrastructure, runtime startup, or product implementation changes.
+- allowed_files_check: current Harness files, trace index, raw requirements, user stories, backlog, task log, audit report, branch log, and review-case runtime preflight document only.
+- scope_diff_check: expected acceptance decision documentation and traceability only; no app, components, hooks, lib, backend code, migrations, scripts, scripts/check.sh, package/lockfile, dependency, schema, auth, permission, approval, export, batch, production formula, settlement, charge-factor, `.local`, or `.qoder` changes.
+- qoder_result: Packet A found no Playwright/E2E infrastructure and recommended against automated form-click E2E; Packet B added Section 15 to the preflight document with the decision, remaining low-risk glue gap, manual walkthrough checklist, stop conditions, and future optional automation boundary.
+- check_result: `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, 433 Node script subtests (432 pass, 1 skip), shadcn check, lint, typecheck, Next build, and backend 221 unittest OK.
 - local_commit_sha: `recorded in Done Report and git log after commit creation`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM241 Review Case Write Action Runtime Smoke
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `76b1685`
+- stacked_on: `IM240 review-case read-path runtime smoke`
+- remote_status: `pushed commit 141e6e6 to origin/codex/im237-harness-review-case-integration before IM242`
+- scope: Execute the PM-confirmed local runtime smoke for existing review-case write actions. Verify evidence write, conclusion write, closure write, closed-case rejection, idempotent closure, and feedback URLs without changing product UI, backend implementation, API routes, schema, dependencies, or check scripts.
+- allowed_files_check: current Harness files, trace index, raw requirements, user stories, backlog, task log, audit report, branch log, review-case runtime preflight document, and isolated `.local/im241-review-case-action-smoke.db` runtime artifact only.
+- scope_diff_check: expected acceptance traceability and local smoke artifact only; no app, components, hooks, lib, backend code, migrations, scripts/check.sh, package/lockfile, dependency, schema, auth, permission, approval, export, batch, production formula, settlement, or charge-factor changes.
+- runtime_result: Loaded `seed_review_case_stage_matrix()` into `.local/im241-review-case-action-smoke.db` through `BPO_DATABASE_URL=sqlite+pysqlite:///./.local/im241-review-case-action-smoke.db`. Backend ran on `127.0.0.1:8000`; frontend ran on `127.0.0.1:3002`.
+- smoke_result: POST evidence on `CASE-SEED-ME-001` returned 200 and detail readback showed `EVD-SMOKE-ME-001`; POST conclusion on `CASE-SEED-MC-001` returned 200 and detail readback showed `CON-SMOKE-MC-001`; POST closure on `CASE-QUERY-001` returned 200 and detail readback showed `CLO-SMOKE-001`; closed `CASE-SEED-CL-001` rejected evidence and conclusion with 400 `REVIEW_EVIDENCE_INVALID` / `REVIEW_CONCLUSION_INVALID`; repeated closure kept original `CLO-SEED-CL-001`; feedback pages returned 200 and showed success/failed messages.
+- check_result: Runtime smoke passed. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, 433 Node script subtests (432 pass, 1 skip), shadcn check, lint, typecheck, Next build, and backend 221 unittest OK.
+- local_commit_sha: `141e6e6`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `PM confirmed push; pushed before IM242`
 - blocked_reason: `N/A`
 
 ## 2026-06-24

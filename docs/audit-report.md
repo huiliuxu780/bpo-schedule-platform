@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-06-25 - IM242 复核案例 Form-Click E2E 自动化决策
+
+#### 审计结论
+
+- `IM242/US861/R941` 已完成 review-case form-click E2E feasibility decision。
+- 当前 `qa` gate 不建议自动化页面表单点击 E2E：仓库没有 Playwright/E2E 基础设施，新增依赖会修改 `package.json` / lockfile 并触发单独 dependency Gate。
+- IM242 没有启动 frontend/backend runtime，没有新增 E2E 目录、运行脚本或 `scripts/check.sh` 门禁。
+- 剩余未自动化覆盖点限定为 Next server action 表单提交后的 `fetch()` 和 `redirect()` 薄胶水层；风险等级记录为低。
+- 推荐替代验收为 IM241 HTTP smoke 证据加 PM 手工浏览器 8 步 walkthrough。
+
+#### 风险
+
+- 该决策不是 production readiness，也不代表权限、审批、导出、批量、外部集成、生产公式、结算或收费因子验收。
+- 如果 PM 后续要求浏览器自动化，需要另开 dependency Gate，并明确 package/lockfile、E2E 目录、runtime 编排和 check.sh 门禁范围。
+- 如果 PM 手工 walkthrough 发现 server action redirect 失败，应另开 bug fix task，不能在 QA 决策记录中直接修业务代码。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、433 个 Node script subtests（432 pass、1 skip）、shadcn check、lint、typecheck、Next build、backend 221 unittest OK，最终输出 `project Harness check passed`。
+
 ### 2026-06-25 - IM241 复核案例写入动作 Live Runtime Smoke
 
 #### 审计结论

@@ -14125,3 +14125,57 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已完成：使用 `BPO_DATABASE_URL=sqlite+pysqlite:///./.local/im241-review-case-action-smoke.db` 加载 `seed_review_case_stage_matrix()`；backend `127.0.0.1:8000`、frontend `127.0.0.1:3002`。HTTP smoke 覆盖 POST evidence、GET evidence detail、POST conclusion、GET conclusion detail、POST closure、GET closure detail、closed case evidence/conclusion 400 拒绝、closed case closure 幂等，以及 success/failed feedback URL，全部命中预期。未改业务代码、API route、schema/migration、依赖、package/lockfile 或产品 UI。"
+  - id: IM242
+    title: "复核案例 Form-Click E2E 自动化决策"
+    priority: P0
+    status: done
+    required_workflow: qa
+    dependencies: ["IM241"]
+    story_ids: ["US861"]
+    requirement_ids: ["R941"]
+    allowed_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/design/review-case-live-runtime-acceptance-preflight.md"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "backend/migrations/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - ".local/**"
+      - ".qoder/**"
+      - "node_modules/**"
+    acceptance:
+      - "复核 Qoder Packet A/B 结论，确认当前仓库没有 Playwright/E2E 基础设施，且新增依赖不属于当前 qa gate。"
+      - "在 `docs/design/review-case-live-runtime-acceptance-preflight.md` 记录 IM242 form-click E2E feasibility decision。"
+      - "明确 server action -> fetch -> redirect 胶水层为唯一剩余缝隙且风险低。"
+      - "明确推荐替代 Gate：沿用 IM241 HTTP smoke 证据，并由 PM 手工执行 8 步浏览器 walkthrough。"
+      - "明确未来若安装 Playwright，必须另开 dependency Gate；当前不新增脚本、测试目录、依赖或 check.sh 门禁。"
+      - "`bash scripts/check-state.sh --strict`、`git diff --check`、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要安装 Playwright、Cypress、Puppeteer、Selenium 或修改 package/lockfile"
+      - "需要新增 E2E 目录、测试脚本、runtime 编排脚本或 check.sh 门禁"
+      - "需要启动 frontend/backend runtime"
+      - "需要修改业务代码、API route、schema/migration、依赖或 package/lockfile"
+      - "需要新增审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：新增 IM242 form-click E2E feasibility decision，结论为当前 qa gate 不建议自动化 E2E；不安装 Playwright，不改 package/lockfile，不新增 E2E 目录、运行脚本或 check.sh 门禁。推荐使用 IM241 HTTP smoke 证据加 PM 手工浏览器验收清单覆盖剩余低风险胶水层。"
