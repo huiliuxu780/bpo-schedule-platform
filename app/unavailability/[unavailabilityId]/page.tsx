@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
+import { MetricCard } from "@/components/metric-card"
 import { UnavailabilityImpactRiskTable } from "@/components/unavailability-impact-risk-table"
 import { UnavailabilityImpactShiftTable } from "@/components/unavailability-impact-shift-table"
 import { Badge } from "@/components/ui/badge"
@@ -169,29 +170,5 @@ function InfoBlock({ label, value }: { label: string; value: string }) {
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className="mt-1 text-sm">{value}</p>
     </div>
-  )
-}
-
-function MetricCard({
-  title,
-  value,
-  description,
-}: {
-  title: string
-  value: string
-  description: string
-}) {
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardDescription>{title}</CardDescription>
-        <CardTitle className="text-2xl font-semibold tabular-nums">
-          {value}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="text-xs text-muted-foreground">
-        {description}
-      </CardContent>
-    </Card>
   )
 }

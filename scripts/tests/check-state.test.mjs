@@ -8,7 +8,12 @@ import test from "node:test";
 const rootDir = path.resolve(import.meta.dirname, "../..");
 const checkStateScript = path.join(rootDir, "scripts/check-state.sh");
 
-function createStateRoot({ storyQueue, activeTasks, traceIndex } = {}) {
+function createStateRoot({
+  projectContext,
+  storyQueue,
+  activeTasks,
+  traceIndex,
+} = {}) {
   const dir = mkdtempSync(path.join(tmpdir(), "bpo-state-check-"));
 
   mkdirSync(path.join(dir, "docs/current"), { recursive: true });
@@ -17,7 +22,7 @@ function createStateRoot({ storyQueue, activeTasks, traceIndex } = {}) {
 
   writeFileSync(
     path.join(dir, "docs/current/PROJECT_CONTEXT.md"),
-    "# Project Context\n",
+    projectContext ?? "# Project Context\n",
   );
   writeFileSync(path.join(dir, "docs/current/BLOCKERS.md"), "# Blockers\n");
   writeFileSync(
@@ -195,4 +200,25 @@ test("check-state strict mode rejects missing TRACE_INDEX current file paths", (
 
   assert.notEqual(result.status, 0, "expected strict mode to fail");
   assert.match(result.stdout, /registry path missing: docs\/current\/MISSING\.md/);
+});
+
+test("check-state strict mode rejects accumulated done-history markers in project context", () => {
+  const stateRoot = createStateRoot({
+    projectContext: [
+      "# Project Context",
+      "",
+      "`US900/IM900` completed the first historical slice, then current queue returned to empty.",
+      "`US901/IM901` completed the second historical slice, then current queue returned to empty.",
+      "`US902/IM902` completed the third historical slice, then current queue returned to empty.",
+      "`US903/IM903` completed the fourth historical slice, then current queue returned to empty.",
+      "",
+    ].join("\n"),
+  });
+  const result = runCheckState(stateRoot, ["--strict"]);
+
+  assert.notEqual(result.status, 0, "expected strict mode to fail");
+  assert.match(
+    result.stdout,
+    /PROJECT_CONTEXT.md contains accumulated done-history markers/,
+  );
 });

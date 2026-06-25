@@ -1,10 +1,11 @@
+import { fetchImportBatches } from "@/lib/import-api"
+import { formatApiError } from "@/lib/api-error"
+import type { ApiResult } from "@/lib/api-result"
 import { AppShell } from "@/components/app-shell"
 import { ImportCenterComparisonRunDetailWorkspace } from "@/components/import-center-comparison-run-detail-workspace"
 import {
-  type ImportBatchListRow,
   type ImportComparisonRunDetailResponse,
   type ImportReviewCaseRecord,
-  buildImportApiUrl,
   buildImportComparisonRunDetailApiUrl,
   buildImportReviewCasesUrl,
 } from "@/components/import-center-model"
@@ -15,11 +16,6 @@ type ComparisonRunDetailPageProps = {
   params: Promise<{
     runId: string
   }>
-}
-
-type ApiResult<T> = {
-  data: T | null
-  error: string | null
 }
 
 export default async function ComparisonRunDetailPage({
@@ -82,33 +78,6 @@ async function fetchImportComparisonRunDetail(
   }
 }
 
-async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
-  try {
-    const response = await fetch(buildImportApiUrl("/api/v1/import-batches"), {
-      cache: "no-store",
-    })
-
-    if (!response.ok) {
-      return {
-        data: [],
-        error: `导入批次读取失败（状态码 ${response.status}）`,
-      }
-    }
-
-    const payload = (await response.json()) as { items?: ImportBatchListRow[] }
-
-    return {
-      data: Array.isArray(payload.items) ? payload.items : [],
-      error: null,
-    }
-  } catch (error) {
-    return {
-      data: [],
-      error: formatApiError(error),
-    }
-  }
-}
-
 async function fetchImportReviewCases(
   businessDate: string
 ): Promise<ApiResult<ImportReviewCaseRecord[]>> {
@@ -136,12 +105,4 @@ async function fetchImportReviewCases(
       error: formatApiError(error),
     }
   }
-}
-
-function formatApiError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return "读取失败"
 }

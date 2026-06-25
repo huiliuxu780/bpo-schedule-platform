@@ -1,3 +1,6 @@
+import { fetchImportBatches, fetchImportFieldMappingTemplates } from "@/lib/import-api"
+import { formatApiError } from "@/lib/api-error"
+import type { ApiResult } from "@/lib/api-result"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 
@@ -16,12 +19,10 @@ import {
   type ImportBatchPersistenceDetail,
   type ImportComparisonRunRecord,
   type ImportPageHierarchyDetailTab,
-  type ImportFieldMappingTemplate,
   type ImportReviewCaseRecord,
   buildImportApiUrl,
   buildImportBatchDetailUrl,
   buildImportComparisonRunsUrl,
-  buildImportFieldMappingTemplatesUrl,
   buildImportReviewCasesUrl,
   formatImportBatchFileDisplayName,
   formatImportBatchDisplayLabel,
@@ -53,11 +54,6 @@ type ImportBatchDetailPageProps = {
     apply?: string
     tab?: string
   }>
-}
-
-type ApiResult<T> = {
-  data: T | null
-  error: string | null
 }
 
 export default async function ImportBatchDetailPage({
@@ -560,64 +556,6 @@ function HeaderMetric({ label, value }: { label: string; value: string }) {
   )
 }
 
-async function fetchImportFieldMappingTemplates(): Promise<
-  ApiResult<ImportFieldMappingTemplate[]>
-> {
-  try {
-    const response = await fetch(buildImportFieldMappingTemplatesUrl(), {
-      cache: "no-store",
-    })
-
-    if (!response.ok) {
-      return {
-        data: [],
-        error: `字段映射模板读取失败（状态码 ${response.status}）`,
-      }
-    }
-
-    const payload = (await response.json()) as {
-      items?: ImportFieldMappingTemplate[]
-    }
-
-    return {
-      data: Array.isArray(payload.items) ? payload.items : [],
-      error: null,
-    }
-  } catch (error) {
-    return {
-      data: [],
-      error: formatApiError(error),
-    }
-  }
-}
-
-async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
-  try {
-    const response = await fetch(buildImportApiUrl("/api/v1/import-batches"), {
-      cache: "no-store",
-    })
-
-    if (!response.ok) {
-      return {
-        data: [],
-        error: `导入批次读取失败（状态码 ${response.status}）`,
-      }
-    }
-
-    const payload = (await response.json()) as { items?: ImportBatchListRow[] }
-
-    return {
-      data: Array.isArray(payload.items) ? payload.items : [],
-      error: null,
-    }
-  } catch (error) {
-    return {
-      data: [],
-      error: formatApiError(error),
-    }
-  }
-}
-
 async function fetchImportReadiness(
   batchId: string
 ): Promise<ApiResult<ImportApplyReadinessResponse>> {
@@ -733,12 +671,4 @@ async function fetchImportReviewCases(
       error: formatApiError(error),
     }
   }
-}
-
-function formatApiError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return "读取失败"
 }

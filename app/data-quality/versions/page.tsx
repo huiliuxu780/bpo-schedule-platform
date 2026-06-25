@@ -1,3 +1,6 @@
+import { fetchImportBatches } from "@/lib/import-api"
+import { formatApiError } from "@/lib/api-error"
+import type { ApiResult } from "@/lib/api-result"
 import { AppShell } from "@/components/app-shell"
 import { ImportCenterVersionWorkbench } from "@/components/import-center-version-workbench"
 import {
@@ -5,7 +8,6 @@ import {
   type ImportComparisonRunRecord,
   type ImportReviewCaseRecord,
   type ImportVersionWorkbenchFilters,
-  buildImportApiUrl,
   buildImportComparisonRunsUrl,
   buildImportReviewCasesUrl,
 } from "@/components/import-center-model"
@@ -21,11 +23,6 @@ type VersionWorkbenchPageProps = {
     compareRun?: string
     compareReason?: string
   }>
-}
-
-type ApiResult<T> = {
-  data: T | null
-  error: string | null
 }
 
 export default async function VersionWorkbenchPage({
@@ -66,33 +63,6 @@ export default async function VersionWorkbenchPage({
       />
     </AppShell>
   )
-}
-
-async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
-  try {
-    const response = await fetch(buildImportApiUrl("/api/v1/import-batches"), {
-      cache: "no-store",
-    })
-
-    if (!response.ok) {
-      return {
-        data: [],
-        error: `导入批次读取失败（状态码 ${response.status}）`,
-      }
-    }
-
-    const payload = (await response.json()) as { items?: ImportBatchListRow[] }
-
-    return {
-      data: Array.isArray(payload.items) ? payload.items : [],
-      error: null,
-    }
-  } catch (error) {
-    return {
-      data: [],
-      error: formatApiError(error),
-    }
-  }
 }
 
 async function fetchImportComparisonRuns(
@@ -206,12 +176,4 @@ function collectVersionWorkbenchBusinessDates(
         .map((batch) => batch.business_date_from)
     )
   )
-}
-
-function formatApiError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return "读取失败"
 }

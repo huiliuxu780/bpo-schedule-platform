@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import {
   type ColumnDef,
   flexRender,
@@ -19,13 +20,14 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Columns3,
-  MoreHorizontal,
+  ExternalLink,
   RotateCcw,
   Search,
 } from "lucide-react"
 
 import { anomalies, type Anomaly } from "@/app/dashboard/data"
 import {
+  buildDashboardAnomalyEntryState,
   clampDashboardPageIndex,
   filterDashboardAnomalies,
   getDashboardPaginationRange,
@@ -256,13 +258,35 @@ const columns: ColumnDef<Anomaly>[] = [
     id: "actions",
     enableHiding: false,
     header: () => <div className="text-right">操作</div>,
-    cell: () => (
-      <div className="text-right">
-        <Button variant="ghost" size="icon" aria-label="行操作">
-          <MoreHorizontal className="size-4" />
-        </Button>
-      </div>
-    ),
+    cell: ({ row }) => {
+      const entryState = buildDashboardAnomalyEntryState(row.original)
+
+      if (entryState.kind === "link") {
+        return (
+          <div className="text-right">
+            <Button asChild variant="ghost" size="sm">
+              <Link href={entryState.href}>
+                {entryState.label}
+                <ExternalLink data-icon="inline-end" />
+              </Link>
+            </Button>
+          </div>
+        )
+      }
+
+      return (
+        <div className="text-right">
+          <Button
+            variant="ghost"
+            size="sm"
+            disabled
+            title={entryState.detail}
+          >
+            {entryState.label}
+          </Button>
+        </div>
+      )
+    },
   },
 ]
 
@@ -345,7 +369,7 @@ export function DataTable() {
         <div>
           <CardTitle>BPO 异常明细</CardTitle>
           <CardDescription>
-            支持搜索、排序、列显示、分页与行操作占位
+            支持搜索、排序、列显示、分页；仅在下游 ID 稳定时开放跳转
           </CardDescription>
         </div>
         <DropdownMenu>

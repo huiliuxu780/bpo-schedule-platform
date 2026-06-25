@@ -62,6 +62,7 @@ required_files=(
   "scripts/shadcn-ui-baseline.json"
   "scripts/verify-backend-runtime.sh"
   "scripts/verify-frontend-native-runtime.mjs"
+  "scripts/tests/check-script-coverage.test.mjs"
   "scripts/tests/check-shadcn-ui.test.mjs"
   "scripts/tests/check-state.test.mjs"
   "scripts/tests/verify-backend-runtime.test.mjs"
@@ -128,7 +129,6 @@ if (( ${#missing_tools[@]} > 0 )); then
 fi
 
 npm run verify:dev-runtime
-npm run test:dev-runtime
 state_check_mode="${BPO_STATE_CHECK_MODE:-strict}"
 case "$state_check_mode" in
   strict)
@@ -146,11 +146,20 @@ case "$state_check_mode" in
     exit 1
     ;;
 esac
-node --test scripts/tests/check-state.test.mjs
-node --test scripts/tests/check-shadcn-ui.test.mjs
+
+script_tests=()
+while IFS= read -r test_file; do
+  script_tests+=("$test_file")
+done < <(find scripts/tests -maxdepth 1 -name '*.test.mjs' -print | sort)
+
+if (( ${#script_tests[@]} == 0 )); then
+  echo "missing scripts/tests/*.test.mjs coverage" >&2
+  exit 1
+fi
+
+node --test "${script_tests[@]}"
 node scripts/check-shadcn-ui.mjs
 bash scripts/verify-backend-runtime.sh
-node --test scripts/tests/verify-backend-runtime.test.mjs
 npm run lint
 npm run typecheck
 npm run build

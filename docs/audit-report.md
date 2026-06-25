@@ -4,6 +4,662 @@
 
 ## Current Audit
 
+### 2026-06-25 - IM242 复核案例 Form-Click E2E 自动化决策
+
+#### 审计结论
+
+- `IM242/US861/R941` 已完成 review-case form-click E2E feasibility decision。
+- 当前 `qa` gate 不建议自动化页面表单点击 E2E：仓库没有 Playwright/E2E 基础设施，新增依赖会修改 `package.json` / lockfile 并触发单独 dependency Gate。
+- IM242 没有启动 frontend/backend runtime，没有新增 E2E 目录、运行脚本或 `scripts/check.sh` 门禁。
+- 剩余未自动化覆盖点限定为 Next server action 表单提交后的 `fetch()` 和 `redirect()` 薄胶水层；风险等级记录为低。
+- 推荐替代验收为 IM241 HTTP smoke 证据加 PM 手工浏览器 8 步 walkthrough。
+
+#### 风险
+
+- 该决策不是 production readiness，也不代表权限、审批、导出、批量、外部集成、生产公式、结算或收费因子验收。
+- 如果 PM 后续要求浏览器自动化，需要另开 dependency Gate，并明确 package/lockfile、E2E 目录、runtime 编排和 check.sh 门禁范围。
+- 如果 PM 手工 walkthrough 发现 server action redirect 失败，应另开 bug fix task，不能在 QA 决策记录中直接修业务代码。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、433 个 Node script subtests（432 pass、1 skip）、shadcn check、lint、typecheck、Next build、backend 221 unittest OK，最终输出 `project Harness check passed`。
+
+### 2026-06-25 - IM241 复核案例写入动作 Live Runtime Smoke
+
+#### 审计结论
+
+- `IM241/US860/R940` 已完成 PM-confirmed local write-action runtime smoke。
+- 隔离数据库 `.local/im241-review-case-action-smoke.db` 通过 `BPO_DATABASE_URL` 加载 `seed_review_case_stage_matrix()`，避免污染默认业务数据库。
+- 后端运行在 `127.0.0.1:8000`；前端运行在 `127.0.0.1:3002`。runtime smoke 完成后已停止服务。
+- Live smoke 覆盖 POST evidence、POST conclusion、POST closure、closed case evidence/conclusion 拒绝、closed case closure 幂等，以及 success/failed feedback URL。
+- 本轮未修改业务 UI、组件、后端实现、API route、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 该证据只代表本地 runtime smoke 通过，不代表生产 readiness、权限/审批边界、PR 合并或真实外部集成验收。
+- 本轮使用 curl/API 验证写入链路，未使用 Playwright 执行真实表单点击；前端 feedback URL 文案已通过 GET 页面验证。
+- `python -m backend.app.review_demo_seed` 仍只执行基础 seed；完整四阶段矩阵需要显式调用 `seed_review_case_stage_matrix()` 或传入相同 seed helper。
+
+#### 验证
+
+- Seed 输出：`CASE-QUERY-001 open 1 1 False`、`CASE-SEED-ME-001 open 0 0 False`、`CASE-SEED-MC-001 open 1 0 False`、`CASE-SEED-CL-001 open 1 1 True`。
+- API write smoke：`CASE-SEED-ME-001` evidence 写入 200 且 detail 回读 `EVD-SMOKE-ME-001`；`CASE-SEED-MC-001` conclusion 写入 200 且 detail 回读 `CON-SMOKE-MC-001`；`CASE-QUERY-001` closure 写入 200 且 detail 回读 `CLO-SMOKE-001`。
+- Rejection/idempotency smoke：`CASE-SEED-CL-001` evidence 写入返回 400 `REVIEW_EVIDENCE_INVALID`，conclusion 写入返回 400 `REVIEW_CONCLUSION_INVALID`，重复 closure 返回 200 且保持 `CLO-SEED-CL-001`。
+- Feedback smoke：`evidence=success`、`conclusion=success`、`closure=success`、`evidence=failed` 页面均 200 且显示对应反馈文案。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、433 个 Node script subtests（432 pass、1 skip）、shadcn check、lint、typecheck、Next build、backend 221 unittest OK，最终输出 `project Harness check passed`。
+
+### 2026-06-24 - IM240 复核案例 Live Runtime Smoke
+
+#### 审计结论
+
+- `IM240/US859/R939` 已完成 PM-confirmed local runtime smoke。
+- 隔离数据库 `.local/im240-runtime-smoke.db` 已加载 `seed_review_case_stage_matrix()`，四个案例覆盖缺证据、缺结论、可关闭和 closure-backed 已关闭阶段。
+- 后端运行在 `127.0.0.1:8000`；前端运行在 `127.0.0.1:3002`。`3000` 的旧 BPO Next dev 进程无响应且持有 `.next/dev/lock`，已只停止该旧进程；`3001` 的 WikiNode Vite 进程未触碰。
+- Live smoke 覆盖 backend docs/API、复核案例列表、`CASE-QUERY-001` 详情、四个 processing-stage filter、`evidence=failed`、`conclusion=failed`、`closure=success` 三类 feedback URL。
+- 本轮未修改业务 UI、组件、后端实现、API route、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 该证据只代表本地 runtime smoke 通过，不代表生产 readiness、权限/审批边界、写入 POST 动作验收或 PR 合并。
+- `python -m backend.app.review_demo_seed` 仍只执行基础 seed；完整四阶段矩阵需要显式调用 `seed_review_case_stage_matrix()`。
+- 当前 smoke 没有执行真实 POST 写入动作，只验证页面读取、过滤和 URL feedback 渲染。
+
+#### 验证
+
+- Seed 输出：`CASE-QUERY-001 open 1 1 False`、`CASE-SEED-ME-001 open 0 0 False`、`CASE-SEED-MC-001 open 1 0 False`、`CASE-SEED-CL-001 open 1 1 True`。
+- HTTP smoke：backend docs/API、列表、详情、四阶段 filter 和三类 feedback URL 全部 200 且命中预期 case ID 或反馈文案。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、433 个 Node script subtests（432 pass、1 skip）、shadcn check、lint、typecheck、Next build、backend 221 unittest OK，最终输出 `project Harness check passed`。
+
+### 2026-06-24 - IM239 复核案例阶段 Seed Matrix
+
+#### 审计结论
+
+- `IM239/US858/R938` 已补齐 review-case live runtime smoke 前需要的本地 seed 阶段矩阵。
+- `seed_review_case_demo()` 保持既有 `CASE-QUERY-001` 行为；新增 `seed_review_case_stage_matrix()` 显式创建四个目标案例。
+- 四个案例覆盖：`CASE-SEED-ME-001` 缺证据、`CASE-SEED-MC-001` 缺结论、`CASE-QUERY-001` 可关闭、`CASE-SEED-CL-001` closure-backed 已关闭。
+- closed 阶段由 closure 记录支撑，`review_cases.status` 保持既有 open 语义；前端 processing-stage 推导已按 `status === "closed" || closure !== null` 处理。
+- 本轮未启动 runtime，未新增 API route，未修改 persistence/service/main route、schema/migration、前端、依赖、package/lockfile、权限、审批、导出、批量、公式、结算或收费因子。
+
+#### 风险
+
+- IM239 只提供 seed 数据基线，不代表 `/data-quality/review-cases` live runtime smoke 已通过。
+- 后续 smoke 仍需 PM 明确允许使用 backend `127.0.0.1:8000` 和 frontend `127.0.0.1:3000`。
+- 如果后续希望用 `python -m backend.app.review_demo_seed` 直接创建四阶段矩阵，需要另行确认 CLI 行为；当前完整矩阵通过显式 `seed_review_case_stage_matrix()` 调用生成。
+
+#### 验证
+
+- Focused seed unittest：`backend_python=$(bash scripts/verify-backend-runtime.sh --print-path); "$backend_python" -m unittest backend.tests.test_review_demo_seed -v` 通过，8 tests OK。
+- `bash scripts/check-state.sh --strict`：通过。
+- `bash scripts/check-state.sh --repair-scope`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、433 个 Node script subtests（432 pass、1 skip）、shadcn check、lint、typecheck、Next build、backend 221 unittest OK，最终输出 `project Harness check passed`。
+
+### 2026-06-24 - IM238 复核案例 Live Runtime 验收准备
+
+#### 审计结论
+
+- `IM238/US857/R937` 已作为当前唯一 ready task 入队，目标是 live runtime 验收前置准备，不是业务功能开发。
+- Qoder 交回的 runtime 入口梳理已落到 `docs/design/review-case-live-runtime-acceptance-preflight.md`，覆盖 `/data-quality/review-cases`、详情页、5 个 review-case API、`CASE-QUERY-001` seed、PM 手工验收清单和自动化 smoke 候选。
+- 本轮明确区分 3000-only 可完成的页面壳/错误态/model contract 检查，以及必须等待 8000 runtime 的 seeded list/detail/action deck/stage filter 验收。
+- `CASE-QUERY-001` 当前 seed 是 `ready_to_close` 案例：有证据和结论，但没有 closure 记录；如需 live 验收 `missing_evidence`、`missing_conclusion` 或 `closed` 阶段，需要后续单独确认 seed 扩展或显式关闭动作。
+- Packet D 已补充未来 seed extension Gate 草案：仅作为设计决策材料，不是确认任务；未来实现建议限定在 `backend/app/review_demo_seed.py` 与 `backend/tests/test_review_demo_seed.py`，且不得修改 persistence/service/main route、前端、check.sh、依赖、schema/migration 或自动启动 seed。
+- Qoder 后续只能执行 bounded packets，且不得直接写 `docs/current/**` 或 `docs/registry/**`。
+
+#### 风险
+
+- 启动 backend 8000、执行 seed、或做 live smoke 都属于 Gate 后动作；本轮未启动服务。
+- 如果直接在未合并的 PR #2 分支上验收，报告必须明确基线是 `codex/im237-harness-review-case-integration`，不是 `main`。
+- 如果不扩展 seed 或执行显式关闭动作，`missing_evidence`、`missing_conclusion` 和 `closed` 阶段只能靠现有模型/contract 测试覆盖，不能声称 live seeded UI 已覆盖全部阶段。
+- PM 需要在三个路径中选择：先做当前 seed 可覆盖的部分 runtime smoke；先确认 seed extension 后做完整四阶段 live acceptance；或无限期 defer seed extension 并接受 live evidence 只覆盖 `ready_to_close`。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过。
+- `bash scripts/check-state.sh --repair-scope`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、433 个 Node script subtests（432 pass、1 skip）、shadcn check、lint、typecheck、Next build、backend 215 unittest OK，最终输出 `project Harness check passed`。
+
+### 2026-06-22 - IM237 Harness 与 Review Case 集成
+
+#### 审计结论
+
+- `IM237` 已将 `codex/harness-state-hygiene` 与 `codex/review-case-acceptance-block` 集成到同一分支基线。
+- 集成保留新 Harness 的精简 `docs/current/PROJECT_CONTEXT.md`、空队列不得猜任务规则、`check-state` current-context history guard，以及 `scripts/check.sh` 动态运行全部 `scripts/tests/*.test.mjs` 的门禁。
+- 集成同时保留 IM220-IM236 产品与测试门禁链，包括 IM236 复核案例处理路径。
+- 冲突只发生在 `docs/current/PROJECT_CONTEXT.md`、`docs/dev/branch-log.md`、`scripts/check.sh`，已按“新 Harness 规则优先、产品成果保留”的原则解决。
+- 本轮没有新增业务能力、后端、数据库、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮是分支集成，不代表 live review-case UI/API 验收完成；真实 runtime 验收仍需要 PM 允许可达的 API/runtime 环境。
+- 集成分支包含 IM220-IM236 的大量既有文件变更；后续合并时应以 `codex/im237-harness-review-case-integration` 作为统一基线，避免再分别合并两条并行分支。
+
+#### 验证
+
+- 冲突解决后 `bash scripts/check-state.sh --strict` 通过。
+- 冲突解决后 `git diff --check` 通过。
+- 冲突解决后 `bash scripts/check-state.sh --repair-scope` 通过。
+- 冲突解决后 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。
+- 追踪更新后再次复跑 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 dynamic Node script tests、shadcn check、lint、typecheck、Next build、backend 215 tests OK，最终输出 `project Harness check passed`。
+
+### 2026-06-22 - IM236 复核案例处理路径收口
+
+#### 审计结论
+
+- `IM236/US856` 已将复核案例列表和详情页的分散信息收成运营人员可用的处理路径。
+- `/data-quality/review-cases` 新增队列处理路径，展示处理阶段分布、优先处理入口和读取/空队列状态。
+- `/data-quality/review-cases/[caseId]` 总览新增单案例处理路径，展示来源、证据、结论、关闭和续办五步状态。
+- 本轮明确修正了过去把 Codex 思路、Gate、PM 验收矩阵和停机条件写成页面内容的错误：页面只保留运营处理语言，项目治理语言留在规格、测试和报告中。
+- 这次没有新增后端、数据库、schema/migration、依赖、package/lockfile、页面路由、审批、权限、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮不是 live UI/API 验收；如需真实 seeded 数据渲染验收，仍需要 PM 允许可达的 `127.0.0.1:8000` review-case API runtime。
+- 页面新增的是处理路径提示，不代表新增审批、转派、重开、导出、批量关闭或生产工作流能力。
+
+#### 验证
+
+- TDD RED：`node --test scripts/tests/import-center-review-case-acceptance-model.test.mjs` 先因新摘要函数缺失失败。
+- GREEN：`node --test scripts/tests/import-center-review-case-acceptance-model.test.mjs` 通过，4/4 tests pass。
+- 结构 RED：`node --test scripts/tests/product-structure-review-case-processing-path.test.mjs` 先因页面未渲染处理路径失败。
+- GREEN：`node --test scripts/tests/product-structure-review-case-processing-path.test.mjs` 通过，2/2 tests pass，并确认页面源码不暴露 Gate/PM 验收/停机条件/审批/导出/批量/权限等治理语言。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、shadcn gate、lint、typecheck、Next build、backend 215 tests OK。
+- 现有 `127.0.0.1:3000` 在 3 秒内未返回；遵守 PM 指令未启动新的测试环境，因此不声称完成 browser smoke。
+
+### 2026-06-22 - IM235 结构与主数据中等门禁继续拆分
+
+#### 审计结论
+
+- `IM235/US855` 已将 product-structure app-shell/master-data 与 master-data maintenance agent-list/workplace-detail 四组偏长测试门禁拆成 8 个中等粒度子门禁。
+- 四个旧测试文件现在只是 import 薄入口，分别导入对应子门禁，避免默认入口空跑。
+- Qoder 并行执行三组受控拆分但均返回 max-turns；Codex 审查实际 diff 后确认只保留 in-scope 测试拆分产物，并由 Codex 接入 `scripts/check.sh` 与 Harness。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增 product-structure 或 master-data maintenance 业务能力。
+- IM235 分支叠在尚未合并的 IM234 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 -> IM228 -> IM229 -> IM230 -> IM231 -> IM232 -> IM233 -> IM234 -> IM235 顺序处理。
+
+#### 验证
+
+- `node --test` focused run 覆盖 4 个旧入口和 8 个新子门禁：通过，36/36 entry-plus-child tests pass；8 个子门禁单独运行通过，18/18 tests pass。
+- Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、结构/主数据子门禁、lint、typecheck、Next build、backend 215 tests OK。
+
+### 2026-06-18 - IM234 import-center 中等门禁继续拆分
+
+#### 审计结论
+
+- `IM234/US854` 已将 import-center review-case preview/gap、version workbench、batch apply action 三组偏长测试门禁拆成 6 个中等粒度子门禁。
+- 三个旧测试文件现在只是 import 薄入口，分别导入对应子门禁，避免默认入口空跑。
+- 新增门禁覆盖 review conclusion preview/evidence gap、version workbench list-filter/result-link、batch apply url-guidance/submit-feedback。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增导入中心业务能力。
+- IM234 分支叠在尚未合并的 IM233 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 -> IM228 -> IM229 -> IM230 -> IM231 -> IM232 -> IM233 -> IM234 顺序处理。
+
+#### 验证
+
+- `node --test` focused run 覆盖 3 个旧入口和 6 个新子门禁：通过，22/22 entry-plus-child tests pass；6 个子门禁单独运行通过，11/11 tests pass。
+- Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、import-center 子门禁、lint、typecheck、Next build、backend 215 tests OK。
+
+### 2026-06-18 - IM233 复核案例中等门禁继续拆分
+
+#### 审计结论
+
+- `IM233/US853` 已将 import-center review-case workspace owner、action deck、action write 三组偏长测试门禁拆成 6 个中等粒度子门禁。
+- 三个旧测试文件现在只是 import 薄入口，分别导入对应子门禁，避免默认入口空跑。
+- 新增门禁覆盖 workspace-owner matrix/detail、action deck summary/feedback-navigation、action write closure/supplement。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- Qoder 本轮返回 max-turns，Codex 只复用其已完成且 in-scope 的 workspace-owner 拆分，并直接补齐 action-deck/action-write 拆分。
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增复核案例业务能力。
+- IM233 分支叠在尚未合并的 IM232 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 -> IM228 -> IM229 -> IM230 -> IM231 -> IM232 -> IM233 顺序处理。
+
+#### 验证
+
+- `node --test` focused run 覆盖 3 个旧入口和 6 个新子门禁：通过，20/20 entry-plus-child tests pass；6 个子门禁单独运行通过，10/10 tests pass。
+- Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、review-case 子门禁、lint、typecheck、Next build、backend 215 tests OK。
+
+### 2026-06-18 - IM232 中等粒度测试门禁拆分
+
+#### 审计结论
+
+- `IM232/US852` 已将 dashboard model、import-center batch detail、product-structure master-data detail context 三组测试门禁拆成 10 个中等粒度子门禁。
+- 三个旧测试文件现在只是 import 薄入口，分别导入对应子门禁，避免默认入口空跑。
+- 新增门禁覆盖 dashboard anomaly/sync-heatmap/schedule-plan/risk-unavailability、batch detail URL-row/summary/correction、master-data detail terminology/workplace-vendor/agent-reference-detail。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- dashboard model 旧入口之前不在 `scripts/check.sh` 中，本轮将拆分后的四个 dashboard 子门禁纳入默认门禁，提升覆盖但可能增加少量门禁耗时。
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增 dashboard、导入中心或主数据业务能力。
+- IM232 分支叠在尚未合并的 IM231 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 -> IM228 -> IM229 -> IM230 -> IM231 -> IM232 顺序处理。
+
+#### 验证
+
+- `node --test` focused run 覆盖 3 个旧入口和 10 个新子门禁：通过，48/48 entry-plus-child tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、dashboard/batch-detail/product-structure 子门禁、lint、typecheck、Next build、backend 215 tests OK。
+
+### 2026-06-18 - IM231 import-center 长门禁继续子拆分
+
+#### 审计结论
+
+- `IM231/US851` 已将 import-center comparison、version action/comparison、result trace、exception 五个偏长测试门禁拆成 17 个小门禁。
+- 五个旧测试文件现在只是薄入口，分别导入对应子门禁，避免默认入口空跑。
+- 新增门禁覆盖 comparison detail/return/review-case、version candidate/direct-entry/result-context/trigger/submit-notice/run-callback/result-review、result trace navigation/list/drilldown、exception impact/trace/guidance。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- Qoder 初始产物把 comparison、result-trace、exception 三个旧入口改成 0-test 注释入口，Codex review 后已修正为 import 薄入口。
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增导入中心业务能力。
+- IM231 分支叠在尚未合并的 IM230 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 -> IM228 -> IM229 -> IM230 -> IM231 顺序处理。
+
+#### 验证
+
+- `node --test` focused run 覆盖 5 个旧入口和 17 个新子门禁：通过，36/36 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、shadcn gate、split import-center 长门禁、lint、typecheck、Next build、backend 215 tests OK。
+
+### 2026-06-18 - IM230 import-center 剩余大门禁子拆分
+
+#### 审计结论
+
+- `IM230/US850` 已将 import-center template、batch list、review-case detail 三个偏大的测试门禁拆成 9 个小门禁。
+- 三个旧测试文件现在只是薄入口，分别导入对应子门禁，避免默认入口空跑。
+- 新增门禁覆盖 template URL/action/fit、batch summary/filter/navigation、review-case detail context/evidence/timeline。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- Qoder 初始产物把旧入口改成 0-test 注释入口，Codex review 后已修正为 import 薄入口。
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增导入中心业务能力。
+- IM230 分支叠在尚未合并的 IM229 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 -> IM228 -> IM229 -> IM230 顺序处理。
+
+#### 验证
+
+- `node --test scripts/tests/import-center-template-model.test.mjs scripts/tests/import-center-template-url-model.test.mjs scripts/tests/import-center-template-action-model.test.mjs scripts/tests/import-center-template-fit-model.test.mjs scripts/tests/import-center-batch-list-model.test.mjs scripts/tests/import-center-batch-summary-model.test.mjs scripts/tests/import-center-batch-filter-model.test.mjs scripts/tests/import-center-batch-navigation-model.test.mjs scripts/tests/import-center-review-case-detail-model.test.mjs scripts/tests/import-center-review-case-detail-context-model.test.mjs scripts/tests/import-center-review-case-detail-evidence-model.test.mjs scripts/tests/import-center-review-case-detail-timeline-model.test.mjs`：通过，34/34 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、shadcn gate、split import-center 子门禁、lint、typecheck、Next build、backend 215 tests OK。
+
+### 2026-06-18 - IM229 master-data reference 门禁子拆分
+
+#### 审计结论
+
+- `IM229/US849` 已将偏大的 master-data reference 测试门禁拆成 3 个小门禁。
+- `scripts/tests/master-data-maintenance-reference-model.test.mjs` 现在只是薄入口，导入 list、action、detail 三个子门禁。
+- 新增门禁覆盖引用对象列表/入口、组织/技能/供应商维护 payload、组织/技能详情归属。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增主数据维护能力。
+- IM229 分支叠在尚未合并的 IM228 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 -> IM228 -> IM229 顺序处理。
+
+#### 验证
+
+- `node --test scripts/tests/master-data-maintenance-reference-model.test.mjs scripts/tests/master-data-maintenance-reference-list-model.test.mjs scripts/tests/master-data-maintenance-reference-action-model.test.mjs scripts/tests/master-data-maintenance-reference-detail-model.test.mjs`：通过，16/16 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、shadcn gate、master-data reference 子门禁、lint、typecheck、Next build、backend 215 tests OK。
+
+### 2026-06-18 - IM228 master-data agent 门禁子拆分
+
+#### 审计结论
+
+- `IM228/US848` 已将偏大的 master-data agent 测试门禁拆成 4 个小门禁。
+- `scripts/tests/master-data-maintenance-agent-model.test.mjs` 现在只是薄入口，导入 list、detail、import、action 四个子门禁。
+- 新增门禁覆盖客服人员列表/筛选、人员详情服务团队上下文、客服人员导入弹窗、维护 payload 与反馈。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增主数据维护能力。
+- IM228 分支叠在尚未合并的 IM227 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 -> IM228 顺序处理。
+
+#### 验证
+
+- `node --test scripts/tests/master-data-maintenance-agent-model.test.mjs scripts/tests/master-data-maintenance-agent-list-model.test.mjs scripts/tests/master-data-maintenance-agent-detail-model.test.mjs scripts/tests/master-data-maintenance-agent-import-model.test.mjs scripts/tests/master-data-maintenance-agent-action-model.test.mjs`：通过，16/16 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
+### 2026-06-18 - IM227 import-center batch apply 门禁子拆分
+
+#### 审计结论
+
+- `IM227/US847` 已将偏大的 import-center batch apply 测试门禁拆成 3 个小门禁。
+- `scripts/tests/import-center-batch-apply-model.test.mjs` 现在只是薄入口，导入 action、applied-result、readiness 三个子门禁。
+- 新增门禁覆盖批次应用 URL/action guidance/submit feedback、applied result card、readiness issue groups。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增导入应用能力。
+- IM227 分支叠在尚未合并的 IM226 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 顺序处理。
+
+#### 验证
+
+- `node --test scripts/tests/import-center-batch-apply-model.test.mjs scripts/tests/import-center-batch-apply-action-model.test.mjs scripts/tests/import-center-batch-applied-result-model.test.mjs scripts/tests/import-center-batch-readiness-model.test.mjs`：通过，12/12 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
+### 2026-06-18 - IM226 product-structure 过期断言重定向与最终拆分
+
+#### 审计结论
+
+- `IM226/US846` 已将 IM225 后剩余的 product-structure 断言从旧 monolith 源码位置重定向到真实模块，并拆成 7 个可执行门禁。
+- `scripts/tests/product-structure.test.mjs` 现在只是薄入口，导入 7 个子门禁，不再保留失败审计基线。
+- 新增门禁覆盖 production wording、global shell、master-data detail context、master-data maintenance actions、master-data agent workflow、business import、result chain。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮解决的是测试表达过期和门禁结构问题，不代表新增产品能力。
+- IM226 分支叠在尚未合并的 IM225 分支之后；PR/merge 时需要按 IM225 -> IM226 顺序处理。
+
+#### 验证
+
+- `node --test scripts/tests/product-structure.test.mjs scripts/tests/product-structure-production-wording.test.mjs scripts/tests/product-structure-global-shell.test.mjs scripts/tests/product-structure-master-data-detail-context.test.mjs scripts/tests/product-structure-master-data-maintenance-actions.test.mjs scripts/tests/product-structure-master-data-agent-workflow.test.mjs scripts/tests/product-structure-business-import.test.mjs scripts/tests/product-structure-result-chain.test.mjs`：通过，46/46 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
+### 2026-06-18 - IM225 product-structure 绿色安全子集拆分
+
+#### 审计结论
+
+- `IM225/US845` 已将 product-structure 中可验证为绿色的安全结构子集拆出并接入默认 `scripts/check.sh`。
+- `scripts/tests/product-structure-app-shell.test.mjs` 覆盖 app-shell/global wording/page identity 结构守卫，6/6 tests pass。
+- `scripts/tests/product-structure-master-data.test.mjs` 覆盖 master-data 入口、对象边界、breadcrumb 与重复标题结构守卫，6/6 tests pass。
+- 原 `scripts/tests/product-structure.test.mjs` 保留 23 个非默认审计 tests，其中当前 9/23 pass、14/23 fail；失败均为拆分前已有断言偏差或需要产品/实现校准的边界，不接入默认门禁。
+- 本轮不启动额外测试环境，不修改 UI、路由、数据读取、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这不是 product-structure 全量修复，只是把绿色安全子集变成默认门禁。
+- 剩余 business-import、result-chain 和部分 master-data drift 断言需要单独评审；直接机械拆或接入 `scripts/check.sh` 会让默认门禁失败。
+
+#### 验证
+
+- `node --test scripts/tests/product-structure-app-shell.test.mjs`：通过，6/6 tests pass。
+- `node --test scripts/tests/product-structure-master-data.test.mjs`：通过，6/6 tests pass。
+- `node --test scripts/tests/product-structure.test.mjs`：当前 9/23 pass、14/23 fail，保留为非默认审计基线。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
+### 2026-06-18 - IM224 production model gate 子拆分
+
+#### 审计结论
+
+- `IM224/US844` 已接管 Qoder 的 production model gate 拆分结果，并将新文件接入默认 `scripts/check.sh`。
+- 原 `scripts/tests/actual-log-production-model.test.mjs` 的 10 个 tests 拆为 workbench 5 tests、detail status 2 tests、detail login 3 tests。
+- 原 `scripts/tests/personnel-schedule-production-model.test.mjs` 的 10 个 tests 拆为 workbench 5 tests、detail 2 tests、reference blocker 3 tests。
+- 原 `scripts/tests/demand-forecast-production-model.test.mjs` 的 11 个 tests 拆为 workbench 5 tests、detail 3 tests、change trace 3 tests。
+- 旧通用 production 测试文件已完全迁出并删除；`scripts/check.sh` 已改为显式运行 9 个拆分后的 production model gates。
+- product-structure 只读分析未产生文件变更；其 business-import 与 data-quality-result 分组需要产品评审后再决定是否拆分。
+- 本轮不启动额外测试环境，不修改 UI、路由、数据读取、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁维护，不等同于新增 actual-log、personnel-schedule、demand-forecast 生产处理能力。
+- `product-structure.test.mjs` 仍是最大单文件，但其中 business-import/result-chain 断言承载产品所有权边界，不应直接机械拆分。
+
+#### 验证
+
+- `node --test scripts/tests/actual-log-production-workbench-model.test.mjs scripts/tests/actual-log-production-detail-status-model.test.mjs scripts/tests/actual-log-production-detail-login-model.test.mjs`：通过，10/10 tests pass。
+- `node --test scripts/tests/personnel-schedule-production-workbench-model.test.mjs scripts/tests/personnel-schedule-production-detail-model.test.mjs scripts/tests/personnel-schedule-production-reference-blocker-model.test.mjs`：通过，10/10 tests pass。
+- `node --test scripts/tests/demand-forecast-production-workbench-model.test.mjs scripts/tests/demand-forecast-production-detail-model.test.mjs scripts/tests/demand-forecast-production-change-trace-model.test.mjs`：通过，11/11 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
+### 2026-06-18 - IM223 Qoder 拆分结果接入与剩余大门禁细分
+
+#### 审计结论
+
+- `IM223/US843` 已接管 Qoder 的测试拆分结果，并继续细分剩余较大的 import-center 与 master-data model gates。
+- 原 `scripts/tests/import-center-core-model.test.mjs` 的 16 个 tests 拆为 format/url 6 tests、batch list 6 tests、result trace 4 tests。
+- 原 review-case workspace/action 14 个 tests 拆为 workspace list 2 tests、workspace owner 3 tests、workspace grouping 2 tests、action deck 4 tests、action write 3 tests。
+- 原 master-data maintenance detail/payload 7 个 tests 拆为 workplace detail 3 tests、service-team detail 1 test、vendor detail 2 tests、workplace payload 1 test。
+- 旧通用测试文件已完全迁出并删除；`scripts/check.sh` 已改为显式运行拆分后的新 model gates。
+- 本轮不启动额外测试环境，不修改 UI、路由、数据读取、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁维护，不等同于新增导入中心、复核案例或主数据维护业务能力。
+- Qoder 本轮只允许机械拆分；Codex 保留 diff 审查、门禁接入、Harness、最终验证和提交责任。
+
+#### 验证
+
+- `node --test scripts/tests/import-center-format-url-model.test.mjs scripts/tests/import-center-batch-list-model.test.mjs scripts/tests/import-center-result-trace-model.test.mjs`：通过，16/16 tests pass。
+- `node --test scripts/tests/import-center-review-case-model.test.mjs scripts/tests/import-center-review-case-workspace-list-model.test.mjs scripts/tests/import-center-review-case-workspace-owner-model.test.mjs scripts/tests/import-center-review-case-workspace-grouping-model.test.mjs scripts/tests/import-center-review-case-detail-model.test.mjs scripts/tests/import-center-review-case-action-deck-model.test.mjs scripts/tests/import-center-review-case-action-write-model.test.mjs`：通过，21/21 tests pass。
+- `node --test scripts/tests/master-data-maintenance-model.test.mjs scripts/tests/master-data-maintenance-agent-model.test.mjs scripts/tests/master-data-maintenance-reference-model.test.mjs scripts/tests/master-data-maintenance-workplace-detail-model.test.mjs scripts/tests/master-data-maintenance-service-team-detail-model.test.mjs scripts/tests/master-data-maintenance-vendor-detail-model.test.mjs scripts/tests/master-data-maintenance-workplace-payload-model.test.mjs`：通过，31/31 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
+### 2026-06-18 - IM222 import-center version gate 子拆分
+
+#### 审计结论
+
+- `IM222/US842` 已继续拆分 import-center version model gate。
+- 原 `scripts/tests/import-center-version-model.test.mjs` 的 10 个 tests 拆为 version workbench 3 tests、version action/applied context 3 tests、version comparison 4 tests。
+- 旧 `scripts/tests/import-center-version-model.test.mjs` 已完全迁出并删除；`scripts/check.sh` 改为显式运行三个更细的 version model gate。
+- 本轮不启动额外测试环境，不修改 UI、路由、数据读取、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁维护，不等同于新增业务版本、应用版本定位或本地比对业务能力。
+
+#### 验证
+
+- `node --test scripts/tests/import-center-version-workbench-model.test.mjs scripts/tests/import-center-version-action-model.test.mjs scripts/tests/import-center-version-comparison-model.test.mjs`：通过，10/10 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
+### 2026-06-18 - IM221 import-center batch/template gate 子拆分
+
+#### 审计结论
+
+- `IM221/US841` 已继续拆分 import-center batch/template model gate。
+- 原 `scripts/tests/import-center-batch-template-model.test.mjs` 的 27 个 tests 拆为 batch apply/readiness/result 6 tests、template inventory/detail/fit 8 tests、upload workspace/prefill/result 6 tests、batch detail/row correction 7 tests。
+- 旧 `scripts/tests/import-center-batch-template-model.test.mjs` 已完全迁出并删除；`scripts/check.sh` 改为显式运行四个更细的 batch/template model gate。
+- `product-structure.test.mjs` 原始基线当前为 21/35 tests pass，失败集中在已漂移的 master-data/product-structure 断言；本轮未将其接入默认门禁。
+- 本轮不启动额外测试环境，不修改 UI、路由、数据读取、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁维护，不等同于新增导入、模板、上传或批次应用业务能力。
+- `product-structure.test.mjs` 后续需要单独审计和产品校准；不应作为绿色机械拆分候选直接接入 `scripts/check.sh`。
+
+#### 验证
+
+- `node --test scripts/tests/import-center-batch-apply-model.test.mjs scripts/tests/import-center-template-model.test.mjs scripts/tests/import-center-upload-model.test.mjs scripts/tests/import-center-batch-detail-model.test.mjs`：通过，27/27 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
+### 2026-06-18 - IM220 import-center model gate 最终子拆分
+
+#### 审计结论
+
+- `IM220/US840` 已继续拆分 import-center model gate，Qoder 执行低风险机械拆分，Codex 审查 diff 与验证。
+- review-case gate 拆为 conclusion/evidence 4 tests、workspace/list/owner 7 tests、detail/context/chain/timeline 3 tests、action/feedback/retry/write 7 tests。
+- 原 core/comparison/exception gate 拆为 core 16 tests、comparison 3 tests、exception 4 tests。
+- 旧 `scripts/tests/import-center-model.test.mjs` 已完全迁出并删除；`scripts/check.sh` 改为显式运行 7 个更细的 import-center model gate，并保留 version 与 batch/template gate。
+- product-structure 只读分析未产生文件变更；其结论是建议未来拆为 global-shell、master-data-entity、agent-workflow、reference-maintenance、business-import 五组，其中 business-import/result-chain 需要产品评审后再拆。
+- 本轮不启动额外测试环境，不修改 UI、路由、数据读取、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁覆盖维护，不等同于新增导入中心或复核案例业务能力。
+- `product-structure.test.mjs` 后续不应直接机械拆 business-import/result-chain 组，需要先确认产品语义边界。
+
+#### 验证
+
+- `node --test scripts/tests/import-center-core-model.test.mjs scripts/tests/import-center-comparison-model.test.mjs scripts/tests/import-center-exception-model.test.mjs scripts/tests/import-center-review-case-model.test.mjs scripts/tests/import-center-review-case-workspace-model.test.mjs scripts/tests/import-center-review-case-detail-model.test.mjs scripts/tests/import-center-review-case-action-model.test.mjs`：通过，44/44 tests pass。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
+### 2026-06-18 - IM219 master-data maintenance model gate 拆分接入
+
+#### 审计结论
+
+- `IM219/US839` 已把 master-data maintenance model 断言从单个大测试文件拆成四个业务边界门禁。
+- `scripts/tests/master-data-maintenance-model.test.mjs` 保留 core/workbench/source-context 8 个 tests。
+- `scripts/tests/master-data-maintenance-agent-model.test.mjs` 新增 8 个 agent 相关 tests，覆盖员工列表、坐席管理、坐席详情、筛选、导入弹窗、坐席 payload、技能替换 payload 和反馈。
+- `scripts/tests/master-data-maintenance-reference-model.test.mjs` 新增 8 个 reference/organization/skill/vendor tests。
+- `scripts/tests/master-data-maintenance-detail-model.test.mjs` 新增 7 个 workplace/service-team/vendor detail 和 workplace payload tests。
+- `scripts/check.sh` 已显式运行四个拆分后的 master-data maintenance model 测试文件。
+- 本轮不启动额外测试环境，不修改 UI、路由、数据读取、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁覆盖改进，不等同于新增主数据维护业务能力。
+- 后续若继续拆 `product-structure.test.mjs`，需要先按产品结构职责分组，避免只按文件长度机械拆分。
+
+#### 验证
+
+- `node --test scripts/tests/master-data-maintenance-model.test.mjs scripts/tests/master-data-maintenance-agent-model.test.mjs scripts/tests/master-data-maintenance-reference-model.test.mjs scripts/tests/master-data-maintenance-detail-model.test.mjs scripts/tests/master-data-model-split.test.mjs scripts/tests/master-data-workbench-split.test.mjs`：通过，33/33 tests pass。
+- `npm run lint`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、import-center model gates、master-data maintenance model gates、split guards、shadcn gate、lint、typecheck、Next build 和后端 215 个测试。
+
+### 2026-06-18 - IM218 import-center model gate 业务边界拆分
+
+#### 审计结论
+
+- `IM218/US838` 已继续按业务边界拆分 import-center model gate。
+- `scripts/tests/import-center-version-model.test.mjs` 新增 10 个 version/workbench assertions，覆盖版本台账、应用版本定位、本地比对触发、触发反馈、最新运行回看和业务版本列表结果回看。
+- `scripts/tests/import-center-batch-template-model.test.mjs` 新增 27 个 batch/template/apply assertions，覆盖批次应用 URL、字段映射模板、上传预填、模板 fit、失败行、批次详情、准备度分组、应用入口和上传结果反馈。
+- 原 `scripts/tests/import-center-model.test.mjs` 保留 23 个 core/comparison/exception assertions，包括基础格式、批次筛选、downstream navigation/drilldown、quality impact、comparison-run detail、page hierarchy、API/upload URL 和 exception guidance。
+- `scripts/check.sh` 已接入新增两个测试文件，并把既有 `import-center-model-first-split`、`import-center-summary-split`、`master-data-model-split`、`master-data-workbench-split` 四个 split guard 纳入正式门禁。
+- Qoder 只执行受控测试拆分，未提交、未推送；Codex 审查 diff、补 Harness、负责最终验证与本地提交。
+- 本轮不启动 `127.0.0.1:8000`，不修改 UI、路由、数据读取、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁维护，不等同于新增导入中心业务能力，也不等同于 live UI/API smoke。
+- 后续若继续拆 `product-structure.test.mjs`，需要先做只读产品语义分组，不能按文件长度机械移动。
+
+#### 验证
+
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，23/23 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-version-model.test.mjs`：通过，10/10 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-batch-template-model.test.mjs`：通过，27/27 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model-first-split.test.mjs scripts/tests/import-center-summary-split.test.mjs scripts/tests/master-data-model-split.test.mjs scripts/tests/master-data-workbench-split.test.mjs`：通过，4/4 tests pass。
+- `npm run lint`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、四个 import-center model gate、四个 split guard、shadcn gate、lint、typecheck、Next build 和后端 215 个测试。
+
+### 2026-06-17 - IM217 复核案例 model test 拆分
+
+#### 审计结论
+
+- `IM217/US837` 已把复核案例相关 21 个 model assertions 从通用 `scripts/tests/import-center-model.test.mjs` 拆到 `scripts/tests/import-center-review-case-model.test.mjs`。
+- 原 `scripts/tests/import-center-model.test.mjs` 保留 60 个导入中心、业务版本和 comparison-run assertions；`import center comparison run detail links related review cases` 仍留在原文件，因为它验证的是 comparison-run 结果结构如何聚合复核案例链接。
+- `scripts/check.sh` 现在同时运行两个 import-center model 测试文件，保持 IM216 的正式门禁覆盖，同时降低单文件维护成本。
+- Qoder 只执行受控拆分，未提交、未推送；Codex 审查 diff、清理拆分后残留 import，并负责最终验证与本地提交。
+- 本轮不启动 `127.0.0.1:8000`，不修改 UI、路由、数据读取、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁维护，不等同于新增复核业务能力，也不等同于 live seeded UI/API smoke。
+- 后续若继续拆分其他 import-center model tests，需要按业务边界切分，避免只按文件长度机械拆分。
+
+#### 验证
+
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，60/60 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-review-case-model.test.mjs`：通过，21/21 tests pass。
+- `npm run lint`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、两个 import-center model gate、shadcn gate、lint、typecheck、Next build 和后端 215 个测试。
+
+### 2026-06-17 - IM216 复核案例 model test 运行器硬化
+
+#### 审计结论
+
+- `IM216/US836` 已把 `scripts/tests/import-center-model.test.mjs` 从加载失败状态修复为正式可执行测试。
+- 根因是 direct Node ESM resolver 不解析 import-center barrel 内部的 extensionless TS imports；测试文件改用现有 `jiti` 加载 `components/import-center-model.ts`，不改业务组件源码。
+- 该测试已接入 `scripts/check.sh`，现在会覆盖 import-center model 的 81 个断言，包括复核案例处理阶段、owner 矩阵、详情上下文、动作区、失败重试、关闭后续办，以及导入/版本/对比相关模型契约。
+- 本轮不启动 `127.0.0.1:8000`，不修改 UI、路由、数据读取、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是 model/contract gate hardening，不等同于 live seeded UI/API smoke；真实页面数据验收仍需要已批准的 8000/API runtime。
+- `jiti` 当前来自既有安装树；本轮未新增依赖或修改 package/lockfile。若未来依赖树收紧，应单独确认是否把测试加载器变成显式 devDependency。
+
+#### 验证
+
+- RED：`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 在修复前失败，报 `ERR_MODULE_NOT_FOUND`，缺失 `components/import-center-formatters`。
+- GREEN：同一命令修复后通过，81/81 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含新增 import-center model test、strict state、shadcn gate、lint、typecheck、Next build 和后端 215 个测试。
+
+### 2026-06-17 - IM215 复核案例 model/contract-only 验收收口
+
+#### 审计结论
+
+- `IM215/US835` 已按 PM 继续指令收口为 no-new-env model/contract-only QA 记录。
+- 本轮不启动 `127.0.0.1:8000` 或其他测试环境，不修改复核案例 UI、路由、数据读取、后端、依赖或 package/lockfile。
+- live smoke 结论保持克制：3000 route shell 和反馈参数部分可达，但 seeded case 数据没有通过 live UI/API 验收。
+- 现有覆盖盘点显示：共享 API/error helper、共享 empty-state、处理阶段、owner 矩阵、详情上下文、动作区、失败重试、关闭后续办均有代码级测试或结构覆盖来源；其中 `import-center-model.test.mjs` 目前不能直接作为通过证据，因为 direct Node 执行被既有 TS/ESM import resolution 问题挡住。
+
+#### 风险
+
+- 后续若需要真实验收，仍必须提供已批准的 `127.0.0.1:8000` review-case API 或等效运行端点。
+- 直接把本次收口理解成“live seeded review-case 已可用”会误导后续优先级。
+- 如果要把复核案例 model assertions 纳入硬门禁，需要单独修复测试运行器或把相关断言迁入当前正式 `scripts/check.sh` 可执行路径。
+
+#### 验证
+
+- `node --test scripts/tests/frontend-api-utilities.test.mjs`：通过。
+- `node --test scripts/tests/shared-empty-state.test.mjs`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：加载阶段失败，原因是既有 TS/ESM extensionless import resolution；不作为 IM215 pass evidence。
+- `node --test scripts/tests/product-structure.test.mjs scripts/tests/frontend-api-utilities.test.mjs scripts/tests/shared-empty-state.test.mjs`：失败，失败来自 unrelated historical master-data structure assertions；不作为 IM215 pass evidence。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict`：通过，current queue / active tasks 已清空。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、shadcn gate、lint、typecheck、Next build 和后端 215 个测试。
+
+### 2026-06-17 - IM215 复核案例验收 smoke
+
+#### 审计结论
+
+- `IM215/US835` 已尝试使用当前已运行的 `127.0.0.1:3000` 做复核案例验收 smoke。
+- 复核案例列表、处理阶段筛选、`CASE-QUERY-001` 详情、失败反馈参数和关闭成功反馈参数的前端 URL 均返回 200。
+- 但页面实际状态为 `复核案例读取失败 / fetch failed`，因为 `127.0.0.1:8000` review-case API 当前不可达。
+- PM 已明确不要启动其他测试环境，因此本轮不能完成 seeded case 状态矩阵验收。
+
+#### 风险
+
+- 如果只看 3000 HTTP 200，容易误判复核案例工作区已通过验收；真实状态数据仍未加载。
+- 在 API 未运行时继续做文案或空态修复，可能掩盖环境问题。
+
+#### 验证
+
+- `curl` 访问 3000 复核案例列表、阶段筛选、详情和反馈 URL：均返回 200。
+- `curl` 访问 8000 review-case API：连接失败。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict`：blocked current queue / active tasks 通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、shadcn gate、lint、typecheck、Next build 和后端 215 个测试。
+
+### 2026-06-17 - IM214 复核案例工作区现状校准
+
+#### 审计结论
+
+- `IM214/US834` 已新增复核案例工作区校准文档。
+- 当前 `/data-quality/review-cases` 是复核案例 triage 列表，覆盖业务日、owner、状态、严重度、来源类型、处理阶段和关键词筛选，并提供 owner x 阶段负载和首个待处理入口。
+- 当前 `/data-quality/review-cases/[caseId]` 是单案例处理工作区，覆盖来源上下文、来源链路、证据/结论链路、处理时间线、动作区、Owner 上下文和续办导航。
+- 当前动作区支持受控本地证据补充、结论补充和关闭；关闭仍受证据/结论完整性和已关闭状态约束。
+- 本轮不修改 UI、路由、数据读取、后端、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 复核案例工作区容易被误读为已经具备生产审批、权限、批量关闭或导出能力；这些仍需新 Gate。
+- 如果后续从 dashboard 行跳转复核案例，必须先确认稳定 `caseId` 或明确查询契约，不能伪造 downstream ID。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：执行态通过。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict`：完成态 current queue / active tasks 清空后通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、shadcn gate、lint、typecheck、Next build 和后端 215 个测试。
+
 ### 2026-06-01 - IM050 shadcn/ui 自动化验证链路
 
 #### 审计结论
@@ -4371,3 +5027,667 @@
 - `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增 Dialog 使用既有 Dialog、Alert、Button、Input、Badge 和语义 token，未引入硬编码色阶或 `space-*`。
 - in-app browser smoke 确认 `/actual-logs/production?import_dialog=1&log_type=login` 和 `log_type=status` 均渲染对应 Dialog；登录/状态两个标题各唯一，`CSV 文件` 字段可见，旧独立上传链接数量为 0；`/actual-logs/production?import_dialog=1&log_type=login&upload=success&batch=BATCH-LOGIN-001` 显示 `导入已提交` 并提供 `/data-quality/import-batches/BATCH-LOGIN-001` 链接。
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM172 前端健康恢复计划固化
+
+#### 审计结论
+
+- 将第三方综合审计后的恢复策略固化到仓库，不再依赖聊天上下文保存执行顺序。
+- `docs/frontend-health-recovery-plan.md` 记录恢复入口、Product Design 插件门禁、阶段拆分、验收指标和明确非目标。
+- `docs/superpowers/plans/2026-06-12-frontend-health-recovery.md` 记录可执行计划，后续 worker 可按任务恢复。
+- Current state 只包含 US792/IM172；后续 IM173+ 不直接进入 active queue，避免上下文压缩后误执行多个任务。
+- 本轮不修改 app、components、lib、backend、package、lockfile，不新增业务功能、导航、权限、审批、导出、批量、自动排班、公式、结算或收费因子。
+
+#### 验证
+
+- 严格状态检查和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM173 前端 API 结果和错误工具去重
+
+#### 审计结论
+
+- 按恢复计划 Stage 1 第一刀执行，只抽取共享 `ApiResult<T>` 与 `formatApiError`。
+- 新增 `lib/api-result.ts` 和 `lib/api-error.ts`；目标前端数据读取文件不再本地定义 `ApiResult<T>` 或 `formatApiError`。
+- `formatApiError` 支持 optional fallback，保留字段映射模板详情页原有 `api_unavailable` 兜底语义。
+- `fetchImportBatches` / field-mapping fetch 去重仍留给 IM174，没有混入本轮。
+- 本轮不改变页面 UI、导航、fetch URL、返回数据结构、错误文案语义、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/frontend-api-utilities.test.mjs` 先失败，证明缺少 `lib/api-result.ts`。
+- TDD 绿灯：结构测试通过；`npm run typecheck` 和 `npm run lint` 已通过。
+- strict state、`git diff --check` 和最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM174 导入 fetch 工具去重
+
+#### 审计结论
+
+- 按恢复计划 Stage 1 第二刀执行，只抽取导入批次与字段映射模板的共享 fetch 工具。
+- 新增 `lib/import-api.ts`，提供共享 `fetchImportBatches` 和 `fetchImportFieldMappingTemplates`。
+- 目标页面不再本地定义重复 fetch；`app/master-data/agents/data.ts` 通过 re-export 保持既有调用方兼容。
+- 页面专属 detail/readiness/review/calculation fetch 继续 colocated，没有混入本轮抽象。
+- 本轮不改变页面 UI、导航、fetch URL、返回数据结构、错误文案语义、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/import-api-utilities.test.mjs` 先失败，证明缺少 `lib/import-api.ts`。
+- TDD 绿灯：结构测试通过；`npm run typecheck` 和 `npm run lint` 已通过。
+- strict state、`git diff --check` 和最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM175 导入和比对 Server Action 运行时保护
+
+#### 审计计划
+
+- 按恢复计划 Stage 1 第三刀执行，只补充 Server Action 入参 runtime guards。
+- 保护范围限定为 `file_type`、`comparison_type`、`result_redirect_to`，不引入表单库，不改可见 UI。
+- 本轮不改变页面 UI、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 验证计划
+
+- 先写结构测试并看到红灯，再实现 guard。
+- 聚焦测试、strict state、`git diff --check` 和最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 结果写入 Done Report。
+
+#### 执行结果
+
+- 已新增结构测试 `scripts/tests/data-quality-actions-guards.test.mjs`，先确认缺少 parser 时红灯，再实现运行时 guard。
+- `uploadImportCsvAction` 现在先校验 `file_type` 和 `result_redirect_to`；非法值返回 `invalid_file_type` 或 `invalid_redirect_target`。
+- `createImportFieldMappingTemplateAction` 与 `applyImportBatchAction` 现在先校验 `file_type`；非法值返回 `invalid_file_type`。
+- `triggerLocalComparisonRunAction` 与 `triggerVersionWorkbenchLocalComparisonRunAction` 现在通过共享 `comparison_type` guard 拦截非法值并返回 `invalid_comparison_type`。
+- 未改变可见 UI、导航、后端、数据库、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+### 2026-06-12 - IM176 全局页面异常恢复边界
+
+#### 审计计划
+
+- 按恢复计划 Stage 2 第一刀执行，只新增全局 `app/error.tsx`。
+- 使用现有 shadcn Alert/Button 和 AppShell，不新增依赖，不做 route-group 迁移。
+- 本轮不改变业务页面、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 已新增 `app/error.tsx` 作为 Next.js app router error boundary。
+- 异常内容区使用 destructive Alert，提供 `reset()` 重试和 `/dashboard` 安全返回。
+- 已新增结构测试 `scripts/tests/global-error-boundary.test.mjs`，先确认缺少 `app/error.tsx` 时红灯，再实现。
+
+### 2026-06-12 - IM177 核心业务路由加载骨架屏
+
+#### 审计计划
+
+- 按恢复计划 Stage 2 第二刀执行，只新增 6 个核心入口的 route-local `loading.tsx`。
+- 使用当前 AppShell 和 shadcn Skeleton；因为未做 shared layout/route-group 迁移，loading 文件按当前项目现实包含 AppShell。
+- 本轮不修改现有业务页面、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 已新增 `/dashboard`、`/master-data`、`/demand-plans`、`/schedule-plans`、`/actual-logs/production`、`/data-quality` 的 loading skeleton。
+- 已新增结构测试 `scripts/tests/core-route-loading-states.test.mjs`，先确认 loading 文件缺失时红灯，再实现。
+
+### 2026-06-13 - IM178 导入中心模型第一刀拆分
+
+#### 审计计划
+
+- 按恢复计划 Stage 3 第一刀执行，只拆分 `components/import-center-model.ts` 中的基础设施代码。
+- 新文件限定为类型、格式化函数、URL/href 构造函数；旧入口继续 re-export，避免大范围改调用方。
+- 本轮不改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 已新增 `components/import-center-types.ts`，承载原 model 中的导出类型定义。
+- 已新增 `components/import-center-formatters.ts`，承载批次显示名、文件类型、处理状态、应用状态、就绪状态和行状态格式化函数。
+- 已新增 `components/import-center-navigation.ts`，承载导入中心 API URL 与页面 href 构造函数。
+- `components/import-center-model.ts` 继续 re-export 旧公开入口，并保留后续业务 summarizer/builder 逻辑。
+- 已新增结构测试 `scripts/tests/import-center-model-first-split.test.mjs`，先确认缺少拆分文件时红灯，再实现兼容拆分。
+
+### 2026-06-13 - IM179 导入中心剩余汇总构造逻辑拆分
+
+#### 审计计划
+
+- 按恢复计划 Stage 3 第二刀执行，只拆分导入中心剩余 summarizer/builder。
+- 旧 `components/import-center-model.ts` 必须降为兼容 re-export 入口，现有调用方 import path 不变。
+- 本轮不改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 已新增 list/version/review/batch/template/comparison 六个导入中心责任 model 文件。
+- `components/import-center-model.ts` 只保留类型、格式化、导航和六个责任 model 的 re-export。
+- 已新增结构测试 `scripts/tests/import-center-summary-split.test.mjs`，先确认缺少拆分文件时红灯，再实现拆分。
+
+### 2026-06-13 - IM180 主数据维护 workbench 行为不变拆分
+
+#### 审计计划
+
+- 按恢复计划 Stage 3 第三刀执行，只拆分 `components/master-data-maintenance-workbench.tsx`。
+- 旧入口必须降为兼容 re-export 入口，现有调用方 import path 不变。
+- 本轮不改变可见 UI、路由、交互、业务语义、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 已新增 actions/agents/references/details/forms/fields 六个主数据维护责任文件。
+- `components/master-data-maintenance-workbench.tsx` 只保留六个责任文件的 re-export。
+- 已新增结构测试 `scripts/tests/master-data-workbench-split.test.mjs`，先确认缺少拆分文件时红灯，再实现拆分。
+
+### 2026-06-13 - IM181 主数据维护 model 行为不变拆分
+
+#### 审计计划
+
+- 按恢复计划 Stage 3 第四刀执行，只拆分 `components/master-data-maintenance-model.ts`。
+- 旧入口必须降为兼容 re-export 入口，现有调用方 import path 不变。
+- 本轮不改变可见 UI、路由、交互、业务语义、API URL、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 已新增 types/entities/payloads/agent/reference/detail/import-dialog/formatters 八个主数据维护 model 责任文件。
+- `components/master-data-maintenance-model.ts` 只保留八个责任文件的 re-export。
+- 已新增结构测试 `scripts/tests/master-data-model-split.test.mjs`，先确认缺少拆分文件时红灯，再实现拆分。
+
+### 2026-06-13 - IM182 可见动作位置规则固化
+
+#### 审计计划
+
+- 按恢复计划 Stage 3 第五刀执行，只固化可见动作位置边界。
+- 用结构标记区分页级、筛选、列表、行内和危险确认动作，防止后续重新混放。
+- 本轮不新增按钮、业务动作、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- `SiteHeader` 页级动作区已标记为 `data-action-scope="page"`。
+- 客服人员筛选区、列表工具栏、行内动作和冻结 Dialog 危险确认区分别标记为 `filter`、`list`、`row`、`danger`。
+- 已新增结构测试 `scripts/tests/action-placement-structure.test.mjs`，先确认缺少页级 action scope 时红灯，再实现标记。
+- 浏览器烟测确认 `/master-data/agents` 上页级动作是 `新建/批量导入`，筛选动作是 `查询/重置`，列表工具栏和行内动作边界可读。
+
+### 2026-06-14 - IM183 共享空状态模式
+
+#### 审计计划
+
+- 按恢复计划 Stage 4 第二刀执行，只引入共享空状态组件。
+- 先替换已经存在的同名本地 EmptyState，不扩大到所有 EmptyPanel/PanelState。
+- 本轮不新增业务按钮、业务动作、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 新增 `components/empty-state.tsx`，使用 lucide 图标、语义 token、稳定 `data-slot`、compact 高度和外部动作 slot。
+- 替换 `components/import-center-batch-list-panel.tsx`、`components/import-center-batch-inspector-panel.tsx`、`components/import-center-review-cases-workspace.tsx` 中的本地同名 EmptyState。
+- 新增结构测试 `scripts/tests/shared-empty-state.test.mjs`，先确认缺少共享组件时红灯，再实现共享空状态。
+- 浏览器烟测确认数据质量页无匹配筛选下渲染共享空状态节点、标题、详情和图标。
+
+### 2026-06-14 - IM184 主数据维护表单反馈一致性
+
+#### 审计计划
+
+- 按恢复计划 Stage 4 执行，只统一主数据维护表单反馈。
+- 使用共享 client submit 组件承载提交中状态，避免在 server 表单文件里直接使用 hook。
+- 本轮不新增业务字段、按钮、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 新增 `components/maintenance-submit-button.tsx`，使用 `useFormStatus` 提供 pending 禁用态和提交中文案。
+- `components/master-data-maintenance-fields.tsx` 新增统一 `MaintenanceFieldLabel` 和必填视觉标识。
+- `components/master-data-maintenance-forms.tsx` 已替换散落的裸 submit Button。
+- 新增结构测试 `scripts/tests/master-data-form-feedback.test.mjs`，先确认缺少共享组件、字段标识和表单引用时红灯，再实现统一反馈。
+- 浏览器烟测确认 `/master-data/agents/new` 渲染共享 submit、7 个必填标识且控制台无 error。
+
+### 2026-06-15 - IM185 导航和 Breadcrumb 规则复核
+
+#### 审计计划
+
+- 按恢复计划 Stage 4 最后一刀执行，只固化导航和 Breadcrumb 规则。
+- 不恢复未经确认的 `质量中心`、`数据质量中心` 或 generic `导入中心` Sidebar 入口。
+- 不追求所有详情/新建/编辑页的 Sidebar 覆盖，不新增业务导航模块。
+
+#### 执行结果
+
+- `components/app-sidebar.tsx` 中主数据 `组织`、`技能` 导航项改为 prefix 匹配，覆盖详情/新建/编辑子路由。
+- `components/site-header.tsx` 增加稳定 `site-header`、`site-header-breadcrumb`、`site-header-title` slot。
+- 新增结构测试 `scripts/tests/navigation-breadcrumb-rules.test.mjs`，先确认组织/技能 prefix 和 header slot 缺失时红灯，再实现规则。
+- 浏览器烟测确认 `/master-data/organizations/new` 与 `/master-data/skills/new` 对应父级导航高亮、Breadcrumb slot 存在且控制台无 error。
+
+### 2026-06-15 - IM186 收口旧计划脚手架导航入口
+
+#### 审计计划
+
+- 只从 Sidebar 收口旧 demo 入口 `班次明细` 和 `不可用管理`。
+- 旧 `/shift-details`、`/unavailability` 路由保持兼容，不扩大为路由删除或模型改名。
+- 本轮不新增页面、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- `components/app-sidebar.tsx` 已移除旧 demo 入口。
+- `scripts/tests/navigation-breadcrumb-rules.test.mjs` 新增结构测试，防止旧 demo 入口重新回到 Sidebar。
+- 浏览器烟测确认本地 Sidebar 保留已确认入口，且不再显示 `班次明细`、`不可用管理`。
+
+### 2026-06-15 - IM187 收口排班计划旧链路入口
+
+#### 审计计划
+
+- 只收口当前 `/schedule-plans` 和 `/schedule-plans/[planId]` 页面里的旧 demo 深链。
+- 旧 `/schedule-risks`、`/shift-details`、`/unavailability` 路由保持兼容，不扩大为路由删除。
+- 本轮不新增页面、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- `/schedule-plans` 已移除旧链路卡和旧风险表。
+- `/schedule-plans/[planId]` 已移除旧复核链路按钮和旧风险/不可用查询。
+- 已删除两个不再使用的旧链路组件，并新增结构测试防止当前排班计划入口重新链接到旧 demo 路由。
+
+### 2026-06-15 - IM188 预测版本详情入口语义收口
+
+#### 审计计划
+
+- 从恢复计划 Stage 5 回到业务版本流，先处理预测版本入口语义。
+- 只使用现有 `/demand-plans/production` 与 `/demand-plans/production/[batchId]` 路由，不新增版本路由或后端接口。
+- 本轮不新增发布、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 预测版本列表行操作改为 `查看预测版本`。
+- 预测版本详情页返回入口改为 `返回预测版本列表`，说明文案聚焦预测业务版本。
+- 新增结构测试 `scripts/tests/demand-forecast-version-entry-semantics.test.mjs`，防止详情入口退回来源批次处理语义。
+
+### 2026-06-15 - IM189 排班版本详情入口语义收口
+
+#### 审计计划
+
+- 延续 IM188 的业务版本入口规则，对排班版本做同构收口。
+- 只使用现有 `/schedule-plans/production` 与 `/schedule-plans/production/[batchId]` 路由，不新增版本路由或后端接口。
+- 本轮不新增发布、冻结、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 排班版本列表行操作改为 `查看排班版本`。
+- 排班版本详情页返回入口改为 `返回排班版本列表`，说明文案聚焦排班业务版本。
+- 新增结构测试 `scripts/tests/personnel-schedule-version-entry-semantics.test.mjs`，防止详情入口退回来源批次处理语义。
+
+### 2026-06-15 - IM190 登录/状态日志版本详情入口语义收口
+
+#### 审计计划
+
+- 延续 IM188/IM189 的业务版本入口规则，对登录/状态日志版本做同构收口。
+- 只使用现有 `/actual-logs/production` 与 `/actual-logs/production/[batchId]` 路由，不新增版本路由或后端接口。
+- 本轮不新增日志处理增强、状态字典配置维护、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 登录/状态日志版本列表行操作改为 `查看日志版本`。
+- 日志版本详情页返回入口改为 `返回日志版本列表`，错误标题和详情说明聚焦日志版本。
+- 新增结构测试 `scripts/tests/actual-log-version-entry-semantics.test.mjs`，防止详情入口退回来源批次处理语义。
+
+### 2026-06-15 - IM191 对比运行详情结果回看入口语义收口
+
+#### 审计计划
+
+- 延续 Stage 5 的结果回看语义，对对比运行详情页做最小收口。
+- 只修改详情页顶部主返回入口，不新增 comparison run 列表页、计算触发、后端接口或写能力。
+- 本轮不新增审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 对比运行详情页顶部主返回入口改为 `返回业务版本列表`。
+- 页内 `来源链路` 和 `复核案例` tab 保持原有功能，不把复核案例作为页面父级。
+- 新增结构测试 `scripts/tests/comparison-result-entry-semantics.test.mjs`，防止主返回入口退回 `返回复核案例`。
+
+### 2026-06-16 - IM192 业务版本列表本地比对动作语义收口
+
+#### 审计计划
+
+- 延续 Stage 5 的比对运行结果回看语义，对业务版本列表里的本地比对动作做最小收口。
+- 只修改现有 `/data-quality/versions` 模型文案和测试，不新增 comparison run 列表路由、后端接口或计算能力。
+- 本轮不新增审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 本地比对候选和当前版本触发入口改为 `可发起比对运行` / `发起比对运行`。
+- 比对提交反馈和回看入口改为 `比对运行已生成`、`查看比对运行列表`、`最新一次比对运行结果`。
+- 业务版本列表回看标题改为 `业务版本列表比对运行结果`。
+- 新增结构测试 `scripts/tests/version-comparison-action-semantics.test.mjs`，防止退回泛化比对/结果列表文案。
+
+### 2026-06-16 - IM193 共享 lib helper 回归护栏
+
+#### 审计计划
+
+- 使用 Qoder 执行一个低风险机械测试任务，Codex 负责 Harness、范围、diff 审查、验证、提交和推送控制。
+- Qoder 只允许新增 `scripts/tests/lib-helpers-regression.test.mjs`，不允许修改业务源码、共享 lib 实现、后端、check 脚本或依赖。
+- 本轮不新增 UI、导航、路由、后端接口、数据库、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- Qoder 以 `ultimate` 模型新增共享 helper 回归结构测试；虽然 Qoder 返回 max-turns 错误，Codex 审查确认实际 diff 只有允许的测试文件。
+- 新测试确认 `lib/api-result.ts`、`lib/api-error.ts`、`lib/import-api.ts` 存在，关键导出仍存在。
+- 新测试扫描 `app/`、`components/`、`lib/`，防止 `formatApiError`、`fetchImportBatches`、`fetchImportFieldMappingTemplates` 函数定义重复回流。
+
+### 2026-06-16 - IM194 共享 MetricCard 首刀
+
+#### 审计计划
+
+- 按第三方重构方案 Task 1 做最小首刀，不一次性全站替换。
+- Product Design brief 锁定为保留现有 shadcn Card 指标卡视觉、静态展示、无新增动作。
+- Qoder 只允许新增共享 MetricCard、迁移 `/demand-plans`、`/schedule-plans`、`/shift-details` 三个完全同构页面，并补结构测试。
+- 本轮不新增页面、路由、数据读取、业务文案、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `components/metric-card.tsx`，沿用现有 Card/Header/Description/Title/Content 结构。
+- 三个目标页面改为引用共享 MetricCard，并移除本地 `MetricCard` 或 `SummaryCard` 函数。
+- 新增 `scripts/tests/shared-metric-card-structure.test.mjs`，防止三处页面重新定义本地指标卡函数。
+- Qoder 两次返回 max-turns，Codex 按实际 diff 审查后确认没有越权修改。
+
+### 2026-06-16 - IM195 共享 MetricCard 旧风险不可用页迁移
+
+#### 审计计划
+
+- 延续 IM194，只处理已经确认完全同构的旧风险/不可用指标卡，不扩展到生产工作台变体。
+- Product Design brief 继续锁定为保留现有 shadcn Card 指标卡视觉、静态展示、无新增动作。
+- Qoder 只允许修改三处页面；Codex 负责结构测试扩展、diff 审查、验证、提交和推送控制。
+- 本轮不新增页面、路由、数据读取、业务文案、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- `/unavailability`、`/unavailability/[unavailabilityId]`、`/schedule-risks/[riskId]` 改为引用共享 `MetricCard`。
+- 三处页面本地同构 `MetricCard` 函数已删除。
+- `scripts/tests/shared-metric-card-structure.test.mjs` 扩展到 6 个页面，防止本地指标卡函数回流。
+- Codex 审查确认 Qoder 只做机械迁移；HTTP smoke 覆盖列表页和两条详情页。
+
+### 2026-06-16 - IM196 共享列表搜索与状态筛选控件
+
+#### 审计计划
+
+- 按第三方重构方案 Task 2 做最小组件抽取，不做单一泛型大组件。
+- Product Design brief 锁定为保持现有 shadcn Button/Input 列表筛选视觉和完整搜索/筛选/清空交互。
+- Qoder 只允许机械实现两个共享控件和四个页面替换；Codex 负责 diff 审查、验证、提交和推送控制。
+- 本轮不新增页面、路由、查询语义、业务文案、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `SearchInputBar`，集中搜索图标、query 输入、隐藏字段和搜索按钮。
+- 新增 `StatusFilterPills`，集中状态筛选按钮组 active/outline 渲染。
+- 四个旧列表页复用共享筛选控件；状态筛选页保留原有 status 值和 href 生成逻辑。
+- 新增结构测试防止四页重新内联 Search/Input/status map。
+
+### 2026-06-16 - IM197 SimpleTable 首刀迁移 demand-plan-table
+
+#### 审计计划
+
+- 按第三方重构方案 Task 3 做首刀验证，只迁移一个轻量子表格，不一次性迁移 11 个表格。
+- Product Design brief 锁定为保持现有 shadcn Table 视觉、列定义、排序入口和空状态文案。
+- Qoder 只允许新增 `SimpleTable` 和迁移 `demand-plan-table`；Codex 负责 diff 审查、验证、提交和推送控制。
+- 本轮不新增页面、路由、业务文案、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `SimpleTable`，集中轻量表格的 TanStack Table 渲染、排序状态、header/body render loop 和空状态。
+- `demand-plan-table` 保留原列定义、状态 Badge、排序按钮和默认 `plan_date` 排序，渲染委托给 `SimpleTable`。
+- 新增结构测试防止 `demand-plan-table` 重新拥有 `useReactTable`、`flexRender` 或 shadcn Table 循环。
+- HTTP smoke 覆盖正常列表和空状态。
+
+### 2026-06-17 - IM198 SimpleTable 第二刀迁移 schedule-plan-interval-table
+
+#### 审计计划
+
+- 延续第三方重构方案 Task 3 和 IM197 结果，只迁移第二个轻量子表格，不扩大到所有表格。
+- Product Design brief 锁定为保持现有 shadcn Table 视觉、列定义、排序入口和空状态文案。
+- 本轮只允许迁移 `schedule-plan-interval-table` 并扩展结构测试；不新增页面、路由、业务文案、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- `schedule-plan-interval-table` 保留原列定义、覆盖率格式化、排序按钮和默认 `interval_start` 排序，渲染委托给 `SimpleTable`。
+- `scripts/tests/simple-table-structure.test.mjs` 扩展覆盖 `schedule-plan-interval-table`，防止该表重新拥有 `useReactTable`、`flexRender` 或 shadcn Table 循环。
+- 当前队列和 active tasks 已在完成后清空，不保留 done history。
+
+### 2026-06-17 - IM199 SimpleTable 第三刀迁移 schedule-risk-shift-table
+
+#### 审计计划
+
+- 延续第三方重构方案 Task 3、IM197 和 IM198 结果，只迁移第三个轻量子表格，不扩大到所有表格。
+- Product Design brief 锁定为保持现有 shadcn Table 视觉、列定义、排序入口和空状态文案。
+- 本轮只允许迁移 `schedule-risk-shift-table` 并扩展结构测试；不新增页面、路由、业务文案、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- `schedule-risk-shift-table` 保留原列定义、状态 Badge、覆盖率格式化、排序按钮和默认 `plan_id` 排序，渲染委托给 `SimpleTable`。
+- `scripts/tests/simple-table-structure.test.mjs` 扩展覆盖 `schedule-risk-shift-table`，防止该表重新拥有 `useReactTable`、`flexRender` 或 shadcn Table 循环。
+- 当前队列和 active tasks 已在完成后清空，不保留 done history。
+
+### 2026-06-17 - IM200 SimpleTable 第四刀迁移 schedule-risk-unavailability-table
+
+#### 审计计划
+
+- 延续第三方重构方案 Task 3、IM197 到 IM199 结果，只迁移第四个轻量子表格，不扩大到所有表格。
+- Product Design brief 锁定为保持现有 shadcn Table 视觉、列定义、排序入口和空状态文案。
+- 本轮只允许迁移 `schedule-risk-unavailability-table` 并扩展结构测试；不新增页面、路由、业务文案、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- `schedule-risk-unavailability-table` 保留原列定义、状态 Badge、排序按钮和默认 `staff_name` 排序，渲染委托给 `SimpleTable`。
+- `scripts/tests/simple-table-structure.test.mjs` 扩展覆盖 `schedule-risk-unavailability-table`，防止该表重新拥有 `useReactTable`、`flexRender` 或 shadcn Table 循环。
+- 当前队列和 active tasks 已在完成后清空，不保留 done history。
+
+### 2026-06-17 - IM201 SimpleTable 第五刀迁移 unavailability-impact-shift-table
+
+#### 审计计划
+
+- 延续第三方重构方案 Task 3、IM197 到 IM200 结果，只迁移第五个轻量子表格，不扩大到所有表格。
+- Product Design brief 锁定为保持现有 shadcn Table 视觉、列定义、排序入口、计划链接和空状态文案。
+- 本轮只允许迁移 `unavailability-impact-shift-table` 并扩展结构测试；不新增页面、路由、业务文案、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- `unavailability-impact-shift-table` 保留原列定义、状态 Badge、计划链接、覆盖率格式化、排序按钮和默认 `plan_id` 排序，渲染委托给 `SimpleTable`。
+- `scripts/tests/simple-table-structure.test.mjs` 扩展覆盖 `unavailability-impact-shift-table`，防止该表重新拥有 `useReactTable`、`flexRender` 或 shadcn Table 循环。
+- 浏览器烟测确认 `/unavailability/unavail-20260511-001` 的影响班次表表头、2 行数据和计划链接保持正常，空态未误显示。
+- 当前队列和 active tasks 已在完成后清空，不保留 done history。
+
+### 2026-06-17 - IM202 SimpleTable 第六刀迁移 unavailability-impact-risk-table
+
+#### 审计计划
+
+- 延续第三方重构方案 Task 3、IM197 到 IM201 结果，只迁移第六个轻量子表格，不扩大到所有表格。
+- Product Design brief 锁定为保持现有 shadcn Table 视觉、列定义、排序入口、明细链接和空状态文案。
+- 本轮只允许迁移 `unavailability-impact-risk-table` 并扩展结构测试；不新增页面、路由、业务文案、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- `unavailability-impact-risk-table` 保留原列定义、风险 Badge、明细链接、排序按钮和默认 `risk_level` 排序，渲染委托给 `SimpleTable`。
+- `scripts/tests/simple-table-structure.test.mjs` 扩展覆盖 `unavailability-impact-risk-table`，防止该表重新拥有 `useReactTable`、`flexRender` 或 shadcn Table 循环。
+- 浏览器烟测确认 `/unavailability/unavail-20260511-001` 的关联风险表表头、1 行数据和明细链接保持正常，空态未误显示。
+- 当前队列和 active tasks 已在完成后清空，不保留 done history。
+
+### 2026-06-17 - IM203 SimpleTable 第七刀迁移 shift-details-table
+
+#### 审计计划
+
+- 延续第三方重构方案 Task 3、IM197 到 IM202 结果，只迁移第七个轻量子表格，不扩大到主列表或工作台表格。
+- Product Design brief 锁定为保持现有 shadcn Table 视觉、列定义、排序入口、计划链接和空状态文案。
+- 本轮只允许迁移 `shift-details-table` 并扩展结构测试；不新增页面、路由、业务文案、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- `shift-details-table` 保留原列定义、状态 Badge、计划链接、覆盖率格式化、排序按钮和默认 `plan_date` 排序，渲染委托给 `SimpleTable`。
+- `scripts/tests/simple-table-structure.test.mjs` 扩展覆盖 `shift-details-table`，防止该表重新拥有 `useReactTable`、`flexRender` 或 shadcn Table 循环。
+- HTTP smoke 确认 `/shift-details?query=suzhou` 的班次明细页标题、表头、计划链接保持正常，空态未误显示。
+- 当前队列和 active tasks 已在完成后清空，不保留 done history。
+
+### 2026-06-17 - IM204 MainTableShell 边界规格
+
+#### 审计计划
+
+- IM203 已完成七个低风险 SimpleTable 迁移；继续机械迁移剩余 `useReactTable` 会触碰主列表/工作台表格。
+- 本轮只允许新增边界规格和 trace 记录，确认 `schedule-plan-table`、`unavailability-table`、`data-table` 的候选优先级。
+- 本轮不修改 UI 代码、页面、路由、数据读取、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `docs/design/main-table-shell-boundary-spec.md`，明确 `SimpleTable` 只适用于轻量子表格。
+- 规格定义未来 `MainTableShell` 只可拥有 toolbar slot、筛选布局 slot、列显隐、summary strip slot、表格 render loop、empty row 和分页控制。
+- 规格明确业务列定义、状态语义、row action、route href、数据查询、页面指标和生产能力必须留在具体表格或页面内。
+- 候选顺序建议先 `schedule-plan-table`，再 `unavailability-table`，暂缓 `data-table`。
+
+### 2026-06-17 - IM205 MainTableShell 结构护栏
+
+#### 审计计划
+
+- 延续 IM204 边界规格，先用 docs/test-only 结构护栏锁住 MainTableShell 职责边界。
+- TDD 红灯必须先证明缺少 guard 文档会失败，再补最小文档让测试通过。
+- 本轮不创建 `components/main-table-shell.tsx`，不修改候选表、页面、路由、数据读取、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `scripts/tests/main-table-shell-structure.test.mjs`，红灯失败原因是缺少 `docs/design/main-table-shell-structure-guard.md`。
+- 新增 `docs/design/main-table-shell-structure-guard.md`，记录允许职责、禁止职责和候选顺序。
+- 结构测试确认本轮没有创建 `components/main-table-shell.tsx`，`schedule-plan-table`、`unavailability-table`、`data-table` 也没有提前 import/render MainTableShell。
+
+### 2026-06-17 - IM206 MainTableShell 首刀迁移 schedule-plan-table
+
+#### 审计计划
+
+- 延续 IM204/IM205 边界，只把第一个主表候选 `schedule-plan-table` 迁移到 MainTableShell，不扩大到 `unavailability-table` 或 `data-table`。
+- Product Design brief 锁定为保持当前 shadcn Card/Table/Select/Button/DropdownMenu 视觉，保留排班计划搜索、状态筛选、缺口筛选、列显隐、排序、分页、汇总、重置和详情入口。
+- MainTableShell 只拥有主表壳层、toolbar/summary slot、列显隐、TanStack 渲染循环、排序状态、分页状态和空态结构；业务筛选、列定义、详情路由和业务文案继续留在 `schedule-plan-table`。
+- 本轮不新增页面、路由、数据读取、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `components/main-table-shell.tsx`，提供共享主表壳层和分页/列显隐能力。
+- `components/schedule-plan-table.tsx` 委托 MainTableShell 渲染主表，同时保留排班计划业务列、筛选状态、摘要、详情链接和文案。
+- `scripts/tests/main-table-shell-structure.test.mjs` 扩展为实现护栏：确认 MainTableShell 拥有共享结构，排班计划主表不再直接拥有渲染循环，其他候选表未提前接入。
+- 结构测试、typecheck、lint、shadcn/tokens review 和浏览器烟测覆盖排班计划列表；最终验证结果记录在 branch log。
+
+### 2026-06-17 - IM207 MainTableShell 第二刀迁移 unavailability-table
+
+#### 审计计划
+
+- 延续 IM204/IM205 边界和 IM206 实现，只把第二个主表候选 `unavailability-table` 迁移到 MainTableShell，不扩大到 `data-table`。
+- Product Design brief 锁定为保持当前 shadcn Card/Table/Select/Button/DropdownMenu 视觉，保留不可用管理搜索、状态筛选、列显隐、排序、分页、汇总、重置、影响入口和班次入口。
+- 不可用页面已有外层业务 Card，因此 MainTableShell 需要 embedded 模式避免 card-in-card；业务筛选、列定义、影响/班次路由和业务文案继续留在 `unavailability-table`。
+- 本轮不新增页面、路由、数据读取、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- `components/main-table-shell.tsx` 增加 embedded 模式，并把列显隐控制作为 toolbar context 暴露给嵌入式表格。
+- `components/unavailability-table.tsx` 委托 MainTableShell 渲染主表，同时保留不可用业务列、筛选状态、摘要、影响/班次链接和文案。
+- `scripts/tests/main-table-shell-structure.test.mjs` 扩展为第二个实现护栏：确认不可用主表不再直接拥有渲染循环，`data-table` 未提前接入。
+- 结构测试、typecheck、lint、shadcn/tokens review 和浏览器烟测覆盖不可用管理列表；最终验证结果记录在 branch log。
+
+### 2026-06-17 - IM208 MainTableShell 收口与 data-table 暂缓决策
+
+#### 审计计划
+
+- IM197-IM207 已完成七个轻量 SimpleTable 表格、MainTableShell 边界/护栏，以及排班计划和不可用管理两个主表迁移。
+- 本轮只做文档和 Harness 收口，确认不把 `components/data-table.tsx` 作为下一刀机械迁移。
+- `data-table` 属于 `/dashboard` anomaly/demo table；在产品 owner、路由责任和真实 BPO 工作流价值重新确认前，迁移它的产品收益不足。
+- 本轮不修改 UI 组件、页面、路由、数据读取、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 R908/US828/IM208 记录，明确当前表格抽象链路收口。
+- 更新 MainTableShell 边界规格，写清重新评估 `data-table` 的前置条件。
+- `data-table` 暂缓迁移不代表技术债遗漏；它是产品归属未确认前的有意停止。
+- 当前队列和 active tasks 已在完成后清空，不保留 done history。
+
+### 2026-06-17 - IM209 Dashboard anomaly table 产品归属审计
+
+#### 审计计划
+
+- 延续 IM208 收口结论，只审计 `/dashboard` anomaly table 的产品归属，不做 UI 改造。
+- 读取 `/dashboard` 页面、`components/data-table.tsx`、`app/dashboard/data.ts`、F030/F031/Q012 历史需求和 MainTableShell 收口文档。
+- 判断 `DataTable` 是经营总览 summary widget、异常分诊入口，还是应替换为真实下游结果摘要。
+- 本轮不修改 UI 组件、页面、路由、数据读取、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `docs/design/dashboard-anomaly-table-ownership-audit.md`。
+- 结论：`DataTable` 当前归属 `/dashboard` 经营总览，是本地 anomaly overview widget。
+- 证据：数据来自静态 `app/dashboard/data.ts`，行操作仍是占位；历史 R058-R060/US070-US072 定义的是 dashboard table parity；真实异常追踪上下文已经在 data-quality、comparison-run、review-case、import-batch 和 actual-log production 页面形成。
+- 默认路径：保留 overview，不进入 MainTableShell 机械迁移队列。未来如要升级，先定义异常行路由到 comparison run、review case、import quality trace 或 actual-log production detail 的产品语义。
+
+### 2026-06-17 - IM210 Dashboard 下游工作区入口规格
+
+#### 审计计划
+
+- 延续 IM209 结论，不做 dashboard UI 改造，只定义 future row entry semantics。
+- 读取现有 comparison-run、review-case、import batch、actual-log production、schedule production 详情页面，确认可复用的真实下游工作区。
+- 明确 dashboard 只能持有摘要和入口，不能拥有复核写入、关闭、对比计算、批次应用、生产动作或权限/审批/导出等能力。
+- 本轮不修改 UI 组件、页面、路由、数据读取、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `docs/design/dashboard-downstream-entry-spec.md`。
+- 结论：未来 dashboard anomaly entry 只能是 summary-to-workspace link。
+- 允许目标限定为已有详情工作区：comparison run detail、review case detail、import batch result trace、actual-log production detail、schedule production detail。
+- 缺少稳定 `caseId`、`runId` 或来源 `batchId` 时，未来实现不得伪造行级跳转、状态、复核结论或生产动作。
+
+### 2026-06-17 - IM211 Dashboard anomaly row 下游入口阻塞态
+
+#### 审计计划
+
+- 延续 IM210 规格，只做 read-only/link-only 的最小前端实现。
+- 当前静态 dashboard anomaly rows 没有稳定下游 ID，因此默认应显示 blocked entry，而不是泛化行操作按钮。
+- TDD 先补模型测试，再改 `data-table-model` 和 `data-table`。
+- 本轮不新增真实异常查询、新路由、新查询参数、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- RED：`node --test scripts/tests/dashboard-table-model.test.mjs` 先因缺少 `buildDashboardAnomalyEntryState` export 失败。
+- GREEN：新增 anomaly downstream entry 状态模型；无 `downstreamEntry` 返回 `等待下游定位` blocked 状态，有稳定 review case ID 时生成既有详情链接。
+- `components/data-table.tsx` 的操作列不再显示泛化占位按钮；当前静态数据没有 stable downstream ID，因此显示 disabled 阻塞态。
+
+### 2026-06-17 - IM212 Dashboard anomaly 链路收口与真实工作区回切
+
+#### 审计计划
+
+- 收口 IM209-IM211，不继续在 dashboard anomaly 静态行上扩展异常处理语义。
+- 对照项目理解与需求基线：经营总览是 Dashboard，真实复核、对比、导入质量和生产处理应在下游业务域承载。
+- 只新增 product/design 收口记录和 Harness 追踪，不修改 UI、路由、数据、后端或依赖。
+
+#### 执行结果
+
+- 新增 `docs/design/dashboard-anomaly-chain-closeout.md`。
+- 结论：dashboard anomaly 链路已到停止点，当前只保留经营总览摘要、future summary-to-workspace 规格，以及缺少稳定下游 ID 时的 `等待下游定位`。
+- 下一阶段推荐从真实复核案例工作区、对比运行工作区、导入质量结果追踪中选择，不再向静态 dashboard 行补伪 ID 或处理动作。
+
+### 2026-06-17 - IM213 项目理解需求基线校准
+
+#### 审计计划
+
+- 对齐 2026-06-14 外部项目理解与需求文档和 2026-06-17 当前 Harness 状态。
+- 只判断需求基线是否仍有效、哪些状态判断已过期、哪些事项需要新 Gate。
+- 不把旧 P0/P1 清单直接转为开发任务，不修改 UI、路由、数据、后端或依赖。
+
+#### 执行结果
+
+- 新增 `docs/design/project-understanding-requirements-calibration.md`。
+- 结论：外部文档的业务背景、核心概念、五大业务域、用户角色和目标 IA 仍可作为产品基线。
+- 结论：外部文档中的当前状态和待实现排序必须按当前 Harness 重校准；错误边界、loading、Tab 化、空状态、数据质量和复核链路已有后续推进。
+- 结论：认证、权限、审批、导出、批量、自动排班、生产公式、结算和收费因子仍是硬边界，需要单独 Gate。
+
+### 2026-06-25 - IM243 复核案例写入动作手工浏览器验收
+
+#### 审计计划
+
+- 只做本地 QA 验收，不新增产品能力或自动化 E2E。
+- 使用 `BPO_DATABASE_URL` 指向 `.local/im243-review-case-form-click-smoke.db`，显式加载 `seed_review_case_stage_matrix()`。
+- 启动 backend `127.0.0.1:8000` 和 frontend `127.0.0.1:3002`，用浏览器手工提交补证据、补结论、关闭案例三个表单。
+- 通过 URL success 参数、页面反馈文本和 detail API 回读确认 server action -> backend write -> redirect 链路。
+- 不修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- `CASE-SEED-ME-001` 补证据提交后跳转 `?evidence=success`，动作页签显示 `补证据提交成功`，detail API 回读到 `local://im243/browser-evidence` 和 `IM243 browser evidence`。
+- `CASE-SEED-MC-001` 补结论提交后跳转 `?conclusion=success`，动作页签显示 `补结论提交成功`，detail API 回读到 `IM243 browser conclusion`。
+- `CASE-QUERY-001` 关闭案例提交后跳转 `?closure=success`，动作页签显示 `关闭案例提交成功`，detail API 回读到 `closure_status=closed` 和 `IM243 browser closure`。
+- `CASE-SEED-CL-001` 显示已关闭 blocker，证据/结论入口提示 `案例已关闭`，面包屑 `复核案例` 可返回列表页。
+- 该证据关闭当前 review-case 本地 runtime acceptance block；不代表 production-ready、权限验收、外部集成验收或自动化 E2E 覆盖。
+
+### 2026-06-25 - IM244 复核案例验收块收口摘要
+
+#### 审计计划
+
+- 复核 Qoder Packet A/B 的证据索引和边界风险输出。
+- 修正容易误读的点：IM239 确实新增了 backend seed 函数；`.local/*.db` 是本地 smoke artifact，不是 PR 可复现工件。
+- 新增收口文档，明确 IM239-IM243 已验证范围、未验证范围、PR 摘要草案和下一阶段候选。
+- 不启动 runtime，不修改产品 UI、后端实现、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 新增 `docs/design/review-case-acceptance-closeout.md`。
+- 结论：review-case local MVP acceptance block 已收口；已验证四阶段 seed、读路径 runtime、写入 API、E2E 不自动化决策和三条浏览器表单链路。
+- 结论：该证据不代表 production-ready、权限、审批、导出、批量、外部集成、自动排班、生产公式、结算、收费因子、多用户并发或 PR 合并完成。
+- 推荐下一步优先做 PR review / merge planning；之后再定义相邻 operator workflow 或 import-center/data-quality downstream chain。

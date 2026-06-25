@@ -149,6 +149,7 @@ Current checks:
 - Registry `current_files` paths exist.
 - Current queue entries do not point to archive files as execution sources.
 - Current files stay under line-count budgets.
+- `PROJECT_CONTEXT.md` does not retain repeated done-history markers beyond the compact current-state budget.
 
 Regression coverage:
 
@@ -159,6 +160,7 @@ Regression coverage:
 - Done story history in current queue warns in warning mode and fails strict mode.
 - Done task history in active tasks fails strict mode.
 - Missing `TRACE_INDEX.yaml` current file paths fail strict mode.
+- Accumulated done-history markers in `PROJECT_CONTEXT.md` fail strict mode.
 
 First live smoke result:
 

@@ -1,9 +1,6 @@
-import {
-  type ImportFieldMappingTemplate,
-  type ImportBatchListRow,
-  buildImportApiUrl,
-  buildImportFieldMappingTemplatesUrl,
-} from "@/components/import-center-model"
+import { formatApiError } from "@/lib/api-error"
+import type { ApiResult } from "@/lib/api-result"
+import { buildImportApiUrl } from "@/components/import-center-model"
 import type {
   MasterDataEmployeeListRow,
   MasterDataMaintenanceEntityKey,
@@ -13,10 +10,7 @@ import type {
   MasterDataWorkplaceServiceTeamRow,
 } from "@/components/master-data-maintenance-model"
 
-export type ApiResult<T> = {
-  data: T | null
-  error: string | null
-}
+export { fetchImportBatches, fetchImportFieldMappingTemplates } from "@/lib/import-api"
 
 export async function fetchMasterDataEmployees(): Promise<
   ApiResult<MasterDataEmployeeListRow[]>
@@ -196,64 +190,6 @@ export async function fetchMasterDataWorkplaceServiceTeams(
   }
 }
 
-export async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
-  try {
-    const response = await fetch(buildImportApiUrl("/api/v1/import-batches"), {
-      cache: "no-store",
-    })
-
-    if (!response.ok) {
-      return {
-        data: [],
-        error: `导入批次读取失败（状态码 ${response.status}）`,
-      }
-    }
-
-    const payload = (await response.json()) as { items?: ImportBatchListRow[] }
-
-    return {
-      data: Array.isArray(payload.items) ? payload.items : [],
-      error: null,
-    }
-  } catch (error) {
-    return {
-      data: [],
-      error: formatApiError(error),
-    }
-  }
-}
-
-export async function fetchImportFieldMappingTemplates(): Promise<
-  ApiResult<ImportFieldMappingTemplate[]>
-> {
-  try {
-    const response = await fetch(buildImportFieldMappingTemplatesUrl(), {
-      cache: "no-store",
-    })
-
-    if (!response.ok) {
-      return {
-        data: [],
-        error: `字段映射模板读取失败（状态码 ${response.status}）`,
-      }
-    }
-
-    const payload = (await response.json()) as {
-      items?: ImportFieldMappingTemplate[]
-    }
-
-    return {
-      data: Array.isArray(payload.items) ? payload.items : [],
-      error: null,
-    }
-  } catch (error) {
-    return {
-      data: [],
-      error: formatApiError(error),
-    }
-  }
-}
-
 function mapReferenceEntityKeyToApiType(
   entityKey: MasterDataMaintenanceEntityKey
 ) {
@@ -286,12 +222,4 @@ function getReferenceEntityLabel(entityKey: MasterDataMaintenanceEntityKey) {
   }
 
   return "主数据"
-}
-
-function formatApiError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return "读取失败"
 }
