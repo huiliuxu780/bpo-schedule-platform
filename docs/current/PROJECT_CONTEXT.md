@@ -12,7 +12,7 @@ The active product boundary remains local MVP and operator-facing workflow scaff
 
 ## Current Queue
 
-IM246 is the current ready story. It defines a medium-sized operator workflow block: Comparison Run -> Review Case association loop. The task must keep the product requirement as one coherent capability, while any Qoder delegation is limited to execution packets inside the same task.
+No executable story is currently queued. IM246 completed the medium-sized Comparison Run -> Review Case association loop and should not be split into smaller follow-up IMs unless a new product block is confirmed.
 
 IM240 completed the PM-confirmed review-case live runtime smoke on the current branch using an isolated `.local/im240-runtime-smoke.db` runtime artifact. The smoke used backend `127.0.0.1:8000` and frontend `127.0.0.1:3002` because the existing `3000` BPO Next dev process was stale and unresponsive. It did not add product features or modify business UI/backend implementation beyond acceptance traceability.
 
@@ -31,7 +31,7 @@ IM243 completed the PM-confirmed manual browser walkthrough for that remaining g
 - IM243 completed the final manual browser path for the three review-case write forms: evidence, conclusion, and closure.
 - IM244 completed a documentation-only QA closeout so the review-case acceptance block can be handed off without overstating production readiness.
 - IM245 completed the PR readiness decision: split review into three stacked PRs before continuing with new product development on top of the branch.
-- IM246 is now queued to strengthen the existing comparison-run and review-case bidirectional navigation surface without adding backend APIs, persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors.
+- IM246 completed the comparison-run review-case loop: explicit related-case counts, open-first/high-risk ordering, strengthened review tab expression, and expanded model coverage, without adding backend APIs, persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors.
 - Harness state optimization is now the active maintenance concern: current context must stay compact, default reads must use the current layer, and history must be queried on demand through registry/legacy references.
 
 ## Current Execution Rules
@@ -59,4 +59,4 @@ IM243 completed the PM-confirmed manual browser walkthrough for that remaining g
 
 ## Current Recommendation
 
-Execute IM246 as one medium-sized product capability, not as many small requirements. Recommended delegation is three bounded execution packets: model contract, page expression, and verification/traceability. Do not claim production readiness, add runtime automation, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.
+Recommended next medium-sized candidates are: (1) review-case source trace to original import batch, completing investigation from case to raw import context, (2) owner workbench across review cases, if PM accepts API/query expansion, or (3) version comparison history timeline after the first two are stable. Do not claim production readiness, add runtime automation, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.

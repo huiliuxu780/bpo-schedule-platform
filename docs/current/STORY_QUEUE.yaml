@@ -5,16 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: "US865"
-    requirement_id: "R945"
-    title: "Comparison Run 到 Review Case 的关联闭环"
-    status: "ready"
-    task_id: "IM246"
-    priority: "high"
-    summary: "让操作员从对比运行详情识别关联复核案例，并能在复核案例详情回到来源对比运行，形成可理解的双向回跳闭环。"
-    acceptance:
-      - "对比运行详情能清楚展示关联复核案例数量、未关闭数量、高风险提示和下一步动作。"
-      - "关联复核案例列表按未关闭、高风险优先展示，并能跳转到对应复核案例详情。"
-      - "复核案例详情保留来源对比运行回跳，不暴露 Gate、PM、Harness、Codex 等内部验收词。"
-      - "空态、读取失败、无关联案例均有明确操作提示。"
+stories: []

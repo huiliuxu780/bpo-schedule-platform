@@ -184,3 +184,27 @@ Return:
 - Tests run and exact pass/fail result.
 - Any risk or follow-up that Codex should handle before final full check.
 ```
+
+## 10. Closeout
+
+IM246 completed on branch `codex/im246-comparison-review-case-loop` as one medium-sized product capability.
+
+Completed scope:
+
+- Added explicit `totalCount` and `openCount` to the comparison-run review-case summary contract.
+- Changed related review-case ordering to prioritize open cases before closed cases, then higher-risk cases.
+- Strengthened the comparison-run `复核案例` tab with a clearer summary, count display, next action, and tone-specific badges.
+- Expanded model coverage for matching, empty state, read error, null detail, ordering, all-closed cases, `schedule_actual` matching, and result-id mismatch.
+
+Verification evidence:
+
+- `node --test scripts/tests/import-center-comparison-*.test.mjs`: 20 pass.
+- `node --test scripts/tests/import-center-review-case-*.test.mjs`: 38 pass.
+- `bash scripts/check-state.sh --strict`: pass.
+- `git diff --check`: pass.
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`: 447 Node tests with 446 pass and 1 skip, lint pass, typecheck pass, Next build pass, 221 backend unittest pass, Harness check pass.
+
+Deferred:
+
+- Runtime browser acceptance can be done later if PM wants visual proof, but no runtime automation or new dependency is required for this scope.
+- Creating review cases from result rows, owner-wide API expansion, version history timelines, permissions, approval, export, batch operations, production formulas, settlement rules, and charge factors remain out of scope.
