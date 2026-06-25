@@ -79,7 +79,7 @@ export function PersonnelScheduleProductionWorkbench({
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <AlertTriangle className="size-4 text-destructive" />
-              排班来源读取失败
+              排班版本读取失败
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
@@ -127,7 +127,7 @@ export function PersonnelScheduleProductionWorkbench({
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild size="sm" variant="ghost">
-              <Link href="/schedule-plans">返回排班计划</Link>
+              <Link href="/schedule-plans">返回排班计划列表</Link>
             </Button>
           </div>
         </CardContent>
@@ -240,12 +240,12 @@ export function PersonnelScheduleProductionDetail({
             <Button asChild size="sm" variant="ghost">
               <Link href={detail.workbenchHref}>
                 <ArrowLeft data-icon="inline-start" />
-                返回排班计划
+                {detail.workbenchLabel}
               </Link>
             </Button>
           </div>
           <p className="max-w-3xl text-sm text-muted-foreground">
-            查看单个人员排班来源批次对应的业务版本、班次引用口径、人员范围说明和 0.5h 展开结果。
+            查看单个人员排班业务版本的班次引用口径、人员范围说明和 0.5h 展开结果。
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -260,7 +260,7 @@ export function PersonnelScheduleProductionDetail({
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <AlertTriangle className="size-4 text-destructive" />
-              排班详情读取失败
+              排班版本读取失败
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
@@ -344,7 +344,7 @@ export function PersonnelScheduleProductionDetail({
                   </Link>
                 </Button>
                 <Button asChild size="sm" variant="ghost">
-                  <Link href={detail.workbenchHref}>返回排班计划</Link>
+                  <Link href={detail.workbenchHref}>{detail.workbenchLabel}</Link>
                 </Button>
               </div>
             </CardContent>

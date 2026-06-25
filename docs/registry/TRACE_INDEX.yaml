@@ -858,6 +858,26 @@ requirements:
   US789: {file: "docs/user-stories.md", requirement_ids: ["R869"], task_ids: ["IM169"], archive_refs: []}
   US790: {file: "docs/user-stories.md", requirement_ids: ["R870"], task_ids: ["IM170"], archive_refs: []}
   US791: {file: "docs/user-stories.md", requirement_ids: ["R871"], task_ids: ["IM171"], archive_refs: []}
+  US792: {file: "docs/user-stories.md", requirement_ids: ["R872"], task_ids: ["IM172"], archive_refs: []}
+  US793: {file: "docs/user-stories.md", requirement_ids: ["R873"], task_ids: ["IM173"], archive_refs: []}
+  US794: {file: "docs/user-stories.md", requirement_ids: ["R874"], task_ids: ["IM174"], archive_refs: []}
+  US795: {file: "docs/user-stories.md", requirement_ids: ["R875"], task_ids: ["IM175"], archive_refs: []}
+  US796: {file: "docs/user-stories.md", requirement_ids: ["R876"], task_ids: ["IM176"], archive_refs: []}
+  US797: {file: "docs/user-stories.md", requirement_ids: ["R877"], task_ids: ["IM177"], archive_refs: []}
+  US798: {file: "docs/user-stories.md", requirement_ids: ["R878"], task_ids: ["IM178"], archive_refs: []}
+  US799: {file: "docs/user-stories.md", requirement_ids: ["R879"], task_ids: ["IM179"], archive_refs: []}
+  US800: {file: "docs/user-stories.md", requirement_ids: ["R880"], task_ids: ["IM180"], archive_refs: []}
+  US801: {file: "docs/user-stories.md", requirement_ids: ["R881"], task_ids: ["IM181"], archive_refs: []}
+  US802: {file: "docs/user-stories.md", requirement_ids: ["R882"], task_ids: ["IM182"], archive_refs: []}
+  US803: {file: "docs/user-stories.md", requirement_ids: ["R883"], task_ids: ["IM183"], archive_refs: []}
+  US804: {file: "docs/user-stories.md", requirement_ids: ["R884"], task_ids: ["IM184"], archive_refs: []}
+  US805: {file: "docs/user-stories.md", requirement_ids: ["R885"], task_ids: ["IM185"], archive_refs: []}
+  US806: {file: "docs/user-stories.md", requirement_ids: ["R886"], task_ids: ["IM186"], archive_refs: []}
+  US807: {file: "docs/user-stories.md", requirement_ids: ["R887"], task_ids: ["IM187"], archive_refs: []}
+  US808: {file: "docs/user-stories.md", requirement_ids: ["R888"], task_ids: ["IM188"], archive_refs: []}
+  US809: {file: "docs/user-stories.md", requirement_ids: ["R889"], task_ids: ["IM189"], archive_refs: []}
+  US810: {file: "docs/user-stories.md", requirement_ids: ["R890"], task_ids: ["IM190"], archive_refs: []}
+  US811: {file: "docs/user-stories.md", requirement_ids: ["R891"], task_ids: ["IM191"], archive_refs: []}
   IM155: {file: "tasks/backlog.yaml", story_ids: ["US775"], gate: "frontend-scaffold"}
   IM156: {file: "tasks/backlog.yaml", story_ids: ["US776"], gate: "frontend-scaffold"}
   IM157: {file: "tasks/backlog.yaml", story_ids: ["US777"], gate: "backend-vertical"}
@@ -875,6 +895,37 @@ requirements:
   IM169: {file: "tasks/backlog.yaml", story_ids: ["US789"], gate: "frontend-scaffold"}
   IM170: {file: "tasks/backlog.yaml", story_ids: ["US790"], gate: "frontend-scaffold"}
   IM171: {file: "tasks/backlog.yaml", story_ids: ["US791"], gate: "frontend-scaffold"}
+  IM172: {file: "tasks/backlog.yaml", story_ids: ["US792"], gate: "harness"}
+  IM173: {file: "tasks/backlog.yaml", story_ids: ["US793"], gate: "frontend-scaffold"}
+  IM174: {file: "tasks/backlog.yaml", story_ids: ["US794"], gate: "frontend-scaffold"}
+  IM175: {file: "tasks/backlog.yaml", story_ids: ["US795"], gate: "frontend-scaffold"}
+  IM176: {file: "tasks/backlog.yaml", story_ids: ["US796"], gate: "frontend-scaffold"}
+  IM177: {file: "tasks/backlog.yaml", story_ids: ["US797"], gate: "frontend-scaffold"}
+  IM178: {file: "tasks/backlog.yaml", story_ids: ["US798"], gate: "frontend-scaffold"}
+  IM179: {file: "tasks/backlog.yaml", story_ids: ["US799"], gate: "frontend-scaffold"}
+  IM180: {file: "tasks/backlog.yaml", story_ids: ["US800"], gate: "frontend-scaffold"}
+  IM181: {file: "tasks/backlog.yaml", story_ids: ["US801"], gate: "frontend-scaffold"}
+  IM182: {file: "tasks/backlog.yaml", story_ids: ["US802"], gate: "frontend-scaffold"}
+  IM183: {file: "tasks/backlog.yaml", story_ids: ["US803"], gate: "frontend-scaffold"}
+  IM184: {file: "tasks/backlog.yaml", story_ids: ["US804"], gate: "frontend-scaffold"}
+  IM185: {file: "tasks/backlog.yaml", story_ids: ["US805"], gate: "frontend-scaffold"}
+  IM186: {file: "tasks/backlog.yaml", story_ids: ["US806"], gate: "frontend-scaffold"}
+  IM187: {file: "tasks/backlog.yaml", story_ids: ["US807"], gate: "frontend-scaffold"}
+  IM188: {file: "tasks/backlog.yaml", story_ids: ["US808"], gate: "frontend-scaffold"}
+  IM189: {file: "tasks/backlog.yaml", story_ids: ["US809"], gate: "frontend-scaffold"}
+  IM190: {file: "tasks/backlog.yaml", story_ids: ["US810"], gate: "frontend-scaffold"}
+  IM191: {file: "tasks/backlog.yaml", story_ids: ["US811"], gate: "frontend-scaffold"}
+  IM192: {file: "tasks/backlog.yaml", story_ids: ["US812"], gate: "frontend-scaffold"}
+  IM193: {file: "tasks/backlog.yaml", story_ids: ["US813"], gate: "harness"}
+  IM194: {file: "tasks/backlog.yaml", story_ids: ["US814"], gate: "frontend-scaffold"}
+  IM195: {file: "tasks/backlog.yaml", story_ids: ["US815"], gate: "frontend-scaffold"}
+  IM196: {file: "tasks/backlog.yaml", story_ids: ["US816"], gate: "frontend-scaffold"}
+  IM197: {file: "tasks/backlog.yaml", story_ids: ["US817"], gate: "frontend-scaffold"}
+  IM198: {file: "tasks/backlog.yaml", story_ids: ["US818"], gate: "frontend-scaffold"}
+  IM199: {file: "tasks/backlog.yaml", story_ids: ["US819"], gate: "frontend-scaffold"}
+  IM200: {file: "tasks/backlog.yaml", story_ids: ["US820"], gate: "frontend-scaffold"}
+  IM201: {file: "tasks/backlog.yaml", story_ids: ["US821"], gate: "frontend-scaffold"}
+  IM202: {file: "tasks/backlog.yaml", story_ids: ["US822"], gate: "frontend-scaffold"}
   R855: {file: "docs/raw-requirements.md", story_ids: ["US775"], task_ids: ["IM155"]}
   R856: {file: "docs/raw-requirements.md", story_ids: ["US776"], task_ids: ["IM156"]}
   R857: {file: "docs/raw-requirements.md", story_ids: ["US777"], task_ids: ["IM157"]}
@@ -892,6 +943,37 @@ requirements:
   R869: {file: "docs/raw-requirements.md", story_ids: ["US789"], task_ids: ["IM169"]}
   R870: {file: "docs/raw-requirements.md", story_ids: ["US790"], task_ids: ["IM170"]}
   R871: {file: "docs/raw-requirements.md", story_ids: ["US791"], task_ids: ["IM171"]}
+  R872: {file: "docs/raw-requirements.md", story_ids: ["US792"], task_ids: ["IM172"]}
+  R873: {file: "docs/raw-requirements.md", story_ids: ["US793"], task_ids: ["IM173"]}
+  R874: {file: "docs/raw-requirements.md", story_ids: ["US794"], task_ids: ["IM174"]}
+  R875: {file: "docs/raw-requirements.md", story_ids: ["US795"], task_ids: ["IM175"]}
+  R876: {file: "docs/raw-requirements.md", story_ids: ["US796"], task_ids: ["IM176"]}
+  R877: {file: "docs/raw-requirements.md", story_ids: ["US797"], task_ids: ["IM177"]}
+  R878: {file: "docs/raw-requirements.md", story_ids: ["US798"], task_ids: ["IM178"]}
+  R879: {file: "docs/raw-requirements.md", story_ids: ["US799"], task_ids: ["IM179"]}
+  R880: {file: "docs/raw-requirements.md", story_ids: ["US800"], task_ids: ["IM180"]}
+  R881: {file: "docs/raw-requirements.md", story_ids: ["US801"], task_ids: ["IM181"]}
+  R882: {file: "docs/raw-requirements.md", story_ids: ["US802"], task_ids: ["IM182"]}
+  R883: {file: "docs/raw-requirements.md", story_ids: ["US803"], task_ids: ["IM183"]}
+  R884: {file: "docs/raw-requirements.md", story_ids: ["US804"], task_ids: ["IM184"]}
+  R885: {file: "docs/raw-requirements.md", story_ids: ["US805"], task_ids: ["IM185"]}
+  R886: {file: "docs/raw-requirements.md", story_ids: ["US806"], task_ids: ["IM186"]}
+  R887: {file: "docs/raw-requirements.md", story_ids: ["US807"], task_ids: ["IM187"]}
+  R888: {file: "docs/raw-requirements.md", story_ids: ["US808"], task_ids: ["IM188"]}
+  R889: {file: "docs/raw-requirements.md", story_ids: ["US809"], task_ids: ["IM189"]}
+  R890: {file: "docs/raw-requirements.md", story_ids: ["US810"], task_ids: ["IM190"]}
+  R891: {file: "docs/raw-requirements.md", story_ids: ["US811"], task_ids: ["IM191"]}
+  R892: {file: "docs/raw-requirements.md", story_ids: ["US812"], task_ids: ["IM192"]}
+  R893: {file: "docs/raw-requirements.md", story_ids: ["US813"], task_ids: ["IM193"]}
+  R894: {file: "docs/raw-requirements.md", story_ids: ["US814"], task_ids: ["IM194"]}
+  R895: {file: "docs/raw-requirements.md", story_ids: ["US815"], task_ids: ["IM195"]}
+  R896: {file: "docs/raw-requirements.md", story_ids: ["US816"], task_ids: ["IM196"]}
+  R897: {file: "docs/raw-requirements.md", story_ids: ["US817"], task_ids: ["IM197"]}
+  R898: {file: "docs/raw-requirements.md", story_ids: ["US818"], task_ids: ["IM198"]}
+  R899: {file: "docs/raw-requirements.md", story_ids: ["US819"], task_ids: ["IM199"]}
+  R900: {file: "docs/raw-requirements.md", story_ids: ["US820"], task_ids: ["IM200"]}
+  R901: {file: "docs/raw-requirements.md", story_ids: ["US821"], task_ids: ["IM201"]}
+  R902: {file: "docs/raw-requirements.md", story_ids: ["US822"], task_ids: ["IM202"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

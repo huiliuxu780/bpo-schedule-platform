@@ -2,13 +2,13 @@ import Link from "next/link"
 import {
   ArrowLeft,
   ArrowRight,
-  CircleSlash,
   ClipboardList,
   Filter,
   RotateCcw,
   UserRound,
 } from "lucide-react"
 
+import { EmptyState } from "@/components/empty-state"
 import {
   type ImportReviewCaseRecord,
   type ImportReviewCaseProcessingStageSnapshot,
@@ -446,9 +446,13 @@ function ReviewCaseTable({
       </CardHeader>
       <CardContent className="p-0">
         {error ? (
-          <EmptyState title="复核案例读取失败" detail={error} />
+          <EmptyState title="复核案例读取失败" detail={error} className="min-h-80" />
         ) : cases.length === 0 ? (
-          <EmptyState title="暂无匹配复核案例" detail="调整筛选条件后重新查看。" />
+          <EmptyState
+            title="暂无匹配复核案例"
+            detail="调整筛选条件后重新查看。"
+            className="min-h-80"
+          />
         ) : (
           <div className="overflow-x-auto">
             <Table>
@@ -569,18 +573,6 @@ function FilterSelect({
         ))}
       </select>
     </label>
-  )
-}
-
-function EmptyState({ title, detail }: { title: string; detail: string }) {
-  return (
-    <div className="grid min-h-80 place-items-center p-6 text-center">
-      <div className="grid max-w-md gap-2">
-        <CircleSlash className="mx-auto size-5 text-muted-foreground" />
-        <div className="text-sm font-medium">{title}</div>
-        <div className="text-sm text-muted-foreground">{detail}</div>
-      </div>
-    </div>
   )
 }
 

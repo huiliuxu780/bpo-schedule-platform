@@ -97,7 +97,7 @@ export function ActualLogProductionWorkbench({
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <AlertTriangle className="size-4 text-destructive" />
-              日志来源读取失败
+              日志版本读取失败
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
@@ -213,7 +213,7 @@ export function ActualLogProductionWorkbench({
                     <TableCell className="align-top">
                       <Button asChild size="sm" variant="outline">
                         <Link href={row.detailHref}>
-                          处理解释
+                          {row.nextActionLabel}
                           <ArrowRight data-icon="inline-end" />
                         </Link>
                       </Button>
@@ -250,7 +250,7 @@ export function ActualLogProcessingDetail({
         <div>
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <Button asChild size="sm" variant="ghost">
-              <Link href={summary.workbenchHref}>返回登录/状态日志</Link>
+              <Link href={summary.workbenchHref}>{summary.workbenchLabel}</Link>
             </Button>
             <Badge variant={summary.tone === "ready" ? "outline" : "destructive"}>
               {summary.tone === "ready" ? "可解释" : "解释受限"}
@@ -274,7 +274,7 @@ export function ActualLogProcessingDetail({
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <AlertTriangle className="size-4 text-destructive" />
-              明细读取失败
+              日志版本读取失败
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">{error}</CardContent>

@@ -1,3 +1,5 @@
+import { formatApiError } from "@/lib/api-error"
+import type { ApiResult } from "@/lib/api-result"
 import { AppShell } from "@/components/app-shell"
 import { ImportCenterReviewCaseDetailWorkspace } from "@/components/import-center-review-case-detail-workspace"
 import {
@@ -19,11 +21,6 @@ type ReviewCaseDetailPageProps = {
     conclusion?: string | string[]
     closure?: string | string[]
   }>
-}
-
-type ApiResult<T> = {
-  data: T | null
-  error: string | null
 }
 
 export default async function ReviewCaseDetailPage({
@@ -186,12 +183,4 @@ async function fetchImportReviewCaseDetail(
       error: formatApiError(error),
     }
   }
-}
-
-function formatApiError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return "读取失败"
 }

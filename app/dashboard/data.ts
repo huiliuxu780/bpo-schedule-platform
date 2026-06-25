@@ -88,6 +88,15 @@ export type Anomaly = {
   impactedHours: string
   severity: "高" | "中" | "低"
   status: "待复核" | "已确认" | "已忽略"
+  downstreamEntry?: {
+    type:
+      | "comparison_run"
+      | "review_case"
+      | "import_batch_result_trace"
+      | "actual_log_production"
+      | "schedule_production"
+    id: string
+  }
 }
 
 export const anomalies: Anomaly[] = [

@@ -12,7 +12,527 @@
   submitted_at: "YYYY-MM-DD"
   version: "1.0"
   status: "draft"
-  notes: "补充说明"
+notes: "补充说明"
+```
+
+### R935 - 结构与主数据中等门禁继续拆分
+
+```yaml
+id: R935
+module: "测试门禁治理"
+description: "IM234 推送后，继续把默认门禁中仍偏大的 product-structure 与 master-data maintenance 测试文件拆成中等粒度子门禁。拆分必须保持旧入口为 import 薄入口，避免 0-test 空跑；Qoder 只承担受控机械拆分，Codex 负责审查、接入 check.sh、Harness、验证、提交和推送。不得修改业务 UI、组件实现、后端、依赖或 package/lockfile。"
+source: "PM 指令：继续吧，给 Qoder 拆任务"
+submitted_at: "2026-06-22"
+version: "1.0"
+status: "done"
+notes: "IM235 已完成：product-structure app-shell/master-data、master-data maintenance agent-list/workplace-detail 四个旧入口拆为八个中等粒度子门禁并接入 `scripts/check.sh`。"
+```
+
+### R934 - import-center 中等门禁继续拆分
+
+```yaml
+id: R934
+module: "测试门禁治理"
+description: "IM233 推送后，继续把默认门禁中仍偏大的 import-center 测试文件拆成中等粒度子门禁。拆分必须保持旧入口为 import 薄入口，避免 0-test 空跑；不得修改业务 UI、组件实现、后端、依赖或 package/lockfile。"
+source: "PM 指令：同意；延续 IM230-IM233 测试门禁治理"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM234 已完成：review-case preview/gap、version workbench、batch apply action 三个旧入口拆为六个中等粒度子门禁并接入 `scripts/check.sh`。"
+```
+
+### R933 - 复核案例中等门禁继续拆分
+
+```yaml
+id: R933
+module: "测试门禁治理"
+description: "IM232 推送后，继续把默认门禁中仍偏大的 import-center review-case 测试文件拆成中等粒度子门禁。拆分必须保持旧入口为 import 薄入口，避免 0-test 空跑；不得修改业务 UI、组件实现、后端、依赖或 package/lockfile。"
+source: "PM 指令：拆吧；延续 IM230-IM232 测试门禁治理"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM233 已完成：Qoder 尝试执行后超出轮次，Codex 复用其 workspace-owner 部分产物并补齐 action-deck/action-write 拆分；三个旧入口拆为六个中等粒度子门禁并接入 `scripts/check.sh`。"
+```
+
+### R913 - 项目理解需求基线校准
+
+```yaml
+id: R913
+module: "产品需求基线"
+description: "PM 确认继续后，需要把 `/Users/mac/Documents/Codex/01_Projects/bpo-schedule-platform-project-understanding-and-requirements.md` 作为 2026-06-14 的产品理解基线进行校准：保留其业务域、角色、愿景和目标 IA 的有效部分，但标记其中已经被 2026-06-15 至 2026-06-17 迭代改变的状态判断，避免把旧 P0/P1 清单直接当成当前可执行 backlog。"
+source: "PM confirmed requirements-baseline calibration after IM212"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM213 已完成：新增需求基线校准文档，明确该外部文档适合作为产品北极星和需求地图，不适合作为当前实现状态或自动开发队列；下一阶段仍需从当前 Harness 重新 seed 最小确认切片。"
+```
+
+### R914 - 复核案例工作区现状校准
+
+```yaml
+id: R914
+module: "复核案例工作区"
+description: "IM212 已建议从 dashboard anomaly 回切到真实复核、对比和导入质量工作区，IM213 已确认旧需求文档不能直接作为当前 backlog。当前需要校准 `/data-quality/review-cases` 和 `/data-quality/review-cases/[caseId]` 已经具备的列表筛选、处理阶段、证据/结论/关闭、Owner 续办和提交反馈能力，并明确仍需新 Gate 的权限、审批、导出、批量、生产动作和外部集成边界。"
+source: "IM213 completion + PM confirmed continuation into real review-case workspace"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM214 已完成：新增复核案例工作区校准文档，明确当前列表、详情、证据/结论/关闭、Owner 续办和提交反馈已形成受控本地复核工作区；权限、审批、导出、批量、外部集成和生产语义仍需新 Gate。"
+```
+
+### R915 - 复核案例验收 smoke
+
+```yaml
+id: R915
+module: "复核案例工作区"
+description: "IM214 已校准复核案例工作区为真实受控本地异常处理工作区。当前需要做一次验收 smoke，验证列表、详情、处理阶段、失败重试和关闭后交接在当前本地环境中的可达性；如果环境不满足，不允许伪造通过结论。"
+source: "IM214 recommended next slice + PM continued"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM215 已按 PM 继续指令收口为 no-new-env model/contract-only QA 记录：3000 页面壳可达，但 live seeded data 仍因 8000 review-case API 不可达而未验收；本轮未启动其他测试环境、未修改业务代码。"
+```
+
+### R916 - 复核案例 model test 运行器硬化
+
+```yaml
+id: R916
+module: "复核案例工作区"
+description: "IM215 收口时发现 `scripts/tests/import-center-model.test.mjs` 已包含复核案例处理阶段、Owner 矩阵、详情上下文、动作区、失败重试和关闭后续办断言，但 direct Node 执行被 import-center barrel 内部的 TS/ESM extensionless import resolution 挡住。当前需要修复测试运行器路径，并把该测试纳入正式 `scripts/check.sh`，使复核案例 model/contract 验收可执行。"
+source: "IM215 closeout recommended test-runner hardening + PM confirmed"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM216 已完成：`scripts/tests/import-center-model.test.mjs` 改用现有 `jiti` 加载 TS barrel，direct Node 执行 81/81 通过，并已接入 `scripts/check.sh`；未启动 8000，未修改业务 UI、后端、依赖或 package/lockfile。"
+```
+
+### R917 - 复核案例 model test 拆分
+
+```yaml
+id: R917
+module: "复核案例工作区"
+description: "IM216 已把 import-center model assertions 接入正式门禁，但单个 `scripts/tests/import-center-model.test.mjs` 同时承载导入、版本、对比运行和复核案例断言，后续维护成本偏高。当前需要把复核案例相关 21 个断言拆到独立 `scripts/tests/import-center-review-case-model.test.mjs`，并保持 comparison-run 复核案例链接断言留在原 comparison-run 作用域。"
+source: "IM216 closeout + PM confirmed Qoder bounded implementation"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM217 已完成：复核案例 model assertions 已拆入独立测试文件，原 import-center model test 保留 60 个非 review-case / comparison-run assertions，`scripts/check.sh` 同时运行两个测试文件；未启动 8000，未修改业务 UI、后端、依赖或 package/lockfile。"
+```
+
+### R918 - import-center model gate 业务边界拆分
+
+```yaml
+id: R918
+module: "导入中心测试门禁"
+description: "IM217 已先拆出 review-case model assertions，但 `scripts/tests/import-center-model.test.mjs` 仍承载 version/workbench、batch/template/apply 和 core/comparison 多类断言。当前需要继续按业务边界拆分 version/workbench 与 batch/template/apply 断言，并把已有 split guard 测试接入 `scripts/check.sh`，降低单个门禁文件维护成本。"
+source: "PM requested more Qoder tasks after IM217 + Codex bounded task packets"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM218 已完成：新增 `import-center-version-model.test.mjs` 10 个 tests 和 `import-center-batch-template-model.test.mjs` 27 个 tests，原 `import-center-model.test.mjs` 保留 23 个 core/comparison/exception tests；`scripts/check.sh` 同时运行新增测试和 4 个 split guard。未启动 8000，未修改业务 UI、后端、依赖或 package/lockfile。"
+```
+
+### R919 - master-data maintenance model gate 拆分接入
+
+```yaml
+id: R919
+module: "主数据维护测试门禁"
+description: "`scripts/tests/master-data-maintenance-model.test.mjs` 已膨胀为 31 个断言、1788 行，并且 direct Node 执行被 master-data barrel 内部 TS/ESM extensionless import resolution 挡住，导致它未接入正式 `scripts/check.sh`。当前需要按 core/workbench、agent、reference、detail/payload 边界拆分测试文件，使用现有 `jiti` 加载 TS barrel，并把拆分后的测试纳入正式门禁。"
+source: "PM requested continuing test gate split after IM218"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM219 已完成：master-data maintenance model gate 拆为 core/workbench 8 个 tests、agent 8 个 tests、reference 8 个 tests、detail/payload 7 个 tests，并全部接入 `scripts/check.sh`；未修改业务 UI、组件实现、后端、依赖或 package/lockfile。"
+```
+
+### R920 - import-center model gate 最终子拆分
+
+```yaml
+id: R920
+module: "导入中心测试门禁"
+description: "IM218 后 import-center model gate 已拆出 version 与 batch/template，但 review-case 文件仍有 21 个断言、core 文件仍承载 core/comparison/exception 三类断言。当前需要继续按 review-case workspace/detail/action 与 core/comparison/exception 边界拆分，并删除已经完全迁出的旧 `scripts/tests/import-center-model.test.mjs` 执行入口，降低后续维护冲突。"
+source: "PM requested continuing Qoder task arrangement after IM219"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM220 已完成：review-case 21 个 tests 拆为 conclusion/evidence、workspace、detail、action 四个门禁；core/comparison/exception 23 个 tests 拆为三个门禁；旧 `import-center-model.test.mjs` 已删除，`scripts/check.sh` 改为运行 7 个更细 import-center 门禁。"
+```
+
+### R921 - import-center batch/template gate 子拆分
+
+```yaml
+id: R921
+module: "导入中心测试门禁"
+description: "IM220 后 import-center model gate 主干已拆完，但 `scripts/tests/import-center-batch-template-model.test.mjs` 仍同时承载 batch apply、template、upload 和 batch detail/row correction 四类断言。当前需要把这 27 个已在默认门禁中通过的 assertions 继续按业务边界拆分，并保持 `scripts/check.sh` 显式运行拆分后的文件。"
+source: "PM confirmed push and requested continuing test split after IM220"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM221 已完成：batch/template 27 个 tests 拆为 batch apply/readiness/result、template inventory/detail/fit、upload workspace/prefill/result、batch detail/row correction 四个门禁；原 `import-center-batch-template-model.test.mjs` 已删除并由新门禁替代。"
+```
+
+### R922 - import-center version gate 子拆分
+
+```yaml
+id: R922
+module: "导入中心测试门禁"
+description: "IM221 后 import-center batch/template gate 已完成子拆分，但 `scripts/tests/import-center-version-model.test.mjs` 仍同时承载版本台账、应用版本定位、本地比对触发、触发反馈和结果回看断言。当前需要把这 10 个已在默认门禁中通过的 assertions 按 version workbench、version action/applied context、version comparison 三个边界拆分，并保持 `scripts/check.sh` 显式运行拆分后的文件。"
+source: "PM requested continuing test split after IM221"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM222 已完成：version 10 个 tests 拆为 version workbench、version action/applied context、version comparison 三个门禁；原 `import-center-version-model.test.mjs` 已删除并由新门禁替代。"
+```
+
+### R923 - Qoder 拆分结果接入与剩余大门禁细分
+
+```yaml
+id: R923
+module: "测试门禁"
+description: "IM222 后，PM 要求继续拆分测试门禁并由 Qoder 执行低风险机械拆分。当前需要由 Codex 接管 Qoder 输出，将 import-center core、review-case workspace/action、master-data maintenance detail/payload 继续拆到更小执行文件，接入 `scripts/check.sh`，并完成 Harness、全量门禁和本地提交。"
+source: "PM requested push, continued Qoder task split, and Codex integration"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM223 已完成：import-center core 16 个 tests 拆为 format/url、batch list、result trace 三个门禁；review-case workspace/action 14 个 tests 拆为 workspace list、workspace owner、workspace grouping、action deck、action write 五个门禁；master-data maintenance detail/payload 7 个 tests 拆为 workplace detail、service-team detail、vendor detail、workplace payload 四个门禁。"
+```
+
+### R924 - production model gate 子拆分
+
+```yaml
+id: R924
+module: "生产版本测试门禁"
+description: "IM223 后，PM 同意继续用 Qoder 做低风险测试拆分。当前需要由 Codex 接管 Qoder 输出，将 actual-log、personnel-schedule、demand-forecast 三个 production model gate 按 workbench、detail、blocker/change-trace 等业务边界拆分，接入 `scripts/check.sh`，并完成 Harness、全量门禁和本地提交。"
+source: "PM approved continuing test split with Qoder after IM223 push"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM224 已完成：actual-log production 10 个 tests 拆为 workbench、detail status、detail login 三个门禁；personnel-schedule production 10 个 tests 拆为 workbench、detail、reference blocker 三个门禁；demand-forecast production 11 个 tests 拆为 workbench、detail、change trace 三个门禁。"
+```
+
+### R925 - product-structure 绿色安全子集拆分
+
+```yaml
+id: R925
+module: "产品结构测试门禁"
+description: "IM224 后，PM 同意继续处理 `product-structure.test.mjs`。该文件整体仍包含拆分前已有断言偏差，不能直接作为默认门禁。当前需要只将已验证绿色的 app-shell 与 master-data 安全结构子集拆出并接入 `scripts/check.sh`，把仍失败或需要产品边界确认的断言留在原文件作为非默认审计基线。"
+source: "PM approved product-structure safe split after IM224 push"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM225 已完成：app-shell 6 个 tests 与 master-data 6 个 tests 拆为两个绿色门禁并接入 `scripts/check.sh`；原 `product-structure.test.mjs` 保留 23 个非默认审计 tests，其中 14 个仍为拆分前已有失败，需后续产品/实现校准。"
+```
+
+### R926 - product-structure 过期断言重定向与最终拆分
+
+```yaml
+id: R926
+module: "产品结构测试门禁"
+description: "IM225 后，PM 要求先反思剩余 product-structure 失败是否存在遗漏，再继续执行。只读复核确认剩余失败主要来自测试仍按旧 monolith 文件查找源码字符串，而当前 master-data 实现已经拆到 agents、details、references、forms、payloads 等模块。当前需要将过期断言重定向到真实源码模块，按产品边界拆为更小门禁，并接入 `scripts/check.sh`，不修改业务实现。"
+source: "PM approved IM226 after product-structure remaining assertion reflection"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM226 已完成：旧 `product-structure.test.mjs` 改为薄入口；剩余 23 个 assertions 拆为 production wording、global shell、master-data detail context、master-data maintenance actions、master-data agent workflow、business import、result chain 七个绿色门禁并接入 `scripts/check.sh`。"
+```
+
+### R927 - import-center batch apply 门禁子拆分
+
+```yaml
+id: R927
+module: "导入中心测试门禁"
+description: "继续测试治理时，优先拆分仍然偏大的 `import-center-batch-apply-model.test.mjs`，把 URL/action、applied result、readiness issue 三类断言拆成独立绿色门禁，降低单文件上下文负担。"
+source: "PM approved continuation after IM226 closeout"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM227 已完成：旧 `import-center-batch-apply-model.test.mjs` 改为薄入口，新增 action、applied-result、readiness 三个子门禁并接入 `scripts/check.sh`。"
+```
+
+### R928 - master-data agent 门禁子拆分
+
+```yaml
+id: R928
+module: "主数据测试门禁"
+description: "继续测试治理时，拆分仍然偏大的 `master-data-maintenance-agent-model.test.mjs`，按客服人员列表、详情、导入弹窗、维护动作四类断言形成独立绿色门禁，降低单文件上下文负担。"
+source: "PM approved continuation after IM227 push"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM228 已完成：旧 `master-data-maintenance-agent-model.test.mjs` 改为薄入口，新增 list、detail、import、action 四个子门禁并接入 `scripts/check.sh`。"
+```
+
+### R929 - master-data reference 门禁子拆分
+
+```yaml
+id: R929
+module: "主数据测试门禁"
+description: "继续测试治理时，拆分仍然偏大的 `master-data-maintenance-reference-model.test.mjs`，按引用对象列表、维护动作、详情归属三类断言形成独立绿色门禁，降低单文件上下文负担。"
+source: "PM approved task splitting continuation after IM228 push"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM229 已完成：旧 `master-data-maintenance-reference-model.test.mjs` 改为薄入口，新增 list、action、detail 三个子门禁并接入 `scripts/check.sh`。"
+```
+
+### R930 - import-center 剩余大门禁子拆分
+
+```yaml
+id: R930
+module: "导入中心测试门禁"
+description: "继续测试治理时，拆分仍然偏大的 import-center template、batch list、review-case detail 测试门禁，按 URL/action/fit、summary/filter/navigation、context/evidence/timeline 形成独立绿色门禁，降低单文件上下文负担。"
+source: "PM requested Qoder task splitting after IM229 push"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM230 已完成：Qoder 机械拆分 3 个旧入口，Codex 修正薄入口、接入 9 个子门禁到 `scripts/check.sh` 并完成验证。"
+```
+
+### R931 - import-center 长门禁继续子拆分
+
+```yaml
+id: R931
+module: "导入中心测试门禁"
+description: "继续测试治理时，拆分 import-center comparison、version action/comparison、result trace、exception 等仍然偏长的测试门禁，按单一产品断言形成独立绿色门禁，降低单文件上下文负担。"
+source: "PM requested continued Qoder task splitting after IM230 push"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM231 已完成：Qoder 机械拆分 5 个旧入口，Codex 修正薄入口、接入 17 个子门禁到 `scripts/check.sh` 并完成验证。"
+```
+
+### R932 - 中等粒度测试门禁拆分
+
+```yaml
+id: R932
+module: "测试门禁治理"
+description: "继续测试治理时，按不太散的中等粒度拆分 dashboard model、import-center batch detail、product-structure master-data detail context 三组已绿色但仍偏大的测试门禁，降低 review 和故障定位成本。"
+source: "PM requested continued Qoder task splitting with medium granularity after IM231 push"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM232 已完成：Qoder 机械拆分 3 个旧入口，Codex 接入 10 个子门禁到 `scripts/check.sh` 并完成验证。"
+```
+
+### R912 - Dashboard anomaly 链路收口与真实工作区回切
+
+```yaml
+id: R912
+module: "运营工作台"
+description: "IM209-IM211 已确认 dashboard anomaly table 属于经营总览 overview、未来只能作为 summary-to-workspace entry，并且当前缺少稳定下游 ID 时显示 `等待下游定位`。当前需要正式收口 dashboard anomaly 链路，明确不继续在静态 dashboard 行里补伪 caseId/runId/batchId 或异常处理语义，并把下一阶段优先级切回 review-case、comparison-run、data-quality 等真实工作区。"
+source: "IM211 completion + PM requested closeout before reviewing project understanding requirements"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM212 已完成：dashboard anomaly 链路收口为经营总览摘要与诚实阻塞态；下一阶段推荐从真实复核/对比/导入质量工作区继续，不再扩展 dashboard 静态异常处理语义。"
+```
+
+### R909 - Dashboard anomaly table 产品归属审计
+
+```yaml
+id: R909
+module: "运营工作台"
+description: "IM208 已关闭当前表格抽象链路，并把 `components/data-table.tsx` 暂缓到 dashboard anomaly table 产品归属明确之后。当前需要对 `/dashboard` anomaly table 做一次只读产品归属审计，确认它是经营总览摘要、本地 parity 展示，还是应进入异常复核/对比结果/导入质量追踪链路。"
+source: "IM208 closeout + PM continued recommended next step"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM209 已完成：`data-table` 当前归属为 `/dashboard` 经营总览的本地 anomaly overview widget，不作为 MainTableShell 下一刀；后续默认保留为 overview，只有在异常行路由到 comparison run、review case、import quality trace 或 actual-log production detail 的产品语义明确后再进入实现。"
+```
+
+### R910 - Dashboard 下游工作区入口规格
+
+```yaml
+id: R910
+module: "运营工作台"
+description: "IM209 已确认 dashboard anomaly table 当前只属于经营总览 overview，但未来如果异常行需要进入真实业务闭环，必须先定义下游入口规格。当前需要明确 dashboard 行级入口可指向哪些既有工作区、什么时候允许跳转、哪些处理责任必须留在下游页面，避免把总览页误扩成异常处理工作台。"
+source: "IM209 ownership audit + PM confirmed continuation"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM210 已完成：dashboard 未来只可作为 summary-to-workspace entry，候选入口限定在既有 comparison run、review case、import batch result trace、actual-log production detail 和 schedule production detail；没有稳定下游 ID 时不得伪造行级跳转或处理状态。"
+```
+
+### R911 - Dashboard anomaly row 下游入口阻塞态
+
+```yaml
+id: R911
+module: "运营工作台"
+description: "IM210 已定义 dashboard anomaly row 未来只能作为 summary-to-workspace entry。当前 `/dashboard` 静态 anomaly 数据还没有稳定的 caseId、runId 或 batchId，因此需要把行操作占位改成明确的不可跳转/等待下游定位状态，避免 PM 或运营误以为经营总览已经具备异常处理入口。"
+source: "IM210 downstream entry spec + PM confirmed continuation"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM211 已完成：dashboard anomaly row 缺少稳定下游 ID 时显示 `等待下游定位` 阻塞态；只有 future row 明确携带稳定 downstreamEntry 时模型才会生成既有工作区链接。"
+```
+
+### R908 - MainTableShell 收口与 data-table 暂缓决策
+
+```yaml
+id: R908
+module: "前端健康恢复"
+description: "IM197 到 IM207 已完成轻量子表格 SimpleTable 链路、MainTableShell 边界定义、结构护栏，以及 `schedule-plan-table` 和 `unavailability-table` 两个主表迁移。当前仅剩 `components/data-table.tsx` 仍直接拥有 TanStack Table 渲染循环，但它属于 `/dashboard` 异常演示表，产品归属和下一阶段业务责任不如排班计划与不可用管理清晰。本轮需要收口表格抽象链路，确认暂缓 `data-table` 迁移，并把后续工作从机械技术债切回有业务价值的产品切片。"
+source: "IM207 completion + PM confirmed closeout continuation"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM208 已完成：记录 `data-table` 暂缓条件，关闭当前 SimpleTable/MainTableShell 表格抽象链路；后续只有在 dashboard anomaly table 的产品 owner、路由责任和真实业务用途明确后才重新评估迁移。"
+```
+
+### R907 - MainTableShell 第二刀迁移 unavailability-table
+
+```yaml
+id: R907
+module: "前端健康恢复"
+description: "IM206 已完成 MainTableShell 首刀并验证主表壳层可承接排班计划列表。下一个候选是 `components/unavailability-table.tsx`，它同样包含搜索、状态筛选、列显隐、汇总、分页和行级影响/班次入口，但页面外层已经有业务 Card，因此迁移时需要避免 nested Card，保留外层页面结构，只把表格壳层迁移到 MainTableShell embedded 模式。"
+source: "IM204/IM205 MainTableShell boundary + IM206 implementation + PM confirmed continuation"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM207 已完成：扩展 `MainTableShell` embedded 模式，并让 `unavailability-table` 委托共享壳层；保留搜索、状态筛选、列显隐、分页、汇总、影响/班次入口和业务文案。"
+```
+
+### R906 - MainTableShell 首刀迁移 schedule-plan-table
+
+```yaml
+id: R906
+module: "前端健康恢复"
+description: "IM204/IM205 已明确 MainTableShell 边界并加上结构护栏。当前第一个适合迁移的主表是 `components/schedule-plan-table.tsx`：它包含搜索、状态/缺口筛选、列显隐、汇总、分页和详情入口，需要把共享表格壳层抽到 `MainTableShell`，同时保留业务列、筛选语义、详情路由和页面文案在具体表格内。"
+source: "IM205 MainTableShell structure guard + PM confirmed continuation"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM206 已完成：新增 `components/main-table-shell.tsx`，并让 `schedule-plan-table` 委托共享壳层；保留搜索、状态/缺口筛选、列显隐、分页、汇总、详情入口和业务文案。"
+```
+
+### R905 - MainTableShell 结构护栏
+
+```yaml
+id: R905
+module: "前端健康恢复"
+description: "IM204 已定义 MainTableShell 边界，但在真正实现主表壳层前，需要先新增一个 docs/test-only 结构护栏，防止后续把业务列、动作、路由、查询参数或业务语义塞进 shell，也防止 IM205 提前创建或接入 UI 组件。"
+source: "IM204 MainTableShell boundary spec + PM confirmed continuation"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM205 已完成：新增 `docs/design/main-table-shell-structure-guard.md` 与 `scripts/tests/main-table-shell-structure.test.mjs`，只做结构护栏，不创建或接入 MainTableShell UI。"
+```
+
+### R904 - MainTableShell 边界规格
+
+```yaml
+id: R904
+module: "前端健康恢复"
+description: "IM197 到 IM203 已完成七个低风险轻量表格的 SimpleTable 迁移。继续机械迁移会碰到主列表/工作台表格，它们包含搜索、筛选、列显隐、分页、汇总和动作入口，产品职责明显大于轻量子表格。本轮需要先定义未来 MainTableShell 的边界、候选表优先级和停止条件，不修改 UI 代码。"
+source: "IM203 后产品设计 checkpoint + 代码事实盘点"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM204 已完成：新增 `docs/design/main-table-shell-boundary-spec.md`，明确 SimpleTable 停在轻量表格，MainTableShell 只作为未来主表布局/分页/列显隐壳层，不拥有业务列、动作、查询参数或业务语义。"
+```
+
+### R903 - SimpleTable 第七刀迁移 shift-details-table
+
+```yaml
+id: R903
+module: "前端健康恢复"
+description: "IM197 到 IM202 已验证轻量 `SimpleTable` 抽取模式。第三方前端重构方案 Task 3 仍有班次明细表保留重复 TanStack Table 渲染循环；本轮继续只迁移 `components/shift-details-table.tsx`，同时在完成后停止进入更大的主列表/工作台表格。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 3 + IM202 后代码事实盘点"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "已完成。Product Design brief：保持现有 shadcn Table 视觉、列定义、排序入口、默认排序、计划链接和空状态文案；不重设计表格。"
+```
+
+### R898 - SimpleTable 第二刀迁移 schedule-plan-interval-table
+
+```yaml
+id: R898
+module: "前端健康恢复"
+description: "IM197 已验证轻量 `SimpleTable` 抽取模式。第三方前端重构方案 Task 3 仍有多个子表格保留重复 TanStack Table 渲染循环；本轮继续只迁移一个低风险子表格 `components/schedule-plan-interval-table.tsx`，验证同一抽取模式可复用。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 3 + IM197 后代码事实盘点"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "已完成。Product Design brief：保持现有 shadcn Table 视觉、列定义、排序入口、默认排序和空状态文案；不重设计表格。"
+```
+
+### R899 - SimpleTable 第三刀迁移 schedule-risk-shift-table
+
+```yaml
+id: R899
+module: "前端健康恢复"
+description: "IM197 和 IM198 已验证轻量 `SimpleTable` 抽取模式。第三方前端重构方案 Task 3 仍有子表格保留重复 TanStack Table 渲染循环；本轮继续只迁移一个低风险子表格 `components/schedule-risk-shift-table.tsx`，验证同一抽取模式可持续复用。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 3 + IM198 后代码事实盘点"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "已完成。Product Design brief：保持现有 shadcn Table 视觉、列定义、排序入口、默认排序和空状态文案；不重设计表格。"
+```
+
+### R900 - SimpleTable 第四刀迁移 schedule-risk-unavailability-table
+
+```yaml
+id: R900
+module: "前端健康恢复"
+description: "IM197 到 IM199 已验证轻量 `SimpleTable` 抽取模式。第三方前端重构方案 Task 3 仍有子表格保留重复 TanStack Table 渲染循环；本轮继续只迁移一个低风险子表格 `components/schedule-risk-unavailability-table.tsx`，验证同一抽取模式可持续复用。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 3 + IM199 后代码事实盘点"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "已完成。Product Design brief：保持现有 shadcn Table 视觉、列定义、排序入口、默认排序和空状态文案；不重设计表格。"
+```
+
+### R901 - SimpleTable 第五刀迁移 unavailability-impact-shift-table
+
+```yaml
+id: R901
+module: "前端健康恢复"
+description: "IM197 到 IM200 已验证轻量 `SimpleTable` 抽取模式。第三方前端重构方案 Task 3 仍有不可用影响班次子表格保留重复 TanStack Table 渲染循环；本轮继续只迁移 `components/unavailability-impact-shift-table.tsx`，保持不可用影响详情页的表格体验不变。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 3 + IM200 后代码事实盘点"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "已完成。Product Design brief：保持现有 shadcn Table 视觉、列定义、排序入口、默认排序、计划链接和空状态文案；不重设计表格。"
+```
+
+### R902 - SimpleTable 第六刀迁移 unavailability-impact-risk-table
+
+```yaml
+id: R902
+module: "前端健康恢复"
+description: "IM197 到 IM201 已验证轻量 `SimpleTable` 抽取模式。第三方前端重构方案 Task 3 仍有不可用影响风险子表格保留重复 TanStack Table 渲染循环；本轮继续只迁移 `components/unavailability-impact-risk-table.tsx`，保持不可用影响详情页的风险表体验不变。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 3 + IM201 后代码事实盘点"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "已完成。Product Design brief：保持现有 shadcn Table 视觉、列定义、排序入口、默认排序、明细链接和空状态文案；不重设计表格。"
+```
+
+### R897 - SimpleTable 首刀迁移 demand-plan-table
+
+```yaml
+id: R897
+module: "前端健康恢复"
+description: "第三方前端重构方案 Task 3 建议拆分表格渲染层，但一次性迁移 11 个表格风险过高。需要先新增轻量 `SimpleTable`，只迁移 `components/demand-plan-table.tsx` 作为第一刀，验证排序、渲染和空状态抽取方式。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 3 + 代码事实盘点"
+submitted_at: "2026-06-16"
+version: "1.0"
+status: "done"
+notes: "已完成。Product Design brief：保持现有 shadcn Table 视觉、列定义、排序入口和空状态文案；不重设计表格。"
+```
+
+### R896 - 共享列表搜索与状态筛选控件
+
+```yaml
+id: R896
+module: "前端健康恢复"
+description: "第三方前端重构方案 Task 2 指出四个旧列表页重复实现搜索栏，其中三页还重复状态筛选按钮。需要按产品设计保持模式抽取 `SearchInputBar` 与 `StatusFilterPills` 两个可组合控件，迁移 `/demand-plans`、`/schedule-plans`、`/shift-details`、`/unavailability`，并保持现有查询参数、清空入口、文案和视觉不变。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 2 + 代码事实盘点"
+submitted_at: "2026-06-16"
+version: "1.0"
+status: "done"
+notes: "已完成。Product Design brief：匹配现有 shadcn Button/Input 列表筛选外观；完整保留搜索、状态筛选、清空交互；不重设信息架构或视觉风格。"
 ```
 
 ### R860 - 职场详情只读服务团队关系
@@ -3208,4 +3728,316 @@ source: "PM confirmed continuation after IM170"
 summary: "将登录/状态日志导入入口收回到 `/actual-logs/production` 的当前页分步 Dialog，复用现有 CSV 上传能力并回流导入结果。"
 owner: "PM"
 notes: "IM171 已完成：/actual-logs/production 的 `导入登录日志`、`导入状态日志` 打开当前页 step-by-step Dialog，复用现有上传 action 并按 log_type 回流导入结果；未扩展解析增强、状态字典配置维护、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+```
+
+### R872 - 前端健康恢复计划固化
+
+```yaml
+id: R872
+module: "前端健康恢复"
+description: "第三方综合审计指出当前前端存在重复数据访问函数、缺少 error/loading、巨型 model/workbench 文件、产品设计门禁缺失和上下文压缩后计划易丢失的问题。PM 要求先把恢复计划固化为可拆解、可验证、可审计的仓库状态，再进入后续实现。"
+source: "PM requested durable frontend health recovery plan after audit review on 2026-06-12"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM172 已完成：写入 docs/frontend-health-recovery-plan.md 和 docs/superpowers/plans/2026-06-12-frontend-health-recovery.md；后续 IM173+ 必须从恢复计划单独 seed 到 current queue；涉及可见 UI/页面/交互的任务必须先使用 Product Design 插件确认 brief。本轮未改 app/components/lib/backend/package。"
+```
+
+### R873 - 前端 API 结果和错误工具去重
+
+```yaml
+id: R873
+module: "前端健康恢复"
+description: "多个前端页面和数据读取模块重复定义 `ApiResult<T>` 与 `formatApiError`，导致错误处理语义分散、后续页面维护成本高。需要先抽取共享工具，作为后续 fetch/import 去重和 error/loading 体系的低风险基础。"
+source: "docs/frontend-health-recovery-plan.md Stage 1 IM173"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM173 已完成：新增 lib/api-result.ts 和 lib/api-error.ts，并将目标前端数据读取文件改为引用共享 `ApiResult<T>` 与 `formatApiError`；字段映射模板详情的 `api_unavailable` 兜底语义通过 optional fallback 保留。未改变可见 UI、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R874 - 导入批次和字段映射模板 fetch 工具去重
+
+```yaml
+id: R874
+module: "前端健康恢复"
+description: "多个前端页面重复实现 `fetchImportBatches` 和 `fetchImportFieldMappingTemplates`，虽然业务语义一致，但维护成本高且容易在错误处理、空数组兜底或 URL 构造上漂移。需要抽取共享导入 fetch 工具。"
+source: "docs/frontend-health-recovery-plan.md Stage 1 IM174"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM174 已完成：新增 lib/import-api.ts，提供共享 `fetchImportBatches` 与 `fetchImportFieldMappingTemplates`；目标页面和 master-data data module 已改为引用或 re-export 共享工具。未改变可见 UI、导航、fetch URL、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R875 - 导入和比对 Server Action 运行时保护
+
+```yaml
+id: R875
+module: "前端健康恢复"
+description: "`app/data-quality/actions.ts` 中部分 Server Action 直接把 FormData 中的 `file_type`、`comparison_type` 和 `result_redirect_to` 当作可信枚举或回跳目标使用。需要补充运行时 guard，防止非法值进入 API URL、请求体或成功回跳。"
+source: "docs/frontend-health-recovery-plan.md Stage 1 IM175"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM175 已完成：`app/data-quality/actions.ts` 新增 `file_type`、`comparison_type` 和 `result_redirect_to` 运行时白名单 guard；非法值在进入 API URL、请求体或成功回跳前进入失败回跳。本需求未引入表单库，未改变可见 UI、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R876 - 全局页面异常恢复边界
+
+```yaml
+id: R876
+module: "前端健康恢复"
+description: "项目缺少 `app/error.tsx`，Server Component 或页面渲染异常时用户可能看到空白或不可恢复状态。需要新增全局 error boundary，提供明确错误提示、重试入口和安全返回入口。"
+source: "docs/frontend-health-recovery-plan.md Stage 2 IM176"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM176 已完成：新增 `app/error.tsx`，使用现有 AppShell、shadcn Alert/Button 和语义 token，提供 `reset()` 重试与 `/dashboard` 安全返回。未新增依赖，未改变业务页面、导航、后端、数据库、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R877 - 核心业务路由加载骨架屏
+
+```yaml
+id: R877
+module: "前端健康恢复"
+description: "核心业务入口缺少 route-local `loading.tsx`，数据等待期间可能出现空白。需要先为 6 个核心入口补充与页面结构匹配的 loading skeleton。"
+source: "docs/frontend-health-recovery-plan.md Stage 2 IM177"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM177 已完成：为 `/dashboard`、`/master-data`、`/demand-plans`、`/schedule-plans`、`/actual-logs/production`、`/data-quality` 新增 route-local `loading.tsx`，使用现有 AppShell 与 shadcn Skeleton。未做 route-group 迁移，未改变业务页面、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R878 - 导入中心模型第一刀拆分
+
+```yaml
+id: R878
+module: "前端健康恢复"
+description: "`components/import-center-model.ts` 已膨胀为巨型文件，混合类型定义、格式化函数、URL 构造函数和大量业务汇总函数。需要先做不改变行为的第一刀机械拆分，降低后续维护和审计成本。"
+source: "docs/frontend-health-recovery-plan.md Stage 3 IM178"
+submitted_at: "2026-06-13"
+version: "1.0"
+status: "done"
+notes: "IM178 已完成：新增 `components/import-center-types.ts`、`components/import-center-formatters.ts`、`components/import-center-navigation.ts`，旧 `components/import-center-model.ts` 继续作为兼容入口 re-export 类型、格式化函数和 URL 构造函数，并保留后续汇总逻辑。本轮未改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R879 - 导入中心剩余汇总构造逻辑拆分
+
+```yaml
+id: R879
+module: "前端健康恢复"
+description: "IM178 已拆出导入中心类型、格式化函数和导航 helper，但 `components/import-center-model.ts` 仍承载大量 summarizer/builder 逻辑。需要继续按责任拆分剩余汇总构造函数，并让旧入口继续兼容导出。"
+source: "docs/frontend-health-recovery-plan.md Stage 3 IM179"
+submitted_at: "2026-06-13"
+version: "1.0"
+status: "done"
+notes: "IM179 已完成：新增导入中心 list/version/review/batch/template/comparison 六个责任 model 文件，`components/import-center-model.ts` 降为兼容 re-export 入口。本轮未改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R880 - 主数据维护 workbench 行为不变拆分
+
+```yaml
+id: R880
+module: "前端健康恢复"
+description: "`components/master-data-maintenance-workbench.tsx` 已膨胀为巨型 UI 文件，混合页面动作、列表页、详情页、表单页、弹窗和字段控件。需要按页面责任做不改变行为的机械拆分，并让旧入口继续兼容导出。"
+source: "docs/frontend-health-recovery-plan.md Stage 3 IM180"
+submitted_at: "2026-06-13"
+version: "1.0"
+status: "done"
+notes: "IM180 已完成：主数据维护 workbench 已拆为 actions、agents、references、details、forms、fields 六个责任文件，旧 `components/master-data-maintenance-workbench.tsx` 降为兼容 re-export 入口。本轮未改变可见 UI、路由、交互、业务语义、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R881 - 主数据维护 model 行为不变拆分
+
+```yaml
+id: R881
+module: "前端健康恢复"
+description: "`components/master-data-maintenance-model.ts` 已膨胀为巨型 model 文件，混合类型、维护对象、payload 构造、人员汇总、reference 汇总、详情汇总、导入弹窗状态和格式化 helper。需要按责任做不改变行为的机械拆分，并让旧入口继续兼容导出。"
+source: "docs/frontend-health-recovery-plan.md Stage 3 IM181"
+submitted_at: "2026-06-13"
+version: "1.0"
+status: "done"
+notes: "IM181 已完成：主数据维护 model 已拆为 types、entities、payloads、agent-model、reference-model、detail-model、import-dialog-model 和 formatters 八个责任文件，旧 `components/master-data-maintenance-model.ts` 降为兼容 re-export 入口。本轮未改变可见 UI、路由、交互、业务语义、API URL、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R882 - 可见动作位置规则固化
+
+```yaml
+id: R882
+module: "前端健康恢复"
+description: "主数据客服人员页面已经按产品反馈调整动作位置，但缺少结构性约束，后续容易重新把页级动作、筛选动作、列表动作、行内动作和危险确认混放。需要用最小结构标记和回归测试固化动作分层，不新增业务能力。"
+source: "docs/frontend-health-recovery-plan.md Stage 3 IM182"
+submitted_at: "2026-06-13"
+version: "1.0"
+status: "done"
+notes: "IM182 已完成：`SiteHeader` 页级动作、客服人员筛选区、列表工具栏、行内动作和冻结 Dialog 危险动作均有明确 `data-action-scope` 结构标记；结构测试防止 `新建/批量导入` 回流到筛选区或列表工具栏，也防止 `查询/重置` 混入页级动作。本轮未新增按钮、业务能力、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R883 - 共享空状态模式
+
+```yaml
+id: R883
+module: "前端健康恢复"
+description: "多个页面存在本地重复的 `EmptyState`/空状态实现，容易产生字体、间距、图标和动作入口不一致。需要先引入一个共享空状态组件，并只替换已经存在的同名本地空状态，不新增业务动作。"
+source: "docs/frontend-health-recovery-plan.md Stage 4 IM183"
+submitted_at: "2026-06-14"
+version: "1.0"
+status: "done"
+notes: "IM183 已完成：新增共享 `components/empty-state.tsx`，替换导入批次列表、批次状态检查和复核案例列表中的本地同名 EmptyState，保留原文案和原业务行为；结构测试防止目标文件回退到本地 EmptyState。本轮未新增业务按钮、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R884 - 主数据维护表单反馈一致性
+
+```yaml
+id: R884
+module: "前端健康恢复"
+description: "主数据维护表单已拆分到独立责任文件，但提交按钮、提交中状态和必填视觉提示仍由各表单局部维护，容易继续产生字体、按钮和表单反馈不一致。需要以共享组件收敛表单反馈，不新增业务字段或提交能力。"
+source: "docs/frontend-health-recovery-plan.md Stage 4 IM184"
+submitted_at: "2026-06-14"
+version: "1.0"
+status: "done"
+notes: "IM184 已完成：新增共享维护表单 submit 组件，主数据维护表单已改为统一提交按钮、提交中状态和必填视觉标识；保留现有字段、required 条件、后端 action、路由、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R885 - 导航和 Breadcrumb 规则复核
+
+```yaml
+id: R885
+module: "前端健康恢复"
+description: "恢复阶段已经修复动作位置、空状态和表单反馈，但导航与 Breadcrumb 仍需要规则化，避免详情/新建/编辑页父级高亮错误、页面内容区重复造标题结构，或后续恢复未经确认的大模块入口。"
+source: "docs/frontend-health-recovery-plan.md Stage 4 IM185"
+submitted_at: "2026-06-15"
+version: "1.0"
+status: "done"
+notes: "IM185 已完成：主数据组织/技能导航项改为 prefix 高亮，SiteHeader 增加稳定 header/breadcrumb/title slot，结构测试防止恢复未经确认的质量中心/数据质量中心/导入中心入口；未新增业务导航模块、业务页面、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R886 - 收口旧计划脚手架导航入口
+
+```yaml
+id: R886
+module: "前端健康恢复"
+description: "恢复阶段完成后，Sidebar 仍保留旧前端 demo 的 `班次明细` 和 `不可用管理` 入口。它们不是当前已确认业务主线入口，容易让产品 IA 再次混入未确认模块。需要只从 Sidebar 收口这些入口，并保留旧路由兼容。"
+source: "PM 反馈：不要把未确认模块伪装成需求；恢复后继续清理旧 demo 导航残留。"
+submitted_at: "2026-06-15"
+version: "1.0"
+status: "done"
+notes: "IM186 已完成：`components/app-sidebar.tsx` 不再暴露 `班次明细` 和 `不可用管理` Sidebar 入口；旧 `/shift-details`、`/unavailability` 路由未删除；结构测试防止这些旧 demo 入口回流。本轮未新增页面、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R887 - 收口排班计划旧链路入口
+
+```yaml
+id: R887
+module: "前端健康恢复"
+description: "Sidebar 旧 demo 入口已移除，但当前 `/schedule-plans` 列表和 `/schedule-plans/[planId]` 详情仍通过旧链路卡、风险表或复核链路按钮把用户带入 `/schedule-risks`、`/shift-details`、`/unavailability`。需要收口这些内容入口，避免当前排班计划页面继续暴露未确认旧 demo 流程。"
+source: "IM186 后续清理：只收当前页面入口，不删除旧路由。"
+submitted_at: "2026-06-15"
+version: "1.0"
+status: "done"
+notes: "IM187 已完成：`/schedule-plans` 不再渲染旧链路卡和风险表，`/schedule-plans/[planId]` 不再渲染旧复核链路按钮；已删除两个不再使用的旧链路组件；旧 `/schedule-risks`、`/shift-details`、`/unavailability` 路由保留。本轮未新增页面、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R888 - 预测版本详情入口语义收口
+
+```yaml
+id: R888
+module: "业务版本流"
+description: "前端健康恢复阶段完成后，业务版本流从预测版本开始继续推进。现有 `/demand-plans/production` 与详情页已经可查看预测版本，但入口、返回文案和详情说明仍容易混入来源批次处理语义。需要在不新增路由或能力的前提下，把列表行操作、详情页 header 和 Breadcrumb 语义收口为预测版本详情。"
+source: "docs/frontend-health-recovery-plan.md Stage 5 business-version flows"
+submitted_at: "2026-06-15"
+version: "1.0"
+status: "done"
+notes: "IM188 已完成：`/demand-plans/production` 列表行操作改为 `查看预测版本`，预测版本详情页返回入口和说明文案保持预测版本语义；新增结构测试防止退回来源批次处理语义。本轮未新增页面、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R889 - 排班版本详情入口语义收口
+
+```yaml
+id: R889
+module: "业务版本流"
+description: "预测版本入口语义已经收口后，排班版本应采用同一产品口径。现有 `/schedule-plans/production` 与详情页已经可查看排班版本，但列表操作、详情返回和页面说明仍容易混入来源批次处理语义。需要在不新增路由或能力的前提下，把这些入口统一为排班版本详情语义。"
+source: "docs/frontend-health-recovery-plan.md Stage 5 business-version flows"
+submitted_at: "2026-06-15"
+version: "1.0"
+status: "done"
+notes: "IM189 已完成：`/schedule-plans/production` 列表行操作改为 `查看排班版本`，排班版本详情页返回入口和说明文案保持排班版本语义；新增结构测试防止退回来源批次处理语义。本轮未新增页面、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R890 - 登录/状态日志版本详情入口语义收口
+
+```yaml
+id: R890
+module: "业务版本流"
+description: "预测版本和排班版本入口语义已经收口后，登录/状态日志版本应采用同一产品口径。现有 `/actual-logs/production` 与详情页已经可查看实际日志业务版本和处理解释，但列表操作、详情返回和页面说明仍容易混入来源批次处理语义。需要在不新增路由或能力的前提下，把这些入口统一为日志版本详情语义。"
+source: "docs/frontend-health-recovery-plan.md Stage 5 business-version flows"
+submitted_at: "2026-06-15"
+version: "1.0"
+status: "done"
+notes: "IM190 已完成：`/actual-logs/production` 列表行操作改为 `查看日志版本`，日志版本详情页返回入口改为 `返回日志版本列表`，错误标题和详情说明改为日志版本语义；新增结构测试防止退回来源批次处理语义。本轮未新增路由、业务能力、后端、数据库、依赖或 package/lockfile。"
+```
+
+### R891 - 对比运行详情结果回看入口语义收口
+
+```yaml
+id: R891
+module: "业务版本流"
+description: "业务版本列表和三类版本详情入口语义已经收口后，对比运行详情应继续采用结果回看口径。现有 `/data-quality/comparison-runs/[runId]` 已经展示完整结果回看、来源链路和复核案例，但顶部主返回入口仍默认回到复核案例，容易把对比运行详情误导成复核案例子页。需要在不新增路由或计算能力的前提下，把主入口统一为业务版本结果回看语义。"
+source: "docs/frontend-health-recovery-plan.md Stage 5 comparison trigger and result review"
+submitted_at: "2026-06-15"
+version: "1.0"
+status: "done"
+notes: "IM191 已完成：`/data-quality/comparison-runs/[runId]` 顶部主返回入口改为 `返回业务版本列表`，来源链路和复核案例仍保留在页内 tab；新增结构测试防止退回 `返回复核案例`。本轮未新增路由、业务能力、后端、数据库、依赖或 package/lockfile。"
+```
+
+### R892 - 业务版本列表本地比对动作语义收口
+
+```yaml
+id: R892
+module: "业务版本流"
+description: "业务版本列表已经能从完整版本对发起本地比对并回看结果，但入口和反馈仍使用 `发起一次比对`、`查看结果列表` 等泛化文案，容易让用户误解为普通页面动作或不可追踪结果。需要在不新增路由或计算能力的前提下，把可提交入口、提交反馈和结果回看统一为 `比对运行` 语义。"
+source: "docs/frontend-health-recovery-plan.md Stage 5 comparison trigger and result review"
+submitted_at: "2026-06-16"
+version: "1.0"
+status: "done"
+notes: "IM192 已完成：`/data-quality/versions` 现有本地比对候选、提交反馈和结果回看标题已统一为比对运行语义；新增结构测试防止退回 `发起一次比对`、`查看结果列表` 或泛泛 `比对结果`。本轮未新增 comparison run 列表路由、业务能力、后端、数据库、依赖或 package/lockfile。"
+```
+
+### R893 - 共享 lib helper 回归护栏
+
+```yaml
+id: R893
+module: "前端健康恢复"
+description: "恢复阶段已抽取共享 API/import helper，但这些机械恢复成果需要结构回归测试防止后续改动重新引入重复定义。需要新增一个低风险测试文件确认共享 helper 文件和关键导出存在，并限制相关函数重复定义回流。"
+source: "PM 指令：用 Qoder 执行下一部分；Qoder 只读试跑建议的低风险机械任务"
+submitted_at: "2026-06-16"
+version: "1.0"
+status: "done"
+notes: "IM193 已完成：Qoder 以 `ultimate` 模型受控新增 `scripts/tests/lib-helpers-regression.test.mjs`，Codex 审查确认未越权改文件；测试覆盖共享 helper 文件存在、关键导出存在和重复函数定义回流。本轮未修改业务源码、lib 实现、check 脚本、后端、依赖或 package/lockfile。"
+```
+
+### R894 - 共享 MetricCard 首刀
+
+```yaml
+id: R894
+module: "前端健康恢复"
+description: "第三方前端重构方案指出多个页面重复定义 MetricCard/SummaryCard/DetailCard。当前代码事实仍存在多处同构指标卡，本轮只先处理三个完全同构旧页面：`/demand-plans`、`/schedule-plans`、`/shift-details`。需要新增共享 MetricCard 并迁移这三处页面，不改变页面路由、数据读取、业务文案或视觉层级。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 1 + 代码事实盘点"
+submitted_at: "2026-06-16"
+version: "1.0"
+status: "done"
+notes: "IM194 已完成：Qoder 受控新增共享 `components/metric-card.tsx`，并迁移 `/demand-plans`、`/schedule-plans`、`/shift-details` 三处完全同构指标卡；结构测试防止三处页面重新定义本地 `MetricCard` 或 `SummaryCard`。本轮未修改页面路由、数据读取、业务文案、后端、依赖或 package/lockfile。"
+```
+
+### R895 - 旧风险不可用页共享 MetricCard 迁移
+
+```yaml
+id: R895
+module: "前端健康恢复"
+description: "IM194 已完成共享 MetricCard 首刀，代码事实显示旧 `/unavailability`、`/unavailability/[unavailabilityId]`、`/schedule-risks/[riskId]` 仍保留完全同构本地 MetricCard。需要在不修改共享组件 API、不改页面语义的前提下，把这三处迁移到共享 MetricCard，并扩展结构测试。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 1 + IM194 后代码事实盘点"
+submitted_at: "2026-06-16"
+version: "1.0"
+status: "done"
+notes: "已完成。Product Design brief：继续保持当前 shadcn Card 指标卡视觉；静态展示；不新增动作、文案或业务语义。"
 ```

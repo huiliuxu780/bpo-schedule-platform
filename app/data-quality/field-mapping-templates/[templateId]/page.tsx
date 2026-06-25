@@ -1,3 +1,5 @@
+import { formatApiError } from "@/lib/api-error"
+import type { ApiResult } from "@/lib/api-result"
 import Link from "next/link"
 import type { ReactNode } from "react"
 import { ArrowLeft, Ban, Save, Upload } from "lucide-react"
@@ -43,11 +45,6 @@ type FieldMappingTemplatePageProps = {
     batchId?: string
     reason?: string
   }>
-}
-
-type ApiResult<T> = {
-  data: T | null
-  error: string | null
 }
 
 export default async function FieldMappingTemplatePage({
@@ -431,15 +428,7 @@ async function fetchImportFieldMappingTemplate(
   } catch (error) {
     return {
       data: null,
-      error: formatApiError(error),
+      error: formatApiError(error, "api_unavailable"),
     }
   }
-}
-
-function formatApiError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return "api_unavailable"
 }

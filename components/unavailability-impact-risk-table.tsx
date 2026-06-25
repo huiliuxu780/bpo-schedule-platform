@@ -2,26 +2,11 @@
 
 import Link from "next/link"
 import { ArrowUpDown } from "lucide-react"
-import {
-  type ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  type SortingState,
-  useReactTable,
-} from "@tanstack/react-table"
-import * as React from "react"
+import { type ColumnDef } from "@tanstack/react-table"
 
+import { SimpleTable } from "@/components/simple-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 import {
   scheduleRiskLevelLabel,
   type ScheduleRiskRow,
@@ -142,61 +127,12 @@ export function UnavailabilityImpactRiskTable({
 }: {
   rows: ScheduleRiskRow[]
 }) {
-  "use no memo"
-
-  const [sorting, setSorting] = React.useState<SortingState>([
-    { id: "risk_level", desc: false },
-  ])
-  // TanStack Table exposes an imperative table service that React Compiler cannot memoize.
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const table = useReactTable({
-    data: rows,
-    columns,
-    state: { sorting },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  })
-
   return (
-    <Table>
-      <TableHeader>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableRow key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <TableHead key={header.id}>
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-              </TableHead>
-            ))}
-          </TableRow>
-        ))}
-      </TableHeader>
-      <TableBody>
-        {table.getRowModel().rows.map((row) => (
-          <TableRow key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </TableCell>
-            ))}
-          </TableRow>
-        ))}
-        {rows.length === 0 ? (
-          <TableRow>
-            <TableCell
-              colSpan={columns.length}
-              className="h-20 text-center text-sm text-muted-foreground"
-            >
-              当前不可用时段暂无关联风险提示
-            </TableCell>
-          </TableRow>
-        ) : null}
-      </TableBody>
-    </Table>
+    <SimpleTable
+      columns={columns}
+      data={rows}
+      emptyMessage="当前不可用时段暂无关联风险提示"
+      defaultSorting={[{ id: "risk_level", desc: false }]}
+    />
   )
 }

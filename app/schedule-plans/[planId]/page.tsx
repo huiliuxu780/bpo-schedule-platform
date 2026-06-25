@@ -6,7 +6,6 @@ import { SchedulePlanIntervalTable } from "@/components/schedule-plan-interval-t
 import {
   formatCoverageRate,
   getSchedulePlan,
-  getScheduleRisks,
   schedulePlanStatusLabel,
 } from "@/lib/schedule-plans"
 import { Badge } from "@/components/ui/badge"
@@ -18,7 +17,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { getUnavailability } from "@/lib/unavailability"
 
 type PageProps = {
   params: Promise<{
@@ -34,23 +32,7 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
     notFound()
   }
 
-  const [risks, activeUnavailability] = await Promise.all([
-    getScheduleRisks(plan.summary.id),
-    getUnavailability({ query: plan.summary.site_name, status: "active" }),
-  ])
   const gapIntervals = plan.intervals.filter((item) => item.gap_agents > 0)
-  const relatedRisks = risks.filter(
-    (risk) =>
-      risk.plan_id === plan.summary.id &&
-      risk.plan_date === plan.summary.plan_date
-  )
-  const primaryRisk = relatedRisks[0] ?? null
-  const relatedUnavailability = activeUnavailability.filter(
-    (row) =>
-      row.project_name === plan.summary.project_name &&
-      row.site_name === plan.summary.site_name &&
-      row.unavailable_date === plan.summary.plan_date
-  )
 
   return (
     <AppShell
@@ -97,15 +79,15 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-4">
             <div>
-              <CardTitle>复核链路</CardTitle>
+              <CardTitle>计划复核摘要</CardTitle>
               <CardDescription>
-                继续检查班次、风险和不可用影响。
+                当前计划的 0.5h 时段和缺口分布。
               </CardDescription>
             </div>
-            <Badge variant="outline">复核中</Badge>
+            <Badge variant="outline">计划内</Badge>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
-            <div className="grid gap-3 md:grid-cols-4">
+            <div className="grid gap-3 md:grid-cols-3">
               <DetailCard
                 title="0.5h 时段"
                 value={`${plan.intervals.length}`}
@@ -117,40 +99,10 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
                 description="需人工复核"
               />
               <DetailCard
-                title="关联风险"
-                value={`${relatedRisks.length}`}
-                description="同计划风险提示"
+                title="覆盖缺口"
+                value={`${plan.summary.gap_agents}`}
+                description="按计划口径汇总"
               />
-              <DetailCard
-                title="生效不可用"
-                value={`${relatedUnavailability.length}`}
-                description="同日期同职场"
-              />
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Button asChild variant="outline" size="sm">
-                <Link href={`/shift-details?query=${plan.summary.id}`}>查看班次</Link>
-              </Button>
-              {primaryRisk ? (
-                <Button asChild variant="outline" size="sm">
-                  <Link
-                    href={`/schedule-risks/${encodeURIComponent(primaryRisk.risk_id)}`}
-                  >
-                    查看风险
-                  </Link>
-                </Button>
-              ) : (
-                <Button variant="outline" size="sm" disabled>
-                  查看风险
-                </Button>
-              )}
-              <Button asChild variant="outline" size="sm">
-                <Link
-                  href={`/unavailability?query=${encodeURIComponent(plan.summary.site_name)}&status=active`}
-                >
-                  查看不可用
-                </Link>
-              </Button>
             </div>
           </CardContent>
         </Card>

@@ -21,6 +21,7 @@ export type ActualLogProductionRow = {
   sourceBatchLabel: string
   sourceBatchHref: string
   detailHref: string
+  nextActionLabel: string
   businessDateLabel: string
   uploadedAtLabel: string
   applicationLabel: "已应用" | "待应用"
@@ -135,6 +136,7 @@ export type ActualLogProcessingDetailSummary = {
   versionLabel: string
   sourceBatchHref: string
   workbenchHref: string
+  workbenchLabel: string
   businessDateLabel: string
   uploadedAtLabel: string
   applicationLabel: "已应用" | "待应用"
@@ -343,6 +345,7 @@ function toActualLogProductionRow(batch: ImportBatchListRow): ActualLogProductio
     sourceBatchLabel: formatImportBatchDisplayLabel(batch.batch_id),
     sourceBatchHref: `/data-quality/import-batches/${batch.batch_id}`,
     detailHref: `/actual-logs/production/${batch.batch_id}`,
+    nextActionLabel: "查看日志版本",
     businessDateLabel: formatBusinessDateRange(
       batch.business_date_from,
       batch.business_date_to
@@ -407,6 +410,7 @@ export function summarizeActualLogProcessingDetail(
     versionLabel: row.versionLabel,
     sourceBatchHref: row.sourceBatchHref,
     workbenchHref: "/actual-logs/production",
+    workbenchLabel: "返回日志版本列表",
     businessDateLabel: row.businessDateLabel,
     uploadedAtLabel: row.uploadedAtLabel,
     applicationLabel: row.applicationLabel,
@@ -453,8 +457,8 @@ function buildMissingActualLogProcessingDetail(
 ): ActualLogProcessingDetailSummary {
   return {
     tone: "blocked",
-    title: "日志处理批次未定位",
-    detail: "当前来源批次不在登录/状态日志列表中，无法展示处理解释。",
+    title: "日志版本未定位",
+    detail: "当前日志版本不在日志版本列表中，无法展示处理解释。",
     workspaceTabs: [...ACTUAL_LOG_PROCESSING_WORKSPACE_TABS],
     batchId,
     fileName: "未找到来源文件",
@@ -462,6 +466,7 @@ function buildMissingActualLogProcessingDetail(
     versionLabel: "未找到实际日志业务版本",
     sourceBatchHref: "/actual-logs/production",
     workbenchHref: "/actual-logs/production",
+    workbenchLabel: "返回日志版本列表",
     businessDateLabel: "未定位",
     uploadedAtLabel: "未定位",
     applicationLabel: "待应用",
@@ -473,7 +478,7 @@ function buildMissingActualLogProcessingDetail(
     statusIntervalLabel: "未定位状态区间",
     loginEventLabel: "未定位登录事件",
     detailEmptyLabel: "批次明细未读取，不能展示逐行登录事件或状态区间",
-    blockerSummary: "请返回登录/状态日志选择来源批次",
+    blockerSummary: "请返回日志版本列表选择已应用版本",
     loginEventCount: 0,
     statusDictionaryCount: 0,
     statusIntervalCount: 0,
