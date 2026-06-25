@@ -17,6 +17,55 @@
 
 ## Log
 
+### 2026-06-25
+
+- task_id: `IM242`
+- source_ids:
+  - `R941`
+- story_ids:
+  - `US861`
+- action: 复核案例 form-click E2E 自动化决策。
+- status: `done`
+- notes: Qoder 只读审计确认当前仓库无 Playwright/E2E 基础设施，安装浏览器自动化会修改 package/lockfile 并超出当前 qa gate。Codex 复核后把结论记录为 IM242：当前不自动化页面表单点击 E2E，不启动 runtime，不新增测试脚本或 check.sh 门禁；剩余 server action -> fetch -> redirect 胶水层风险低，推荐沿用 IM241 HTTP smoke 证据并由 PM 手工执行 8 步浏览器 walkthrough。
+
+- task_id: `IM241`
+- source_ids:
+  - `R940`
+- story_ids:
+  - `US860`
+- action: 复核案例写入动作 live runtime smoke。
+- status: `done`
+- notes: PM 确认执行后，Codex 使用 `BPO_DATABASE_URL=sqlite+pysqlite:///./.local/im241-review-case-action-smoke.db` 创建隔离 runtime DB 并加载 `seed_review_case_stage_matrix()`。后端运行在 `127.0.0.1:8000`，前端运行在 `127.0.0.1:3002`。HTTP smoke 覆盖补证据、补结论、关闭案例、closed case 拒绝补写、closed case 重复关闭幂等，以及 success/failed feedback URL，均返回预期状态和内容。本轮不新增业务功能、API、schema、依赖、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+### 2026-06-24
+
+- task_id: `IM240`
+- source_ids:
+  - `R939`
+- story_ids:
+  - `US859`
+- action: 复核案例 live runtime smoke。
+- status: `done`
+- notes: PM 确认可启动 runtime 并在端口占用时换端口后，Codex 使用隔离数据库 `.local/im240-runtime-smoke.db` 调用 `seed_review_case_stage_matrix()`。后端运行在 `127.0.0.1:8000`，现有 BPO Next `3000` 进程无响应且持有 Next dev lock，已只停止该旧 BPO Next 进程并在 `127.0.0.1:3002` 重启前端；`3001` 的 WikiNode 进程未触碰。HTTP smoke 覆盖 backend docs/API、列表页、CASE-QUERY-001 详情页、四个 processing-stage filter 和三类 feedback URL，均返回 200 且命中预期内容。本轮不新增业务功能、API、schema、依赖、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+- task_id: `IM239`
+- source_ids:
+  - `R938`
+- story_ids:
+  - `US858`
+- action: 复核案例阶段 seed matrix 实现。
+- status: `done`
+- notes: PM 确认先扩展 seed 再做完整 live runtime 验收后，Qoder 实现 `seed_review_case_stage_matrix()`，Codex 复核并补齐 Harness。该函数在保留 `CASE-QUERY-001` ready_to_close 基线的同时新增 `CASE-SEED-ME-001`、`CASE-SEED-MC-001`、`CASE-SEED-CL-001`，分别覆盖缺证据、缺结论和 closure-backed 已关闭阶段。当前任务不启动 runtime，不新增 API，不修改 persistence/schema/frontend/依赖，也不声称 live runtime acceptance 已通过。
+
+- task_id: `IM238`
+- source_ids:
+  - `R937`
+- story_ids:
+  - `US857`
+- action: 复核案例 live runtime 验收准备入队。
+- status: `ready`
+- notes: Qoder 只读梳理复核案例 runtime 入口后，Codex 将其正规化为 R937/US857/IM238，并 seed 到 current story queue 与 active task。当前任务只允许完善 preflight 文档和 Harness traceability；不启动 8000，不执行 live seeded 验收，不修改业务 UI、组件、后端、数据库、依赖或 package/lockfile。Packet D 已把未来 seed extension Gate 草案写入 preflight 文档，明确当前 seed 只覆盖 `ready_to_close`，其余三个 processing stage 需 PM 另行确认后才可实现或验收。真正 runtime 验收、seed 扩展或自动化 smoke 需要 PM 确认 Gate Plan 后另行执行。
+
 ### 2026-06-22
 
 - task_id: `IM237`
@@ -2789,3 +2838,30 @@
   action: 项目理解需求基线校准。
   status: `done`
   notes: 新增 `docs/design/project-understanding-requirements-calibration.md`，把 2026-06-14 外部项目理解与需求文档校准为产品北极星和需求地图，而不是当前实现状态或自动 backlog。校准结果明确：业务背景、核心概念、五大业务域、用户角色和目标 IA 仍有效；错误边界、loading、详情页 Tab 化、空状态组件化、数据质量/复核链路等状态判断已经被后续迭代改变；认证、权限、审批、导出、批量、生产公式、结算和收费因子仍需新 Gate。本轮未修改 UI 组件、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM243`
+  source_ids:
+    - `R942`
+  story_ids:
+    - `US862`
+  action: 复核案例写入动作手工浏览器验收。
+  status: `done`
+  notes: 使用 `BPO_DATABASE_URL` 指向 `.local/im243-review-case-form-click-smoke.db` 并加载 `seed_review_case_stage_matrix()`；backend `127.0.0.1:8000` 与 frontend `127.0.0.1:3002` 启动后，浏览器手工验证 `CASE-SEED-ME-001` 补证据、`CASE-SEED-MC-001` 补结论、`CASE-QUERY-001` 关闭案例三条表单链路均触发 server action、跳转 success URL、显示成功反馈，并通过 detail API 回读确认写入；`CASE-SEED-CL-001` 显示已关闭 blocker，面包屑可返回列表。本轮未新增自动化 E2E，未修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM244`
+  source_ids:
+    - `R943`
+  story_ids:
+    - `US863`
+  action: 复核案例验收块收口摘要。
+  status: `done`
+  notes: 复核 Qoder Packet A/B 后新增 `docs/design/review-case-acceptance-closeout.md`，把 IM239-IM243 的 stage matrix seed、read runtime smoke、write API smoke、E2E 决策和 manual browser walkthrough 整理为一份本地 MVP 验收收口摘要。文档明确已验证能力、未覆盖生产边界、PR 摘要草案和后续候选任务；本轮未启动 runtime，未修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM245`
+  source_ids:
+    - `R944`
+  story_ids:
+    - `US864`
+  action: Review-case acceptance PR 合并规划。
+  status: `done`
+  notes: 复核 Qoder IM245 Packet A/B 后新增 `docs/design/review-case-pr-readiness-plan.md`，决策采用 3 个 stacked PR：PR-1 frontend health/model refactor/test split，PR-2 Harness hygiene/review-case processing path，PR-3 review-case acceptance block。Comparison Run -> Review Case 关联链保留为 PR 策略落地后的首选开发候选。本轮未执行 cherry-pick/拆分分支，未修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

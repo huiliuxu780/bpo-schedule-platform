@@ -2,6 +2,138 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: IM245
+    title: "Review-case acceptance PR 合并规划"
+    priority: P0
+    status: done
+    required_workflow: qa
+    dependencies: ["IM244"]
+    story_ids: ["US864"]
+    requirement_ids: ["R944"]
+    task_packets:
+      - id: "Packet A"
+        title: "PR 边界复核"
+        owner: "Qoder"
+        scope: "只读复核当前分支相对 `origin/main` 的 diff、commit 范围、逻辑阶段和 review 风险，确认是否适合单 PR。"
+      - id: "Packet B"
+        title: "下一业务切片候选复核"
+        owner: "Qoder"
+        scope: "只读复核 Comparison Run -> Review Case 关联链、批量操作、Import Batch 溯源链三个候选，给出推荐顺序和风险。"
+      - id: "Packet C"
+        title: "合并策略收口"
+        owner: "Codex"
+        scope: "Codex 复核 Packet A/B，输出 PR 拆分或单 PR 分段审阅方案、PR 文案、Qoder 后续任务边界和下一开发切片建议。"
+    allowed_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/design/review-case-acceptance-closeout.md"
+      - "docs/design/review-case-pr-readiness-plan.md"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "backend/migrations/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - ".qoder/**"
+      - "node_modules/**"
+      - ".local/**"
+    acceptance:
+      - "记录当前分支相对 `origin/main` 的 PR 规模、逻辑阶段和 review 风险。"
+      - "给出单 PR 分段审阅与拆 2-3 个 stacked PR 的取舍，明确推荐方案。"
+      - "如推荐拆分，输出安全拆分步骤、基线、合并顺序和 stop conditions；如推荐单 PR，输出 PR title/body 和 reviewer 指引。"
+      - "保留 Comparison Run -> Review Case 关联链为后续候选，不在本任务中修改业务代码。"
+      - "`bash scripts/check-state.sh --strict`、`git diff --check`、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要 cherry-pick、rebase、reset、checkout 覆盖或其他破坏性/歧义 Git 操作"
+      - "需要修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration"
+      - "需要启动 frontend/backend runtime"
+      - "需要新增审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：复核 Qoder IM245 Packet A/B 后，新增 `docs/design/review-case-pr-readiness-plan.md`。决策采用 3 个 stacked PR：PR-1 frontend health/model refactor/test split，PR-2 Harness hygiene/review-case processing path，PR-3 review-case acceptance block。Comparison Run -> Review Case 关联链保留为 PR 策略落地后的首选开发候选。本轮未执行 cherry-pick/拆分分支，未修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量或生产规则。"
+  - id: IM244
+    title: "复核案例验收块收口摘要"
+    priority: P0
+    status: done
+    required_workflow: qa
+    dependencies: ["IM243"]
+    story_ids: ["US863"]
+    requirement_ids: ["R943"]
+    task_packets:
+      - id: "Packet A"
+        title: "证据索引"
+        owner: "Qoder"
+        scope: "只读梳理 IM239-IM243 已有文档和日志，列出证据文件、验证命令、runtime/DB 信息和明确通过项。"
+      - id: "Packet B"
+        title: "边界与风险"
+        owner: "Qoder"
+        scope: "只读梳理未覆盖范围和 hard boundary，确认不能把本地 QA 证据表述为 production-ready。"
+      - id: "Packet C"
+        title: "收口文档与后续候选"
+        owner: "Codex"
+        scope: "Codex 复核 Packet A/B，写入收口摘要、更新 Harness，提出 2-3 个后续候选任务并跑全量门禁。"
+    allowed_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/design/review-case-live-runtime-acceptance-preflight.md"
+      - "docs/design/review-case-acceptance-closeout.md"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "backend/migrations/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - ".qoder/**"
+      - "node_modules/**"
+      - ".local/**"
+    acceptance:
+      - "新增或更新收口文档，按 IM239、IM240、IM241、IM242、IM243 分段列出证据和结果。"
+      - "明确本地 MVP 已验证范围、未验证范围、PR/交接措辞和生产边界。"
+      - "输出下一阶段 2-3 个候选任务，按依赖、业务价值和风险排序。"
+      - "不启动 runtime，不新增自动化 E2E，不修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration。"
+      - "`bash scripts/check-state.sh --strict`、`git diff --check`、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要启动 frontend/backend runtime"
+      - "需要新增自动化 E2E、测试脚本、运行脚本或 check.sh 门禁"
+      - "需要修改业务代码、API route、schema/migration、依赖或 package/lockfile"
+      - "需要新增审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：复核 Qoder Packet A/B 后，新增 `docs/design/review-case-acceptance-closeout.md`，按 IM239-IM243 整理本地 MVP 验收证据、runtime/DB 信息、已验证能力、未覆盖边界、PR 摘要草案和后续候选任务。本轮未启动 runtime，未修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
   - id: IM171
     title: "登录/状态日志导入大弹窗"
     priority: P0
@@ -13910,3 +14042,343 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已完成：集成新 Harness 治理分支和 review-case 产品/门禁分支，保留两边成果并通过完整门禁。"
+  - id: IM238
+    title: "复核案例 Live Runtime 验收准备"
+    priority: P0
+    status: done
+    required_workflow: qa
+    dependencies: ["IM237"]
+    story_ids: ["US857"]
+    requirement_ids: ["R937"]
+    allowed_files:
+      - "docs/design/review-case-live-runtime-acceptance-preflight.md"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "scripts/check.sh"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - ".local/**"
+      - ".qoder/**"
+    acceptance:
+      - "正式记录 R937/US857/IM238，并把 current story queue 与 active task seed 为 ready。"
+      - "复核案例 live runtime preflight 文档覆盖页面入口、API 端点、seed 前置条件、PM 手工验收清单、自动化 smoke 候选、hard stop 和 non-goals。"
+      - "文档明确 `CASE-QUERY-001` 当前是 ready_to_close seed；如需 missing_evidence、missing_conclusion 或 closed 等 live 阶段，需要后续单独确认 seed 扩展或显式关闭动作。"
+      - "文档明确本轮不启动 8000，不执行 live runtime 验收，不修改业务 UI、组件、后端、数据库或依赖。"
+      - "`bash scripts/check-state.sh --strict`、`bash scripts/check-state.sh --repair-scope`、`git diff --check`、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要启动新的测试环境或后端/API runtime"
+      - "需要新增或修改 seed 数据实现、后端 route、数据库、schema/migration、依赖或 package/lockfile"
+      - "需要修改 app、components、hooks、lib 或任何业务 UI/业务模型代码"
+      - "需要把 3000-only 页面可达、模型测试通过或错误态渲染误表述为 live seeded 验收通过"
+      - "需要新增审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：live runtime preflight 文档、bounded Qoder packets、seed coverage gap、future smoke sequence 和 seed extension Gate 草案均已记录；未启动 runtime，未修改业务代码。"
+  - id: IM239
+    title: "复核案例阶段 Seed Matrix"
+    priority: P0
+    status: done
+    required_workflow: backend-mvp
+    dependencies: ["IM238"]
+    story_ids: ["US858"]
+    requirement_ids: ["R938"]
+    allowed_files:
+      - "backend/app/review_demo_seed.py"
+      - "backend/tests/test_review_demo_seed.py"
+      - "docs/design/review-case-live-runtime-acceptance-preflight.md"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+    forbidden_files:
+      - "backend/app/review_persistence.py"
+      - "backend/app/review_closure.py"
+      - "backend/app/review_evidence.py"
+      - "backend/app/review_conclusion.py"
+      - "backend/app/main.py"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "scripts/check.sh"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - ".local/**"
+      - ".qoder/**"
+    acceptance:
+      - "`seed_review_case_demo()` 保持 `CASE-QUERY-001` 现有行为和返回值。"
+      - "新增 `seed_review_case_stage_matrix()`，生成四个阶段案例：ready_to_close、missing_evidence、missing_conclusion 和 closure-backed closed。"
+      - "stage matrix seed 复用 `_ensure_forecast_schedule_result()`，不新增 route、startup hook、schema/migration 或依赖。"
+      - "`backend.tests.test_review_demo_seed` 覆盖四个案例组合、幂等性和 `created_at` 不变。"
+      - "`bash scripts/check-state.sh --strict`、`bash scripts/check-state.sh --repair-scope`、`git diff --check`、focused unittest、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要启动新的测试环境或后端/API runtime"
+      - "需要修改 review persistence/service/main route、数据库 schema/migration、依赖或 package/lockfile"
+      - "需要修改 app、components、hooks、lib 或任何业务 UI/业务模型代码"
+      - "需要新增审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：新增 review-case stage matrix seed 和 unittest 覆盖，为后续 PM-confirmed live runtime smoke 提供四阶段 seed 数据；未启动 runtime，未新增 API，未修改 persistence/schema/frontend。"
+  - id: IM240
+    title: "复核案例 Live Runtime Smoke"
+    priority: P0
+    status: done
+    required_workflow: qa
+    dependencies: ["IM239"]
+    story_ids: ["US859"]
+    requirement_ids: ["R939"]
+    allowed_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/design/review-case-live-runtime-acceptance-preflight.md"
+      - ".local/im240-runtime-smoke.db"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "scripts/check.sh"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - ".qoder/**"
+    acceptance:
+      - "隔离数据库 `.local/im240-runtime-smoke.db` 成功加载 `seed_review_case_stage_matrix()`。"
+      - "backend/frontend runtime 成功启动；如 `8000/3000` 占用，可使用替代端口并记录。"
+      - "复核案例列表页和 `CASE-QUERY-001` 详情页返回 200 并包含预期内容。"
+      - "四个 processing-stage filter 分别返回 `CASE-SEED-ME-001`、`CASE-SEED-MC-001`、`CASE-QUERY-001`、`CASE-SEED-CL-001`。"
+      - "详情页 feedback URL 参数 `evidence=failed`、`conclusion=failed`、`closure=success` 返回 200 并显示对应反馈。"
+      - "`bash scripts/check-state.sh --strict`、`git diff --check`、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "backend or frontend runtime cannot start on default or alternate local ports"
+      - "stage matrix seed cannot be loaded into the isolated runtime database"
+      - "review-case list, detail, processing-stage filters, or URL feedback smoke returns non-200 or missing expected content"
+      - "需要新增或修改业务代码、API route、schema/migration、依赖或 package/lockfile"
+      - "需要新增审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：使用隔离数据库 `.local/im240-runtime-smoke.db` 加载 `seed_review_case_stage_matrix()`；backend `127.0.0.1:8000`、frontend `127.0.0.1:3002`。HTTP smoke 覆盖 `/docs`、review-case API、列表、CASE-QUERY-001 详情、四个 processing-stage filter 和 `evidence=failed`/`conclusion=failed`/`closure=success` feedback，全部 200 且命中预期内容。未改业务代码、API route、schema/migration、依赖、package/lockfile 或产品 UI。"
+  - id: IM241
+    title: "复核案例写入动作 Live Runtime Smoke"
+    priority: P0
+    status: done
+    required_workflow: qa
+    dependencies: ["IM240"]
+    story_ids: ["US860"]
+    requirement_ids: ["R940"]
+    allowed_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/design/review-case-live-runtime-acceptance-preflight.md"
+      - ".local/im241-review-case-action-smoke.db"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "backend/migrations/**"
+      - "scripts/check.sh"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - ".qoder/**"
+    acceptance:
+      - "隔离数据库 `.local/im241-review-case-action-smoke.db` 通过 `BPO_DATABASE_URL` 成功加载 `seed_review_case_stage_matrix()`。"
+      - "`CASE-SEED-ME-001` POST evidence 成功，GET detail 可见新增 evidence。"
+      - "`CASE-SEED-MC-001` POST conclusion 成功，GET detail 可见新增 conclusion。"
+      - "`CASE-QUERY-001` POST closure 成功，GET detail 可见 closure。"
+      - "`CASE-SEED-CL-001` POST evidence 返回 `400 REVIEW_EVIDENCE_INVALID`，POST conclusion 返回 `400 REVIEW_CONCLUSION_INVALID`。"
+      - "`CASE-SEED-CL-001` 重复 closure 返回 200 且原 closure 不变。"
+      - "成功/失败 feedback URL 返回 200 并显示对应文案。"
+      - "`bash scripts/check-state.sh --strict`、`git diff --check`、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "isolated runtime database cannot be guaranteed through BPO_DATABASE_URL"
+      - "stage matrix seed cannot be loaded into the isolated runtime database"
+      - "backend or frontend runtime cannot start on default or alternate local ports"
+      - "evidence, conclusion, closure, closed-case rejection, idempotent closure, or feedback smoke returns an unexpected status or missing expected content"
+      - "需要新增或修改业务代码、API route、schema/migration、依赖或 package/lockfile"
+      - "需要新增审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：使用 `BPO_DATABASE_URL=sqlite+pysqlite:///./.local/im241-review-case-action-smoke.db` 加载 `seed_review_case_stage_matrix()`；backend `127.0.0.1:8000`、frontend `127.0.0.1:3002`。HTTP smoke 覆盖 POST evidence、GET evidence detail、POST conclusion、GET conclusion detail、POST closure、GET closure detail、closed case evidence/conclusion 400 拒绝、closed case closure 幂等，以及 success/failed feedback URL，全部命中预期。未改业务代码、API route、schema/migration、依赖、package/lockfile 或产品 UI。"
+  - id: IM242
+    title: "复核案例 Form-Click E2E 自动化决策"
+    priority: P0
+    status: done
+    required_workflow: qa
+    dependencies: ["IM241"]
+    story_ids: ["US861"]
+    requirement_ids: ["R941"]
+    allowed_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/design/review-case-live-runtime-acceptance-preflight.md"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "backend/migrations/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - ".local/**"
+      - ".qoder/**"
+      - "node_modules/**"
+    acceptance:
+      - "复核 Qoder Packet A/B 结论，确认当前仓库没有 Playwright/E2E 基础设施，且新增依赖不属于当前 qa gate。"
+      - "在 `docs/design/review-case-live-runtime-acceptance-preflight.md` 记录 IM242 form-click E2E feasibility decision。"
+      - "明确 server action -> fetch -> redirect 胶水层为唯一剩余缝隙且风险低。"
+      - "明确推荐替代 Gate：沿用 IM241 HTTP smoke 证据，并由 PM 手工执行 8 步浏览器 walkthrough。"
+      - "明确未来若安装 Playwright，必须另开 dependency Gate；当前不新增脚本、测试目录、依赖或 check.sh 门禁。"
+      - "`bash scripts/check-state.sh --strict`、`git diff --check`、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要安装 Playwright、Cypress、Puppeteer、Selenium 或修改 package/lockfile"
+      - "需要新增 E2E 目录、测试脚本、runtime 编排脚本或 check.sh 门禁"
+      - "需要启动 frontend/backend runtime"
+      - "需要修改业务代码、API route、schema/migration、依赖或 package/lockfile"
+      - "需要新增审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：新增 IM242 form-click E2E feasibility decision，结论为当前 qa gate 不建议自动化 E2E；不安装 Playwright，不改 package/lockfile，不新增 E2E 目录、运行脚本或 check.sh 门禁。推荐使用 IM241 HTTP smoke 证据加 PM 手工浏览器验收清单覆盖剩余低风险胶水层。"
+  - id: IM243
+    title: "复核案例写入动作手工浏览器验收"
+    priority: P0
+    status: done
+    required_workflow: qa
+    dependencies: ["IM242"]
+    story_ids: ["US862"]
+    requirement_ids: ["R942"]
+    task_packets:
+      - id: "Packet A"
+        title: "Harness 入队"
+        owner: "Codex"
+        scope: "写入 R942/US862/IM243/current/trace，建立当前 QA Gate。"
+      - id: "Packet B"
+        title: "Runtime 与浏览器 walkthrough"
+        owner: "Codex"
+        scope: "使用隔离 DB、backend 8000、frontend 3002 验证三个页面表单提交和已关闭 blocker。"
+      - id: "Packet C"
+        title: "审计收口"
+        owner: "Codex"
+        scope: "记录证据、清空 current queue、跑完整门禁、提交；push 等 PM 确认。"
+    allowed_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/design/review-case-live-runtime-acceptance-preflight.md"
+      - ".local/im243-review-case-form-click-smoke.db"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "backend/migrations/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - ".qoder/**"
+      - "node_modules/**"
+    acceptance:
+      - "隔离数据库 `.local/im243-review-case-form-click-smoke.db` 通过 `BPO_DATABASE_URL` 成功加载 `seed_review_case_stage_matrix()`。"
+      - "backend `127.0.0.1:8000` 和 frontend `127.0.0.1:3002` 成功启动；如端口不可用，必须记录并获得 PM 确认后换端口。"
+      - "`CASE-SEED-ME-001` 在浏览器中提交补证据表单后跳转到 `?evidence=success` 并显示 `补证据提交成功`。"
+      - "`CASE-SEED-MC-001` 在浏览器中提交补结论表单后跳转到 `?conclusion=success` 并显示 `补结论提交成功`。"
+      - "`CASE-QUERY-001` 在浏览器中提交关闭案例表单后跳转到 `?closure=success` 并显示 `关闭案例提交成功`。"
+      - "`CASE-SEED-CL-001` 在浏览器中显示已关闭 blocker，不允许补证据或补结论。"
+      - "记录 runtime/browser 证据，不声明 production-ready，不新增自动化 E2E。"
+      - "`bash scripts/check-state.sh --strict`、`git diff --check`、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "isolated runtime database cannot be guaranteed through BPO_DATABASE_URL"
+      - "stage matrix seed cannot be loaded into the isolated runtime database"
+      - "backend or frontend runtime cannot start on the confirmed local ports"
+      - "browser walkthrough cannot reach expected pages, controls, feedback URLs, or blocker text"
+      - "需要安装 E2E 自动化依赖、修改 package/lockfile、新增脚本或修改 check.sh"
+      - "需要修改业务代码、API route、schema/migration、依赖或 package/lockfile"
+      - "需要新增审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：使用 `BPO_DATABASE_URL` 指向 `.local/im243-review-case-form-click-smoke.db` 并加载 `seed_review_case_stage_matrix()`；backend `127.0.0.1:8000` 与 frontend `127.0.0.1:3002` 启动后，浏览器手工验证 `CASE-SEED-ME-001` 补证据、`CASE-SEED-MC-001` 补结论、`CASE-QUERY-001` 关闭案例三条表单链路均触发 Next server action、写入后端、跳转 success URL 并显示成功反馈；`CASE-SEED-CL-001` 显示已关闭 blocker，面包屑可返回列表。本轮未新增自动化 E2E，未修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"

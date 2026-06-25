@@ -4,6 +4,127 @@
 
 ## Current Audit
 
+### 2026-06-25 - IM242 复核案例 Form-Click E2E 自动化决策
+
+#### 审计结论
+
+- `IM242/US861/R941` 已完成 review-case form-click E2E feasibility decision。
+- 当前 `qa` gate 不建议自动化页面表单点击 E2E：仓库没有 Playwright/E2E 基础设施，新增依赖会修改 `package.json` / lockfile 并触发单独 dependency Gate。
+- IM242 没有启动 frontend/backend runtime，没有新增 E2E 目录、运行脚本或 `scripts/check.sh` 门禁。
+- 剩余未自动化覆盖点限定为 Next server action 表单提交后的 `fetch()` 和 `redirect()` 薄胶水层；风险等级记录为低。
+- 推荐替代验收为 IM241 HTTP smoke 证据加 PM 手工浏览器 8 步 walkthrough。
+
+#### 风险
+
+- 该决策不是 production readiness，也不代表权限、审批、导出、批量、外部集成、生产公式、结算或收费因子验收。
+- 如果 PM 后续要求浏览器自动化，需要另开 dependency Gate，并明确 package/lockfile、E2E 目录、runtime 编排和 check.sh 门禁范围。
+- 如果 PM 手工 walkthrough 发现 server action redirect 失败，应另开 bug fix task，不能在 QA 决策记录中直接修业务代码。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、433 个 Node script subtests（432 pass、1 skip）、shadcn check、lint、typecheck、Next build、backend 221 unittest OK，最终输出 `project Harness check passed`。
+
+### 2026-06-25 - IM241 复核案例写入动作 Live Runtime Smoke
+
+#### 审计结论
+
+- `IM241/US860/R940` 已完成 PM-confirmed local write-action runtime smoke。
+- 隔离数据库 `.local/im241-review-case-action-smoke.db` 通过 `BPO_DATABASE_URL` 加载 `seed_review_case_stage_matrix()`，避免污染默认业务数据库。
+- 后端运行在 `127.0.0.1:8000`；前端运行在 `127.0.0.1:3002`。runtime smoke 完成后已停止服务。
+- Live smoke 覆盖 POST evidence、POST conclusion、POST closure、closed case evidence/conclusion 拒绝、closed case closure 幂等，以及 success/failed feedback URL。
+- 本轮未修改业务 UI、组件、后端实现、API route、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 该证据只代表本地 runtime smoke 通过，不代表生产 readiness、权限/审批边界、PR 合并或真实外部集成验收。
+- 本轮使用 curl/API 验证写入链路，未使用 Playwright 执行真实表单点击；前端 feedback URL 文案已通过 GET 页面验证。
+- `python -m backend.app.review_demo_seed` 仍只执行基础 seed；完整四阶段矩阵需要显式调用 `seed_review_case_stage_matrix()` 或传入相同 seed helper。
+
+#### 验证
+
+- Seed 输出：`CASE-QUERY-001 open 1 1 False`、`CASE-SEED-ME-001 open 0 0 False`、`CASE-SEED-MC-001 open 1 0 False`、`CASE-SEED-CL-001 open 1 1 True`。
+- API write smoke：`CASE-SEED-ME-001` evidence 写入 200 且 detail 回读 `EVD-SMOKE-ME-001`；`CASE-SEED-MC-001` conclusion 写入 200 且 detail 回读 `CON-SMOKE-MC-001`；`CASE-QUERY-001` closure 写入 200 且 detail 回读 `CLO-SMOKE-001`。
+- Rejection/idempotency smoke：`CASE-SEED-CL-001` evidence 写入返回 400 `REVIEW_EVIDENCE_INVALID`，conclusion 写入返回 400 `REVIEW_CONCLUSION_INVALID`，重复 closure 返回 200 且保持 `CLO-SEED-CL-001`。
+- Feedback smoke：`evidence=success`、`conclusion=success`、`closure=success`、`evidence=failed` 页面均 200 且显示对应反馈文案。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、433 个 Node script subtests（432 pass、1 skip）、shadcn check、lint、typecheck、Next build、backend 221 unittest OK，最终输出 `project Harness check passed`。
+
+### 2026-06-24 - IM240 复核案例 Live Runtime Smoke
+
+#### 审计结论
+
+- `IM240/US859/R939` 已完成 PM-confirmed local runtime smoke。
+- 隔离数据库 `.local/im240-runtime-smoke.db` 已加载 `seed_review_case_stage_matrix()`，四个案例覆盖缺证据、缺结论、可关闭和 closure-backed 已关闭阶段。
+- 后端运行在 `127.0.0.1:8000`；前端运行在 `127.0.0.1:3002`。`3000` 的旧 BPO Next dev 进程无响应且持有 `.next/dev/lock`，已只停止该旧进程；`3001` 的 WikiNode Vite 进程未触碰。
+- Live smoke 覆盖 backend docs/API、复核案例列表、`CASE-QUERY-001` 详情、四个 processing-stage filter、`evidence=failed`、`conclusion=failed`、`closure=success` 三类 feedback URL。
+- 本轮未修改业务 UI、组件、后端实现、API route、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 该证据只代表本地 runtime smoke 通过，不代表生产 readiness、权限/审批边界、写入 POST 动作验收或 PR 合并。
+- `python -m backend.app.review_demo_seed` 仍只执行基础 seed；完整四阶段矩阵需要显式调用 `seed_review_case_stage_matrix()`。
+- 当前 smoke 没有执行真实 POST 写入动作，只验证页面读取、过滤和 URL feedback 渲染。
+
+#### 验证
+
+- Seed 输出：`CASE-QUERY-001 open 1 1 False`、`CASE-SEED-ME-001 open 0 0 False`、`CASE-SEED-MC-001 open 1 0 False`、`CASE-SEED-CL-001 open 1 1 True`。
+- HTTP smoke：backend docs/API、列表、详情、四阶段 filter 和三类 feedback URL 全部 200 且命中预期 case ID 或反馈文案。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、433 个 Node script subtests（432 pass、1 skip）、shadcn check、lint、typecheck、Next build、backend 221 unittest OK，最终输出 `project Harness check passed`。
+
+### 2026-06-24 - IM239 复核案例阶段 Seed Matrix
+
+#### 审计结论
+
+- `IM239/US858/R938` 已补齐 review-case live runtime smoke 前需要的本地 seed 阶段矩阵。
+- `seed_review_case_demo()` 保持既有 `CASE-QUERY-001` 行为；新增 `seed_review_case_stage_matrix()` 显式创建四个目标案例。
+- 四个案例覆盖：`CASE-SEED-ME-001` 缺证据、`CASE-SEED-MC-001` 缺结论、`CASE-QUERY-001` 可关闭、`CASE-SEED-CL-001` closure-backed 已关闭。
+- closed 阶段由 closure 记录支撑，`review_cases.status` 保持既有 open 语义；前端 processing-stage 推导已按 `status === "closed" || closure !== null` 处理。
+- 本轮未启动 runtime，未新增 API route，未修改 persistence/service/main route、schema/migration、前端、依赖、package/lockfile、权限、审批、导出、批量、公式、结算或收费因子。
+
+#### 风险
+
+- IM239 只提供 seed 数据基线，不代表 `/data-quality/review-cases` live runtime smoke 已通过。
+- 后续 smoke 仍需 PM 明确允许使用 backend `127.0.0.1:8000` 和 frontend `127.0.0.1:3000`。
+- 如果后续希望用 `python -m backend.app.review_demo_seed` 直接创建四阶段矩阵，需要另行确认 CLI 行为；当前完整矩阵通过显式 `seed_review_case_stage_matrix()` 调用生成。
+
+#### 验证
+
+- Focused seed unittest：`backend_python=$(bash scripts/verify-backend-runtime.sh --print-path); "$backend_python" -m unittest backend.tests.test_review_demo_seed -v` 通过，8 tests OK。
+- `bash scripts/check-state.sh --strict`：通过。
+- `bash scripts/check-state.sh --repair-scope`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、433 个 Node script subtests（432 pass、1 skip）、shadcn check、lint、typecheck、Next build、backend 221 unittest OK，最终输出 `project Harness check passed`。
+
+### 2026-06-24 - IM238 复核案例 Live Runtime 验收准备
+
+#### 审计结论
+
+- `IM238/US857/R937` 已作为当前唯一 ready task 入队，目标是 live runtime 验收前置准备，不是业务功能开发。
+- Qoder 交回的 runtime 入口梳理已落到 `docs/design/review-case-live-runtime-acceptance-preflight.md`，覆盖 `/data-quality/review-cases`、详情页、5 个 review-case API、`CASE-QUERY-001` seed、PM 手工验收清单和自动化 smoke 候选。
+- 本轮明确区分 3000-only 可完成的页面壳/错误态/model contract 检查，以及必须等待 8000 runtime 的 seeded list/detail/action deck/stage filter 验收。
+- `CASE-QUERY-001` 当前 seed 是 `ready_to_close` 案例：有证据和结论，但没有 closure 记录；如需 live 验收 `missing_evidence`、`missing_conclusion` 或 `closed` 阶段，需要后续单独确认 seed 扩展或显式关闭动作。
+- Packet D 已补充未来 seed extension Gate 草案：仅作为设计决策材料，不是确认任务；未来实现建议限定在 `backend/app/review_demo_seed.py` 与 `backend/tests/test_review_demo_seed.py`，且不得修改 persistence/service/main route、前端、check.sh、依赖、schema/migration 或自动启动 seed。
+- Qoder 后续只能执行 bounded packets，且不得直接写 `docs/current/**` 或 `docs/registry/**`。
+
+#### 风险
+
+- 启动 backend 8000、执行 seed、或做 live smoke 都属于 Gate 后动作；本轮未启动服务。
+- 如果直接在未合并的 PR #2 分支上验收，报告必须明确基线是 `codex/im237-harness-review-case-integration`，不是 `main`。
+- 如果不扩展 seed 或执行显式关闭动作，`missing_evidence`、`missing_conclusion` 和 `closed` 阶段只能靠现有模型/contract 测试覆盖，不能声称 live seeded UI 已覆盖全部阶段。
+- PM 需要在三个路径中选择：先做当前 seed 可覆盖的部分 runtime smoke；先确认 seed extension 后做完整四阶段 live acceptance；或无限期 defer seed extension 并接受 live evidence 只覆盖 `ready_to_close`。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过。
+- `bash scripts/check-state.sh --repair-scope`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、433 个 Node script subtests（432 pass、1 skip）、shadcn check、lint、typecheck、Next build、backend 215 unittest OK，最终输出 `project Harness check passed`。
+
 ### 2026-06-22 - IM237 Harness 与 Review Case 集成
 
 #### 审计结论
@@ -5536,3 +5657,53 @@
 - 结论：外部文档的业务背景、核心概念、五大业务域、用户角色和目标 IA 仍可作为产品基线。
 - 结论：外部文档中的当前状态和待实现排序必须按当前 Harness 重校准；错误边界、loading、Tab 化、空状态、数据质量和复核链路已有后续推进。
 - 结论：认证、权限、审批、导出、批量、自动排班、生产公式、结算和收费因子仍是硬边界，需要单独 Gate。
+
+### 2026-06-25 - IM243 复核案例写入动作手工浏览器验收
+
+#### 审计计划
+
+- 只做本地 QA 验收，不新增产品能力或自动化 E2E。
+- 使用 `BPO_DATABASE_URL` 指向 `.local/im243-review-case-form-click-smoke.db`，显式加载 `seed_review_case_stage_matrix()`。
+- 启动 backend `127.0.0.1:8000` 和 frontend `127.0.0.1:3002`，用浏览器手工提交补证据、补结论、关闭案例三个表单。
+- 通过 URL success 参数、页面反馈文本和 detail API 回读确认 server action -> backend write -> redirect 链路。
+- 不修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- `CASE-SEED-ME-001` 补证据提交后跳转 `?evidence=success`，动作页签显示 `补证据提交成功`，detail API 回读到 `local://im243/browser-evidence` 和 `IM243 browser evidence`。
+- `CASE-SEED-MC-001` 补结论提交后跳转 `?conclusion=success`，动作页签显示 `补结论提交成功`，detail API 回读到 `IM243 browser conclusion`。
+- `CASE-QUERY-001` 关闭案例提交后跳转 `?closure=success`，动作页签显示 `关闭案例提交成功`，detail API 回读到 `closure_status=closed` 和 `IM243 browser closure`。
+- `CASE-SEED-CL-001` 显示已关闭 blocker，证据/结论入口提示 `案例已关闭`，面包屑 `复核案例` 可返回列表页。
+- 该证据关闭当前 review-case 本地 runtime acceptance block；不代表 production-ready、权限验收、外部集成验收或自动化 E2E 覆盖。
+
+### 2026-06-25 - IM244 复核案例验收块收口摘要
+
+#### 审计计划
+
+- 复核 Qoder Packet A/B 的证据索引和边界风险输出。
+- 修正容易误读的点：IM239 确实新增了 backend seed 函数；`.local/*.db` 是本地 smoke artifact，不是 PR 可复现工件。
+- 新增收口文档，明确 IM239-IM243 已验证范围、未验证范围、PR 摘要草案和下一阶段候选。
+- 不启动 runtime，不修改产品 UI、后端实现、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 新增 `docs/design/review-case-acceptance-closeout.md`。
+- 结论：review-case local MVP acceptance block 已收口；已验证四阶段 seed、读路径 runtime、写入 API、E2E 不自动化决策和三条浏览器表单链路。
+- 结论：该证据不代表 production-ready、权限、审批、导出、批量、外部集成、自动排班、生产公式、结算、收费因子、多用户并发或 PR 合并完成。
+- 推荐下一步优先做 PR review / merge planning；之后再定义相邻 operator workflow 或 import-center/data-quality downstream chain。
+
+### 2026-06-25 - IM245 Review-case acceptance PR 合并规划
+
+#### 审计计划
+
+- 复核 Qoder IM245 Packet A/B，不再重复派发已完成的只读任务。
+- 基于 290 files / 82 commits / 6 个逻辑阶段的事实，判断当前集成分支是否适合单 PR。
+- 只新增 PR readiness 计划和 Harness 追踪；不执行 cherry-pick、rebase、reset、分支拆分或 PR 创建。
+- 不修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 新增 `docs/design/review-case-pr-readiness-plan.md`。
+- 决策：推荐拆为 3 个 stacked PR，而不是继续在当前大分支上叠业务开发。
+- PR-1：frontend health + model refactor + test split；PR-2：Harness hygiene + review-case processing path；PR-3：review-case acceptance block。
+- 下一业务候选：Comparison Run -> Review Case 关联链，但需等 PR 策略落地后再正式定义和开发。

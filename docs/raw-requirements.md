@@ -15,6 +15,110 @@
 notes: "补充说明"
 ```
 
+### R944 - Review-case acceptance PR 合并规划
+
+```yaml
+id: R944
+module: "复核案例工作区"
+description: "IM245 只读审计显示当前 `codex/im237-harness-review-case-integration` 分支相对 `origin/main` 包含 82 个 commits、290 个文件和多个逻辑阶段。继续在该分支上叠加业务开发会放大审阅和回滚风险。当前需要先形成 PR 拆分/合并规划，明确是否单 PR 分段审阅或拆为 2-3 个 stacked PR，并把下一块相邻 operator workflow 切片作为后续候选，而不是立即进入开发。"
+source: "Qoder IM245 Packet A/B：PR Readiness Audit 与 Next Operator Workflow Slice Discovery"
+submitted_at: "2026-06-25"
+version: "1.0"
+status: "done"
+notes: "IM245 已完成：新增 `docs/design/review-case-pr-readiness-plan.md`，决策采用 3 个 stacked PR 的拆分策略，并把 Comparison Run -> Review Case 关联链保留为 PR 策略落地后的首选开发候选。本轮未执行 cherry-pick/拆分分支，未修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量或生产规则。"
+```
+
+### R943 - 复核案例验收块收口摘要
+
+```yaml
+id: R943
+module: "复核案例工作区"
+description: "IM239-IM243 已补齐复核案例四阶段 seed、读路径 live smoke、写入 API smoke、form-click E2E 决策和手工浏览器 walkthrough。当前需要把这一组本地 MVP 验收证据整理成一个可审阅的收口摘要，明确已验证、未验证、非生产就绪边界和下一阶段候选，方便 PR/交接时不把 QA 证据误解为生产能力。"
+source: "PM 确认：来吧，记得拆分出来任务"
+submitted_at: "2026-06-25"
+version: "1.0"
+status: "done"
+notes: "IM244 已完成：新增 `docs/design/review-case-acceptance-closeout.md`，收口 IM239-IM243 的本地 MVP 验收证据、PR/交接边界和后续候选任务。不启动 runtime，不修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量或生产规则。"
+```
+
+### R942 - 复核案例写入动作手工浏览器验收
+
+```yaml
+id: R942
+module: "复核案例工作区"
+description: "IM240 已验证复核案例读路径，IM241 已验证写入 API，IM242 已决定当前不引入 Playwright 自动化。当前需要在隔离本地 runtime 下手工走完页面表单点击链路，验证补证据、补结论、关闭案例是否能从浏览器触发 Next server action、跳转到 feedback URL，并在页面上显示正确反馈。"
+source: "PM 确认：可以，记得拆分出来任务"
+submitted_at: "2026-06-25"
+version: "1.0"
+status: "done"
+notes: "IM243 已完成本地手工浏览器验收：使用隔离数据库 `.local/im243-review-case-form-click-smoke.db`、backend `127.0.0.1:8000`、frontend `127.0.0.1:3002`，验证补证据、补结论、关闭案例三条页面表单提交链路、成功 feedback 和已关闭 blocker。本需求未新增自动化 E2E，未修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量或生产规则。"
+```
+
+### R941 - 复核案例 Form-Click E2E 自动化决策
+
+```yaml
+id: R941
+module: "复核案例工作区"
+description: "IM240 已覆盖复核案例 live read path，IM241 已覆盖写入 API 和 feedback URL。当前需要评估是否应继续把页面表单点击到 Next server action、后端 fetch、redirect feedback 的链路自动化为 E2E，并把结论记录为受控 QA 决策，避免为了低风险胶水层引入新依赖或扩大 Gate。"
+source: "PM 确认：继续拆分；Qoder 完成 IM242 Packet A/B 后由 Codex 复核和收口"
+submitted_at: "2026-06-25"
+version: "1.0"
+status: "done"
+notes: "IM242 已完成：当前 qa gate 不建议自动化 form-click E2E，不安装 Playwright，不修改 package/lockfile，不新增 E2E 目录或 check.sh 门禁。剩余 server action -> fetch -> redirect 胶水层风险评估为低，推荐用 IM241 HTTP smoke 证据加 PM 手工浏览器验收清单覆盖。"
+```
+
+### R940 - 复核案例写入动作 Live Runtime Smoke
+
+```yaml
+id: R940
+module: "复核案例工作区"
+description: "IM240 已证明复核案例读路径、四阶段筛选和 URL feedback 在 live runtime 下可用。当前需要继续用隔离本地数据库验证已实现的三个写入动作：补证据、补结论、关闭案例，以及已关闭案例拒绝补写和关闭幂等行为。该任务只做本地 runtime smoke 和验收留证，不新增业务能力或修改实现代码。"
+source: "PM 确认：执行 IM241"
+submitted_at: "2026-06-25"
+version: "1.0"
+status: "done"
+notes: "IM241 已完成本地 runtime smoke：必须使用且实际使用 `BPO_DATABASE_URL` 指向 `.local/im241-review-case-action-smoke.db`，backend `127.0.0.1:8000`、frontend `127.0.0.1:3002`。POST evidence、POST conclusion、POST closure、closed case 拒绝补写、closure 幂等和 feedback URL 均通过。本需求未新增业务功能、API route、schema/migration、依赖、权限、审批、导出、批量或生产规则。"
+```
+
+### R939 - 复核案例 Live Runtime Smoke
+
+```yaml
+id: R939
+module: "复核案例工作区"
+description: "IM238 已定义 live runtime 验收边界，IM239 已补齐四阶段 stage matrix seed。现在 PM 确认可以启动本地 runtime，允许默认端口被占用时换端口。需要用隔离本地数据库执行 live smoke，验证复核案例列表、详情、四阶段 processing-stage filter 和 URL feedback 在真实前后端运行下可用。"
+source: "PM 确认：确认，或者换个端口"
+submitted_at: "2026-06-24"
+version: "1.0"
+status: "done"
+notes: "IM240 已完成本地 runtime smoke：隔离数据库 `.local/im240-runtime-smoke.db` 加载 stage matrix seed，backend 使用 `127.0.0.1:8000`，frontend 使用 `127.0.0.1:3002`；列表、详情、四阶段 filter 和三类 URL feedback 均返回 200 且命中预期内容。本需求未新增业务功能、API route、schema/migration、依赖、权限、审批、导出、批量或生产规则。"
+```
+
+### R938 - 复核案例阶段 Seed Matrix
+
+```yaml
+id: R938
+module: "复核案例工作区"
+description: "IM238 已确认当前 `CASE-QUERY-001` 只覆盖 ready_to_close，导致 live runtime 验收无法证明 missing_evidence、missing_conclusion 和 closed 三个 processing-stage filter。需要补齐本地 demo seed 的阶段矩阵，让后续 PM-confirmed runtime smoke 能看到四个处理阶段的真实案例。"
+source: "PM 确认：先扩展 seed，再做完整 live runtime 验收；Qoder 执行 IM239 Packet A 后由 Codex 复核和收口"
+submitted_at: "2026-06-24"
+version: "1.0"
+status: "done"
+notes: "IM239 已新增 `seed_review_case_stage_matrix()`，覆盖 CASE-QUERY-001、CASE-SEED-ME-001、CASE-SEED-MC-001、CASE-SEED-CL-001。该需求不启动 runtime，不新增 API route，不修改 persistence/schema/dependency，也不代表 live runtime acceptance 已通过。"
+```
+
+### R937 - 复核案例 Live Runtime 验收准备
+
+```yaml
+id: R937
+module: "复核案例工作区"
+description: "IM215 只能在 3000-only 环境下完成 no-new-env model/contract-only QA，IM236/IM237 已把复核案例处理路径和新 Harness 统一到同一基线。当前需要把 live runtime 验收重新定义为一个受控 Gate：明确页面入口、后端 API、seed 前置条件、PM 手工验收清单、自动化 smoke 候选和 hard stop，避免把未跑通的 8000 seeded runtime 误报为已验收。"
+source: "PM 指令：IM237 先作为统一基线，下一轮业务开发先定义新的 requirement/story/Gate；Qoder 只读梳理 review-case runtime 入口后交回"
+submitted_at: "2026-06-24"
+version: "1.0"
+status: "done"
+notes: "IM238 已完成 live runtime 验收准备与执行边界定义，不新增复核案例产品能力；启动后端 8000、加载 seed 或新增自动化 runtime smoke 仍需 Gate 确认后再执行。"
+```
+
 ### R936 - 复核案例处理路径收口
 
 ```yaml

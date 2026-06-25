@@ -1,5 +1,105 @@
 # Branch Log
 
+## 2026-06-25
+
+### IM242 Review Case Form-Click E2E Decision
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `141e6e6`
+- stacked_on: `IM241 review-case write-action runtime smoke`
+- remote_status: `not_pushed after IM242 local decision record`
+- scope: Record the PM-confirmed decision not to automate review-case form-click E2E inside the current QA gate. Preserve IM241 HTTP smoke evidence, add a PM manual browser walkthrough checklist, and avoid new dependencies, E2E infrastructure, runtime startup, or product implementation changes.
+- allowed_files_check: current Harness files, trace index, raw requirements, user stories, backlog, task log, audit report, branch log, and review-case runtime preflight document only.
+- scope_diff_check: expected acceptance decision documentation and traceability only; no app, components, hooks, lib, backend code, migrations, scripts, scripts/check.sh, package/lockfile, dependency, schema, auth, permission, approval, export, batch, production formula, settlement, charge-factor, `.local`, or `.qoder` changes.
+- qoder_result: Packet A found no Playwright/E2E infrastructure and recommended against automated form-click E2E; Packet B added Section 15 to the preflight document with the decision, remaining low-risk glue gap, manual walkthrough checklist, stop conditions, and future optional automation boundary.
+- check_result: `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, 433 Node script subtests (432 pass, 1 skip), shadcn check, lint, typecheck, Next build, and backend 221 unittest OK.
+- local_commit_sha: `recorded in Done Report and git log after commit creation`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM241 Review Case Write Action Runtime Smoke
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `76b1685`
+- stacked_on: `IM240 review-case read-path runtime smoke`
+- remote_status: `pushed commit 141e6e6 to origin/codex/im237-harness-review-case-integration before IM242`
+- scope: Execute the PM-confirmed local runtime smoke for existing review-case write actions. Verify evidence write, conclusion write, closure write, closed-case rejection, idempotent closure, and feedback URLs without changing product UI, backend implementation, API routes, schema, dependencies, or check scripts.
+- allowed_files_check: current Harness files, trace index, raw requirements, user stories, backlog, task log, audit report, branch log, review-case runtime preflight document, and isolated `.local/im241-review-case-action-smoke.db` runtime artifact only.
+- scope_diff_check: expected acceptance traceability and local smoke artifact only; no app, components, hooks, lib, backend code, migrations, scripts/check.sh, package/lockfile, dependency, schema, auth, permission, approval, export, batch, production formula, settlement, or charge-factor changes.
+- runtime_result: Loaded `seed_review_case_stage_matrix()` into `.local/im241-review-case-action-smoke.db` through `BPO_DATABASE_URL=sqlite+pysqlite:///./.local/im241-review-case-action-smoke.db`. Backend ran on `127.0.0.1:8000`; frontend ran on `127.0.0.1:3002`.
+- smoke_result: POST evidence on `CASE-SEED-ME-001` returned 200 and detail readback showed `EVD-SMOKE-ME-001`; POST conclusion on `CASE-SEED-MC-001` returned 200 and detail readback showed `CON-SMOKE-MC-001`; POST closure on `CASE-QUERY-001` returned 200 and detail readback showed `CLO-SMOKE-001`; closed `CASE-SEED-CL-001` rejected evidence and conclusion with 400 `REVIEW_EVIDENCE_INVALID` / `REVIEW_CONCLUSION_INVALID`; repeated closure kept original `CLO-SEED-CL-001`; feedback pages returned 200 and showed success/failed messages.
+- check_result: Runtime smoke passed. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, 433 Node script subtests (432 pass, 1 skip), shadcn check, lint, typecheck, Next build, and backend 221 unittest OK.
+- local_commit_sha: `141e6e6`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `PM confirmed push; pushed before IM242`
+- blocked_reason: `N/A`
+
+## 2026-06-24
+
+### IM240 Review Case Live Runtime Smoke
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `1a6882a`
+- stacked_on: `IM239 review-case stage seed matrix`
+- remote_status: `not_pushed after IM240 local runtime smoke`
+- scope: Execute the PM-confirmed local runtime smoke for the review-case workspace using the IM239 stage matrix seed. Record live list/detail/filter/feedback evidence without changing product UI, backend implementation, API routes, schema, dependencies, or check scripts.
+- allowed_files_check: current Harness files, trace index, raw requirements, user stories, backlog, task log, audit report, branch log, review-case runtime preflight document, and isolated `.local/im240-runtime-smoke.db` runtime artifact only.
+- scope_diff_check: expected acceptance traceability and local smoke artifact only; no app, components, hooks, lib, backend code, scripts/check.sh, package/lockfile, dependency, schema/migration, auth, permission, approval, export, batch, production formula, settlement, or charge-factor changes.
+- runtime_result: Loaded `seed_review_case_stage_matrix()` into `.local/im240-runtime-smoke.db`. Backend ran on `127.0.0.1:8000`. Existing BPO Next dev on `3000` was stale and unresponsive, so it was stopped and frontend ran on `127.0.0.1:3002`; `3001` belonged to `wikinode-studio` and was left untouched.
+- smoke_result: `GET /docs`, `GET /api/v1/review-cases`, `/data-quality/review-cases`, `/data-quality/review-cases/CASE-QUERY-001`, four `processingStage` filters, and detail feedback URLs `evidence=failed`, `conclusion=failed`, `closure=success` all returned 200 and contained expected case IDs or feedback text.
+- check_result: Runtime smoke passed. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, 433 Node script subtests (432 pass, 1 skip), shadcn check, lint, typecheck, Next build, and backend 221 unittest OK.
+- local_commit_sha: `recorded in Done Report and git log after commit creation`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM239 Review Case Stage Seed Matrix
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `bf779b8`
+- stacked_on: `IM238 review-case live runtime acceptance preflight`
+- remote_status: `not_pushed after IM239 local seed implementation`
+- scope: Add a local review-case stage seed matrix so future PM-confirmed live runtime smoke can verify `missing_evidence`, `missing_conclusion`, `ready_to_close`, and closure-backed `closed` processing stages with real seeded cases.
+- allowed_files_check: `backend/app/review_demo_seed.py`, `backend/tests/test_review_demo_seed.py`, `docs/design/review-case-live-runtime-acceptance-preflight.md`, current Harness files, trace index, raw requirements, user stories, backlog, task log, audit report, and this branch-log entry only.
+- scope_diff_check: expected seed helper, focused unittest coverage, and traceability updates only; no runtime startup, API route, persistence/service/main route, schema/migration, app, components, hooks, lib, scripts/check.sh, package/lockfile, dependency, auth, permission, approval, export, batch, production formula, settlement, or charge-factor changes.
+- check_result: Focused `backend_python=$(bash scripts/verify-backend-runtime.sh --print-path); "$backend_python" -m unittest backend.tests.test_review_demo_seed -v` passed with 8 tests. `bash scripts/check-state.sh --strict`, `bash scripts/check-state.sh --repair-scope`, and `git diff --check` passed. Full `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, 433 Node script subtests (432 pass, 1 skip), shadcn check, lint, typecheck, Next build, and backend 221 unittest OK.
+- local_commit_sha: `1a6882a`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM238 Review Case Live Runtime Acceptance Preflight
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `5cbaad3`
+- stacked_on: `IM237 integration branch and draft PR #2`
+- remote_status: `pushed baseline 40644c2 to origin/codex/im237-harness-review-case-integration; Packet D seed-extension Gate draft is local pending verification and PM push decision.`
+- scope: Define and seed the next current-layer QA task for review-case live runtime acceptance preflight. Formalize R937/US857/IM238, record page/API/seed/runtime acceptance boundaries, and provide bounded Qoder packets without starting runtime.
+- allowed_files_check: `docs/design/review-case-live-runtime-acceptance-preflight.md`, current Harness queue/task files, trace index, raw requirements, user stories, backlog, task log, audit report, and this branch-log entry only.
+- scope_diff_check: expected docs/current/traceability updates only; no app, components, hooks, lib, backend, scripts/check.sh, package/lockfile, dependency, database/schema/migration, auth, permission, approval, export, batch, production formula, settlement, or charge-factor changes. `.local/` and `.qoder/` must remain untouched.
+- check_result: `bash scripts/check-state.sh --strict` passed; `bash scripts/check-state.sh --repair-scope` passed; `git diff --check` passed; `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, 433 Node script subtests (432 pass, 1 skip), shadcn check, lint, typecheck, Next build, and backend 215 unittest OK.
+- packet_d_scope: Added a draft future Gate section for review-case stage seed extension, documenting why current seed only supports `ready_to_close`, which three future cases would cover `missing_evidence`, `missing_conclusion`, and `closed`, and the PM decision between partial runtime smoke, seed-first full acceptance, or deferral. No backend seed implementation, runtime startup, current/registry state change, product UI copy, dependency, package/lockfile, schema, auth, permission, approval, export, batch, formula, settlement, or charge-factor change is in scope.
+- local_commit_sha: pending after final check and commit.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ## 2026-06-22
 
 ### H030 Harness Template Export
@@ -5307,6 +5407,60 @@
 - allowed_files_check: `scripts/tests/lib-helpers-regression.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
 - scope_diff_check: expected new focused structure test and traceability updates only; no changes to `app/**`, `components/**`, `lib/**`, backend, package/lockfile, check scripts, dependencies, navigation, UI, database, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor files. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
 - check_result: TDD RED `node --test scripts/tests/lib-helpers-regression.test.mjs` first failed because the test file did not exist. Qoder ran with `--model ultimate` and returned a max-turns error, so Codex reviewed the diff before accepting it; Qoder only created the allowed `scripts/tests/lib-helpers-regression.test.mjs` file and did not touch forbidden runtime or Harness files. Focused `node --test scripts/tests/lib-helpers-regression.test.mjs` passed with 3 tests. `npm run lint`, `npm run typecheck`, `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM243 Review Case Manual Browser Walkthrough
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `carried forward from the IM237 integration branch`
+- stacked_on: `codex/im237-harness-review-case-integration`
+- remote_status: `not_pushed after IM243 local commit; push remains PM-controlled.`
+- scope: PM-confirmed QA walkthrough for the remaining review-case form-click glue. Use isolated `BPO_DATABASE_URL` runtime DB, backend `127.0.0.1:8000`, and frontend `127.0.0.1:3002` to validate evidence, conclusion, and closure browser form submission. Do not add E2E automation or modify product/backend code.
+- allowed_files_check: current Harness files, registry trace index, raw requirements, user stories, task log, audit report, branch log, backlog, and `docs/design/review-case-live-runtime-acceptance-preflight.md` only. Runtime DB `.local/im243-review-case-form-click-smoke.db` is allowed as a local smoke artifact and must not be committed.
+- scope_diff_check: expected QA evidence and Harness closeout only; no changes to `app/**`, `components/**`, `backend/**`, `scripts/**`, package/lockfiles, dependencies, schema/migration, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor files.
+- check_result: Browser walkthrough passed for `CASE-SEED-ME-001` evidence submit, `CASE-SEED-MC-001` conclusion submit, `CASE-QUERY-001` closure submit, and `CASE-SEED-CL-001` closed blocker plus breadcrumb return. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 433 frontend node tests (1 skipped), lint, typecheck, Next build, and 221 backend unittest tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM244 Review Case Acceptance Closeout
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `carried forward from the IM237 integration branch`
+- stacked_on: `codex/im237-harness-review-case-integration`
+- remote_status: `not_pushed after IM244 local commit; push remains PM-controlled.`
+- scope: Documentation-only QA closeout for the IM239-IM243 review-case acceptance evidence chain. Review Qoder Packet A/B, write the closeout summary, update Harness state, and keep the branch boundary explicit.
+- allowed_files_check: current Harness files, registry trace index, raw requirements, user stories, task log, audit report, branch log, backlog, and `docs/design/review-case-acceptance-closeout.md` only.
+- scope_diff_check: expected QA closeout documentation and Harness traceability only; no changes to `app/**`, `components/**`, `backend/**`, `scripts/**`, package/lockfiles, dependencies, local runtime DB artifacts, schema/migration, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor files.
+- check_result: `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 433 frontend node tests (1 skipped), shadcn check, lint, typecheck, Next build, and 221 backend unittest tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM245 Review Case PR Readiness Plan
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `carried forward from the IM237 integration branch`
+- stacked_on: `codex/im237-harness-review-case-integration`
+- remote_status: `not_pushed after IM245 local commit; push remains PM-controlled.`
+- scope: Documentation-only QA planning. Review Qoder IM245 Packet A/B, decide PR split strategy, and keep the next product slice outside execution scope.
+- allowed_files_check: current Harness files, registry trace index, raw requirements, user stories, task log, audit report, branch log, backlog, and `docs/design/review-case-pr-readiness-plan.md` only.
+- scope_diff_check: expected PR readiness planning and Harness traceability only; no cherry-pick, branch split, PR creation, product UI, backend, scripts, package/lockfiles, dependencies, local runtime DB artifacts, schema/migration, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 433 frontend node tests (1 skipped), shadcn check, lint, typecheck, Next build, and 221 backend unittest tests OK.
 - local_commit_sha: to be reported in Done Report after local commit creation
 - integration_status: `not_started`
 - integration_method: `N/A`

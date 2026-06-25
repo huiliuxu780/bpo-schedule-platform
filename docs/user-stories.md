@@ -20,6 +20,196 @@
 status: "draft"
 ```
 
+### US864 - Review-case acceptance PR 合并规划
+
+```yaml
+id: US864
+requirement_ids:
+  - R944
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望先获得当前 review-case acceptance 集成分支的 PR 拆分和合并计划，以便在继续开发相邻业务切片前控制审阅成本、合并顺序和回滚边界。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "复核 Qoder IM245 Packet A/B，确认当前分支相对 `origin/main` 的文件规模、commit 范围和逻辑阶段。"
+  - "输出推荐 PR 策略：单 PR 分段审阅或拆为 2-3 个 stacked PR，并说明推荐理由、风险和合并顺序。"
+  - "明确下一个业务候选切片首选为 Comparison Run -> Review Case 关联链，但只作为后续任务，不在本任务中开发。"
+  - "如推荐拆 PR，给出可交给 Qoder 的安全任务边界；如推荐单 PR，给出 PR title/body 和 reviewer 分段审阅指引。"
+  - "不修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量或生产规则。"
+dependencies:
+  - "US863"
+status: "ready"
+status: "done"
+notes: "IM245 已完成：已形成 review-case acceptance 集成分支的 PR readiness plan，推荐拆为 3 个 stacked PR；下一业务候选为 Comparison Run -> Review Case 关联链，但不在本任务中开发。"
+```
+
+### US863 - 复核案例验收块收口摘要
+
+```yaml
+id: US863
+requirement_ids:
+  - R943
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望获得一份复核案例本地 MVP 验收块的收口摘要，以便清楚知道 IM239-IM243 已证明什么、还没有证明什么、PR/交接时应该如何表述边界，以及下一步该从哪里继续。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "整理 IM239-IM243 的证据索引：stage matrix seed、read live smoke、write API smoke、E2E feasibility decision、manual browser walkthrough。"
+  - "明确已验证范围只覆盖本地 MVP runtime，不声明 production-ready、权限、审批、导出、批量、外部集成、自动排班、生产公式、结算或收费因子。"
+  - "形成 PR/交接摘要草案，说明用户可见能力、验证命令、运行端口、隔离 DB 和 hard boundary。"
+  - "拆出后续 2-3 个候选任务，但不直接进入开发。"
+  - "不启动 runtime，不新增自动化 E2E，不修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration。"
+dependencies:
+  - "US862"
+status: "done"
+notes: "IM244 已完成：已形成复核案例验收块收口摘要，明确本地 MVP 已验证范围、未验证边界、PR 摘要草案和下一阶段候选。"
+```
+
+### US862 - 复核案例写入动作手工浏览器验收
+
+```yaml
+id: US862
+requirement_ids:
+  - R942
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望在浏览器中手工提交复核案例补证据、补结论和关闭案例表单，以便确认运营人员在页面上能完成这些已实现动作，并看到正确的成功或阻塞反馈。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "使用 `BPO_DATABASE_URL` 指向隔离数据库 `.local/im243-review-case-form-click-smoke.db`，不污染默认业务数据库。"
+  - "加载 `seed_review_case_stage_matrix()` 后，启动 backend `127.0.0.1:8000` 和 frontend `127.0.0.1:3002`。"
+  - "浏览器访问 `CASE-SEED-ME-001`，提交补证据表单后出现 `?evidence=success` 和 `补证据提交成功`。"
+  - "浏览器访问 `CASE-SEED-MC-001`，提交补结论表单后出现 `?conclusion=success` 和 `补结论提交成功`。"
+  - "浏览器访问 `CASE-QUERY-001`，提交关闭案例表单后出现 `?closure=success` 和 `关闭案例提交成功`。"
+  - "浏览器访问 `CASE-SEED-CL-001`，确认已关闭案例不允许补证据或补结论。"
+  - "不新增自动化 E2E、不修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量或生产规则。"
+dependencies:
+  - "US861"
+status: "done"
+notes: "IM243 已完成：浏览器手工提交补证据、补结论和关闭案例均跳转到对应 success URL 并显示成功反馈；已关闭案例显示 blocker；证据写入、结论写入和关闭写入均通过 detail API 回读确认。"
+```
+
+### US861 - 复核案例 Form-Click E2E 自动化决策
+
+```yaml
+id: US861
+requirement_ids:
+  - R941
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望明确复核案例页面表单点击链路是否值得自动化 E2E，以便在已有 HTTP smoke 和模型测试基础上控制验收成本，避免为低风险胶水层引入新依赖或扩大当前 QA Gate。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "复核 Qoder Packet A 的只读可行性结论，并在 preflight 文档记录 IM242 决策。"
+  - "明确当前 `qa` gate 不安装 Playwright，不修改 `package.json` 或 lockfile，不新增 E2E 目录或 `scripts/check.sh` 门禁。"
+  - "明确唯一剩余缝隙是浏览器 form submit 触发 Next server action、后端 fetch 和 redirect feedback 的薄胶水层，风险等级为低。"
+  - "明确替代 Gate 为 IM241 HTTP smoke 证据加 PM 手工浏览器验收清单。"
+  - "不启动 runtime，不修改业务 UI、组件、后端、测试代码、运行脚本、依赖、权限、审批、导出、批量或生产规则。"
+dependencies:
+  - "US860"
+status: "done"
+notes: "IM242 已完成：文档新增 Form-Click E2E Feasibility Decision，结论为当前不做自动化 E2E；如未来 PM 决定安装 Playwright，需要另开 dependency Gate。"
+```
+
+### US860 - 复核案例写入动作 Live Runtime Smoke
+
+```yaml
+id: US860
+requirement_ids:
+  - R940
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望用隔离本地 runtime 验证复核案例补证据、补结论和关闭案例写入动作，以便确认这些已有本地 MVP 能力不只是单元测试通过，而是在真实 API runtime 下可写入、可回读、可拒绝非法写入。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "使用 `BPO_DATABASE_URL` 指向隔离数据库 `.local/im241-review-case-action-smoke.db`，不污染默认业务数据库。"
+  - "加载 `seed_review_case_stage_matrix()` 后，验证 `CASE-SEED-ME-001` 可以成功补证据并在 detail API 回读。"
+  - "验证 `CASE-SEED-MC-001` 可以成功补结论并在 detail API 回读。"
+  - "验证 `CASE-QUERY-001` 可以成功关闭并在 detail API 回读 closure。"
+  - "验证 `CASE-SEED-CL-001` 拒绝补证据、拒绝补结论，且重复关闭保持原 closure 不变。"
+  - "验证成功/失败 feedback URL 文案可见。"
+  - "不新增业务功能、API route、schema/migration、依赖、权限、审批、导出、批量或生产规则。"
+dependencies:
+  - "US859"
+status: "done"
+notes: "IM241 已完成：使用隔离 DB 和 live backend/frontend runtime 验证补证据、补结论、关闭案例、closed case 拒绝补写、closure 幂等和 feedback URL。本故事只代表本地 runtime smoke 通过，不代表生产验收、权限验收或 PR 合并。"
+```
+
+### US859 - 复核案例 Live Runtime Smoke
+
+```yaml
+id: US859
+requirement_ids:
+  - R939
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望用真实本地前后端 runtime 和四阶段 seed 数据检查复核案例列表、详情和阶段筛选，以便确认它不只是模型测试通过，而是在 live runtime 下可访问、可筛选、可展示反馈。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "使用隔离本地数据库加载 `seed_review_case_stage_matrix()`，不污染默认业务数据库。"
+  - "启动本地 backend/frontend runtime；默认 `8000/3000` 被占用时可使用替代端口，并记录实际端口。"
+  - "验证 `/data-quality/review-cases` 和 `/data-quality/review-cases/CASE-QUERY-001` 返回 200 且包含预期案例内容。"
+  - "验证 `missing_evidence`、`missing_conclusion`、`ready_to_close`、`closed` 四个 processing-stage filter 均能返回对应 case。"
+  - "验证详情页 URL feedback 参数 `evidence=failed`、`conclusion=failed`、`closure=success` 返回 200 并出现对应反馈。"
+  - "不新增业务功能、API route、schema/migration、依赖、权限、审批、导出、批量或生产规则。"
+dependencies:
+  - "US858"
+status: "done"
+notes: "IM240 已完成：使用隔离 DB 和 live backend/frontend runtime 验证复核案例列表、详情、四阶段 processing-stage filter 和 URL feedback。该证据只代表本地 runtime smoke 通过，不代表生产验收或 PR 合并。"
+```
+
+### US858 - 复核案例阶段 Seed Matrix
+
+```yaml
+id: US858
+requirement_ids:
+  - R938
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望本地 review-case seed 能同时生成缺证据、缺结论、可关闭和已关闭四类案例，以便后续 live runtime 验收可以真实检查 processing-stage filter，而不是把空结果误判为通过。"
+task_type: "backend-mvp"
+priority: "P0"
+acceptance:
+  - "`seed_review_case_demo()` 保持现有 `CASE-QUERY-001` 行为和返回值。"
+  - "新增显式 `seed_review_case_stage_matrix()`，生成四个目标案例：`CASE-QUERY-001`、`CASE-SEED-ME-001`、`CASE-SEED-MC-001`、`CASE-SEED-CL-001`。"
+  - "四个案例分别覆盖 `ready_to_close`、`missing_evidence`、`missing_conclusion` 和 closure-backed `closed`。"
+  - "seed 可重复调用且不重复写入证据、结论或关闭记录，也不改变既有 `created_at`。"
+  - "不启动 runtime，不新增 API route，不修改 persistence/service/main route、schema/migration、依赖、package/lockfile、前端或产品 UI。"
+dependencies:
+  - "US857"
+status: "done"
+notes: "IM239 已完成；closed stage 由 closure 记录支撑，`review_cases.status` 仍保持既有 open 语义。"
+```
+
+### US857 - 复核案例 Live Runtime 验收准备
+
+```yaml
+id: US857
+requirement_ids:
+  - R937
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望在启动 live runtime 验收前先看到明确的页面、API、seed、验收清单和 stop condition，以便确认复核案例工作区是真实数据可验收，而不是仅靠模型测试或页面壳可达。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "新增或完善复核案例 live runtime 验收 preflight 文档，覆盖列表页、详情页、processing-stage filter、URL feedback、action deck 和 owner context。"
+  - "明确 5 个后端 API 端点、`CASE-QUERY-001` seed 前置条件，以及 seed 当前只覆盖 ready_to_close 状态的限制。"
+  - "明确无 8000 runtime 可完成的检查与必须等待 runtime 的检查，不能把 3000-only 结果当成 live seeded 验收通过。"
+  - "给出可手动发给 Qoder 的 bounded task packets，且 Qoder 不得直接写 `docs/current/**` 或 `docs/registry/**`。"
+  - "不启动新的测试环境，不修改业务 UI、组件实现、后端、数据库、依赖或 package/lockfile。"
+dependencies:
+  - "US856"
+status: "done"
+notes: "IM238 已完成 QA preflight；runtime 执行、后端启动和自动化 smoke 仍需要 PM 在 Gate Plan 后另行确认。"
+```
+
 ### US856 - 复核案例处理路径收口
 
 ```yaml

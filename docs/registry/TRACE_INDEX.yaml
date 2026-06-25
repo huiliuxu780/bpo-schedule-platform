@@ -974,6 +974,30 @@ requirements:
   R900: {file: "docs/raw-requirements.md", story_ids: ["US820"], task_ids: ["IM200"]}
   R901: {file: "docs/raw-requirements.md", story_ids: ["US821"], task_ids: ["IM201"]}
   R902: {file: "docs/raw-requirements.md", story_ids: ["US822"], task_ids: ["IM202"]}
+  US857: {file: "docs/user-stories.md", requirement_ids: ["R937"], task_ids: ["IM238"], archive_refs: []}
+  US858: {file: "docs/user-stories.md", requirement_ids: ["R938"], task_ids: ["IM239"], archive_refs: []}
+  US859: {file: "docs/user-stories.md", requirement_ids: ["R939"], task_ids: ["IM240"], archive_refs: []}
+  US860: {file: "docs/user-stories.md", requirement_ids: ["R940"], task_ids: ["IM241"], archive_refs: []}
+  US861: {file: "docs/user-stories.md", requirement_ids: ["R941"], task_ids: ["IM242"], archive_refs: []}
+  US862: {file: "docs/user-stories.md", requirement_ids: ["R942"], task_ids: ["IM243"], archive_refs: []}
+  US863: {file: "docs/user-stories.md", requirement_ids: ["R943"], task_ids: ["IM244"], archive_refs: []}
+  US864: {file: "docs/user-stories.md", requirement_ids: ["R944"], task_ids: ["IM245"], archive_refs: []}
+  IM238: {file: "tasks/backlog.yaml", story_ids: ["US857"], gate: "qa"}
+  IM239: {file: "tasks/backlog.yaml", story_ids: ["US858"], gate: "backend-mvp"}
+  IM240: {file: "tasks/backlog.yaml", story_ids: ["US859"], gate: "qa"}
+  IM241: {file: "tasks/backlog.yaml", story_ids: ["US860"], gate: "qa"}
+  IM242: {file: "tasks/backlog.yaml", story_ids: ["US861"], gate: "qa"}
+  IM243: {file: "tasks/backlog.yaml", story_ids: ["US862"], gate: "qa"}
+  IM244: {file: "tasks/backlog.yaml", story_ids: ["US863"], gate: "qa"}
+  IM245: {file: "tasks/backlog.yaml", story_ids: ["US864"], gate: "qa"}
+  R937: {file: "docs/raw-requirements.md", story_ids: ["US857"], task_ids: ["IM238"]}
+  R938: {file: "docs/raw-requirements.md", story_ids: ["US858"], task_ids: ["IM239"]}
+  R939: {file: "docs/raw-requirements.md", story_ids: ["US859"], task_ids: ["IM240"]}
+  R940: {file: "docs/raw-requirements.md", story_ids: ["US860"], task_ids: ["IM241"]}
+  R941: {file: "docs/raw-requirements.md", story_ids: ["US861"], task_ids: ["IM242"]}
+  R942: {file: "docs/raw-requirements.md", story_ids: ["US862"], task_ids: ["IM243"]}
+  R943: {file: "docs/raw-requirements.md", story_ids: ["US863"], task_ids: ["IM244"]}
+  R944: {file: "docs/raw-requirements.md", story_ids: ["US864"], task_ids: ["IM245"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"
