@@ -572,3 +572,82 @@ If PM wants to proceed with this acceptance:
 2. Confirm seed data should be loaded (manually or via startup hook)
 3. Confirm whether acceptance is PM-driven (manual browser walk) or Codex-driven (HTTP smoke via curl/agent)
 4. Decide whether PR #2 should be merged to `main` before this task starts, or whether acceptance runs on the feature branch
+
+## 15. Form-Click E2E Feasibility Decision (IM242)
+
+> This section records the IM242 decision on whether to automate browser-level form-click E2E for the three review-case write actions. It is a decision record only; it does not implement automation, install dependencies, or start runtime services.
+
+### 15.1 Decision
+
+**Not recommended for automated E2E in the current `qa` gate.**
+
+Form-click E2E automation should not be pursued inside the current acceptance scope. The remaining verification gap is low-risk and is better served by HTTP smoke evidence (IM241) combined with a PM manual browser walkthrough.
+
+### 15.2 Reasons
+
+1. **No Playwright infrastructure exists.** `package.json` (both `dependencies` and `devDependencies`) does not include `@playwright/test`. `node_modules/@playwright/` is empty. No `playwright.config.ts` or E2E test directory exists in the repository.
+
+2. **New dependencies violate the current `qa` gate.** The QA Acceptance Gate forbids dependency or package changes unless PM separately confirms them. Installing Playwright would require modifying `package.json` and `package-lock.json`, which are explicit forbidden files.
+
+3. **Server action + redirect automation is costly.** All three form submit functions (`submitEvidence`, `submitConclusion`, `submitClosure`) are Next.js server actions declared with `"use server"`. After form submission, Next.js internally executes a `fetch()` to the backend API and then calls `redirect()`, which produces an HTTP 303 response. Automating this flow with Playwright requires handling cross-request redirects, which adds complexity disproportionate to the verification value.
+
+4. **IM241 already covers backend write and read-back.** The HTTP smoke verified:
+   - POST evidence, conclusion, and closure success (3 actions)
+   - Detail API read-back after each write (3 GET checks)
+   - Closed-case rejection for evidence and conclusion (2 checks)
+   - Closure idempotency (1 check)
+
+5. **IM240 already covers feedback URL rendering.** The live runtime smoke verified that `?evidence=failed`, `?conclusion=failed`, and `?closure=success` URL parameters produce visible feedback text on the detail page.
+
+### 15.3 Remaining Gap
+
+| Gap | Description | Risk Level |
+| --- | --- | --- |
+| Server action → fetch → redirect glue | The three panel `submitXxx()` functions construct a payload via `buildImportReview*WritePayload()`, call `fetch()` to the backend API, evaluate `response.ok`, and call `redirect()` with the appropriate `?xxx=success` or `?xxx=failed` suffix. This ~30-line glue layer per panel is the only code path not covered by automated checks. | **Low** |
+
+Risk justification: payload construction functions are covered by 17 frontend model test files (`import-center-review-case-*.test.mjs`). The backend API endpoints are covered by `test_review_evidence_api.py`, `test_review_conclusion_api.py`, and `test_review_closure_api.py`. The redirect target pages are covered by IM240 feedback URL checks. The remaining glue is thin, linear, and has no branching logic beyond `response.ok`.
+
+### 15.4 Recommended Alternative Gate
+
+**HTTP smoke evidence (IM241):** retained as-is. All 15 curl checks in Section 13.3 provide backend write, read-back, rejection, and idempotency evidence.
+
+**PM manual browser walkthrough (8 steps):**
+
+| # | Action | Expected Result |
+| --- | --- | --- |
+| 1 | Visit `/data-quality/review-cases/CASE-SEED-ME-001` | Evidence panel shows a submittable form (可补充 status) |
+| 2 | Fill the evidence form and click 提交证据 | Page redirects to the same caseId with `?evidence=success`; feedback text `补证据提交成功` is visible |
+| 3 | Visit `/data-quality/review-cases/CASE-SEED-MC-001` | Conclusion panel shows a submittable form (可补充 status) |
+| 4 | Fill the conclusion form and click 提交结论 | Page redirects to the same caseId with `?conclusion=success`; feedback text `补结论提交成功` is visible |
+| 5 | Visit `/data-quality/review-cases/CASE-QUERY-001` | Closure panel shows a submittable form (可关闭 status: has evidence + conclusion, no closure) |
+| 6 | Fill the closure form and click 关闭案例 | Page redirects to the same caseId with `?closure=success`; feedback text `关闭案例提交成功` is visible |
+| 7 | Visit `/data-quality/review-cases/CASE-SEED-CL-001` | Evidence and conclusion panels show blocker text `案例已关闭`; closure panel shows `已关闭` |
+| 8 | Click breadcrumb 复核案例 on CASE-SEED-CL-001 detail page | Returns to list page `/data-quality/review-cases` |
+
+Prerequisites: backend on `127.0.0.1:8000`, frontend on `127.0.0.1:3002`, isolated database via `BPO_DATABASE_URL`, and `seed_review_case_stage_matrix()` invoked explicitly before the walkthrough.
+
+### 15.5 Stop Conditions
+
+- If PM decides to install Playwright → a separate dependency Gate must be opened; this is outside the current `qa` gate scope.
+- If the manual walkthrough discovers that server action redirect does not work → a separate bug fix task must be opened; this is outside the current acceptance scope.
+- If the manual walkthrough passes → no further E2E automation is required for the current review-case write-action acceptance.
+
+### 15.6 Future Optional Automation
+
+If Playwright is confirmed and installed under a future dependency Gate, the minimum viable E2E scope is:
+
+1. **Test only 1 form**: evidence panel on `CASE-SEED-ME-001` (simplest case, no prerequisite evidence or conclusion).
+2. **Verify only redirect URL**: confirm the page navigates to a URL containing `?evidence=success`.
+3. **Verify only feedback text**: confirm `补证据提交成功` is visible after redirect.
+4. **Do not re-verify backend DB writes**: already covered by IM241 HTTP smoke; E2E should not duplicate database-level assertions.
+
+This minimum scope is sufficient because the three panels share identical code patterns (server action → `buildImportReview*WritePayload()` → `fetch()` → `response.ok` check → `redirect()`). One form validates the pattern; the other two differ only in payload shape, which is already covered by frontend model tests.
+
+### 15.7 Non-Goals
+
+- No Playwright, Cypress, Puppeteer, or Selenium installation.
+- No `package.json` or `package-lock.json` changes.
+- No new E2E test files or directories.
+- No changes to `scripts/check.sh` or gate configuration.
+- No production readiness claim.
+- No permission, approval, export, batch-operation, production formula, settlement, or charge-factor coverage.

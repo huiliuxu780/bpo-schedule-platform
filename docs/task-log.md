@@ -19,6 +19,15 @@
 
 ### 2026-06-25
 
+- task_id: `IM242`
+- source_ids:
+  - `R941`
+- story_ids:
+  - `US861`
+- action: 复核案例 form-click E2E 自动化决策。
+- status: `done`
+- notes: Qoder 只读审计确认当前仓库无 Playwright/E2E 基础设施，安装浏览器自动化会修改 package/lockfile 并超出当前 qa gate。Codex 复核后把结论记录为 IM242：当前不自动化页面表单点击 E2E，不启动 runtime，不新增测试脚本或 check.sh 门禁；剩余 server action -> fetch -> redirect 胶水层风险低，推荐沿用 IM241 HTTP smoke 证据并由 PM 手工执行 8 步浏览器 walkthrough。
+
 - task_id: `IM241`
 - source_ids:
   - `R940`
