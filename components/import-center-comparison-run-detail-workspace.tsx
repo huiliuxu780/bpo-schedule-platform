@@ -294,16 +294,16 @@ export function ImportCenterComparisonRunDetailWorkspace({
           </Card>
         </TabsContent>
 
-        <TabsContent value="reviews" className="mt-0">
-          <Card className="overflow-hidden">
-            <CardHeader>
+        <TabsContent value="reviews" className="mt-0 grid gap-4">
+          <Card>
+            <CardHeader className="gap-3">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                 <div className="grid gap-1">
                   <CardTitle className="flex items-center gap-2 text-base">
                     <ShieldAlert className="size-4 text-muted-foreground" />
-                    关联复核案例
+                    {relatedReviewCases.title}
                   </CardTitle>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="max-w-3xl text-sm text-muted-foreground">
                     {relatedReviewCases.detail}
                   </p>
                 </div>
@@ -311,16 +311,53 @@ export function ImportCenterComparisonRunDetailWorkspace({
                   variant={
                     relatedReviewCases.tone === "blocked"
                       ? "destructive"
-                      : "outline"
+                      : relatedReviewCases.tone === "warning"
+                        ? "outline"
+                        : "secondary"
                   }
+                  className="w-fit"
                 >
-                  {relatedReviewCases.title}
+                  {relatedReviewCases.tone === "blocked"
+                    ? "需处理"
+                    : relatedReviewCases.tone === "warning"
+                      ? "待复核"
+                      : relatedReviewCases.tone === "ready"
+                        ? "已关闭"
+                        : "空"}
                 </Badge>
               </div>
             </CardHeader>
+            {relatedReviewCases.totalCount > 0 ? (
+              <CardContent className="grid gap-3 text-sm">
+                <div className="grid gap-3 md:grid-cols-3">
+                  <div className="grid gap-1">
+                    <span className="text-muted-foreground">关联总数</span>
+                    <span className="font-medium">
+                      {relatedReviewCases.totalCount.toLocaleString("zh-CN")}
+                    </span>
+                  </div>
+                  <div className="grid gap-1">
+                    <span className="text-muted-foreground">未关闭</span>
+                    <span className="font-medium">
+                      {relatedReviewCases.openCount.toLocaleString("zh-CN")}
+                    </span>
+                  </div>
+                  <div className="grid gap-1">
+                    <span className="text-muted-foreground">下一步</span>
+                    <span className="font-medium">
+                      {relatedReviewCases.nextAction}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            ) : null}
+          </Card>
+
+          <Card className="overflow-hidden">
             <CardContent className="p-0">
               {relatedReviewCases.cases.length === 0 ? (
                 <div className="grid gap-2 p-4 text-sm text-muted-foreground">
+                  <p>{relatedReviewCases.title}</p>
                   <p>{relatedReviewCases.nextAction}</p>
                 </div>
               ) : (
@@ -346,10 +383,24 @@ export function ImportCenterComparisonRunDetailWorkspace({
                         </TableCell>
                         <TableCell>{reviewCase.ownerLabel}</TableCell>
                         <TableCell>
-                          <Badge variant="outline">{reviewCase.severityLabel}</Badge>
+                          <Badge
+                            variant={
+                              reviewCase.severityLabel === "严重" || reviewCase.severityLabel === "高"
+                                ? "destructive"
+                                : "outline"
+                            }
+                          >
+                            {reviewCase.severityLabel}
+                          </Badge>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline">{reviewCase.statusLabel}</Badge>
+                          <Badge
+                            variant={
+                              reviewCase.statusLabel === "未关闭" ? "outline" : "secondary"
+                            }
+                          >
+                            {reviewCase.statusLabel}
+                          </Badge>
                         </TableCell>
                         <TableCell className="text-right">
                           <Button asChild size="sm" variant="outline">

@@ -177,6 +177,8 @@ export function summarizeImportComparisonRunReviewCases({
       title: "复核案例读取失败",
       detail: reviewError,
       nextAction: "先恢复复核案例读取，再判断当前运行结果是否已进入复核。",
+      totalCount: 0,
+      openCount: 0,
       cases: [],
     }
   }
@@ -187,6 +189,8 @@ export function summarizeImportComparisonRunReviewCases({
       title: "等待运行结果",
       detail: "还没有可匹配复核案例的对比运行结果。",
       nextAction: "先选择一个对比运行。",
+      totalCount: 0,
+      openCount: 0,
       cases: [],
     }
   }
@@ -216,8 +220,8 @@ export function summarizeImportComparisonRunReviewCases({
     )
     .sort(
       (current, next) =>
-        reviewCaseSeverityRank(next.severity) - reviewCaseSeverityRank(current.severity) ||
         reviewCaseOpenRank(next.status) - reviewCaseOpenRank(current.status) ||
+        reviewCaseSeverityRank(next.severity) - reviewCaseSeverityRank(current.severity) ||
         current.case_id.localeCompare(next.case_id)
     )
 
@@ -227,6 +231,8 @@ export function summarizeImportComparisonRunReviewCases({
       title: "暂无关联复核案例",
       detail: "当前运行结果尚未匹配到复核案例。",
       nextAction: "继续查看结果明细。",
+      totalCount: 0,
+      openCount: 0,
       cases: [],
     }
   }
@@ -245,6 +251,8 @@ export function summarizeImportComparisonRunReviewCases({
       openCount > 0
         ? "先查看未关闭或高风险复核案例，再回看运行结果和证据。"
         : "当前关联案例均已关闭，可继续回看结果明细和关闭证据。",
+    totalCount: matchedCases.length,
+    openCount,
     cases: matchedCases.map((reviewCase) => ({
       caseId: reviewCase.case_id,
       resultLabel:

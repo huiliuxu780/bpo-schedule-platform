@@ -608,6 +608,8 @@ export type ImportComparisonRunReviewCaseSummary = {
   title: string
   detail: string
   nextAction: string
+  totalCount: number
+  openCount: number
   cases: Array<{
     caseId: string
     resultLabel: string
