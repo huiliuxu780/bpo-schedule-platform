@@ -2847,3 +2847,12 @@
   action: 复核案例写入动作手工浏览器验收。
   status: `done`
   notes: 使用 `BPO_DATABASE_URL` 指向 `.local/im243-review-case-form-click-smoke.db` 并加载 `seed_review_case_stage_matrix()`；backend `127.0.0.1:8000` 与 frontend `127.0.0.1:3002` 启动后，浏览器手工验证 `CASE-SEED-ME-001` 补证据、`CASE-SEED-MC-001` 补结论、`CASE-QUERY-001` 关闭案例三条表单链路均触发 server action、跳转 success URL、显示成功反馈，并通过 detail API 回读确认写入；`CASE-SEED-CL-001` 显示已关闭 blocker，面包屑可返回列表。本轮未新增自动化 E2E，未修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM244`
+  source_ids:
+    - `R943`
+  story_ids:
+    - `US863`
+  action: 复核案例验收块收口摘要。
+  status: `done`
+  notes: 复核 Qoder Packet A/B 后新增 `docs/design/review-case-acceptance-closeout.md`，把 IM239-IM243 的 stage matrix seed、read runtime smoke、write API smoke、E2E 决策和 manual browser walkthrough 整理为一份本地 MVP 验收收口摘要。文档明确已验证能力、未覆盖生产边界、PR 摘要草案和后续候选任务；本轮未启动 runtime，未修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
