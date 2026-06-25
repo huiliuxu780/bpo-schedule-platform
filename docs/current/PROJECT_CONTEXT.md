@@ -12,7 +12,7 @@ The active product boundary remains local MVP and operator-facing workflow scaff
 
 ## Current Queue
 
-No executable story is currently queued. IM246 completed the medium-sized Comparison Run -> Review Case association loop and should not be split into smaller follow-up IMs unless a new product block is confirmed.
+IM247 is the current ready story. It defines one medium-sized operator workflow block: Review Case -> source result -> comparison run -> business versions -> original import batches. The task must reuse existing source_trace data and route patterns; it must not add backend APIs, persistence, new pages, dependencies, permissions, approval, export, or batch-operation capability.
 
 IM240 completed the PM-confirmed review-case live runtime smoke on the current branch using an isolated `.local/im240-runtime-smoke.db` runtime artifact. The smoke used backend `127.0.0.1:8000` and frontend `127.0.0.1:3002` because the existing `3000` BPO Next dev process was stale and unresponsive. It did not add product features or modify business UI/backend implementation beyond acceptance traceability.
 
@@ -32,6 +32,7 @@ IM243 completed the PM-confirmed manual browser walkthrough for that remaining g
 - IM244 completed a documentation-only QA closeout so the review-case acceptance block can be handed off without overstating production readiness.
 - IM245 completed the PR readiness decision: split review into three stacked PRs before continuing with new product development on top of the branch.
 - IM246 completed the comparison-run review-case loop: explicit related-case counts, open-first/high-risk ordering, strengthened review tab expression, and expanded model coverage, without adding backend APIs, persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors.
+- IM247 is now queued to strengthen review-case source tracing to original import batches using existing source_trace version fields.
 - Harness state optimization is now the active maintenance concern: current context must stay compact, default reads must use the current layer, and history must be queried on demand through registry/legacy references.
 
 ## Current Execution Rules
@@ -59,4 +60,4 @@ IM243 completed the PM-confirmed manual browser walkthrough for that remaining g
 
 ## Current Recommendation
 
-Recommended next medium-sized candidates are: (1) review-case source trace to original import batch, completing investigation from case to raw import context, (2) owner workbench across review cases, if PM accepts API/query expansion, or (3) version comparison history timeline after the first two are stable. Do not claim production readiness, add runtime automation, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.
+Execute IM247 as one medium-sized product capability, not many small requirements. Recommended delegation is three bounded packets: source-trace model contract, detail page source-tab expression, and read-only review/verification. Do not claim production readiness, add runtime automation, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.

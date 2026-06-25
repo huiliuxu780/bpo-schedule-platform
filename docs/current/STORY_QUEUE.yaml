@@ -5,4 +5,17 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: "US866"
+    requirement_id: "R946"
+    title: "Review Case 溯源到原始 Import Batch"
+    status: "ready"
+    task_id: "IM247"
+    priority: "high"
+    summary: "让操作员在复核案例详情页从来源结果一路追溯到对比运行、业务版本和原始导入批次，完成调查闭环。"
+    acceptance:
+      - "复核案例详情的来源链路清楚展示来源结果、对比运行、业务版本和原始导入批次。"
+      - "每条版本链路显示角色、业务版本、导入版本、文件名、业务日范围和批次状态。"
+      - "有 batch_id 的版本链路能跳转到现有导入批次详情页。"
+      - "缺失 source_trace 或 batch_id 时显示可理解的空态/不可用状态，不生成坏链接。"
+      - "不新增后端 API、数据库、依赖、权限、审批、导出或批量操作能力。"
