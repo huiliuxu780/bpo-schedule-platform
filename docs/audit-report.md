@@ -5691,3 +5691,19 @@
 - 结论：review-case local MVP acceptance block 已收口；已验证四阶段 seed、读路径 runtime、写入 API、E2E 不自动化决策和三条浏览器表单链路。
 - 结论：该证据不代表 production-ready、权限、审批、导出、批量、外部集成、自动排班、生产公式、结算、收费因子、多用户并发或 PR 合并完成。
 - 推荐下一步优先做 PR review / merge planning；之后再定义相邻 operator workflow 或 import-center/data-quality downstream chain。
+
+### 2026-06-25 - IM245 Review-case acceptance PR 合并规划
+
+#### 审计计划
+
+- 复核 Qoder IM245 Packet A/B，不再重复派发已完成的只读任务。
+- 基于 290 files / 82 commits / 6 个逻辑阶段的事实，判断当前集成分支是否适合单 PR。
+- 只新增 PR readiness 计划和 Harness 追踪；不执行 cherry-pick、rebase、reset、分支拆分或 PR 创建。
+- 不修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 新增 `docs/design/review-case-pr-readiness-plan.md`。
+- 决策：推荐拆为 3 个 stacked PR，而不是继续在当前大分支上叠业务开发。
+- PR-1：frontend health + model refactor + test split；PR-2：Harness hygiene + review-case processing path；PR-3：review-case acceptance block。
+- 下一业务候选：Comparison Run -> Review Case 关联链，但需等 PR 策略落地后再正式定义和开发。

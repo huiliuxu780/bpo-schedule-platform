@@ -2856,3 +2856,12 @@
   action: 复核案例验收块收口摘要。
   status: `done`
   notes: 复核 Qoder Packet A/B 后新增 `docs/design/review-case-acceptance-closeout.md`，把 IM239-IM243 的 stage matrix seed、read runtime smoke、write API smoke、E2E 决策和 manual browser walkthrough 整理为一份本地 MVP 验收收口摘要。文档明确已验证能力、未覆盖生产边界、PR 摘要草案和后续候选任务；本轮未启动 runtime，未修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM245`
+  source_ids:
+    - `R944`
+  story_ids:
+    - `US864`
+  action: Review-case acceptance PR 合并规划。
+  status: `done`
+  notes: 复核 Qoder IM245 Packet A/B 后新增 `docs/design/review-case-pr-readiness-plan.md`，决策采用 3 个 stacked PR：PR-1 frontend health/model refactor/test split，PR-2 Harness hygiene/review-case processing path，PR-3 review-case acceptance block。Comparison Run -> Review Case 关联链保留为 PR 策略落地后的首选开发候选。本轮未执行 cherry-pick/拆分分支，未修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

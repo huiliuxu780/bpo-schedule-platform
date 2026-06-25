@@ -5450,3 +5450,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM245 Review Case PR Readiness Plan
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `carried forward from the IM237 integration branch`
+- stacked_on: `codex/im237-harness-review-case-integration`
+- remote_status: `not_pushed after IM245 local commit; push remains PM-controlled.`
+- scope: Documentation-only QA planning. Review Qoder IM245 Packet A/B, decide PR split strategy, and keep the next product slice outside execution scope.
+- allowed_files_check: current Harness files, registry trace index, raw requirements, user stories, task log, audit report, branch log, backlog, and `docs/design/review-case-pr-readiness-plan.md` only.
+- scope_diff_check: expected PR readiness planning and Harness traceability only; no cherry-pick, branch split, PR creation, product UI, backend, scripts, package/lockfiles, dependencies, local runtime DB artifacts, schema/migration, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 433 frontend node tests (1 skipped), shadcn check, lint, typecheck, Next build, and 221 backend unittest tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

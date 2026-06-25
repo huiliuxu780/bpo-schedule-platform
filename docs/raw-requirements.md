@@ -24,8 +24,8 @@ description: "IM245 只读审计显示当前 `codex/im237-harness-review-case-in
 source: "Qoder IM245 Packet A/B：PR Readiness Audit 与 Next Operator Workflow Slice Discovery"
 submitted_at: "2026-06-25"
 version: "1.0"
-status: "ready"
-notes: "推荐先完成 PR readiness / merge planning，再决定是否开发 Comparison Run -> Review Case 关联链首刀。当前不修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量或生产规则。"
+status: "done"
+notes: "IM245 已完成：新增 `docs/design/review-case-pr-readiness-plan.md`，决策采用 3 个 stacked PR 的拆分策略，并把 Comparison Run -> Review Case 关联链保留为 PR 策略落地后的首选开发候选。本轮未执行 cherry-pick/拆分分支，未修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量或生产规则。"
 ```
 
 ### R943 - 复核案例验收块收口摘要

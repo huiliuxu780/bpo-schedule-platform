@@ -40,7 +40,8 @@ acceptance:
 dependencies:
   - "US863"
 status: "ready"
-notes: "等待执行：先把 PR 拆分/合并策略收口，再决定是否进入 Comparison Run -> Review Case 关联链开发。"
+status: "done"
+notes: "IM245 已完成：已形成 review-case acceptance 集成分支的 PR readiness plan，推荐拆为 3 个 stacked PR；下一业务候选为 Comparison Run -> Review Case 关联链，但不在本任务中开发。"
 ```
 
 ### US863 - 复核案例验收块收口摘要
