@@ -2,6 +2,72 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: IM245
+    title: "Review-case acceptance PR 合并规划"
+    priority: P0
+    status: ready
+    required_workflow: qa
+    dependencies: ["IM244"]
+    story_ids: ["US864"]
+    requirement_ids: ["R944"]
+    task_packets:
+      - id: "Packet A"
+        title: "PR 边界复核"
+        owner: "Qoder"
+        scope: "只读复核当前分支相对 `origin/main` 的 diff、commit 范围、逻辑阶段和 review 风险，确认是否适合单 PR。"
+      - id: "Packet B"
+        title: "下一业务切片候选复核"
+        owner: "Qoder"
+        scope: "只读复核 Comparison Run -> Review Case 关联链、批量操作、Import Batch 溯源链三个候选，给出推荐顺序和风险。"
+      - id: "Packet C"
+        title: "合并策略收口"
+        owner: "Codex"
+        scope: "Codex 复核 Packet A/B，输出 PR 拆分或单 PR 分段审阅方案、PR 文案、Qoder 后续任务边界和下一开发切片建议。"
+    allowed_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/design/review-case-acceptance-closeout.md"
+      - "docs/design/review-case-pr-readiness-plan.md"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "backend/migrations/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - ".qoder/**"
+      - "node_modules/**"
+      - ".local/**"
+    acceptance:
+      - "记录当前分支相对 `origin/main` 的 PR 规模、逻辑阶段和 review 风险。"
+      - "给出单 PR 分段审阅与拆 2-3 个 stacked PR 的取舍，明确推荐方案。"
+      - "如推荐拆分，输出安全拆分步骤、基线、合并顺序和 stop conditions；如推荐单 PR，输出 PR title/body 和 reviewer 指引。"
+      - "保留 Comparison Run -> Review Case 关联链为后续候选，不在本任务中修改业务代码。"
+      - "`bash scripts/check-state.sh --strict`、`git diff --check`、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要 cherry-pick、rebase、reset、checkout 覆盖或其他破坏性/歧义 Git 操作"
+      - "需要修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration"
+      - "需要启动 frontend/backend runtime"
+      - "需要新增审批、权限、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "pending"
   - id: IM244
     title: "复核案例验收块收口摘要"
     priority: P0

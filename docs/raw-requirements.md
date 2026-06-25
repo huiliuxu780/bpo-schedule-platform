@@ -15,6 +15,19 @@
 notes: "补充说明"
 ```
 
+### R944 - Review-case acceptance PR 合并规划
+
+```yaml
+id: R944
+module: "复核案例工作区"
+description: "IM245 只读审计显示当前 `codex/im237-harness-review-case-integration` 分支相对 `origin/main` 包含 82 个 commits、290 个文件和多个逻辑阶段。继续在该分支上叠加业务开发会放大审阅和回滚风险。当前需要先形成 PR 拆分/合并规划，明确是否单 PR 分段审阅或拆为 2-3 个 stacked PR，并把下一块相邻 operator workflow 切片作为后续候选，而不是立即进入开发。"
+source: "Qoder IM245 Packet A/B：PR Readiness Audit 与 Next Operator Workflow Slice Discovery"
+submitted_at: "2026-06-25"
+version: "1.0"
+status: "ready"
+notes: "推荐先完成 PR readiness / merge planning，再决定是否开发 Comparison Run -> Review Case 关联链首刀。当前不修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量或生产规则。"
+```
+
 ### R943 - 复核案例验收块收口摘要
 
 ```yaml

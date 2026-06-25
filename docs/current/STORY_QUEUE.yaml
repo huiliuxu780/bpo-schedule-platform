@@ -5,4 +5,14 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: "US864"
+    module: "复核案例工作区"
+    status: "ready"
+    priority: "P0"
+    task_type: "qa"
+    requirement_ids:
+      - "R944"
+    task_ids:
+      - "IM245"
+    summary: "先收口 review-case acceptance 集成分支的 PR 拆分/合并策略，再决定是否进入 Comparison Run -> Review Case 关联链开发。"

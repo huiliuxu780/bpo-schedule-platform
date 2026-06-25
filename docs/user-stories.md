@@ -20,6 +20,29 @@
 status: "draft"
 ```
 
+### US864 - Review-case acceptance PR 合并规划
+
+```yaml
+id: US864
+requirement_ids:
+  - R944
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望先获得当前 review-case acceptance 集成分支的 PR 拆分和合并计划，以便在继续开发相邻业务切片前控制审阅成本、合并顺序和回滚边界。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "复核 Qoder IM245 Packet A/B，确认当前分支相对 `origin/main` 的文件规模、commit 范围和逻辑阶段。"
+  - "输出推荐 PR 策略：单 PR 分段审阅或拆为 2-3 个 stacked PR，并说明推荐理由、风险和合并顺序。"
+  - "明确下一个业务候选切片首选为 Comparison Run -> Review Case 关联链，但只作为后续任务，不在本任务中开发。"
+  - "如推荐拆 PR，给出可交给 Qoder 的安全任务边界；如推荐单 PR，给出 PR title/body 和 reviewer 分段审阅指引。"
+  - "不修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量或生产规则。"
+dependencies:
+  - "US863"
+status: "ready"
+notes: "等待执行：先把 PR 拆分/合并策略收口，再决定是否进入 Comparison Run -> Review Case 关联链开发。"
+```
+
 ### US863 - 复核案例验收块收口摘要
 
 ```yaml
