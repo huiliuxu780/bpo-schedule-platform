@@ -33,7 +33,7 @@ Not allowed:
 - `summarizeImportReviewCaseDetail()` currently formats `sourceTraceVersions` as plain strings.
 - `ImportCenterReviewCaseDetailWorkspace` already has a `来源链路` tab and `SourceTraceCard`.
 - `SourceTraceCard` currently shows version strings, but does not expose batch links or per-version batch availability as structured UI.
-- `buildImportBatchProcessingHref()` already builds `/data-quality/import-batches/{batchId}` style links.
+- `buildImportBatchProcessingHref()` already builds existing import-center batch processing links such as `/data-quality/{batchId}`.
 
 ## 4. Acceptance
 
@@ -191,3 +191,27 @@ Return:
 - Tests run and exact pass/fail result.
 - Any risk or follow-up that Codex should handle before final full check.
 ```
+
+## 10. Closeout
+
+IM247 completed on branch `codex/im247-review-case-source-trace` as one medium-sized product capability.
+
+Completed scope:
+
+- Added structured `sourceTraceVersionRows` to the review-case detail summary contract while preserving existing `sourceTraceVersions`.
+- Built per-version source-trace rows with role, business version, import version, import type, file name, business-date range, batch status, and batch href when `batch_id` exists.
+- Updated the review-case detail `来源链路` tab to show source versions and original import batches as structured rows with existing import-center batch links.
+- Covered forecast-vs-schedule and schedule-vs-actual source traces, including a missing `batch_id` unavailable state.
+
+Verification evidence:
+
+- `node --test scripts/tests/import-center-review-case-detail*.test.mjs`: 8 pass.
+- `node --test scripts/tests/import-center-review-case-*.test.mjs`: 40 pass.
+- `bash scripts/check-state.sh --strict`: pass.
+- `git diff --check`: pass.
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`: 449 Node tests with 448 pass and 1 skip, lint pass, typecheck pass, Next build pass, 221 backend unittest pass, Harness check pass.
+
+Deferred:
+
+- Browser visual acceptance was not run because no new runtime environment was started during this task.
+- Owner-wide review-case workbench, version comparison history timelines, permissions, approval, export, batch operations, production formulas, settlement rules, and charge factors remain out of scope.

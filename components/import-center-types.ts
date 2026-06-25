@@ -832,6 +832,7 @@ export type ImportReviewCaseDetailSummary = {
   sourceTraceRun: string
   sourceTraceHref: string
   sourceTraceVersions: string[]
+  sourceTraceVersionRows: ImportReviewCaseSourceTraceVersionRow[]
   ownerLabel: string
   evidenceLabel: string
   qualityFocus: string
@@ -840,6 +841,19 @@ export type ImportReviewCaseDetailSummary = {
   detailHref: string
   listHref: string
   evidence: string[]
+}
+
+export type ImportReviewCaseSourceTraceVersionRow = {
+  key: string
+  roleLabel: string
+  businessVersionLabel: string
+  importVersionLabel: string
+  importVersionTypeLabel: string
+  batchLabel: string
+  batchHref: string | null
+  batchStatusLabel: string
+  fileNameLabel: string
+  businessDateLabel: string
 }
 
 export type ImportReviewCaseDetailWorkspaceTabKey =

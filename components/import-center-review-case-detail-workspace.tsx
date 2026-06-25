@@ -187,6 +187,7 @@ export function ImportCenterReviewCaseDetailWorkspace({
             run={summary.sourceTraceRun}
             href={summary.sourceTraceHref}
             versions={summary.sourceTraceVersions}
+            versionRows={summary.sourceTraceVersionRows}
           />
         </TabsContent>
 
@@ -561,10 +562,12 @@ function SourceTraceCard({
   run,
   href,
   versions,
+  versionRows,
 }: {
   run: string
   href: string
   versions: string[]
+  versionRows: ReturnType<typeof summarizeImportReviewCaseDetail>["sourceTraceVersionRows"]
 }) {
   return (
     <Card>
@@ -591,16 +594,81 @@ function SourceTraceCard({
         <div className="rounded-md border bg-muted/30 p-3 text-sm">
           {run}
         </div>
-        <div className="grid gap-2">
-          {versions.map((version) => (
-            <div
-              key={version}
-              className="rounded-md border px-3 py-2 text-sm text-muted-foreground"
-            >
-              {version}
-            </div>
-          ))}
-        </div>
+        {versionRows.length > 0 ? (
+          <div className="overflow-x-auto rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>业务版本</TableHead>
+                  <TableHead>导入版本</TableHead>
+                  <TableHead>来源文件</TableHead>
+                  <TableHead>业务日</TableHead>
+                  <TableHead>来源批次</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {versionRows.map((version) => (
+                  <TableRow key={version.key}>
+                    <TableCell className="font-medium">
+                      <div className="grid gap-1">
+                        <span>{version.businessVersionLabel}</span>
+                        <Badge variant="secondary" className="w-fit">
+                          {version.roleLabel}
+                        </Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="grid gap-1 text-sm">
+                        <span>{version.importVersionLabel}</span>
+                        <span className="text-muted-foreground">
+                          {version.importVersionTypeLabel}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {version.fileNameLabel}
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {version.businessDateLabel}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge
+                          variant={version.batchHref ? "outline" : "secondary"}
+                        >
+                          {version.batchStatusLabel}
+                        </Badge>
+                        {version.batchHref ? (
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={version.batchHref}>
+                              查看批次
+                              <ExternalLink data-icon="inline-end" />
+                            </Link>
+                          </Button>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">
+                            {version.batchLabel}
+                          </span>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <div className="grid gap-2">
+            {versions.map((version) => (
+              <div
+                key={version}
+                className="rounded-md border px-3 py-2 text-sm text-muted-foreground"
+              >
+                {version}
+              </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   )
