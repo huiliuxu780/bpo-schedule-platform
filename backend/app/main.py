@@ -99,6 +99,7 @@ from backend.app.repository import (
     list_shift_detail_rows,
     list_plan_summaries,
     list_unavailability_rows,
+    transition_plan_status,
     update_plan_draft,
 )
 
@@ -1376,6 +1377,92 @@ def update_schedule_plan_draft(
                 "error": {
                     "code": "SCHEDULE_PLAN_NOT_EDITABLE",
                     "message": "只有草稿排班计划允许更新",
+                }
+            },
+        )
+
+    return updated
+
+
+@app.post(
+    "/api/v1/schedule-plans/{plan_id}/submit-review",
+    response_model=SchedulePlanDetail,
+)
+def submit_schedule_plan_for_review(plan_id: str) -> SchedulePlanDetail:
+    if find_plan_detail(plan_id) is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "SCHEDULE_PLAN_NOT_FOUND",
+                    "message": "排班计划不存在",
+                }
+            },
+        )
+
+    try:
+        updated = transition_plan_status(plan_id, "draft", "review_ready")
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "SCHEDULE_PLAN_NOT_FOUND",
+                    "message": "排班计划不存在",
+                }
+            },
+        ) from exc
+
+    if updated is None:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": {
+                    "code": "SCHEDULE_PLAN_INVALID_TRANSITION",
+                    "message": "当前排班计划状态不允许该流转",
+                }
+            },
+        )
+
+    return updated
+
+
+@app.post(
+    "/api/v1/schedule-plans/{plan_id}/publish",
+    response_model=SchedulePlanDetail,
+)
+def publish_schedule_plan(plan_id: str) -> SchedulePlanDetail:
+    if find_plan_detail(plan_id) is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "SCHEDULE_PLAN_NOT_FOUND",
+                    "message": "排班计划不存在",
+                }
+            },
+        )
+
+    try:
+        updated = transition_plan_status(plan_id, "review_ready", "published")
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "SCHEDULE_PLAN_NOT_FOUND",
+                    "message": "排班计划不存在",
+                }
+            },
+        ) from exc
+
+    if updated is None:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": {
+                    "code": "SCHEDULE_PLAN_INVALID_TRANSITION",
+                    "message": "当前排班计划状态不允许该流转",
                 }
             },
         )

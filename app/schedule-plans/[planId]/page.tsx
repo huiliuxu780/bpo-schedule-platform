@@ -6,7 +6,9 @@ import { SchedulePlanIntervalTable } from "@/components/schedule-plan-interval-t
 import {
   formatCoverageRate,
   getSchedulePlan,
+  getSchedulePlanLifecycleAction,
   schedulePlanStatusLabel,
+  summarizeSchedulePlanLifecycleFeedback,
 } from "@/lib/schedule-plans"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -17,15 +19,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  submitReviewAction,
+  publishSchedulePlanAction,
+} from "./actions"
 
 type PageProps = {
   params: Promise<{
     planId: string
   }>
+  searchParams?: Promise<{
+    lifecycle?: string
+  }>
 }
 
-export default async function SchedulePlanDetailPage({ params }: PageProps) {
+export default async function SchedulePlanDetailPage({ params, searchParams }: PageProps) {
   const { planId } = await params
+  const resolvedSearchParams = searchParams ? await searchParams : {}
   const plan = await getSchedulePlan(planId)
 
   if (!plan) {
@@ -33,6 +43,10 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
   }
 
   const gapIntervals = plan.intervals.filter((item) => item.gap_agents > 0)
+  const lifecycleAction = getSchedulePlanLifecycleAction(plan.summary.status)
+  const lifecycleFeedback = summarizeSchedulePlanLifecycleFeedback(
+    resolvedSearchParams.lifecycle
+  )
 
   return (
     <AppShell
@@ -43,6 +57,21 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
       ]}
     >
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+        {lifecycleFeedback ? (
+          <Card
+            className={
+              lifecycleFeedback.tone === "error"
+                ? "border-destructive/50"
+                : undefined
+            }
+          >
+            <CardHeader>
+              <CardTitle className="text-base">{lifecycleFeedback.title}</CardTitle>
+              <CardDescription>{lifecycleFeedback.description}</CardDescription>
+            </CardHeader>
+          </Card>
+        ) : null}
+
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm font-medium text-foreground">{plan.summary.project_name}</p>
@@ -58,6 +87,20 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
                   编辑草稿
                 </Link>
               </Button>
+            ) : null}
+            {lifecycleAction ? (
+              <form
+                action={
+                  lifecycleAction.key === "submit_review"
+                    ? submitReviewAction
+                    : publishSchedulePlanAction
+                }
+              >
+                <input type="hidden" name="plan_id" value={plan.summary.id} />
+                <Button type="submit" size="sm">
+                  {lifecycleAction.label}
+                </Button>
+              </form>
             ) : null}
             <Button asChild variant="outline" size="sm">
               <Link href="/schedule-plans">返回列表</Link>

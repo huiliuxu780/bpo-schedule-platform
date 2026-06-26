@@ -242,17 +242,22 @@ async function fetchJson<T>(path: string): Promise<T | null> {
 async function writeJson<T>(
   path: string,
   method: "POST" | "PUT",
-  payload: unknown
+  payload?: unknown
 ): Promise<T | null> {
   try {
+    const headers: Record<string, string> = {
+      Accept: "application/json",
+    }
+
+    if (payload !== undefined) {
+      headers["Content-Type"] = "application/json"
+    }
+
     const response = await fetch(`${API_BASE_URL}${path}`, {
       method,
       cache: "no-store",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
+      headers,
+      body: payload !== undefined ? JSON.stringify(payload) : undefined,
     })
 
     if (!response.ok) {
@@ -383,6 +388,99 @@ export async function updateSchedulePlanDraft(
     "PUT",
     payload
   )
+}
+
+export async function submitSchedulePlanForReview(
+  planId: string
+): Promise<SchedulePlanDetail | null> {
+  return writeJson<SchedulePlanDetail>(
+    `/api/v1/schedule-plans/${planId}/submit-review`,
+    "POST"
+  )
+}
+
+export async function publishSchedulePlan(
+  planId: string
+): Promise<SchedulePlanDetail | null> {
+  return writeJson<SchedulePlanDetail>(
+    `/api/v1/schedule-plans/${planId}/publish`,
+    "POST"
+  )
+}
+
+export type SchedulePlanLifecycleActionKey = "submit_review" | "publish"
+
+export type SchedulePlanLifecycleFeedbackKey =
+  | "submit_review_success"
+  | "submit_review_failed"
+  | "publish_success"
+  | "publish_failed"
+
+export type SchedulePlanLifecycleAction = {
+  key: SchedulePlanLifecycleActionKey
+  label: string
+  nextStatus: SchedulePlanStatus
+}
+
+export type SchedulePlanLifecycleFeedback = {
+  tone: "success" | "error"
+  title: string
+  description: string
+}
+
+export function getSchedulePlanLifecycleAction(
+  status: SchedulePlanStatus
+): SchedulePlanLifecycleAction | null {
+  if (status === "draft") {
+    return {
+      key: "submit_review",
+      label: "提交复核",
+      nextStatus: "review_ready",
+    }
+  }
+
+  if (status === "review_ready") {
+    return {
+      key: "publish",
+      label: "发布计划",
+      nextStatus: "published",
+    }
+  }
+
+  return null
+}
+
+export function summarizeSchedulePlanLifecycleFeedback(
+  value?: string | null
+): SchedulePlanLifecycleFeedback | null {
+  if (!value) {
+    return null
+  }
+
+  const feedbackMap: Record<SchedulePlanLifecycleFeedbackKey, SchedulePlanLifecycleFeedback> = {
+    submit_review_success: {
+      tone: "success",
+      title: "已提交复核",
+      description: "排班计划已进入待复核状态。",
+    },
+    submit_review_failed: {
+      tone: "error",
+      title: "提交复核失败",
+      description: "当前排班计划状态暂不允许提交复核，请刷新后重试。",
+    },
+    publish_success: {
+      tone: "success",
+      title: "已发布计划",
+      description: "排班计划已发布，可作为履约执行基线。",
+    },
+    publish_failed: {
+      tone: "error",
+      title: "发布计划失败",
+      description: "当前排班计划状态暂不允许发布，请刷新后重试。",
+    },
+  }
+
+  return feedbackMap[value as SchedulePlanLifecycleFeedbackKey] ?? null
 }
 
 export function formatCoverageRate(value: number) {

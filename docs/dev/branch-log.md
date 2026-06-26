@@ -5468,3 +5468,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM248 Scheduling Plan Lifecycle Closure
+
+- branch_name: `codex/im248-schedule-plan-lifecycle`
+- base_main_commit: `stacked on codex/im247-review-case-source-trace`
+- stacked_on: `codex/im247-review-case-source-trace`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium product block for the local MVP schedule plan lifecycle. Add backend endpoints and frontend detail-page actions for `draft -> review_ready -> published`.
+- qoder_mode: `true; Qoder implemented backend Packet A and frontend Packet B under bounded file scopes. Codex reviewed diffs, owns Harness updates, final verification, local commit, and push decision.`
+- allowed_files_check: schedule lifecycle backend files, schedule plan frontend/detail files, focused lifecycle test, current Harness files, audit report, task log, and branch log only.
+- scope_diff_check: expected lifecycle state transitions, detail-page action forms, lifecycle feedback, and traceability updates only; no auth, permissions, approval, export, batch-operation, automatic scheduling, production formulas, settlement rules, charge factors, dependency, package/lockfile, schema, migration, or real external integration changes.
+- check_result: Qoder Packet A/B diffs were reviewed by Codex. Focused `.venv/bin/python -m unittest backend.tests.test_schedule_plans -v` passed with 28 tests. Focused `node --test scripts/tests/schedule-plan-lifecycle-model.test.mjs` passed with 11 tests. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 460 Node tests (459 pass, 1 skipped), shadcn check, lint, typecheck, Next build, and 230 backend unittest tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

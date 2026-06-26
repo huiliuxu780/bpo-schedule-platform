@@ -5707,3 +5707,19 @@
 - 决策：推荐拆为 3 个 stacked PR，而不是继续在当前大分支上叠业务开发。
 - PR-1：frontend health + model refactor + test split；PR-2：Harness hygiene + review-case processing path；PR-3：review-case acceptance block。
 - 下一业务候选：Comparison Run -> Review Case 关联链，但需等 PR 策略落地后再正式定义和开发。
+
+### 2026-06-26 - IM248 排班计划生命周期闭环
+
+#### 审计计划
+
+- 按 PM 复盘后的主线判断，不继续 owner workbench 候选，转向 WFM 核心排班履约闭环。
+- 以一个中等产品包完成排班计划 `draft -> review_ready -> published`，不拆成碎片任务。
+- Qoder 只执行后端 Packet A 和前端 Packet B；Codex 负责 diff review、Harness 状态、全量验证、提交和推送决策。
+- 不引入审批、权限、批量、导出、自动排班、生产公式、结算、收费因子、新依赖、package/lockfile、schema/migration 或外部集成。
+
+#### 执行结果
+
+- 后端新增 `POST /api/v1/schedule-plans/{plan_id}/submit-review` 和 `POST /api/v1/schedule-plans/{plan_id}/publish`，非法流转返回 `SCHEDULE_PLAN_INVALID_TRANSITION`。
+- 前端详情页根据计划状态展示“提交复核”或“发布计划”，成功/失败后通过 `lifecycle` 参数显示业务反馈。
+- 新增 `scripts/tests/schedule-plan-lifecycle-model.test.mjs`，覆盖生命周期动作、反馈文案、内部术语边界和 action 接入结构。
+- focused backend、focused frontend、state check、diff check 和最终全量门禁结果见 IM248 Done Report。

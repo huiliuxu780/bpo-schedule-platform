@@ -457,3 +457,43 @@ def update_plan_draft(
         return updated
 
     return None
+
+
+def transition_plan_status(
+    plan_id: str,
+    expected_status: SchedulePlanStatus,
+    next_status: SchedulePlanStatus,
+) -> SchedulePlanDetail | None:
+    """Transition a schedule plan from expected_status to next_status.
+
+    Returns the updated detail on success, or None when the plan exists but
+    its current status does not match expected_status.  Raises KeyError when
+    the plan does not exist so the caller can distinguish 404 from 409.
+    """
+    for index, plan in enumerate(SCHEDULE_PLANS):
+        if plan.summary.id != plan_id:
+            continue
+
+        if plan.summary.status != expected_status:
+            return None
+
+        updated = SchedulePlanDetail(
+            summary=SchedulePlanSummary(
+                id=plan.summary.id,
+                plan_date=plan.summary.plan_date,
+                project_name=plan.summary.project_name,
+                site_name=plan.summary.site_name,
+                version=plan.summary.version,
+                status=next_status,
+                forecast_agents=plan.summary.forecast_agents,
+                scheduled_agents=plan.summary.scheduled_agents,
+                gap_agents=plan.summary.gap_agents,
+                coverage_rate=plan.summary.coverage_rate,
+                updated_at=_now_iso(),
+            ),
+            intervals=list(plan.intervals),
+        )
+        SCHEDULE_PLANS[index] = updated
+        return updated
+
+    raise KeyError(plan_id)

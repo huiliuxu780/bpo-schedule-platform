@@ -12,7 +12,7 @@ The active product boundary remains local MVP and operator-facing workflow scaff
 
 ## Current Queue
 
-No executable story is currently queued. IM247 completed the medium-sized Review Case -> source result -> comparison run -> business versions -> original import batches tracing block and should not be split into smaller follow-up IMs unless a new product block is confirmed.
+No executable story is currently queued. IM248 completed the medium-sized Scheduling Plan Lifecycle Closure block and should not be split into smaller follow-up IMs unless a new product block is confirmed.
 
 IM240 completed the PM-confirmed review-case live runtime smoke on the current branch using an isolated `.local/im240-runtime-smoke.db` runtime artifact. The smoke used backend `127.0.0.1:8000` and frontend `127.0.0.1:3002` because the existing `3000` BPO Next dev process was stale and unresponsive. It did not add product features or modify business UI/backend implementation beyond acceptance traceability.
 
@@ -33,6 +33,7 @@ IM243 completed the PM-confirmed manual browser walkthrough for that remaining g
 - IM245 completed the PR readiness decision: split review into three stacked PRs before continuing with new product development on top of the branch.
 - IM246 completed the comparison-run review-case loop: explicit related-case counts, open-first/high-risk ordering, strengthened review tab expression, and expanded model coverage, without adding backend APIs, persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors.
 - IM247 completed review-case source tracing to original import batches using existing source_trace version fields and existing import-center batch route helpers.
+- IM248 completed the local MVP schedule plan lifecycle: backend lifecycle endpoints, frontend detail-page actions, feedback handling, and focused coverage for `draft -> review_ready -> published`.
 - Harness state optimization is now the active maintenance concern: current context must stay compact, default reads must use the current layer, and history must be queried on demand through registry/legacy references.
 
 ## Current Execution Rules
@@ -60,4 +61,4 @@ IM243 completed the PM-confirmed manual browser walkthrough for that remaining g
 
 ## Current Recommendation
 
-Recommended next medium-sized candidates are: (1) owner workbench across review cases, if PM accepts API/query expansion, (2) version comparison history timeline after source tracing is stable, or (3) runtime visual acceptance for the review-case trace chain if PM wants browser evidence before widening scope. Do not claim production readiness, add runtime automation, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.
+Recommended next medium-sized candidates are: (1) schedule risk confirmation/resolution plus unavailability active/resolved handling, because it continues the WFM fulfillment loop after plan publication, (2) dashboard real-data linkage to the schedule lifecycle and risk/unavailability summaries, after the lifecycle data is stable, or (3) runtime visual acceptance for the schedule lifecycle if PM wants browser evidence before widening scope. Do not claim production readiness, add runtime automation, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.

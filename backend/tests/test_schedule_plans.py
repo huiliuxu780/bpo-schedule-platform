@@ -11,6 +11,8 @@ from backend.app.main import (
     list_schedule_plans,
     list_schedule_risks,
     list_unavailability,
+    publish_schedule_plan,
+    submit_schedule_plan_for_review,
     update_schedule_plan_draft,
 )
 from backend.app.models import SchedulePlanDraftRequest, SchedulePlanIntervalInput
@@ -314,6 +316,227 @@ class SchedulePlansApiTest(unittest.TestCase):
                             forecast_agents=15,
                             scheduled_agents=15,
                             note="尝试编辑已发布",
+                        )
+                    ],
+                ),
+            )
+
+        self.assertEqual(raised.exception.status_code, 409)
+        self.assertEqual(
+            raised.exception.detail["error"]["code"],
+            "SCHEDULE_PLAN_NOT_EDITABLE",
+        )
+
+    def test_schedule_plan_lifecycle_routes_are_registered(self) -> None:
+        routes = {(route.path, ",".join(sorted(route.methods))) for route in app.routes}
+
+        self.assertIn(
+            ("/api/v1/schedule-plans/{plan_id}/submit-review", "POST"),
+            routes,
+        )
+        self.assertIn(
+            ("/api/v1/schedule-plans/{plan_id}/publish", "POST"),
+            routes,
+        )
+
+    def test_draft_can_submit_for_review(self) -> None:
+        created = create_schedule_plan_draft(
+            SchedulePlanDraftRequest(
+                plan_date="2026-06-26",
+                project_name="博西客服",
+                site_name="上海职场",
+                version="v1",
+                intervals=[
+                    SchedulePlanIntervalInput(
+                        interval_start="09:00",
+                        interval_end="09:30",
+                        forecast_agents=10,
+                        scheduled_agents=8,
+                        note="待复核",
+                    )
+                ],
+            )
+        )
+
+        submitted = submit_schedule_plan_for_review(created.summary.id)
+
+        self.assertEqual(submitted.summary.id, created.summary.id)
+        self.assertEqual(submitted.summary.status, "review_ready")
+        self.assertEqual(len(submitted.intervals), 1)
+        self.assertTrue(submitted.summary.updated_at)
+
+    def test_review_ready_can_publish(self) -> None:
+        created = create_schedule_plan_draft(
+            SchedulePlanDraftRequest(
+                plan_date="2026-06-27",
+                project_name="博西客服",
+                site_name="苏州职场",
+                version="v1",
+                intervals=[
+                    SchedulePlanIntervalInput(
+                        interval_start="10:00",
+                        interval_end="10:30",
+                        forecast_agents=12,
+                        scheduled_agents=12,
+                        note="待发布",
+                    )
+                ],
+            )
+        )
+
+        submitted = submit_schedule_plan_for_review(created.summary.id)
+        published = publish_schedule_plan(created.summary.id)
+
+        self.assertEqual(published.summary.id, created.summary.id)
+        self.assertEqual(published.summary.status, "published")
+        self.assertEqual(len(published.intervals), 1)
+        self.assertTrue(published.summary.updated_at)
+
+    def test_draft_cannot_publish_directly(self) -> None:
+        created = create_schedule_plan_draft(
+            SchedulePlanDraftRequest(
+                plan_date="2026-06-28",
+                project_name="博西客服",
+                site_name="上海职场",
+                version="v1",
+                intervals=[
+                    SchedulePlanIntervalInput(
+                        interval_start="11:00",
+                        interval_end="11:30",
+                        forecast_agents=5,
+                        scheduled_agents=5,
+                        note="直接发布",
+                    )
+                ],
+            )
+        )
+
+        with self.assertRaises(HTTPException) as raised:
+            publish_schedule_plan(created.summary.id)
+
+        self.assertEqual(raised.exception.status_code, 409)
+        self.assertEqual(
+            raised.exception.detail["error"]["code"],
+            "SCHEDULE_PLAN_INVALID_TRANSITION",
+        )
+
+    def test_review_ready_cannot_submit_review_again(self) -> None:
+        created = create_schedule_plan_draft(
+            SchedulePlanDraftRequest(
+                plan_date="2026-06-29",
+                project_name="博西客服",
+                site_name="苏州职场",
+                version="v1",
+                intervals=[
+                    SchedulePlanIntervalInput(
+                        interval_start="12:00",
+                        interval_end="12:30",
+                        forecast_agents=8,
+                        scheduled_agents=8,
+                        note="重复提交",
+                    )
+                ],
+            )
+        )
+
+        submit_schedule_plan_for_review(created.summary.id)
+
+        with self.assertRaises(HTTPException) as raised:
+            submit_schedule_plan_for_review(created.summary.id)
+
+        self.assertEqual(raised.exception.status_code, 409)
+        self.assertEqual(
+            raised.exception.detail["error"]["code"],
+            "SCHEDULE_PLAN_INVALID_TRANSITION",
+        )
+
+    def test_published_cannot_publish_again(self) -> None:
+        created = create_schedule_plan_draft(
+            SchedulePlanDraftRequest(
+                plan_date="2026-06-30",
+                project_name="博西客服",
+                site_name="上海职场",
+                version="v1",
+                intervals=[
+                    SchedulePlanIntervalInput(
+                        interval_start="13:00",
+                        interval_end="13:30",
+                        forecast_agents=6,
+                        scheduled_agents=6,
+                        note="重复发布",
+                    )
+                ],
+            )
+        )
+
+        submit_schedule_plan_for_review(created.summary.id)
+        publish_schedule_plan(created.summary.id)
+
+        with self.assertRaises(HTTPException) as raised:
+            publish_schedule_plan(created.summary.id)
+
+        self.assertEqual(raised.exception.status_code, 409)
+        self.assertEqual(
+            raised.exception.detail["error"]["code"],
+            "SCHEDULE_PLAN_INVALID_TRANSITION",
+        )
+
+    def test_missing_plan_returns_404_for_submit_review(self) -> None:
+        with self.assertRaises(HTTPException) as raised:
+            submit_schedule_plan_for_review("missing-plan-lifecycle-1")
+
+        self.assertEqual(raised.exception.status_code, 404)
+        self.assertEqual(
+            raised.exception.detail["error"]["code"],
+            "SCHEDULE_PLAN_NOT_FOUND",
+        )
+
+    def test_missing_plan_returns_404_for_publish(self) -> None:
+        with self.assertRaises(HTTPException) as raised:
+            publish_schedule_plan("missing-plan-lifecycle-2")
+
+        self.assertEqual(raised.exception.status_code, 404)
+        self.assertEqual(
+            raised.exception.detail["error"]["code"],
+            "SCHEDULE_PLAN_NOT_FOUND",
+        )
+
+    def test_update_schedule_plan_draft_rejects_review_ready_plan(self) -> None:
+        created = create_schedule_plan_draft(
+            SchedulePlanDraftRequest(
+                plan_date="2026-07-01",
+                project_name="博西客服",
+                site_name="苏州职场",
+                version="v1",
+                intervals=[
+                    SchedulePlanIntervalInput(
+                        interval_start="14:00",
+                        interval_end="14:30",
+                        forecast_agents=7,
+                        scheduled_agents=7,
+                        note="待复核不可编辑",
+                    )
+                ],
+            )
+        )
+
+        submit_schedule_plan_for_review(created.summary.id)
+
+        with self.assertRaises(HTTPException) as raised:
+            update_schedule_plan_draft(
+                created.summary.id,
+                SchedulePlanDraftRequest(
+                    plan_date="2026-07-01",
+                    project_name="博西客服",
+                    site_name="苏州职场",
+                    version="v2",
+                    intervals=[
+                        SchedulePlanIntervalInput(
+                            interval_start="14:00",
+                            interval_end="14:30",
+                            forecast_agents=7,
+                            scheduled_agents=7,
+                            note="尝试编辑待复核",
                         )
                     ],
                 ),

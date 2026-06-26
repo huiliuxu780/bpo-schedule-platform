@@ -2865,3 +2865,12 @@
   action: Review-case acceptance PR 合并规划。
   status: `done`
   notes: 复核 Qoder IM245 Packet A/B 后新增 `docs/design/review-case-pr-readiness-plan.md`，决策采用 3 个 stacked PR：PR-1 frontend health/model refactor/test split，PR-2 Harness hygiene/review-case processing path，PR-3 review-case acceptance block。Comparison Run -> Review Case 关联链保留为 PR 策略落地后的首选开发候选。本轮未执行 cherry-pick/拆分分支，未修改产品 UI、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM248`
+  source_ids:
+    - `R947`
+  story_ids:
+    - `US867`
+  action: 排班计划生命周期闭环。
+  status: `done`
+  notes: 完成本地 MVP `draft -> review_ready -> published` 状态流转。后端新增提交复核和发布计划 API，前端排班计划详情页根据状态显示“提交复核”或“发布计划”动作，并通过 `lifecycle` 查询参数显示成功/失败反馈；新增 focused lifecycle model 测试。未新增依赖，未修改 package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
