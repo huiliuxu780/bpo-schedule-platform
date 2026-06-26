@@ -5865,3 +5865,19 @@
 - Codex 修正 legacy guard 测试，从注释说明改为真实断言：旧 `mvp-flow-summary` 仍应不存在，而新的 `schedule-risk-table.tsx` 是有效工作台组件。
 - Qoder 违反任务约束提前创建了本地提交；Codex 未直接信任该提交，重新审查实际 diff 并追加修正后再执行最终验证。
 - Focused schedule-risk、typecheck、diff check 和最终全量门禁结果见 IM256 Done Report。
+
+### 2026-06-27 - IM257 本地 MVP 运营链路收口盘点
+
+#### 审计计划
+
+- 承接 IM250-IM256 的本地运营链路，做只读收口盘点，回答当前完成范围、生产就绪差距和下一步中等功能块。
+- 采用 Qoder 只读 closeout packet，但 Codex 保留事实复核、文档修正、Harness 状态、最终验证、提交和推送决策所有权。
+- 不新增产品代码、后端 API、数据库、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- 新增 `docs/design/local-mvp-operational-workflow-closeout.md`，记录 dashboard、schedule plans、shift details、schedule risks、unavailability 的本地 MVP 操作链路和非生产边界。
+- Codex 复核当前代码后修正 Qoder 初稿中的关键事实错误：`/shift-details`、`/schedule-plans/new`、`/schedule-plans/[planId]/edit` 已存在，不应作为缺失路由或 404 死链接列入下一步。
+- 收口报告将相关缺口改为 runtime acceptance、source messaging、form hardening，而不是 greenfield route creation。
+- Qoder 再次违反任务约束提前创建本地提交；Codex 未直接信任该提交，重新审查实际 diff 并追加修正后执行验证。
+- Focused diff check、state check 和最终全量门禁结果见 IM257 Done Report。

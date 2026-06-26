@@ -11,7 +11,7 @@ After IM250-IM256, the local MVP operational workflow is a complete operator-fac
 5. Browse, search, and filter all fulfillment risks by status and severity from a dedicated list workbench.
 6. View risk detail with related shift and unavailability context, then confirm or resolve risks.
 7. Browse, search, and filter unavailability records, then resolve them.
-8. Navigate between all four domains through encoded downstream links without dead ends.
+8. Navigate between dashboard, plans, shift details, risks, and unavailability through encoded downstream links without known route dead ends.
 
 This is **not production-ready**. It is a locally verifiable operator workbench that demonstrates the planned BPO WFM operational flow using API-first data access with local fallback seed data.
 
@@ -35,7 +35,7 @@ This is **not production-ready**. It is a locally verifiable operator workbench 
 | Main user job | Browse all plans, search by plan ID / project / site, filter by status |
 | Key data shown | Plan count, forecast agents, scheduled agents, coverage rate; table with date, project, site, status, gap, coverage, version |
 | Available action / drilldown | "新建草稿" button → `/schedule-plans/new`; row "查看" → `/schedule-plans/{planId}` |
-| Current limitation | "新建草稿" route not implemented in this MVP scope (UI placeholder only). |
+| Current limitation | Create/edit forms exist, but still need runtime acceptance and richer form hardening before production use. |
 
 ### Step 3: Schedule Plan Detail (排班计划详情)
 
@@ -45,7 +45,7 @@ This is **not production-ready**. It is a locally verifiable operator workbench 
 | Main user job | Review plan intervals, fulfillment health, related risks and unavailability |
 | Key data shown | 4 detail cards (status, forecast, scheduled, coverage), interval table (0.5h granularity), fulfillment issue summary, up to 3 risk previews + 3 unavailability previews |
 | Available action / drilldown | "提交复核" (draft → review_ready), "发布计划" (review_ready → published); "编辑草稿" (draft only); risk previews → `/schedule-risks/{id}`; unavailability previews → `/unavailability/{id}` |
-| Current limitation | Edit draft page not implemented. Fulfillment preview shows max 3 items each with remaining count. |
+| Current limitation | Edit draft page exists for draft plans only, but needs runtime acceptance and form validation hardening. Fulfillment preview shows max 3 items each with remaining count. |
 
 ### Step 4: Schedule Risks List (履约风险)
 
@@ -77,6 +77,16 @@ This is **not production-ready**. It is a locally verifiable operator workbench 
 | Available action / drilldown | Row "影响" → `/unavailability/{unavailabilityId}`; row "班次" → `/shift-details?query={site}` |
 | Current limitation | No `ReadinessBanner` on this page (unlike other list pages). No data source messaging. |
 
+### Step 6a: Shift Details (班次明细)
+
+| Attribute | Detail |
+|---|---|
+| Route | `/shift-details` |
+| Main user job | Drill into 0.5h shift-level forecast, scheduled agents, gap, coverage, and notes |
+| Key data shown | Filterable shift table, plan status filter, search, 4 metric cards for row count, gap rows, max gap, coverage rate |
+| Available action / drilldown | Status filter links, query reset, return to `/schedule-plans` |
+| Current limitation | API/fallback source messaging is not aligned with schedule plan and risk pages. No dedicated runtime acceptance evidence in this closeout. |
+
 ### Step 7: Unavailability Detail (不可用详情)
 
 | Attribute | Detail |
@@ -96,6 +106,7 @@ This is **not production-ready**. It is a locally verifiable operator workbench 
 | Plan Detail | `/schedule-plans/{planId}` | API-first, local fallback | Interval table, fulfillment preview, lifecycle actions | 404 for missing; ReadinessBanner; "当前计划暂无关联风险" / "当前计划暂无重叠不可用记录" | → `/schedule-risks/{id}`, `/unavailability/{id}`, `/schedule-risks?query={site}`, `/unavailability?query={site}` | ✅ IM252, IM255 validated |
 | Schedule Risks | `/schedule-risks` | API-first, local fallback | Risk list with search, status filter, level filter, metrics | ReadinessBanner; "暂无履约风险数据" / "暂无符合条件的履约风险" | → `/schedule-risks/{id}`, `/schedule-plans/{id}` | ✅ IM256 model tests |
 | Risk Detail | `/schedule-risks/{riskId}` | API-first, local fallback | Risk context, related shifts/unavailability, confirm/resolve actions | 404 for missing; "暂无匹配的班次明细" / "当前风险时段暂无重叠的生效中不可用记录" | → `/schedule-plans/{id}`, `/shift-details`, `/unavailability` | ✅ IM252 validated |
+| Shift Details | `/shift-details` | API-first through schedule plan helper, local fallback | Shift-level list with search, status filter, metrics | Table-level empty state | → `/schedule-plans` | ⚠️ Needs current runtime acceptance and source messaging |
 | Unavailability | `/unavailability` | API-first, local fallback | Unavailability list with search, status filter | "暂无符合条件的不可用记录" (table level only) | → `/unavailability/{id}`, `/shift-details`, `/schedule-plans` | ⚠️ No ReadinessBanner |
 | Unavailability Detail | `/unavailability/{unavailabilityId}` | API-first, local fallback | Impact shifts, related risks, resolve action | 404 for missing; "当前不可用时段暂无关联风险提示" / "当前不可用时段暂无匹配班次" | → `/schedule-risks/{id}`, `/schedule-plans/{id}`, `/shift-details` | ⚠️ No ReadinessBanner |
 
@@ -169,14 +180,14 @@ This workflow explicitly does **NOT** include:
 - **No production formula** — coverage rate is `scheduled / forecast`; gap is `forecast - scheduled`. No business-specific calculation engine.
 - **No settlement / charge factors** — no billing, pricing, or financial computation of any kind.
 - **No external integration** — the only external dependency is the local backend API at `127.0.0.1:8000`. No third-party services, no SSO, no message queues.
-- **No draft creation UI** — the "新建草稿" and "编辑草稿" routes exist in navigation but the pages are not implemented.
+- **No production-grade draft editor** — draft create/edit routes exist, but they are still local MVP forms without production validation, permissions, audit trail, or runtime acceptance evidence in this closeout.
 
 ## 6. Evidence Summary
 
 ### 6.1 Test Coverage
 
-| Test File | Tests | Coverage Area |
-|---|---|---|
+| Test File | Coverage Area |
+|---|---|
 | `dashboard-operational-model.test.mjs` | Dashboard view model: metric cards, heatmap, anomalies, readiness |
 | `dashboard-view-model.test.mjs` | Dashboard view model variants, edge cases |
 | `dashboard-anomaly-table-model.test.mjs` | Anomaly filtering, sorting, pagination, entry state routing |
@@ -195,7 +206,7 @@ This workflow explicitly does **NOT** include:
 | `schedule-plan-legacy-entry-rules.test.mjs` | Ensures no orphaned legacy components remain |
 | `schedule-risk-list-workbench-model.test.mjs` | Risk list: query across 8 fields, status/level filters, combined filters, summary, UI structure, forbidden terms |
 
-**Total: 256 tests across 19 suites, all passing. 0 failures.**
+The local MVP evidence is distributed across the focused suites above. Final completion evidence should use the project gate (`bash scripts/check.sh`) so the report does not understate or overstate the full repository test count.
 
 ### 6.2 Runtime Acceptance
 
@@ -218,7 +229,7 @@ This workflow explicitly does **NOT** include:
 
 | Gap | Impact | Severity |
 |---|---|---|
-| Draft creation/editing UI not implemented | Cannot create new plans from UI; lifecycle starts from externally seeded data | High |
+| Draft creation/editing UI needs hardening | Create/edit forms exist, but still need runtime acceptance, stronger validation, and clearer failure handling | Medium |
 | No undo/rollback for lifecycle or handling actions | Operator mistakes require manual backend intervention | Medium |
 | No audit trail visible in UI | Operators cannot see who performed actions or when | Medium |
 | No notification or alerting when risks are created or status changes | Operators must manually check for new risks | Medium |
@@ -256,24 +267,24 @@ This workflow explicitly does **NOT** include:
 
 | Gap | Impact | Severity |
 |---|---|---|
-| `/shift-details` route referenced but not implemented | Links from risk detail and unavailability pages lead to 404 | High |
-| `/schedule-plans/new` route referenced but not implemented | "新建草稿" button leads to 404 | High |
-| `/schedule-plans/{id}/edit` route referenced but not implemented | "编辑草稿" button leads to 404 | High |
+| `/shift-details` lacks source messaging and current acceptance evidence | Route exists, but is less transparent than schedule plan/risk pages | Medium |
+| `/schedule-plans/new` form needs runtime acceptance | Route exists, but create flow needs browser/API verification in the current branch chain | Medium |
+| `/schedule-plans/{id}/edit` form needs runtime acceptance and failure-state polish | Route exists, but draft-only edit behavior needs explicit acceptance evidence | Medium |
 | No pagination on risk/unavailability server-side queries | All records loaded at once; may degrade with large datasets | Medium |
 | Chart area uses static fallback data | Trend chart does not reflect real operational data | Low |
 
 ## 8. Recommended Next Product Blocks
 
-### Block A: Shift Details Workbench (班次明细工作台)
+### Block A: Operational Workflow Runtime Acceptance (本地运营链路运行时验收)
 
 | Attribute | Detail |
 |---|---|
-| Name | 班次明细工作台 |
-| Why it matters | Three existing pages link to `/shift-details` but the route does not exist. This is the most visible dead end in the current workflow. |
-| User-facing outcome | Operators can view detailed shift-level staffing data from risk detail and unavailability detail pages, completing the drill-down chain. |
-| Risk level | Low — read-only display page, follows established patterns (AppShell, MainTableShell, SearchInputBar), no new actions or backend APIs required if shift data already available. |
-| Suggested Gate type | Standard implementation Gate. |
-| Qoder delegation | Suitable for Qoder — well-scoped, follows existing patterns, no new dependencies or forbidden boundaries. |
+| Name | 本地运营链路运行时验收 |
+| Why it matters | IM250-IM256 added several connected pages and actions. Before building new capability, the current flow needs one browser-backed acceptance pass across dashboard, plan create/edit, shift details, risk handling, and unavailability handling. |
+| User-facing outcome | PM can trust the local MVP demo path and know which screens are verified by browser/runtime evidence rather than only model tests. |
+| Risk level | Low — QA/documentation-focused, no product code required unless defects are found. |
+| Suggested Gate type | QA acceptance Gate. |
+| Qoder delegation | Suitable for Qoder as read-only/browser acceptance packet if branch/runtime prerequisites are explicit. |
 
 ### Block B: Unavailability Data Source Consistency (不可用记录数据源一致性)
 
@@ -286,16 +297,16 @@ This workflow explicitly does **NOT** include:
 | Suggested Gate type | Small maintenance Gate, could be bundled with Block A. |
 | Qoder delegation | Suitable for Qoder — mechanical pattern application. |
 
-### Block C: Dashboard Real Data Integration (经营总览实时数据整合)
+### Block C: Draft Create/Edit Hardening (排班草稿创建与编辑强化)
 
 | Attribute | Detail |
 |---|---|
-| Name | 经营总览实时数据整合 |
-| Why it matters | The dashboard trend chart and global filter bar still use static data, while metric cards and anomalies already use real data. This inconsistency limits the dashboard's operational value. |
-| User-facing outcome | The trend chart reflects actual plan/risk/unavailability data over time; the global filter bar actually filters the dashboard content. |
-| Risk level | Medium — requires deciding how to aggregate trend data (daily snapshots? interval aggregation?) and what filter dimensions matter. May need backend support for time-series queries. |
-| Suggested Gate type | Product design Gate first (decide data shape and filter scope), then implementation Gate. |
-| Qoder delegation | Not suitable for pure Qoder delegation — requires product decisions about data aggregation strategy and filter scope before implementation. |
+| Name | 排班草稿创建与编辑强化 |
+| Why it matters | Create/edit routes already exist, so the next useful work is not building them from zero but validating and hardening the actual form flow, failure states, and source messaging. |
+| User-facing outcome | Operators can create or edit a draft with clearer validation and reliable post-submit feedback before submitting it for review. |
+| Risk level | Medium — touches server actions, API client paths, form validation, and runtime behavior. |
+| Suggested Gate type | Standard implementation Gate after Block A acceptance identifies concrete issues. |
+| Qoder delegation | Partially suitable for Qoder only after Codex defines exact validation rules and allowed files. |
 
 ## 9. Stop Conditions
 

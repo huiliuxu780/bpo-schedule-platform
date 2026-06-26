@@ -5640,3 +5640,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM257 Local MVP Operational Closeout
+
+- branch_name: `codex/im257-local-mvp-operational-closeout`
+- base_main_commit: `stacked on pushed codex/im256-schedule-risk-list-workbench at ef199f8`
+- stacked_on: `codex/im256-schedule-risk-list-workbench`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Read-only closeout for the local MVP operational workflow after IM250-IM256. Document completed operator-facing flow, current production-readiness gaps, stop conditions, and next recommended product blocks.
+- qoder_mode: `true; Qoder produced the closeout document but incorrectly created a local commit despite no-commit instructions. Codex reviewed current code, fixed factual inaccuracies, owns Harness updates, final verification, local commit, and push decision.`
+- allowed_files_check: `docs/design/local-mvp-operational-workflow-closeout.md`, current Harness context, audit report, task log, and branch log only.
+- scope_diff_check: expected documentation and traceability updates only; no product code, backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, or external integration changes.
+- check_result: Codex corrected Qoder's initial claim that `/shift-details`, `/schedule-plans/new`, and `/schedule-plans/[planId]/edit` were missing routes. These routes exist, so the final report reframes gaps as runtime acceptance, data-source consistency, and form hardening. Focused `git diff --check` and `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 680 Node tests (679 pass, 1 skipped), shadcn check, lint, typecheck, Next build, 241 backend unittest tests OK, and project Harness check passed.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -2946,3 +2946,12 @@
   action: 履约风险列表工作台。
   status: `done`
   notes: Qoder 基于 `codex/im255-schedule-plan-fulfillment-preview` 创建 `codex/im256-schedule-risk-list-workbench` 并实现 `/schedule-risks` 中等功能包后，Codex 复核实际 diff，修正筛选空态误判和 legacy guard 测试质量。`/schedule-risks` 现在补齐从经营总览/排班计划预览进入风险列表、再进入风险详情和计划详情的本地 MVP 操作链路，支持搜索、处理状态筛选、风险等级筛选、摘要指标、编码后的详情链接和数据来源提示。未新增后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
+
+- task_id: `IM257`
+  source_ids:
+    - `R956`
+  story_ids:
+    - `US876`
+  action: 本地 MVP 运营链路收口盘点。
+  status: `done`
+  notes: Qoder 在 `codex/im257-local-mvp-operational-closeout` 上新增 `docs/design/local-mvp-operational-workflow-closeout.md` 并提前创建本地提交；Codex 复核实际代码后修正收口报告中的关键事实错误：`/shift-details`、`/schedule-plans/new`、`/schedule-plans/[planId]/edit` 均已存在，不能作为 404 死链接或从零实现任务。IM257 最终定位为只读 closeout：确认 IM250-IM256 已形成 dashboard、schedule plans、shift details、schedule risks、unavailability 的本地操作链路，并把下一步推荐收敛为 runtime acceptance、unavailability 数据源一致性、draft create/edit hardening。未新增产品代码、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
