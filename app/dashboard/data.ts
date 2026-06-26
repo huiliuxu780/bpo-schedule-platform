@@ -95,6 +95,9 @@ export type Anomaly = {
       | "import_batch_result_trace"
       | "actual_log_production"
       | "schedule_production"
+      | "schedule_plan"
+      | "schedule_risk"
+      | "unavailability"
     id: string
   }
 }

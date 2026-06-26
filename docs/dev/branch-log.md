@@ -21,6 +21,25 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM250 Dashboard Real-Data Linkage
+
+- branch_name: `codex/im250-dashboard-real-data-linkage`
+- base_main_commit: `stacked on codex/im249-schedule-fulfillment-issues`
+- stacked_on: `codex/im249-schedule-fulfillment-issues`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium product block for connecting the existing dashboard to local MVP schedule plan, schedule risk, and unavailability data without adding new backend APIs or production workflow capabilities.
+- qoder_mode: `true; Qoder implemented Packet A/B under bounded dashboard scopes. Codex moved the dirty work onto the IM250 branch, reviewed diffs, fixed heatmap layout and downstream link coverage, owns Harness updates, final verification, local commit, and push decision.`
+- allowed_files_check: dashboard page/data/model/components, dashboard focused tests, current Harness files, audit report, task log, and branch log only.
+- scope_diff_check: expected dashboard view model, dashboard server data assembly, prop-based dashboard cards/heatmap/table, local MVP downstream links, fallback preservation, and traceability updates only; no backend, dependency, package/lockfile, schema, migration, auth, permissions, approval, export, batch-operation, automatic scheduling, production formulas, settlement rules, charge factors, or real external integration changes.
+- check_result: focused `node --test scripts/tests/*dashboard*.test.mjs` passed with 92 dashboard tests. `npm run lint`, `npm run typecheck`, `bash scripts/check-state.sh --strict`, and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 549 Node tests (548 pass, 1 skipped), shadcn check, lint, typecheck, Next build, and 241 backend unittest tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM241 Review Case Write Action Runtime Smoke
 
 - branch_name: `codex/im237-harness-review-case-integration`

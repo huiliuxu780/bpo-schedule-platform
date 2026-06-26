@@ -5740,3 +5740,21 @@
 - 排班计划详情页新增履约处理摘要，展示关联风险和不可用处理状态，并明确不自动重算排班覆盖。
 - 新增 `scripts/tests/schedule-fulfillment-issue-model.test.mjs`，覆盖风险/不可用动作、反馈文案、内部术语边界、计划详情联动和自动修复禁用文案。
 - focused backend、focused frontend、state check、diff check 和最终全量门禁结果见 IM249 Done Report。
+
+### 2026-06-26 - IM250 经营总览接入本地 MVP 数据
+
+#### 审计计划
+
+- 承接 IM248/IM249 的排班生命周期和履约问题处理闭环，把经营总览接到现有本地 MVP 数据。
+- 以一个中等产品包完成 dashboard view model、页面数据装配和子组件 props 接入，不新增新模块页面。
+- Qoder 执行 Packet A/B；Codex 负责迁移到独立 IM250 分支、diff review、边界修正、Harness 状态、全量验证、提交和推送决策。
+- 不新增后端 API、数据库、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- 新增 `lib/dashboard.ts`，将现有排班计划、风险和不可用数据聚合为 metric cards、heatmap rows 和 anomalies。
+- `/dashboard` 改为 async server page，并行读取 `getSchedulePlans()`、`getScheduleRisks()` 和 `getUnavailability()` 后调用 `buildDashboardViewModel()`。
+- `SectionCards`、`BpoHeatmap` 和 `DataTable` 支持 props 输入并保留静态 fallback；heatmap 改为根据 slot 数动态布局。
+- dashboard 异常表新增本地 MVP downstream links：排班计划、风险明细、不可用记录。
+- 新增 `scripts/tests/dashboard-view-model.test.mjs` 和 `scripts/tests/dashboard-integration.test.mjs`，并扩展 dashboard table model 覆盖本地 downstream links。
+- focused dashboard、lint、typecheck、state check、diff check 和最终全量门禁结果见 IM250 Done Report。

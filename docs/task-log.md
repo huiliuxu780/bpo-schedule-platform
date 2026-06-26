@@ -2883,3 +2883,12 @@
   action: 排班履约问题处理闭环。
   status: `done`
   notes: 完成本地 MVP 风险确认/处理和不可用处理闭环。后端新增风险确认、风险处理、不可用处理 API；前端风险详情页和不可用详情页根据状态展示处理动作和反馈；排班计划详情页新增关联风险与不可用处理摘要，明确处理状态不代表排班自动重算。未新增依赖，未修改 package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM250`
+  source_ids:
+    - `R949`
+  story_ids:
+    - `US869`
+  action: 经营总览接入本地 MVP 数据。
+  status: `done`
+  notes: 完成 `/dashboard` 从静态经营总览切换为消费现有本地排班计划、风险和不可用数据的 view model。新增 dashboard 汇总模型，页面并行读取现有本地数据 client，SectionCards/BpoHeatmap/DataTable 支持 props 并保留静态 fallback；异常表支持跳转到现有排班计划、风险明细和不可用记录页面。未新增后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

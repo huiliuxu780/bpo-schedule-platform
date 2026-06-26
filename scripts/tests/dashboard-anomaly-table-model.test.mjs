@@ -77,6 +77,51 @@ test("dashboard anomaly entry links only when a stable downstream target exists"
   );
 });
 
+test("dashboard anomaly entry links to local schedule plan issue targets", () => {
+  assert.deepEqual(
+    buildDashboardAnomalyEntryState({
+      ...anomaly,
+      downstreamEntry: {
+        type: "schedule_plan",
+        id: "plan-20260511-suzhou-bosch-v1",
+      },
+    }),
+    {
+      kind: "link",
+      label: "查看排班计划",
+      href: "/schedule-plans/plan-20260511-suzhou-bosch-v1",
+    },
+  );
+  assert.deepEqual(
+    buildDashboardAnomalyEntryState({
+      ...anomaly,
+      downstreamEntry: {
+        type: "schedule_risk",
+        id: "risk-plan-20260511-suzhou-bosch-v1-10:00",
+      },
+    }),
+    {
+      kind: "link",
+      label: "查看风险明细",
+      href: "/schedule-risks/risk-plan-20260511-suzhou-bosch-v1-10%3A00",
+    },
+  );
+  assert.deepEqual(
+    buildDashboardAnomalyEntryState({
+      ...anomaly,
+      downstreamEntry: {
+        type: "unavailability",
+        id: "unavail-20260511-001",
+      },
+    }),
+    {
+      kind: "link",
+      label: "查看不可用记录",
+      href: "/unavailability/unavail-20260511-001",
+    },
+  );
+});
+
 test("dashboard pagination range reports visible row bounds", () => {
   assert.deepEqual(getDashboardPaginationRange({ pageIndex: 0, pageSize: 5, rowCount: 12 }), {
     from: 1,

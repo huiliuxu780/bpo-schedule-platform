@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { heatmapRows, heatmapSlots } from "@/app/dashboard/data"
+import { heatmapRows as fallbackRows, heatmapSlots as fallbackSlots } from "@/app/dashboard/data"
 import { summarizeHeatmapRows } from "@/components/data-table-model"
 import {
   Card,
@@ -27,8 +27,19 @@ function heatClass(value: number) {
   return "bg-background text-muted-foreground"
 }
 
-export function BpoHeatmap() {
-  const summary = summarizeHeatmapRows(heatmapRows, heatmapSlots)
+type BpoHeatmapProps = {
+  rows?: Array<{ day: string; slots: number[] }>
+  slots?: string[]
+}
+
+export function BpoHeatmap({ rows, slots }: BpoHeatmapProps = {}) {
+  const displayRows = rows ?? fallbackRows
+  const displaySlots = slots ?? fallbackSlots
+  const summary = summarizeHeatmapRows(displayRows, displaySlots)
+  const gridTemplateColumns = `3rem repeat(${Math.max(
+    displaySlots.length,
+    1
+  )}, minmax(0, 1fr))`
 
   return (
     <Card>
@@ -43,9 +54,12 @@ export function BpoHeatmap() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-[3rem_repeat(8,minmax(0,1fr))] gap-1 text-xs">
+        <div
+          className="grid gap-1 text-xs"
+          style={{ gridTemplateColumns }}
+        >
           <div />
-          {heatmapSlots.map((slot) => (
+          {displaySlots.map((slot) => (
             <div
               key={slot}
               className="flex h-7 items-center justify-center text-muted-foreground"
@@ -53,7 +67,7 @@ export function BpoHeatmap() {
               {slot}
             </div>
           ))}
-          {heatmapRows.map((row) => (
+          {displayRows.map((row) => (
             <React.Fragment key={row.day}>
               <div
                 className="flex h-8 items-center text-muted-foreground"
@@ -62,15 +76,15 @@ export function BpoHeatmap() {
               </div>
               {row.slots.map((value, index) => (
                 <div
-                  key={`${row.day}-${heatmapSlots[index]}`}
+                  key={`${row.day}-${displaySlots[index]}`}
                   role="gridcell"
                   tabIndex={0}
-                  aria-label={`${row.day} ${heatmapSlots[index]} 缺口 ${value} 人`}
+                  aria-label={`${row.day} ${displaySlots[index]} 缺口 ${value} 人`}
                   className={cn(
                     "flex h-8 items-center justify-center rounded-md border text-xs tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                     heatClass(value)
                   )}
-                  title={`${row.day} ${heatmapSlots[index]} 缺口 ${value}`}
+                  title={`${row.day} ${displaySlots[index]} 缺口 ${value}`}
                 >
                   {value}
                 </div>

@@ -4,6 +4,9 @@ import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { DataTable } from "@/components/data-table"
 import { SectionCards } from "@/components/section-cards"
 import { Button } from "@/components/ui/button"
+import { buildDashboardViewModel } from "@/lib/dashboard"
+import { getSchedulePlans, getScheduleRisks } from "@/lib/schedule-plans"
+import { getUnavailability } from "@/lib/unavailability"
 
 function GlobalFilterBar() {
   return (
@@ -24,18 +27,29 @@ function GlobalFilterBar() {
   )
 }
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const [plans, risks, unavailability] = await Promise.all([
+    getSchedulePlans(),
+    getScheduleRisks(),
+    getUnavailability(),
+  ])
+
+  const viewModel = buildDashboardViewModel(plans, risks, unavailability)
+
   return (
     <AppShell title="经营总览">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto pb-6">
+        <p className="px-4 text-xs text-muted-foreground lg:px-6">
+          经营总览数据来自当前本地排班计划、风险和不可用状态
+        </p>
         <GlobalFilterBar />
-        <SectionCards />
+        <SectionCards cards={viewModel.metricCards} />
         <section className="grid gap-4 px-4 lg:grid-cols-[1.25fr_0.75fr] lg:px-6">
           <ChartAreaInteractive />
-          <BpoHeatmap />
+          <BpoHeatmap rows={viewModel.heatmapRows} slots={viewModel.heatmapSlots} />
         </section>
         <section className="grid gap-4 px-4 lg:px-6">
-          <DataTable />
+          <DataTable anomalies={viewModel.anomalies} />
         </section>
       </main>
     </AppShell>

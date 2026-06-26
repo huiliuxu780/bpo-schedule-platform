@@ -155,6 +155,30 @@ export function buildDashboardAnomalyEntryState(
     }
   }
 
+  if (entry.type === "schedule_plan") {
+    return {
+      kind: "link",
+      label: "查看排班计划",
+      href: `/schedule-plans/${encodedId}`,
+    }
+  }
+
+  if (entry.type === "schedule_risk") {
+    return {
+      kind: "link",
+      label: "查看风险明细",
+      href: `/schedule-risks/${encodedId}`,
+    }
+  }
+
+  if (entry.type === "unavailability") {
+    return {
+      kind: "link",
+      label: "查看不可用记录",
+      href: `/unavailability/${encodedId}`,
+    }
+  }
+
   return {
     kind: "link",
     label: "查看排班版本",

@@ -1,6 +1,7 @@
 import { TrendingDown, TrendingUp } from "lucide-react"
 
-import { metricCards } from "@/app/dashboard/data"
+import type { DashboardMetricCard } from "@/lib/dashboard"
+import { metricCards as fallbackMetricCards } from "@/app/dashboard/data"
 import {
   Card,
   CardContent,
@@ -11,14 +12,17 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
-export function SectionCards() {
+type SectionCardsProps = {
+  cards?: DashboardMetricCard[]
+}
+
+export function SectionCards({ cards }: SectionCardsProps = {}) {
+  const displayCards = cards ?? fallbackMetricCards
+
   return (
     <section className="@container/main px-4 lg:px-6">
       <div className="grid gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
-      {metricCards.map((item) => {
-        const positive = item.change.startsWith("+")
-
-        return (
+        {displayCards.map((item) => (
           <Card
             key={item.title}
             className="min-h-[204px] overflow-hidden bg-gradient-to-t from-card to-muted/20"
@@ -30,14 +34,16 @@ export function SectionCards() {
                   {item.value}
                 </CardTitle>
               </div>
-              <Badge variant="outline" className="gap-1">
-                {positive ? (
-                  <TrendingUp className="size-3" />
-                ) : (
-                  <TrendingDown className="size-3" />
-                )}
-                {item.change}
-              </Badge>
+              {item.change && (
+                <Badge variant="outline" className="gap-1">
+                  {item.change.startsWith("+") ? (
+                    <TrendingUp className="size-3" />
+                  ) : (
+                    <TrendingDown className="size-3" />
+                  )}
+                  {item.change}
+                </Badge>
+              )}
             </CardHeader>
             <CardContent>
               <div className="text-sm font-medium">{item.insight}</div>
@@ -46,8 +52,7 @@ export function SectionCards() {
               {item.note}
             </CardFooter>
           </Card>
-        )
-      })}
+        ))}
       </div>
     </section>
   )

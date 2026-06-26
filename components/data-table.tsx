@@ -25,7 +25,7 @@ import {
   Search,
 } from "lucide-react"
 
-import { anomalies, type Anomaly } from "@/app/dashboard/data"
+import { anomalies as fallbackAnomalies, type Anomaly } from "@/app/dashboard/data"
 import {
   buildDashboardAnomalyEntryState,
   clampDashboardPageIndex,
@@ -290,8 +290,14 @@ const columns: ColumnDef<Anomaly>[] = [
   },
 ]
 
-export function DataTable() {
+type DataTableProps = {
+  anomalies?: Anomaly[]
+}
+
+export function DataTable({ anomalies }: DataTableProps = {}) {
   "use no memo"
+
+  const sourceAnomalies = anomalies ?? fallbackAnomalies
 
   const [globalFilter, setGlobalFilter] = React.useState("")
   const [severityFilter, setSeverityFilter] =
@@ -309,12 +315,12 @@ export function DataTable() {
   })
   const filteredData = React.useMemo(
     () =>
-      filterDashboardAnomalies(anomalies, {
+      filterDashboardAnomalies(sourceAnomalies, {
         query: globalFilter,
         severity: severityFilter,
         status: statusFilter,
       }),
-    [globalFilter, severityFilter, statusFilter]
+    [sourceAnomalies, globalFilter, severityFilter, statusFilter]
   )
 
   // TanStack Table exposes an imperative table service that React Compiler cannot memoize.
