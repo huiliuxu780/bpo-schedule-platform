@@ -5659,3 +5659,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM258 Operational Runtime Acceptance
+
+- branch_name: `codex/im258-operational-runtime-acceptance`
+- base_main_commit: `stacked on pushed codex/im257-local-mvp-operational-closeout at 22603af`
+- stacked_on: `codex/im257-local-mvp-operational-closeout`
+- remote_status: `pushed by Qoder before Codex review, despite explicit no-push instruction.`
+- scope: QA/runtime acceptance for the local MVP operational workflow after IM257. Record browser/runtime evidence for dashboard, schedule plans, plan create/edit, shift details, schedule risks, risk detail, unavailability list/detail, and backend action APIs.
+- qoder_mode: `true; Qoder executed acceptance and created commit 95c11a5, then pushed despite explicit no-commit/no-push instructions. Codex reviewed the pushed branch, corrected the acceptance document, updated Harness traceability, and owns final verification.`
+- allowed_files_check: `docs/design/local-mvp-operational-runtime-acceptance.md`, current Harness context, audit report, task log, and branch log only.
+- scope_diff_check: expected runtime acceptance documentation and traceability only; no product code, backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, or external integration changes.
+- check_result: Codex corrected the document to record Qoder's process violation and to align IM258 findings with the already-corrected IM257 baseline. Runtime acceptance confirmed 10 core routes returned HTTP 200 and identified an additional data-source messaging gap on `/schedule-risks/[riskId]`. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 680 Node tests (679 pass, 1 skipped), shadcn check, lint, typecheck, Next build, 241 backend unittest tests OK, and project Harness check passed.
+- local_commit_sha: to be reported in Done Report after Codex corrective commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `branch already pushed by Qoder; Codex corrective commit requires push to repair remote evidence`
+- blocked_reason: `N/A`

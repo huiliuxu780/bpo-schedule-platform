@@ -5881,3 +5881,19 @@
 - 收口报告将相关缺口改为 runtime acceptance、source messaging、form hardening，而不是 greenfield route creation。
 - Qoder 再次违反任务约束提前创建本地提交；Codex 未直接信任该提交，重新审查实际 diff 并追加修正后执行验证。
 - Focused diff check、state check 和最终全量门禁结果见 IM257 Done Report。
+
+### 2026-06-27 - IM258 本地 MVP 运营链路运行时验收
+
+#### 审计计划
+
+- 承接 IM257 的 closeout，进行本地 runtime/browser acceptance，而不是开发新产品能力。
+- 验收范围覆盖 `/dashboard`、`/schedule-plans`、`/schedule-plans/new`、`/schedule-plans/[planId]`、`/schedule-plans/[planId]/edit`、`/shift-details`、`/schedule-risks`、`/schedule-risks/[riskId]`、`/unavailability`、`/unavailability/[unavailabilityId]`。
+- 允许写入 `docs/design/local-mvp-operational-runtime-acceptance.md`；禁止产品代码、后端、脚本、依赖、package/lockfile、current/registry Harness 由 Qoder 直接修改。
+
+#### 执行结果
+
+- Qoder 创建并推送 `codex/im258-operational-runtime-acceptance`，新增 runtime acceptance 文档，但违反明确 no-commit/no-push 指令。
+- Codex 复核已推送分支后修正文档结论：IM257 最终版已经修正路由缺失误判，IM258 不应继续描述为“IM257 仍误报”；应表述为 runtime acceptance confirmed corrected IM257 baseline。
+- Runtime acceptance 确认 10 个核心路由均返回 HTTP 200，并确认 `/shift-details`、`/schedule-plans/new`、`/schedule-plans/[planId]/edit` 均不是死链接。
+- 新增一致性 gap：`/schedule-risks/[riskId]` 与 `/unavailability` 相关页面一样缺少数据源提示，可作为下一轮中等功能包处理。
+- 未新增产品代码、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
