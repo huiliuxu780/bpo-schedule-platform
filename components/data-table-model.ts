@@ -4,6 +4,7 @@ import type {
   SchedulePlanSummary,
   ScheduleRiskLevel,
   ScheduleRiskRow,
+  ScheduleRiskStatus,
 } from "@/lib/schedule-plans"
 import type {
   UnavailabilityRow,
@@ -55,6 +56,7 @@ export type SchedulePlanTableFilters = {
 
 export type ScheduleRiskTableFilters = {
   query?: string
+  status?: ScheduleRiskStatus | "all"
   level?: ScheduleRiskLevel | "all"
 }
 
@@ -411,10 +413,14 @@ export function scheduleRiskMatchesQuery(row: ScheduleRiskRow, query: string) {
 
 export function filterScheduleRiskRows(
   rows: ScheduleRiskRow[],
-  { query = "", level = "all" }: ScheduleRiskTableFilters
+  { query = "", status = "all", level = "all" }: ScheduleRiskTableFilters
 ) {
   return rows.filter((row) => {
     if (!scheduleRiskMatchesQuery(row, query)) {
+      return false
+    }
+
+    if (status !== "all" && row.risk_status !== status) {
       return false
     }
 
@@ -441,6 +447,14 @@ export function summarizeScheduleRiskRows(rows: ScheduleRiskRow[]) {
         summary.low += 1
       }
 
+      if (row.risk_status === "open") {
+        summary.open += 1
+      } else if (row.risk_status === "confirmed") {
+        summary.confirmed += 1
+      } else {
+        summary.resolved += 1
+      }
+
       return summary
     },
     {
@@ -448,6 +462,9 @@ export function summarizeScheduleRiskRows(rows: ScheduleRiskRow[]) {
       high: 0,
       medium: 0,
       low: 0,
+      open: 0,
+      confirmed: 0,
+      resolved: 0,
       totalGap: 0,
       affectedUnavailability: 0,
     }
