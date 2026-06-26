@@ -7,6 +7,7 @@ import {
   dashboardAnomalyMatchesQuery,
   filterDashboardAnomalies,
   getDashboardPaginationRange,
+  sortDashboardAnomaliesForReview,
 } from "../../components/data-table-model.ts";
 
 const anomaly = {
@@ -50,6 +51,45 @@ test("dashboard anomaly filters combine query, severity, and status", () => {
     filterDashboardAnomalies(rows, { query: "", severity: "all", status: "待复核" }).map((row) => row.id),
     ["ANM-202605-001"],
   );
+});
+
+test("dashboard anomaly review sorting prioritizes severe open and drillable rows", () => {
+  const rows = [
+    { ...anomaly, id: "ANM-LOW-PENDING", severity: "低", status: "待复核" },
+    { ...anomaly, id: "ANM-HIGH-CONFIRMED", severity: "高", status: "已确认" },
+    {
+      ...anomaly,
+      id: "ANM-HIGH-PENDING-BLOCKED",
+      severity: "高",
+      status: "待复核",
+    },
+    {
+      ...anomaly,
+      id: "ANM-HIGH-PENDING-LINK",
+      severity: "高",
+      status: "待复核",
+      downstreamEntry: {
+        type: "schedule_risk",
+        id: "risk-1",
+      },
+    },
+    { ...anomaly, id: "ANM-MEDIUM-PENDING", severity: "中", status: "待复核" },
+  ];
+
+  assert.deepEqual(sortDashboardAnomaliesForReview(rows).map((row) => row.id), [
+    "ANM-HIGH-PENDING-LINK",
+    "ANM-HIGH-PENDING-BLOCKED",
+    "ANM-HIGH-CONFIRMED",
+    "ANM-MEDIUM-PENDING",
+    "ANM-LOW-PENDING",
+  ]);
+  assert.deepEqual(rows.map((row) => row.id), [
+    "ANM-LOW-PENDING",
+    "ANM-HIGH-CONFIRMED",
+    "ANM-HIGH-PENDING-BLOCKED",
+    "ANM-HIGH-PENDING-LINK",
+    "ANM-MEDIUM-PENDING",
+  ]);
 });
 
 test("dashboard anomaly entry stays blocked without a stable downstream target", () => {

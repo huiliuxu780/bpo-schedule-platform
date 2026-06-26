@@ -535,3 +535,22 @@ export function summarizeUnavailabilityRows(rows: UnavailabilityRow[]) {
     siteCount: summary.siteNames.size,
   }
 }
+
+export function sortDashboardAnomaliesForReview(rows: Anomaly[]): Anomaly[] {
+  return [...rows].sort((a, b) => {
+    const severityRank: Record<string, number> = { 高: 0, 中: 1, 低: 2 }
+    const severityDiff =
+      severityRank[a.severity] - severityRank[b.severity]
+    if (severityDiff !== 0) return severityDiff
+
+    if (a.status === "待复核" && b.status !== "待复核") return -1
+    if (a.status !== "待复核" && b.status === "待复核") return 1
+
+    const aHasLink = a.downstreamEntry != null
+    const bHasLink = b.downstreamEntry != null
+    if (aHasLink && !bHasLink) return -1
+    if (!aHasLink && bHasLink) return 1
+
+    return a.id.localeCompare(b.id)
+  })
+}

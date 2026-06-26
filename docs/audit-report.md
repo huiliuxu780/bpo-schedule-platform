@@ -5814,3 +5814,19 @@
 - `/schedule-plans/[planId]` 改为消费 detail result，并在履约处理摘要中增加只读入口：查看关联风险、查看不可用记录。
 - 新增 `scripts/tests/schedule-plan-readiness-model.test.mjs`，覆盖列表/详情数据来源、空态、fallback、404 不 fallback、下游入口和内部术语边界。
 - Focused schedule-plan、lint、typecheck、diff check 和最终全量门禁结果见 IM253 Done Report。
+
+### 2026-06-26 - IM254 经营总览视觉稳定性与异常表可扫读性优化
+
+#### 审计计划
+
+- 承接 IM252 的 Recharts dev-runtime 尺寸 warning 和 IM250/IM251 的 dense anomaly table，把本轮限定为 dashboard visual-polish，不新增业务能力。
+- 采用两个串行 Qoder packet：图表 runtime stability、异常表 review-priority scanability；Codex 负责迁移到独立 IM254 分支、diff review、边界修正、Harness 状态、全量验证、提交和推送决策。
+- 不新增后端 API、数据库、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- `components/chart-area-interactive.tsx` 为 Recharts `ResponsiveContainer` 增加稳定 `initialDimension`，并保持容器高度稳定；Codex 修正 Qoder 初稿中可能导致窄屏横向溢出的固定 `min-w-[320px]`。
+- `components/data-table-model.ts` 新增 `sortDashboardAnomaliesForReview()`，按高严重度、待复核、可下钻、ID 升序提供默认复核优先级。
+- `components/data-table.tsx` 在筛选前应用复核优先排序，并展示筛选后总数、高严重度、待复核、可下钻数量摘要；Codex 修正 Qoder 初稿中 TanStack 默认 severity/status 排序覆盖业务排序的问题。
+- 新增 `scripts/tests/dashboard-chart-stability.test.mjs` 和 `scripts/tests/dashboard-table-scanability.test.mjs`，扩展 `scripts/tests/dashboard-anomaly-table-model.test.mjs` 以直接断言排序行为和非 mutation。
+- Focused dashboard、typecheck、diff check 和最终全量门禁结果见 IM254 Done Report。

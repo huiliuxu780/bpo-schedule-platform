@@ -5583,3 +5583,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM254 Dashboard Visual Polish
+
+- branch_name: `codex/im254-dashboard-visual-polish`
+- base_main_commit: `stacked on pushed codex/im253-schedule-plan-readiness at 195592e`
+- stacked_on: `codex/im253-schedule-plan-readiness`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium frontend-scaffold polish block for dashboard chart stability and anomaly-table scanability. Stabilize Recharts initial render dimensions and prioritize anomaly rows for operations review without adding new product actions.
+- qoder_mode: `true; Qoder implemented Packet A/B under bounded file scopes. Codex reviewed diffs, fixed narrow-screen chart wrapper risk, fixed default sorting semantics, owns Harness updates, final verification, local commit, and push decision.`
+- allowed_files_check: dashboard chart/table component files, dashboard table model file, dashboard focused tests, current Harness context, audit report, task log, and branch log only.
+- scope_diff_check: expected dashboard visual stability, anomaly-table review priority ordering, summary counts, and traceability updates only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, or external integration changes.
+- check_result: Qoder Packet A/B diffs were reviewed by Codex. Codex corrected chart wrapper semantics to avoid fixed narrow-screen overflow and corrected table default sort semantics so the business model ordering is not overridden by TanStack column sorting. Focused `node --test scripts/tests/dashboard-chart-stability.test.mjs scripts/tests/dashboard-table-scanability.test.mjs scripts/tests/dashboard-anomaly-table-model.test.mjs` passed with 33 tests. Focused `node --test scripts/tests/*dashboard*.test.mjs` passed with 165 tests. `npm run typecheck`, `bash scripts/check-state.sh --strict`, and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 648 Node tests (647 pass, 1 skipped), shadcn check, lint, typecheck, Next build, and 241 backend unittest tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -2919,3 +2919,12 @@
   action: 排班计划列表与详情运营可用性闭环。
   status: `done`
   notes: Qoder 串行实现列表页 Packet A 与详情页 Packet B 后，Codex 复核并修正详情读取边界：`getSchedulePlanResult()` 现在区分 API 404 和 API 失败，404 不再回退到本地兜底计划。`/schedule-plans` 改用 result-style reader 和 `ReadinessBanner` 显示数据来源，表格区分源数据为空与筛选无结果；`/schedule-plans/[planId]` 显示详情数据来源并增加只读下游入口到关联风险和不可用记录。未修改后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM254`
+  source_ids:
+    - `R953`
+  story_ids:
+    - `US873`
+  action: 经营总览视觉稳定性与异常表可扫读性优化。
+  status: `done`
+  notes: Qoder 实现图表稳定性 Packet A 与异常表可扫读性 Packet B 后，Codex 复核并修正两处边界：图表 wrapper 不再用固定最小宽度撑破窄屏，异常表默认排序不再被 TanStack 字符串排序覆盖，而是由 `sortDashboardAnomaliesForReview()` 统一提供“高严重度、待复核、可下钻、ID”优先顺序。新增图表稳定性与表格可扫读性测试，并补充实际模型排序断言。未修改后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。

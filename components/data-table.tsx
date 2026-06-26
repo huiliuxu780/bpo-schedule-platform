@@ -31,6 +31,7 @@ import {
   clampDashboardPageIndex,
   filterDashboardAnomalies,
   getDashboardPaginationRange,
+  sortDashboardAnomaliesForReview,
 } from "@/components/data-table-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -304,24 +305,42 @@ export function DataTable({ anomalies }: DataTableProps = {}) {
     React.useState<Anomaly["severity"] | "all">("all")
   const [statusFilter, setStatusFilter] =
     React.useState<Anomaly["status"] | "all">("all")
-  const [sorting, setSorting] = React.useState<SortingState>([
-    { id: "id", desc: false },
-  ])
+  const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
     pageSize: 5,
   })
+  const sortedSourceAnomalies = React.useMemo(
+    () => sortDashboardAnomaliesForReview(sourceAnomalies),
+    [sourceAnomalies]
+  )
   const filteredData = React.useMemo(
     () =>
-      filterDashboardAnomalies(sourceAnomalies, {
+      filterDashboardAnomalies(sortedSourceAnomalies, {
         query: globalFilter,
         severity: severityFilter,
         status: statusFilter,
       }),
-    [sourceAnomalies, globalFilter, severityFilter, statusFilter]
+    [sortedSourceAnomalies, globalFilter, severityFilter, statusFilter]
   )
+
+  const summary = React.useMemo(() => {
+    const highCount = filteredData.filter((row) => row.severity === "高").length
+    const pendingReviewCount = filteredData.filter(
+      (row) => row.status === "待复核"
+    ).length
+    const drillableCount = filteredData.filter(
+      (row) => row.downstreamEntry != null
+    ).length
+    return {
+      total: filteredData.length,
+      high: highCount,
+      pendingReview: pendingReviewCount,
+      drillable: drillableCount,
+    }
+  }, [filteredData])
 
   // TanStack Table exposes an imperative table service that React Compiler cannot memoize.
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -485,7 +504,16 @@ export function DataTable({ anomalies }: DataTableProps = {}) {
           </Button>
         </div>
         <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-          <Badge variant="outline">筛选后 {filteredRowCount} 条</Badge>
+          <Badge variant="outline">筛选后 {summary.total} 条</Badge>
+          <Badge variant="destructive" className="text-xs">
+            高严重度 {summary.high}
+          </Badge>
+          <Badge variant="secondary" className="text-xs">
+            待复核 {summary.pendingReview}
+          </Badge>
+          <Badge variant="default" className="text-xs">
+            可下钻 {summary.drillable}
+          </Badge>
           <span>
             严重度：{severityFilter === "all" ? "全部" : severityFilter}
           </span>

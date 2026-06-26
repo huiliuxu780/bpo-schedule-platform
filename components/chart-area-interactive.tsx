@@ -55,16 +55,24 @@ export function ChartAreaInteractive() {
           ))}
         </div>
       </CardHeader>
-      <CardContent className="h-[280px] min-w-0">
-        <TrendAreaChart />
+      <CardContent className="h-[280px] min-h-[200px] min-w-0">
+        <div className="h-full min-h-[200px] w-full min-w-0">
+          <TrendAreaChart />
+        </div>
       </CardContent>
     </Card>
   )
 }
 
+const CHART_INITIAL_DIMENSION = { width: 320, height: 200 } as const
+
 function TrendAreaChartContent() {
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer
+      width="100%"
+      height="100%"
+      initialDimension={CHART_INITIAL_DIMENSION}
+    >
       <AreaChart data={trendData} margin={{ left: -18, right: 12 }}>
         <defs>
           <linearGradient id="realization" x1="0" x2="0" y1="0" y2="1">

@@ -12,7 +12,7 @@ The active product boundary remains local MVP and operator-facing workflow scaff
 
 ## Current Queue
 
-No executable story is currently queued. IM253 completed the schedule-plan list/detail readiness block for the local operational workflow and should not be expanded into new product behavior unless a new product block is confirmed.
+No executable story is currently queued. IM254 completed the dashboard visual-polish pass for chart runtime stability and dense anomaly-table scanability. The dashboard block should not be expanded into new product behavior unless a new product block is confirmed.
 
 IM240 completed the PM-confirmed review-case live runtime smoke on the current branch using an isolated `.local/im240-runtime-smoke.db` runtime artifact. The smoke used backend `127.0.0.1:8000` and frontend `127.0.0.1:3002` because the existing `3000` BPO Next dev process was stale and unresponsive. It did not add product features or modify business UI/backend implementation beyond acceptance traceability.
 
@@ -39,6 +39,7 @@ IM243 completed the PM-confirmed manual browser walkthrough for that remaining g
 - IM251 completed dashboard operational readiness: `/dashboard` now distinguishes API data, empty API data, fallback data, and mixed source states; it shows operator-facing readiness messaging and stable empty states without claiming production real-time behavior.
 - IM252 completed runtime acceptance for the local operational workflow: `/dashboard`, schedule plan lifecycle, schedule risk handling, and unavailability handling were browser-checked on local runtime with API readback evidence and no visible internal terminology leaks.
 - IM253 completed schedule-plan list/detail readiness: `/schedule-plans` and `/schedule-plans/[planId]` now expose operator-facing data-source messaging, distinguish source empty from filtered empty states, preserve 404 behavior, and add read-only downstream entries to related risks and unavailability records.
+- IM254 completed dashboard visual polish: the chart area now has stable Recharts initial dimensions without forcing narrow-screen overflow, and the anomaly table now defaults to review-priority ordering with filtered summary counts for high severity, pending review, and drillable rows.
 - Harness state optimization is now the active maintenance concern: current context must stay compact, default reads must use the current layer, and history must be queried on demand through registry/legacy references.
 
 ## Current Execution Rules
@@ -66,4 +67,4 @@ IM243 completed the PM-confirmed manual browser walkthrough for that remaining g
 
 ## Current Recommendation
 
-Recommended next medium-sized candidates are: (1) a dashboard visual-polish pass for dev-runtime chart sizing warnings and dense table ergonomics, (2) schedule-plan detail fulfillment preview using existing risk/unavailability rows only, or (3) a planning-only Gate for the next production-grade boundary. Do not claim production readiness, add runtime automation, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.
+Recommended next medium-sized candidates are: (1) schedule-plan detail fulfillment preview using existing risk/unavailability rows only, (2) a planning-only Gate for the next production-grade boundary, or (3) dashboard runtime visual acceptance if PM wants browser screenshot evidence after IM254. Do not claim production readiness, add runtime automation, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.
