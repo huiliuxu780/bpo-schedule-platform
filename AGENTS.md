@@ -97,7 +97,7 @@ Every non-trivial task must follow this order:
 3. Stop for PM confirmation when the task requires confirmation or triggers a hard stop condition.
 4. Work on a task branch, never directly on `main`.
 5. Modify only confirmed in-scope files.
-6. Run `bash scripts/check.sh`.
+6. Run focused verification during implementation, then run final `bash scripts/check.sh` before completion.
 7. Update traceability logs and audit evidence.
 8. Run final verification after log/audit updates.
 9. Commit the verified completed scope locally.
@@ -164,6 +164,22 @@ Story Runner must:
 - run `bash scripts/check-state.sh` after current or registry state changes
 
 Bounded subagents may be used in Story Runner Mode only for independent, non-overlapping write scopes. The main Codex worker remains responsible for dispatch design, diff review, final verification, traceability, commits, and Done Report. Outside Story Runner Mode, subagents require explicit PM/user permission and a confirmed Gate.
+
+## Qoder / Subagent Task Splitting Rules
+
+When Codex delegates work to Qoder or another bounded worker, Codex must keep ownership of scope, branch safety, final verification, traceability, commit, and push.
+
+Every delegated task prompt must include:
+
+- **Branch requirement**: base branch, target branch, whether to create or switch branches, and whether editing the current branch is allowed.
+- **Stop condition**: stop and report instead of editing if the branch, base, or dirty worktree state is unclear.
+- **Task boundary**: the product capability being implemented, allowed files, forbidden files, and explicit non-goals.
+- **Granularity rule**: do not split below a user-visible or reviewable capability. Prefer one medium-sized capability packet over many tiny mechanical packets when files and verification path overlap.
+- **Verification requirement**: run focused checks that prove the delegated scope, plus `git diff --check`; do not claim full project readiness.
+- **Git boundary**: Qoder must not commit, push, modify `docs/current/**`, modify `docs/registry/**`, install dependencies, or change package/lockfiles unless a task explicitly permits it.
+- **Return format**: changed files, behavior summary, focused verification results, known risks, and confirmation that no forbidden files were touched.
+
+Codex must review the actual diff after Qoder returns. Agent reports are advisory; they are not completion evidence.
 
 ## Stage Completion Planning
 
@@ -257,8 +273,11 @@ The lab archive is reference material only. Codex must not import from it, wire 
 
 ## Verification Requirement
 
-- Every task must run `bash scripts/check.sh` before it is reported complete.
-- Documentation-only changes also require check.
+- Use a two-tier verification model:
+  - **Focused verification** during implementation or Qoder review: run the smallest relevant tests, typecheck/lint when touched scope requires it, and `git diff --check`.
+  - **Final verification** before reporting a task complete or making a local commit: run `bash scripts/check.sh` after traceability/audit updates.
+- Do not rerun the full 600+ Node/backend suite after every tiny edit if a focused command proves the current edit. Save the full gate for coherent task completion and commit readiness.
+- Documentation-only changes also require final verification, but may use focused checks first while editing.
 - If check fails, the Done Report must explain the failure and recommended next action.
 
 ## Documentation Rules
