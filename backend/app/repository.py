@@ -4,6 +4,7 @@ from backend.app.models import (
     DemandPlanRow,
     ScheduleRiskLevel,
     ScheduleRiskRow,
+    ScheduleRiskStatus,
     SchedulePlanDetail,
     SchedulePlanDraftRequest,
     SchedulePlanInterval,
@@ -14,6 +15,8 @@ from backend.app.models import (
     UnavailabilityStatus,
 )
 from backend.app.seed_data import SCHEDULE_PLANS
+
+SCHEDULE_RISK_STATUS: dict[str, ScheduleRiskStatus] = {}
 
 UNAVAILABILITY_ROWS = [
     UnavailabilityRow(
@@ -388,9 +391,10 @@ def list_schedule_risk_rows(query: str | None = None) -> list[ScheduleRiskRow]:
                 continue
 
             level = _risk_level(interval.gap_agents, len(active_unavailability))
+            risk_id = f"risk-{plan.summary.id}-{interval.interval_start}"
             rows.append(
                 ScheduleRiskRow(
-                    risk_id=f"risk-{plan.summary.id}-{interval.interval_start}",
+                    risk_id=risk_id,
                     plan_id=plan.summary.id,
                     plan_date=plan.summary.plan_date,
                     project_name=plan.summary.project_name,
@@ -410,6 +414,7 @@ def list_schedule_risk_rows(query: str | None = None) -> list[ScheduleRiskRow]:
                         interval.gap_agents,
                         interval.note,
                     ),
+                    risk_status=SCHEDULE_RISK_STATUS.get(risk_id, "open"),
                 )
             )
 
@@ -497,3 +502,66 @@ def transition_plan_status(
         return updated
 
     raise KeyError(plan_id)
+
+
+def find_schedule_risk(risk_id: str) -> ScheduleRiskRow | None:
+    for row in list_schedule_risk_rows():
+        if row.risk_id == risk_id:
+            return row
+    return None
+
+
+def transition_schedule_risk_status(
+    risk_id: str,
+    next_status: ScheduleRiskStatus,
+) -> ScheduleRiskRow | None:
+    """Transition a schedule risk from current status to next_status.
+
+    Returns the updated risk row on success, or None when the transition is
+    not allowed. Raises KeyError when the risk does not exist.
+    """
+    current = find_schedule_risk(risk_id)
+    if current is None:
+        raise KeyError(risk_id)
+
+    # Validate transition
+    if current.risk_status == "resolved":
+        return None
+    if current.risk_status == "confirmed" and next_status == "confirmed":
+        return None
+
+    SCHEDULE_RISK_STATUS[risk_id] = next_status
+    return find_schedule_risk(risk_id)
+
+
+def resolve_unavailability(unavailability_id: str) -> UnavailabilityRow | None:
+    """Resolve an unavailability record.
+
+    Returns the updated row on success, or None when the row exists but is
+    already resolved. Raises KeyError when the row does not exist.
+    """
+    for index, row in enumerate(UNAVAILABILITY_ROWS):
+        if row.unavailability_id != unavailability_id:
+            continue
+
+        if row.status == "resolved":
+            return None
+
+        updated = UnavailabilityRow(
+            unavailability_id=row.unavailability_id,
+            staff_name=row.staff_name,
+            team_name=row.team_name,
+            project_name=row.project_name,
+            site_name=row.site_name,
+            unavailable_date=row.unavailable_date,
+            start_time=row.start_time,
+            end_time=row.end_time,
+            reason=row.reason,
+            status="resolved",
+            affected_intervals=row.affected_intervals,
+            note=row.note,
+        )
+        UNAVAILABILITY_ROWS[index] = updated
+        return updated
+
+    raise KeyError(unavailability_id)

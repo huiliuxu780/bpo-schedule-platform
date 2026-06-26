@@ -1,3 +1,5 @@
+import type { UnavailabilityRow } from "./unavailability"
+
 export type SchedulePlanStatus = "draft" | "review_ready" | "published"
 
 export type SchedulePlanSummary = {
@@ -59,6 +61,8 @@ export type DemandPlanRow = {
 
 export type ScheduleRiskLevel = "high" | "medium" | "low"
 
+export type ScheduleRiskStatus = "open" | "confirmed" | "resolved"
+
 export type ScheduleRiskRow = {
   risk_id: string
   plan_id: string
@@ -72,6 +76,7 @@ export type ScheduleRiskRow = {
   affected_unavailability: number
   reason: string
   recommendation: string
+  risk_status: ScheduleRiskStatus
 }
 
 export type SchedulePlanIntervalInput = Pick<
@@ -210,6 +215,15 @@ function interval(
     coverage_rate: coverageRate(scheduled_agents, forecast_agents),
     note,
   }
+}
+
+function intervalsOverlap(
+  intervalStart: string,
+  intervalEnd: string,
+  unavailableStart: string,
+  unavailableEnd: string
+) {
+  return intervalStart < unavailableEnd && unavailableStart < intervalEnd
 }
 
 function coverageRate(scheduledAgents: number, forecastAgents: number) {
@@ -408,6 +422,24 @@ export async function publishSchedulePlan(
   )
 }
 
+export async function confirmScheduleRisk(
+  riskId: string
+): Promise<ScheduleRiskRow | null> {
+  return writeJson<ScheduleRiskRow>(
+    `/api/v1/schedule-risks/${encodeURIComponent(riskId)}/confirm`,
+    "POST"
+  )
+}
+
+export async function resolveScheduleRisk(
+  riskId: string
+): Promise<ScheduleRiskRow | null> {
+  return writeJson<ScheduleRiskRow>(
+    `/api/v1/schedule-risks/${encodeURIComponent(riskId)}/resolve`,
+    "POST"
+  )
+}
+
 export type SchedulePlanLifecycleActionKey = "submit_review" | "publish"
 
 export type SchedulePlanLifecycleFeedbackKey =
@@ -426,6 +458,115 @@ export type SchedulePlanLifecycleFeedback = {
   tone: "success" | "error"
   title: string
   description: string
+}
+
+export type ScheduleRiskActionKey = "confirm" | "resolve"
+
+export type ScheduleRiskActionFeedbackKey =
+  | "confirm_success"
+  | "confirm_failed"
+  | "resolve_success"
+  | "resolve_failed"
+
+export type ScheduleRiskAction = {
+  key: ScheduleRiskActionKey
+  label: string
+}
+
+export type ScheduleRiskActionFeedback = {
+  tone: "success" | "error"
+  title: string
+  description: string
+}
+
+export type SchedulePlanFulfillmentIssueSummary = {
+  riskTotal: number
+  riskOpen: number
+  riskConfirmed: number
+  riskResolved: number
+  unavailabilityActive: number
+  unavailabilityResolved: number
+}
+
+export function getScheduleRiskActions(
+  riskStatus: ScheduleRiskStatus
+): ScheduleRiskAction[] {
+  if (riskStatus === "open") {
+    return [
+      { key: "confirm", label: "确认风险" },
+      { key: "resolve", label: "标记已处理" },
+    ]
+  }
+
+  if (riskStatus === "confirmed") {
+    return [{ key: "resolve", label: "标记已处理" }]
+  }
+
+  return []
+}
+
+export function summarizeScheduleRiskActionFeedback(
+  value?: string | null
+): ScheduleRiskActionFeedback | null {
+  if (!value) {
+    return null
+  }
+
+  const feedbackMap: Record<ScheduleRiskActionFeedbackKey, ScheduleRiskActionFeedback> = {
+    confirm_success: {
+      tone: "success",
+      title: "已确认风险",
+      description: "风险已记录为已确认，后续可继续标记处理完成。",
+    },
+    confirm_failed: {
+      tone: "error",
+      title: "确认风险失败",
+      description: "当前风险状态暂不允许确认，请刷新后重试。",
+    },
+    resolve_success: {
+      tone: "success",
+      title: "已处理风险",
+      description: "风险处理状态已更新，排班缺口不会自动重算。",
+    },
+    resolve_failed: {
+      tone: "error",
+      title: "处理风险失败",
+      description: "当前风险状态暂不允许标记处理，请刷新后重试。",
+    },
+  }
+
+  return feedbackMap[value as ScheduleRiskActionFeedbackKey] ?? null
+}
+
+export function summarizeSchedulePlanFulfillmentIssues(
+  plan: SchedulePlanDetail,
+  risks: ScheduleRiskRow[],
+  unavailabilityRows: UnavailabilityRow[]
+): SchedulePlanFulfillmentIssueSummary {
+  const relatedRisks = risks.filter((risk) => risk.plan_id === plan.summary.id)
+  const relatedUnavailability = unavailabilityRows.filter(
+    (row) =>
+      row.project_name === plan.summary.project_name &&
+      row.site_name === plan.summary.site_name &&
+      row.unavailable_date === plan.summary.plan_date &&
+      plan.intervals.some((intervalItem) =>
+        intervalsOverlap(
+          intervalItem.interval_start,
+          intervalItem.interval_end,
+          row.start_time,
+          row.end_time
+        )
+      )
+  )
+
+  return {
+    riskTotal: relatedRisks.length,
+    riskOpen: relatedRisks.filter((risk) => risk.risk_status === "open").length,
+    riskConfirmed: relatedRisks.filter((risk) => risk.risk_status === "confirmed").length,
+    riskResolved: relatedRisks.filter((risk) => risk.risk_status === "resolved").length,
+    unavailabilityActive: relatedUnavailability.filter((row) => row.status === "active").length,
+    unavailabilityResolved: relatedUnavailability.filter((row) => row.status === "resolved").length,
+  }
 }
 
 export function getSchedulePlanLifecycleAction(
@@ -521,6 +662,7 @@ const fallbackScheduleRisks: ScheduleRiskRow[] = [
     affected_unavailability: 1,
     reason: "缺口 2 人，且存在 1 条生效中不可用记录",
     recommendation: "优先复核不可用记录，并从相邻冗余时段调剂",
+    risk_status: "open",
   },
   {
     risk_id: "risk-plan-20260511-shanghai-bosch-v1-09:30",
@@ -535,6 +677,7 @@ const fallbackScheduleRisks: ScheduleRiskRow[] = [
     affected_unavailability: 1,
     reason: "缺口 1 人，且存在 1 条生效中不可用记录",
     recommendation: "优先复核不可用记录，并从相邻冗余时段调剂",
+    risk_status: "open",
   },
   {
     risk_id: "risk-plan-20260512-shanghai-bosch-v2-10:30",
@@ -549,6 +692,7 @@ const fallbackScheduleRisks: ScheduleRiskRow[] = [
     affected_unavailability: 0,
     reason: "排班缺口 1 人",
     recommendation: "检查草稿排班覆盖，必要时补班或跨团队调剂",
+    risk_status: "open",
   },
 ]
 

@@ -7,9 +7,12 @@ import {
   formatCoverageRate,
   getSchedulePlan,
   getSchedulePlanLifecycleAction,
+  getScheduleRisks,
   schedulePlanStatusLabel,
+  summarizeSchedulePlanFulfillmentIssues,
   summarizeSchedulePlanLifecycleFeedback,
 } from "@/lib/schedule-plans"
+import { getUnavailability } from "@/lib/unavailability"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -46,6 +49,15 @@ export default async function SchedulePlanDetailPage({ params, searchParams }: P
   const lifecycleAction = getSchedulePlanLifecycleAction(plan.summary.status)
   const lifecycleFeedback = summarizeSchedulePlanLifecycleFeedback(
     resolvedSearchParams.lifecycle
+  )
+  const [scheduleRisks, unavailabilityRows] = await Promise.all([
+    getScheduleRisks(plan.summary.site_name),
+    getUnavailability({ query: plan.summary.site_name }),
+  ])
+  const fulfillmentIssueSummary = summarizeSchedulePlanFulfillmentIssues(
+    plan,
+    scheduleRisks,
+    unavailabilityRows
   )
 
   return (
@@ -153,6 +165,35 @@ export default async function SchedulePlanDetailPage({ params, searchParams }: P
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-4">
             <div>
+              <CardTitle>履约处理摘要</CardTitle>
+              <CardDescription>
+                展示当前计划关联风险和不可用处理状态，不自动重算排班覆盖。
+              </CardDescription>
+            </div>
+            <Badge variant="outline">处理状态</Badge>
+          </CardHeader>
+          <CardContent className="grid gap-3 md:grid-cols-3">
+            <InlineMetric
+              title="关联风险"
+              value={`${fulfillmentIssueSummary.riskTotal}`}
+              description={`待处理 ${fulfillmentIssueSummary.riskOpen}`}
+            />
+            <InlineMetric
+              title="已确认 / 已处理"
+              value={`${fulfillmentIssueSummary.riskConfirmed} / ${fulfillmentIssueSummary.riskResolved}`}
+              description="风险处理状态"
+            />
+            <InlineMetric
+              title="不可用影响"
+              value={`${fulfillmentIssueSummary.unavailabilityActive}`}
+              description={`已处理 ${fulfillmentIssueSummary.unavailabilityResolved}`}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-start justify-between gap-4">
+            <div>
               <CardTitle>0.5h 时段明细</CardTitle>
               <CardDescription>
                 展示预测人数、已排人数、缺口与备注
@@ -166,6 +207,24 @@ export default async function SchedulePlanDetailPage({ params, searchParams }: P
         </Card>
       </main>
     </AppShell>
+  )
+}
+
+function InlineMetric({
+  title,
+  value,
+  description,
+}: {
+  title: string
+  value: string
+  description: string
+}) {
+  return (
+    <div className="rounded-lg border bg-background p-3">
+      <p className="text-xs text-muted-foreground">{title}</p>
+      <p className="mt-1 text-xl font-semibold tabular-nums">{value}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{description}</p>
+    </div>
   )
 }
 

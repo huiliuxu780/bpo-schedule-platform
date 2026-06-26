@@ -91,6 +91,37 @@ async function fetchJson<T>(path: string): Promise<T | null> {
   }
 }
 
+async function writeJson<T>(
+  path: string,
+  method: "POST" | "PUT",
+  payload?: unknown
+): Promise<T | null> {
+  try {
+    const headers: Record<string, string> = {
+      Accept: "application/json",
+    }
+
+    if (payload !== undefined) {
+      headers["Content-Type"] = "application/json"
+    }
+
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method,
+      cache: "no-store",
+      headers,
+      body: payload !== undefined ? JSON.stringify(payload) : undefined,
+    })
+
+    if (!response.ok) {
+      return null
+    }
+
+    return (await response.json()) as T
+  } catch {
+    return null
+  }
+}
+
 export async function getUnavailability(
   filters: UnavailabilityFilters = {}
 ): Promise<UnavailabilityRow[]> {
@@ -120,6 +151,63 @@ export async function getUnavailabilityRecord(
   const rows = await getUnavailability()
 
   return rows.find((row) => row.unavailability_id === unavailabilityId) ?? null
+}
+
+export async function resolveUnavailability(
+  unavailabilityId: string
+): Promise<UnavailabilityRow | null> {
+  return writeJson<UnavailabilityRow>(
+    `/api/v1/unavailability/${encodeURIComponent(unavailabilityId)}/resolve`,
+    "POST"
+  )
+}
+
+export type UnavailabilityActionKey = "resolve"
+
+export type UnavailabilityActionFeedbackKey = "resolve_success" | "resolve_failed"
+
+export type UnavailabilityAction = {
+  key: UnavailabilityActionKey
+  label: string
+}
+
+export type UnavailabilityActionFeedback = {
+  tone: "success" | "error"
+  title: string
+  description: string
+}
+
+export function getUnavailabilityAction(
+  status: UnavailabilityStatus
+): UnavailabilityAction | null {
+  if (status === "active") {
+    return { key: "resolve", label: "标记已处理" }
+  }
+
+  return null
+}
+
+export function summarizeUnavailabilityActionFeedback(
+  value?: string | null
+): UnavailabilityActionFeedback | null {
+  if (!value) {
+    return null
+  }
+
+  const feedbackMap: Record<UnavailabilityActionFeedbackKey, UnavailabilityActionFeedback> = {
+    resolve_success: {
+      tone: "success",
+      title: "已处理不可用",
+      description: "不可用记录已标记为已处理，请回到风险或计划详情查看当前处理状态。",
+    },
+    resolve_failed: {
+      tone: "error",
+      title: "处理不可用失败",
+      description: "当前不可用记录状态暂不允许处理，请刷新后重试。",
+    },
+  }
+
+  return feedbackMap[value as UnavailabilityActionFeedbackKey] ?? null
 }
 
 export function unavailabilityStatusLabel(status: UnavailabilityStatus) {

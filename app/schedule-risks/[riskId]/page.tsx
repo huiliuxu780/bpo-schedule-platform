@@ -16,26 +16,36 @@ import {
 } from "@/components/ui/card"
 import {
   getScheduleRisk,
+  getScheduleRiskActions,
   getShiftDetails,
   scheduleRiskLevelLabel,
+  summarizeScheduleRiskActionFeedback,
 } from "@/lib/schedule-plans"
 import {
   getUnavailability,
 } from "@/lib/unavailability"
+import { confirmScheduleRiskAction, resolveScheduleRiskAction } from "./actions"
 
 type PageProps = {
   params: Promise<{
     riskId: string
   }>
+  searchParams?: Promise<{
+    riskAction?: string
+  }>
 }
 
-export default async function ScheduleRiskDetailPage({ params }: PageProps) {
+export default async function ScheduleRiskDetailPage({ params, searchParams }: PageProps) {
   const { riskId } = await params
+  const resolvedSearchParams = searchParams ? await searchParams : {}
   const risk = await getScheduleRisk(decodeURIComponent(riskId))
 
   if (!risk) {
     notFound()
   }
+
+  const riskActions = getScheduleRiskActions(risk.risk_status)
+  const riskFeedback = summarizeScheduleRiskActionFeedback(resolvedSearchParams.riskAction)
 
   const [shiftDetails, unavailabilityRows] = await Promise.all([
     getShiftDetails({ query: risk.site_name }),
@@ -59,6 +69,21 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
   return (
     <AppShell title="风险明细">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+        {riskFeedback ? (
+          <Card
+            className={
+              riskFeedback.tone === "error"
+                ? "border-destructive/50"
+                : undefined
+            }
+          >
+            <CardHeader>
+              <CardTitle className="text-base">{riskFeedback.title}</CardTitle>
+              <CardDescription>{riskFeedback.description}</CardDescription>
+            </CardHeader>
+          </Card>
+        ) : null}
+
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-lg font-semibold">风险明细</h1>
@@ -68,6 +93,20 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
+            {riskActions.map((action) => {
+              const formAction =
+                action.key === "confirm"
+                  ? confirmScheduleRiskAction
+                  : resolveScheduleRiskAction
+              return (
+                <form key={action.key} action={formAction}>
+                  <input type="hidden" name="risk_id" value={risk.risk_id} />
+                  <Button type="submit" variant="outline" size="sm">
+                    {action.label}
+                  </Button>
+                </form>
+              )
+            })}
             <Button asChild variant="outline" size="sm">
               <Link href={`/schedule-plans/${risk.plan_id}`}>计划详情</Link>
             </Button>
@@ -79,9 +118,20 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
+            title="风险状态"
+            value={
+              risk.risk_status === "resolved"
+                ? "已处理"
+                : risk.risk_status === "confirmed"
+                ? "已确认"
+                : "待处理"
+            }
+            description={risk.risk_id}
+          />
+          <MetricCard
             title="风险等级"
             value={scheduleRiskLevelLabel(risk.risk_level)}
-            description={risk.risk_id}
+            description="按缺口与不可用综合判断"
           />
           <MetricCard
             title="排班缺口"
@@ -92,11 +142,6 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
             title="不可用影响"
             value={`${risk.affected_unavailability}`}
             description="生效中记录数量"
-          />
-          <MetricCard
-            title="关联班次"
-            value={`${relatedShiftDetails.length}`}
-            description="同计划同一 0.5h 时段"
           />
         </section>
 

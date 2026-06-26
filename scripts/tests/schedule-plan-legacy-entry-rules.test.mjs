@@ -33,12 +33,13 @@ test("schedule plan list does not link into legacy planning demo routes", async 
 test("schedule plan detail keeps detail content local to the plan page", async () => {
   const source = await readFile(schedulePlanDetailPagePath, "utf8")
 
-  assert.equal(source.includes("getScheduleRisks"), false)
-  assert.equal(source.includes("getUnavailability"), false)
+  assert.equal(source.includes("summarizeSchedulePlanFulfillmentIssues"), true)
+  assert.equal(source.includes("MvpFlowSummary"), false)
+  assert.equal(source.includes("ScheduleRiskTable"), false)
   assert.equal(source.includes("复核链路"), false)
-  assert.equal(source.includes("/schedule-risks"), false)
-  assert.equal(source.includes("/shift-details"), false)
-  assert.equal(source.includes("/unavailability"), false)
+  assert.equal(source.includes('href="/schedule-risks'), false)
+  assert.equal(source.includes('href="/shift-details'), false)
+  assert.equal(source.includes('href="/unavailability'), false)
 })
 
 test("orphaned legacy planning link components are removed", async () => {

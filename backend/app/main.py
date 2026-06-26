@@ -83,23 +83,28 @@ from backend.app.models import (
     ReviewEvidenceInput,
     ReviewSourceResultType,
     ScheduleRiskListResponse,
+    ScheduleRiskRow,
     SchedulePlanDetail,
     SchedulePlanDraftRequest,
     SchedulePlanListResponse,
     SchedulePlanStatus,
     ShiftDetailListResponse,
     UnavailabilityListResponse,
+    UnavailabilityRow,
     UnavailabilityStatus,
 )
 from backend.app.repository import (
     create_plan_draft,
     find_plan_detail,
+    find_schedule_risk,
     list_demand_plan_rows,
     list_schedule_risk_rows,
     list_shift_detail_rows,
     list_plan_summaries,
     list_unavailability_rows,
+    resolve_unavailability,
     transition_plan_status,
+    transition_schedule_risk_status,
     update_plan_draft,
 )
 
@@ -1463,6 +1468,124 @@ def publish_schedule_plan(plan_id: str) -> SchedulePlanDetail:
                 "error": {
                     "code": "SCHEDULE_PLAN_INVALID_TRANSITION",
                     "message": "当前排班计划状态不允许该流转",
+                }
+            },
+        )
+
+    return updated
+
+
+@app.post(
+    "/api/v1/schedule-risks/{risk_id}/confirm",
+    response_model=ScheduleRiskRow,
+)
+def confirm_schedule_risk(risk_id: str) -> ScheduleRiskRow:
+    if find_schedule_risk(risk_id) is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "SCHEDULE_RISK_NOT_FOUND",
+                    "message": "排班风险不存在",
+                }
+            },
+        )
+
+    try:
+        updated = transition_schedule_risk_status(risk_id, "confirmed")
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "SCHEDULE_RISK_NOT_FOUND",
+                    "message": "排班风险不存在",
+                }
+            },
+        ) from exc
+
+    if updated is None:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": {
+                    "code": "SCHEDULE_RISK_INVALID_TRANSITION",
+                    "message": "当前风险状态不允许该操作",
+                }
+            },
+        )
+
+    return updated
+
+
+@app.post(
+    "/api/v1/schedule-risks/{risk_id}/resolve",
+    response_model=ScheduleRiskRow,
+)
+def resolve_schedule_risk(risk_id: str) -> ScheduleRiskRow:
+    if find_schedule_risk(risk_id) is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "SCHEDULE_RISK_NOT_FOUND",
+                    "message": "排班风险不存在",
+                }
+            },
+        )
+
+    try:
+        updated = transition_schedule_risk_status(risk_id, "resolved")
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "SCHEDULE_RISK_NOT_FOUND",
+                    "message": "排班风险不存在",
+                }
+            },
+        ) from exc
+
+    if updated is None:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": {
+                    "code": "SCHEDULE_RISK_INVALID_TRANSITION",
+                    "message": "当前风险状态不允许该操作",
+                }
+            },
+        )
+
+    return updated
+
+
+@app.post(
+    "/api/v1/unavailability/{unavailability_id}/resolve",
+    response_model=UnavailabilityRow,
+)
+def resolve_unavailability_api(unavailability_id: str) -> UnavailabilityRow:
+    try:
+        updated = resolve_unavailability(unavailability_id)
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "UNAVAILABILITY_NOT_FOUND",
+                    "message": "不可用记录不存在",
+                }
+            },
+        ) from exc
+
+    if updated is None:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": {
+                    "code": "UNAVAILABILITY_INVALID_TRANSITION",
+                    "message": "当前不可用记录状态不允许该操作",
                 }
             },
         )

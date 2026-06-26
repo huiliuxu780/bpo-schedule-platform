@@ -19,23 +19,35 @@ import {
   getShiftDetails,
 } from "@/lib/schedule-plans"
 import {
+  getUnavailabilityAction,
   getUnavailabilityRecord,
+  summarizeUnavailabilityActionFeedback,
   unavailabilityStatusLabel,
 } from "@/lib/unavailability"
+import { resolveUnavailabilityAction } from "./actions"
 
 type PageProps = {
   params: Promise<{
     unavailabilityId: string
   }>
+  searchParams?: Promise<{
+    unavailabilityAction?: string
+  }>
 }
 
-export default async function UnavailabilityImpactPage({ params }: PageProps) {
+export default async function UnavailabilityImpactPage({ params, searchParams }: PageProps) {
   const { unavailabilityId } = await params
+  const resolvedSearchParams = searchParams ? await searchParams : {}
   const record = await getUnavailabilityRecord(decodeURIComponent(unavailabilityId))
 
   if (!record) {
     notFound()
   }
+
+  const unavailabilityAction = getUnavailabilityAction(record.status)
+  const unavailabilityFeedback = summarizeUnavailabilityActionFeedback(
+    resolvedSearchParams.unavailabilityAction
+  )
 
   const [shiftDetails, risks] = await Promise.all([
     getShiftDetails({ query: record.site_name }),
@@ -65,6 +77,21 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
   return (
     <AppShell title="不可用影响定位">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+        {unavailabilityFeedback ? (
+          <Card
+            className={
+              unavailabilityFeedback.tone === "error"
+                ? "border-destructive/50"
+                : undefined
+            }
+          >
+            <CardHeader>
+              <CardTitle className="text-base">{unavailabilityFeedback.title}</CardTitle>
+              <CardDescription>{unavailabilityFeedback.description}</CardDescription>
+            </CardHeader>
+          </Card>
+        ) : null}
+
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-lg font-semibold">不可用影响定位</h1>
@@ -74,6 +101,14 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
+            {unavailabilityAction ? (
+              <form action={resolveUnavailabilityAction}>
+                <input type="hidden" name="unavailability_id" value={record.unavailability_id} />
+                <Button type="submit" variant="outline" size="sm">
+                  {unavailabilityAction.label}
+                </Button>
+              </form>
+            ) : null}
             <Button asChild variant="outline" size="sm">
               <Link href={`/shift-details?query=${record.site_name}`}>查看班次</Link>
             </Button>

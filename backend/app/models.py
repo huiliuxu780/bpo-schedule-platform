@@ -7,6 +7,7 @@ SchedulePlanStatus = Literal["draft", "review_ready", "published"]
 DemandPlanStatus = Literal["imported", "mapped"]
 UnavailabilityStatus = Literal["active", "resolved"]
 ScheduleRiskLevel = Literal["high", "medium", "low"]
+ScheduleRiskStatus = Literal["open", "confirmed", "resolved"]
 ImportFileType = Literal[
     "master_data",
     "personnel_schedule",
@@ -117,6 +118,7 @@ class ScheduleRiskRow(BaseModel):
     affected_unavailability: int = Field(ge=0)
     reason: str
     recommendation: str
+    risk_status: ScheduleRiskStatus = "open"
 
 
 class ScheduleRiskListResponse(BaseModel):

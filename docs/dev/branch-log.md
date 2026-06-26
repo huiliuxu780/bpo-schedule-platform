@@ -5487,3 +5487,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM249 Schedule Fulfillment Issue Handling
+
+- branch_name: `codex/im249-schedule-fulfillment-issues`
+- base_main_commit: `stacked on codex/im248-schedule-plan-lifecycle`
+- stacked_on: `codex/im248-schedule-plan-lifecycle`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium product block for local MVP fulfillment issue handling. Add risk confirmation/resolution, unavailability resolution, detail-page action feedback, and schedule plan detail issue summaries.
+- qoder_mode: `true; Qoder implemented backend Packet A and frontend Packet B under bounded file scopes. Codex reviewed diffs, implemented Packet C, owns Harness updates, final verification, local commit, and push decision.`
+- allowed_files_check: schedule risk/unavailability backend files, schedule plan/risk/unavailability frontend files, focused fulfillment issue test, current Harness files, audit report, task log, and branch log only.
+- scope_diff_check: expected issue state transitions, detail-page action forms, issue feedback, schedule plan detail handling summaries, and traceability updates only; no auth, permissions, approval, export, batch-operation, automatic scheduling, production formulas, settlement rules, charge factors, dependency, package/lockfile, schema, migration, or real external integration changes.
+- check_result: Qoder Packet A/B diffs were reviewed by Codex. Codex implemented Packet C and adjusted the legacy schedule-plan guard to allow the new plan-level issue summary while still blocking old demo links. Focused `.venv/bin/python -m unittest backend.tests.test_schedule_plans -v` passed with 39 tests. Focused `node --test scripts/tests/schedule-fulfillment-issue-model.test.mjs` passed with 19 tests. Focused `node --test scripts/tests/schedule-plan-legacy-entry-rules.test.mjs scripts/tests/schedule-fulfillment-issue-model.test.mjs` passed with 22 tests. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 479 Node tests (478 pass, 1 skipped), shadcn check, lint, typecheck, Next build, and 241 backend unittest tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

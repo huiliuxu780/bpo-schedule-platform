@@ -5723,3 +5723,20 @@
 - 前端详情页根据计划状态展示“提交复核”或“发布计划”，成功/失败后通过 `lifecycle` 参数显示业务反馈。
 - 新增 `scripts/tests/schedule-plan-lifecycle-model.test.mjs`，覆盖生命周期动作、反馈文案、内部术语边界和 action 接入结构。
 - focused backend、focused frontend、state check、diff check 和最终全量门禁结果见 IM248 Done Report。
+
+### 2026-06-26 - IM249 排班履约问题处理闭环
+
+#### 审计计划
+
+- 承接 IM248 发布计划能力，补齐发布后风险和不可用的人工处理闭环。
+- 以一个中等产品包完成风险确认/处理、不可用处理、计划详情联动摘要，不拆成碎片任务。
+- Qoder 只执行后端 Packet A 和前端 Packet B；Codex 负责 diff review、计划详情联动、Harness 状态、全量验证、提交和推送决策。
+- 不引入审批、权限、批量、导出、自动排班、生产公式、结算、收费因子、新依赖、package/lockfile、schema/migration 或外部集成。
+
+#### 执行结果
+
+- 后端新增 `POST /api/v1/schedule-risks/{risk_id}/confirm`、`POST /api/v1/schedule-risks/{risk_id}/resolve` 和 `POST /api/v1/unavailability/{unavailability_id}/resolve`。
+- 前端风险详情页和不可用详情页根据处理状态展示人工动作，成功/失败后通过 URL 参数显示业务反馈。
+- 排班计划详情页新增履约处理摘要，展示关联风险和不可用处理状态，并明确不自动重算排班覆盖。
+- 新增 `scripts/tests/schedule-fulfillment-issue-model.test.mjs`，覆盖风险/不可用动作、反馈文案、内部术语边界、计划详情联动和自动修复禁用文案。
+- focused backend、focused frontend、state check、diff check 和最终全量门禁结果见 IM249 Done Report。

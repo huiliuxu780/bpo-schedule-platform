@@ -4,6 +4,7 @@ from fastapi import HTTPException
 
 from backend.app.main import (
     app,
+    confirm_schedule_risk,
     create_schedule_plan_draft,
     get_schedule_plan,
     list_demand_plans,
@@ -12,10 +13,13 @@ from backend.app.main import (
     list_schedule_risks,
     list_unavailability,
     publish_schedule_plan,
+    resolve_schedule_risk,
+    resolve_unavailability_api,
     submit_schedule_plan_for_review,
     update_schedule_plan_draft,
 )
 from backend.app.models import SchedulePlanDraftRequest, SchedulePlanIntervalInput
+from backend.app.repository import SCHEDULE_RISK_STATUS, UNAVAILABILITY_ROWS
 
 
 class SchedulePlansApiTest(unittest.TestCase):
@@ -546,6 +550,140 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertEqual(
             raised.exception.detail["error"]["code"],
             "SCHEDULE_PLAN_NOT_EDITABLE",
+        )
+
+    def _find_open_risk_id(self) -> str:
+        SCHEDULE_RISK_STATUS.clear()
+        risks = list_schedule_risks()
+        self.assertGreaterEqual(len(risks.items), 1)
+        return risks.items[0].risk_id
+
+    def test_schedule_risk_routes_are_registered(self) -> None:
+        routes = {(route.path, ",".join(sorted(route.methods))) for route in app.routes}
+
+        self.assertIn(
+            ("/api/v1/schedule-risks/{risk_id}/confirm", "POST"),
+            routes,
+        )
+        self.assertIn(
+            ("/api/v1/schedule-risks/{risk_id}/resolve", "POST"),
+            routes,
+        )
+        self.assertIn(
+            ("/api/v1/unavailability/{unavailability_id}/resolve", "POST"),
+            routes,
+        )
+
+    def test_list_schedule_risks_returns_risk_status_field(self) -> None:
+        SCHEDULE_RISK_STATUS.clear()
+        response = list_schedule_risks()
+
+        self.assertGreaterEqual(len(response.items), 1)
+        first_item = response.items[0].model_dump()
+        self.assertIn("risk_status", first_item)
+        self.assertEqual(response.items[0].risk_status, "open")
+
+    def test_open_risk_can_confirm(self) -> None:
+        risk_id = self._find_open_risk_id()
+
+        confirmed = confirm_schedule_risk(risk_id)
+
+        self.assertEqual(confirmed.risk_id, risk_id)
+        self.assertEqual(confirmed.risk_status, "confirmed")
+
+    def test_confirmed_risk_can_resolve(self) -> None:
+        risk_id = self._find_open_risk_id()
+
+        confirm_schedule_risk(risk_id)
+        resolved = resolve_schedule_risk(risk_id)
+
+        self.assertEqual(resolved.risk_id, risk_id)
+        self.assertEqual(resolved.risk_status, "resolved")
+
+    def test_open_risk_can_resolve_directly(self) -> None:
+        risk_id = self._find_open_risk_id()
+
+        resolved = resolve_schedule_risk(risk_id)
+
+        self.assertEqual(resolved.risk_id, risk_id)
+        self.assertEqual(resolved.risk_status, "resolved")
+
+    def test_resolved_risk_cannot_confirm(self) -> None:
+        risk_id = self._find_open_risk_id()
+        resolve_schedule_risk(risk_id)
+
+        with self.assertRaises(HTTPException) as raised:
+            confirm_schedule_risk(risk_id)
+
+        self.assertEqual(raised.exception.status_code, 409)
+        self.assertEqual(
+            raised.exception.detail["error"]["code"],
+            "SCHEDULE_RISK_INVALID_TRANSITION",
+        )
+
+    def test_resolved_risk_cannot_resolve_again(self) -> None:
+        risk_id = self._find_open_risk_id()
+        resolve_schedule_risk(risk_id)
+
+        with self.assertRaises(HTTPException) as raised:
+            resolve_schedule_risk(risk_id)
+
+        self.assertEqual(raised.exception.status_code, 409)
+        self.assertEqual(
+            raised.exception.detail["error"]["code"],
+            "SCHEDULE_RISK_INVALID_TRANSITION",
+        )
+
+    def test_missing_risk_returns_404(self) -> None:
+        with self.assertRaises(HTTPException) as raised:
+            confirm_schedule_risk("missing-risk-xyz")
+
+        self.assertEqual(raised.exception.status_code, 404)
+        self.assertEqual(
+            raised.exception.detail["error"]["code"],
+            "SCHEDULE_RISK_NOT_FOUND",
+        )
+
+    def test_active_unavailability_can_resolve(self) -> None:
+        active_ids = [
+            row.unavailability_id for row in UNAVAILABILITY_ROWS if row.status == "active"
+        ]
+        self.assertGreaterEqual(len(active_ids), 1)
+        unavailability_id = active_ids[0]
+
+        resolved = resolve_unavailability_api(unavailability_id)
+
+        self.assertEqual(resolved.unavailability_id, unavailability_id)
+        self.assertEqual(resolved.status, "resolved")
+
+        resolved_list = list_unavailability(status="resolved")
+        resolved_ids = [row.unavailability_id for row in resolved_list.items]
+        self.assertIn(unavailability_id, resolved_ids)
+
+    def test_resolved_unavailability_cannot_resolve_again(self) -> None:
+        resolved_ids = [
+            row.unavailability_id for row in UNAVAILABILITY_ROWS if row.status == "resolved"
+        ]
+        self.assertGreaterEqual(len(resolved_ids), 1)
+        unavailability_id = resolved_ids[0]
+
+        with self.assertRaises(HTTPException) as raised:
+            resolve_unavailability_api(unavailability_id)
+
+        self.assertEqual(raised.exception.status_code, 409)
+        self.assertEqual(
+            raised.exception.detail["error"]["code"],
+            "UNAVAILABILITY_INVALID_TRANSITION",
+        )
+
+    def test_missing_unavailability_returns_404(self) -> None:
+        with self.assertRaises(HTTPException) as raised:
+            resolve_unavailability_api("missing-unavail-xyz")
+
+        self.assertEqual(raised.exception.status_code, 404)
+        self.assertEqual(
+            raised.exception.detail["error"]["code"],
+            "UNAVAILABILITY_NOT_FOUND",
         )
 
 
