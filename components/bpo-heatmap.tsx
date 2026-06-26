@@ -41,6 +41,8 @@ export function BpoHeatmap({ rows, slots }: BpoHeatmapProps = {}) {
     1
   )}, minmax(0, 1fr))`
 
+  const isEmpty = displayRows.length === 0 || displaySlots.length === 0
+
   return (
     <Card>
       <CardHeader>
@@ -54,44 +56,50 @@ export function BpoHeatmap({ rows, slots }: BpoHeatmapProps = {}) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div
-          className="grid gap-1 text-xs"
-          style={{ gridTemplateColumns }}
-        >
-          <div />
-          {displaySlots.map((slot) => (
-            <div
-              key={slot}
-              className="flex h-7 items-center justify-center text-muted-foreground"
-            >
-              {slot}
-            </div>
-          ))}
-          {displayRows.map((row) => (
-            <React.Fragment key={row.day}>
+        {isEmpty ? (
+          <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
+            暂无可展示的人力缺口时段
+          </div>
+        ) : (
+          <div
+            className="grid gap-1 text-xs"
+            style={{ gridTemplateColumns }}
+          >
+            <div />
+            {displaySlots.map((slot) => (
               <div
-                className="flex h-8 items-center text-muted-foreground"
+                key={slot}
+                className="flex h-7 items-center justify-center text-muted-foreground"
               >
-                {row.day}
+                {slot}
               </div>
-              {row.slots.map((value, index) => (
+            ))}
+            {displayRows.map((row) => (
+              <React.Fragment key={row.day}>
                 <div
-                  key={`${row.day}-${displaySlots[index]}`}
-                  role="gridcell"
-                  tabIndex={0}
-                  aria-label={`${row.day} ${displaySlots[index]} 缺口 ${value} 人`}
-                  className={cn(
-                    "flex h-8 items-center justify-center rounded-md border text-xs tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                    heatClass(value)
-                  )}
-                  title={`${row.day} ${displaySlots[index]} 缺口 ${value}`}
+                  className="flex h-8 items-center text-muted-foreground"
                 >
-                  {value}
+                  {row.day}
                 </div>
-              ))}
-            </React.Fragment>
-          ))}
-        </div>
+                {row.slots.map((value, index) => (
+                  <div
+                    key={`${row.day}-${displaySlots[index]}`}
+                    role="gridcell"
+                    tabIndex={0}
+                    aria-label={`${row.day} ${displaySlots[index]} 缺口 ${value} 人`}
+                    className={cn(
+                      "flex h-8 items-center justify-center rounded-md border text-xs tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                      heatClass(value)
+                    )}
+                    title={`${row.day} ${displaySlots[index]} 缺口 ${value}`}
+                  >
+                    {value}
+                  </div>
+                ))}
+              </React.Fragment>
+            ))}
+          </div>
+        )}
         <div className="mt-4 flex items-center gap-3 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1">
             <span className="size-2 rounded-sm bg-background ring-1 ring-border" />

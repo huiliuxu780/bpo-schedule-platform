@@ -117,6 +117,13 @@ export type SchedulePlanListFilters = {
   status?: SchedulePlanStatus
 }
 
+export type DataSourceResult<T> = {
+  items: T[]
+  source: "api" | "api_empty" | "fallback"
+  failed: boolean
+  message: string
+}
+
 const API_BASE_URL =
   process.env.BPO_API_BASE_URL?.replace(/\/$/, "") ?? "http://127.0.0.1:8000"
 
@@ -381,6 +388,97 @@ export async function getScheduleRisk(
   const risks = await getScheduleRisks()
 
   return risks.find((risk) => risk.risk_id === riskId) ?? null
+}
+
+export async function getSchedulePlansResult(
+  filters: SchedulePlanListFilters = {}
+): Promise<DataSourceResult<SchedulePlanSummary>> {
+  const searchParams = new URLSearchParams()
+
+  if (filters.query?.trim()) {
+    searchParams.set("query", filters.query.trim())
+  }
+
+  if (filters.status) {
+    searchParams.set("status", filters.status)
+  }
+
+  const path = `/api/v1/schedule-plans${
+    searchParams.size > 0 ? `?${searchParams.toString()}` : ""
+  }`
+
+  const response = await fetchJson<SchedulePlanListResponse>(path)
+
+  if (response === null) {
+    const fallbackItems = filterFallbackPlans(
+      fallbackPlans.map((plan) => plan.summary),
+      filters
+    )
+    return {
+      items: fallbackItems,
+      source: "fallback",
+      failed: true,
+      message: "API 请求失败，已使用本地示例数据",
+    }
+  }
+
+  if (response.items.length === 0) {
+    return {
+      items: [],
+      source: "api_empty",
+      failed: false,
+      message: "当前暂无排班计划数据",
+    }
+  }
+
+  return {
+    items: response.items,
+    source: "api",
+    failed: false,
+    message: "数据来自后端 API",
+  }
+}
+
+export async function getScheduleRisksResult(
+  query = ""
+): Promise<DataSourceResult<ScheduleRiskRow>> {
+  const searchParams = new URLSearchParams()
+
+  if (query.trim()) {
+    searchParams.set("query", query.trim())
+  }
+
+  const path = `/api/v1/schedule-risks${
+    searchParams.size > 0 ? `?${searchParams.toString()}` : ""
+  }`
+
+  const response = await fetchJson<ScheduleRiskListResponse>(path)
+
+  if (response === null) {
+    const fallbackItems = filterFallbackScheduleRisks(fallbackScheduleRisks, query)
+    return {
+      items: fallbackItems,
+      source: "fallback",
+      failed: true,
+      message: "API 请求失败，已使用本地示例数据",
+    }
+  }
+
+  if (response.items.length === 0) {
+    return {
+      items: [],
+      source: "api_empty",
+      failed: false,
+      message: "当前暂无排班风险数据",
+    }
+  }
+
+  return {
+    items: response.items,
+    source: "api",
+    failed: false,
+    message: "数据来自后端 API",
+  }
 }
 
 export async function createSchedulePlanDraft(

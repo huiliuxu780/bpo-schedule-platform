@@ -16,22 +16,22 @@ const dataTableSrc = readProject("components/data-table.tsx");
 
 // ── 1. Dashboard page calls the three data clients ──
 
-test("dashboard page calls getSchedulePlans", () => {
-  assert.match(pageSrc, /getSchedulePlans\s*\(/);
+test("dashboard page calls getSchedulePlansResult", () => {
+  assert.match(pageSrc, /getSchedulePlansResult\s*\(/);
 });
 
-test("dashboard page calls getScheduleRisks", () => {
-  assert.match(pageSrc, /getScheduleRisks\s*\(/);
+test("dashboard page calls getScheduleRisksResult", () => {
+  assert.match(pageSrc, /getScheduleRisksResult\s*\(/);
 });
 
-test("dashboard page calls getUnavailability", () => {
-  assert.match(pageSrc, /getUnavailability\s*\(/);
+test("dashboard page calls getUnavailabilityResult", () => {
+  assert.match(pageSrc, /getUnavailabilityResult\s*\(/);
 });
 
 // ── 2. Dashboard page calls the view model builder ──
 
-test("dashboard page calls buildDashboardViewModel", () => {
-  assert.match(pageSrc, /buildDashboardViewModel\s*\(/);
+test("dashboard page calls buildDashboardOperationalViewModel", () => {
+  assert.match(pageSrc, /buildDashboardOperationalViewModel\s*\(/);
 });
 
 test("dashboard page imports buildDashboardViewModel from lib/dashboard", () => {
@@ -142,7 +142,9 @@ test("dashboard page exports an async server component", () => {
 // ── 10. Dashboard page describes data source ──
 
 test("dashboard page includes a data-source attribution note", () => {
-  assert.match(pageSrc, /本地排班计划/);
+  // Page uses ReadinessBanner which displays readiness.message from the operational view model
+  assert.match(pageSrc, /ReadinessBanner/);
+  assert.match(pageSrc, /viewModel\.readiness\.message/);
 });
 
 test("dashboard page does not claim production real-time data", () => {

@@ -2892,3 +2892,12 @@
   action: 经营总览接入本地 MVP 数据。
   status: `done`
   notes: 完成 `/dashboard` 从静态经营总览切换为消费现有本地排班计划、风险和不可用数据的 view model。新增 dashboard 汇总模型，页面并行读取现有本地数据 client，SectionCards/BpoHeatmap/DataTable 支持 props 并保留静态 fallback；异常表支持跳转到现有排班计划、风险明细和不可用记录页面。未新增后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM251`
+  source_ids:
+    - `R950`
+  story_ids:
+    - `US870`
+  action: 经营总览运营可用性闭环。
+  status: `done`
+  notes: 完成 `/dashboard` 数据来源状态和空态降级闭环。新增 result-style 前端读取函数区分 API 数据、API 空数据和本地兜底数据；新增 operational dashboard view model 和 `ReadinessBanner`，页面以业务文案说明当前数据来源；热力图和异常表补齐空态，异常表继续保留排班计划、风险明细、不可用记录下游入口。Codex 修正 Qoder 初稿中的硬编码颜色，改为 shadcn Alert 和语义 token，并补 mocked-fetch 单测直接覆盖 result-style reader。未新增后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

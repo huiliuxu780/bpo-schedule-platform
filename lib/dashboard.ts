@@ -27,6 +27,28 @@ export type DashboardViewModel = {
   anomalies: Anomaly[]
 }
 
+export type DashboardDataSourceKind = "api" | "api_empty" | "fallback" | "mixed"
+
+export type DashboardDataSourceState = {
+  plans: "api" | "api_empty" | "fallback"
+  risks: "api" | "api_empty" | "fallback"
+  unavailability: "api" | "api_empty" | "fallback"
+  hasAnyFailure: boolean
+  hasAnyFallback: boolean
+  hasAnyEmpty: boolean
+}
+
+export type DashboardReadinessSummary = {
+  overallSource: DashboardDataSourceKind
+  message: string
+  hasData: boolean
+  sourceStates: DashboardDataSourceState
+}
+
+export type DashboardOperationalViewModel = DashboardViewModel & {
+  readiness: DashboardReadinessSummary
+}
+
 /**
  * Build dashboard metric cards from schedule plans, risks, and unavailability data.
  */
@@ -227,5 +249,89 @@ export function buildDashboardViewModel(
     heatmapRows: heatmap.rows,
     heatmapSlots: heatmap.slots,
     anomalies: buildDashboardAnomalies(plans, risks, unavailability),
+  }
+}
+
+export type DataSourceInfo = {
+  source: "api" | "api_empty" | "fallback"
+  failed: boolean
+}
+
+export type DashboardOperationalInput = {
+  plans: SchedulePlanSummary[]
+  risks: ScheduleRiskRow[]
+  unavailability: UnavailabilityRow[]
+  plansSource: DataSourceInfo
+  risksSource: DataSourceInfo
+  unavailabilitySource: DataSourceInfo
+}
+
+export function buildDashboardOperationalViewModel(
+  input: DashboardOperationalInput
+): DashboardOperationalViewModel {
+  const { plans, risks, unavailability, plansSource, risksSource, unavailabilitySource } = input
+
+  const baseViewModel = buildDashboardViewModel(plans, risks, unavailability)
+
+  const hasAnyFailure = plansSource.failed || risksSource.failed || unavailabilitySource.failed
+  const hasAnyFallback =
+    plansSource.source === "fallback" ||
+    risksSource.source === "fallback" ||
+    unavailabilitySource.source === "fallback"
+  const hasAnyEmpty =
+    plansSource.source === "api_empty" ||
+    risksSource.source === "api_empty" ||
+    unavailabilitySource.source === "api_empty"
+
+  const sourceStates: DashboardDataSourceState = {
+    plans: plansSource.source,
+    risks: risksSource.source,
+    unavailability: unavailabilitySource.source,
+    hasAnyFailure,
+    hasAnyFallback,
+    hasAnyEmpty,
+  }
+
+  // Determine overall source
+  let overallSource: DashboardDataSourceKind
+  if (hasAnyFallback) {
+    const hasAnyApi =
+      plansSource.source === "api" ||
+      risksSource.source === "api" ||
+      unavailabilitySource.source === "api"
+    overallSource = hasAnyApi ? "mixed" : "fallback"
+  } else if (hasAnyEmpty && !hasAnyFallback) {
+    const allEmpty =
+      plansSource.source === "api_empty" &&
+      risksSource.source === "api_empty" &&
+      unavailabilitySource.source === "api_empty"
+    overallSource = allEmpty ? "api_empty" : "mixed"
+  } else {
+    overallSource = "api"
+  }
+
+  const hasData = plans.length > 0 || risks.length > 0 || unavailability.length > 0
+
+  let message: string
+  if (overallSource === "fallback" || (overallSource === "mixed" && hasAnyFallback)) {
+    message = "部分经营总览数据使用本地兜底数据，请确认后端服务状态后再用于验收判断。"
+  } else if (overallSource === "api_empty") {
+    message = "当前本地数据为空，请先创建排班计划、风险或不可用记录。"
+  } else if (overallSource === "mixed") {
+    message = "经营总览数据来自部分本地数据源，建议确认所有数据源状态。"
+  } else {
+    message = "经营总览数据来自当前本地排班计划、风险和不可用状态。"
+  }
+
+  const readiness: DashboardReadinessSummary = {
+    overallSource,
+    message,
+    hasData,
+    sourceStates,
+  }
+
+  return {
+    ...baseViewModel,
+    readiness,
   }
 }

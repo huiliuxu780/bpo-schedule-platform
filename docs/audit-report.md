@@ -5758,3 +5758,22 @@
 - dashboard 异常表新增本地 MVP downstream links：排班计划、风险明细、不可用记录。
 - 新增 `scripts/tests/dashboard-view-model.test.mjs` 和 `scripts/tests/dashboard-integration.test.mjs`，并扩展 dashboard table model 覆盖本地 downstream links。
 - focused dashboard、lint、typecheck、state check、diff check 和最终全量门禁结果见 IM250 Done Report。
+
+### 2026-06-26 - IM251 经营总览运营可用性闭环
+
+#### 审计计划
+
+- 承接 IM250 真实本地数据接入，把经营总览从“能读数据”推进到“能解释数据来源并稳定降级”。
+- 以一个中等产品包完成 result-style 数据源契约、Dashboard operational view model、页面 readiness banner、热力图空态和异常表空态区分。
+- Qoder 串行执行 Packet A/B；Codex 负责切到独立 IM251 分支、diff review、shadcn/semantic-token 修正、测试增强、Harness 状态、全量验证、提交和推送决策。
+- 不新增后端 API、数据库、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- `lib/schedule-plans.ts` 和 `lib/unavailability.ts` 新增 result-style 读取函数，保留旧 `getSchedulePlans()`、`getScheduleRisks()`、`getUnavailability()` 调用方兼容。
+- `lib/dashboard.ts` 新增 operational view model，聚合 API、API 空数据、本地 fallback 和 mixed source 状态。
+- `/dashboard` 改为消费 result-style reader，并通过 `ReadinessBanner` 展示业务可读的数据来源提示。
+- `ReadinessBanner` 使用 shadcn `Alert`、lucide icon 和语义 token，不使用硬编码 Tailwind 色阶。
+- `BpoHeatmap` 在无 rows/slots 时展示 `暂无可展示的人力缺口时段`，不渲染空 grid。
+- `DataTable` 区分真实无异常 `暂无异常记录` 和筛选无结果 `暂无符合条件的异常记录`。
+- dashboard focused、lint、typecheck、state check、diff check 和最终全量门禁结果见 IM251 Done Report。

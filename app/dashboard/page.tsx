@@ -2,11 +2,15 @@ import { AppShell } from "@/components/app-shell"
 import { BpoHeatmap } from "@/components/bpo-heatmap"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { DataTable } from "@/components/data-table"
+import { ReadinessBanner } from "@/components/readiness-banner"
 import { SectionCards } from "@/components/section-cards"
 import { Button } from "@/components/ui/button"
-import { buildDashboardViewModel } from "@/lib/dashboard"
-import { getSchedulePlans, getScheduleRisks } from "@/lib/schedule-plans"
-import { getUnavailability } from "@/lib/unavailability"
+import { buildDashboardOperationalViewModel } from "@/lib/dashboard"
+import {
+  getSchedulePlansResult,
+  getScheduleRisksResult,
+} from "@/lib/schedule-plans"
+import { getUnavailabilityResult } from "@/lib/unavailability"
 
 function GlobalFilterBar() {
   return (
@@ -28,25 +32,40 @@ function GlobalFilterBar() {
 }
 
 export default async function DashboardPage() {
-  const [plans, risks, unavailability] = await Promise.all([
-    getSchedulePlans(),
-    getScheduleRisks(),
-    getUnavailability(),
+  const [plansResult, risksResult, unavailabilityResult] = await Promise.all([
+    getSchedulePlansResult(),
+    getScheduleRisksResult(),
+    getUnavailabilityResult(),
   ])
 
-  const viewModel = buildDashboardViewModel(plans, risks, unavailability)
+  const viewModel = buildDashboardOperationalViewModel({
+    plans: plansResult.items,
+    risks: risksResult.items,
+    unavailability: unavailabilityResult.items,
+    plansSource: { source: plansResult.source, failed: plansResult.failed },
+    risksSource: { source: risksResult.source, failed: risksResult.failed },
+    unavailabilitySource: {
+      source: unavailabilityResult.source,
+      failed: unavailabilityResult.failed,
+    },
+  })
 
   return (
     <AppShell title="经营总览">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto pb-6">
-        <p className="px-4 text-xs text-muted-foreground lg:px-6">
-          经营总览数据来自当前本地排班计划、风险和不可用状态
-        </p>
+        <ReadinessBanner
+          message={viewModel.readiness.message}
+          hasData={viewModel.readiness.hasData}
+          overallSource={viewModel.readiness.overallSource}
+        />
         <GlobalFilterBar />
         <SectionCards cards={viewModel.metricCards} />
         <section className="grid gap-4 px-4 lg:grid-cols-[1.25fr_0.75fr] lg:px-6">
           <ChartAreaInteractive />
-          <BpoHeatmap rows={viewModel.heatmapRows} slots={viewModel.heatmapSlots} />
+          <BpoHeatmap
+            rows={viewModel.heatmapRows}
+            slots={viewModel.heatmapSlots}
+          />
         </section>
         <section className="grid gap-4 px-4 lg:px-6">
           <DataTable anomalies={viewModel.anomalies} />

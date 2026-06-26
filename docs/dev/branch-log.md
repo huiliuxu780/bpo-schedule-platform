@@ -40,6 +40,25 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM251 Dashboard Operational Readiness
+
+- branch_name: `codex/im251-dashboard-operational-readiness`
+- base_main_commit: `stacked on pushed codex/im250-dashboard-real-data-linkage at dc787a5`
+- stacked_on: `codex/im250-dashboard-real-data-linkage`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium product block for making `/dashboard` operationally trustworthy after IM250 real-data linkage. Add result-style local data source contracts, readiness/source messaging, and stable empty states without adding backend APIs or production workflow capabilities.
+- qoder_mode: `true; Qoder implemented the serial Packet A/B dashboard readiness work. Codex moved the dirty work onto the IM251 branch, reviewed diffs, replaced hardcoded banner colors with shadcn Alert and semantic tokens, strengthened result-reader tests, owns Harness updates, final verification, local commit, and push decision.`
+- allowed_files_check: dashboard page/model/components, schedule plan and unavailability frontend clients, dashboard focused tests, current Harness files, audit report, task log, and branch log only.
+- scope_diff_check: expected dashboard source-state contract, operator-facing readiness banner, empty heatmap/table states, local fallback preservation, and traceability updates only; no backend, dependency, package/lockfile, schema, migration, auth, permissions, approval, export, batch-operation, automatic scheduling, production formulas, settlement rules, charge factors, or real external integration changes.
+- check_result: focused `node --test scripts/tests/*dashboard*.test.mjs` passed with 138 dashboard tests. `npm run lint`, `npm run typecheck`, `bash scripts/check-state.sh --strict`, and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 595 Node tests (594 pass, 1 skipped), shadcn check, lint, typecheck, Next build, and 241 backend unittest tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM241 Review Case Write Action Runtime Smoke
 
 - branch_name: `codex/im237-harness-review-case-integration`

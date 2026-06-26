@@ -525,7 +525,9 @@ export function DataTable({ anomalies }: DataTableProps = {}) {
                     colSpan={table.getVisibleLeafColumns().length}
                     className="h-24 text-center text-sm text-muted-foreground"
                   >
-                    暂无符合条件的异常记录
+                    {sourceAnomalies.length === 0 && !hasActiveFilters
+                      ? "暂无异常记录"
+                      : "暂无符合条件的异常记录"}
                   </TableCell>
                 </TableRow>
               ) : null}

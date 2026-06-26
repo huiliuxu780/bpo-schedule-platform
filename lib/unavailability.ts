@@ -145,6 +145,62 @@ export async function getUnavailability(
   )
 }
 
+export type UnavailabilityDataSourceResult = {
+  items: UnavailabilityRow[]
+  source: "api" | "api_empty" | "fallback"
+  failed: boolean
+  message: string
+}
+
+export async function getUnavailabilityResult(
+  filters: UnavailabilityFilters = {}
+): Promise<UnavailabilityDataSourceResult> {
+  const searchParams = new URLSearchParams()
+
+  if (filters.query?.trim()) {
+    searchParams.set("query", filters.query.trim())
+  }
+
+  if (filters.status) {
+    searchParams.set("status", filters.status)
+  }
+
+  const path = `/api/v1/unavailability${
+    searchParams.size > 0 ? `?${searchParams.toString()}` : ""
+  }`
+
+  const response = await fetchJson<UnavailabilityListResponse>(path)
+
+  if (response === null) {
+    const fallbackItems = filterFallbackUnavailability(
+      fallbackUnavailabilityRows,
+      filters
+    )
+    return {
+      items: fallbackItems,
+      source: "fallback",
+      failed: true,
+      message: "API 请求失败，已使用本地示例数据",
+    }
+  }
+
+  if (response.items.length === 0) {
+    return {
+      items: [],
+      source: "api_empty",
+      failed: false,
+      message: "当前暂无不可用记录",
+    }
+  }
+
+  return {
+    items: response.items,
+    source: "api",
+    failed: false,
+    message: "数据来自后端 API",
+  }
+}
+
 export async function getUnavailabilityRecord(
   unavailabilityId: string
 ): Promise<UnavailabilityRow | null> {
