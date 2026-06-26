@@ -5,15 +5,18 @@ import { AppShell } from "@/components/app-shell"
 import { ReadinessBanner } from "@/components/readiness-banner"
 import { SchedulePlanIntervalTable } from "@/components/schedule-plan-interval-table"
 import {
+  buildSchedulePlanFulfillmentPreview,
   formatCoverageRate,
   getSchedulePlanResult,
   getSchedulePlanLifecycleAction,
   getScheduleRisks,
   schedulePlanStatusLabel,
+  scheduleRiskLevelLabel,
+  scheduleRiskStatusLabel,
   summarizeSchedulePlanFulfillmentIssues,
   summarizeSchedulePlanLifecycleFeedback,
 } from "@/lib/schedule-plans"
-import { getUnavailability } from "@/lib/unavailability"
+import { getUnavailability, unavailabilityStatusLabel } from "@/lib/unavailability"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -58,6 +61,11 @@ export default async function SchedulePlanDetailPage({ params, searchParams }: P
     getUnavailability({ query: plan.summary.site_name }),
   ])
   const fulfillmentIssueSummary = summarizeSchedulePlanFulfillmentIssues(
+    plan,
+    scheduleRisks,
+    unavailabilityRows
+  )
+  const fulfillmentPreview = buildSchedulePlanFulfillmentPreview(
     plan,
     scheduleRisks,
     unavailabilityRows
@@ -201,6 +209,90 @@ export default async function SchedulePlanDetailPage({ params, searchParams }: P
               description={`已处理 ${fulfillmentIssueSummary.unavailabilityResolved}`}
             />
           </CardContent>
+
+          <CardContent className="pt-0">
+            <h3 className="mb-3 text-sm font-medium">关联风险预览</h3>
+            {fulfillmentPreview.riskPreviews.length === 0 ? (
+              <p className="text-sm text-muted-foreground">当前计划暂无关联风险</p>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {fulfillmentPreview.riskPreviews.map((risk) => (
+                  <div
+                    key={risk.risk_id}
+                    className="rounded-lg border bg-card p-3 text-sm"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-xs">{risk.interval_start} - {risk.interval_end}</span>
+                      <div className="flex gap-2">
+                        <Badge variant={getRiskLevelBadgeVariant(risk.risk_level)}>
+                          {scheduleRiskLevelLabel(risk.risk_level)}
+                        </Badge>
+                        <Badge variant="outline">
+                          {scheduleRiskStatusLabel(risk.risk_status)}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                      <span>缺口 {risk.gap_agents} 人</span>
+                      <span>{risk.reason}</span>
+                      <span>{risk.recommendation}</span>
+                    </div>
+                    <Link
+                      href={`/schedule-risks/${encodeURIComponent(risk.risk_id)}`}
+                      className="mt-2 inline-block text-xs text-primary hover:underline"
+                    >
+                      查看详情
+                    </Link>
+                  </div>
+                ))}
+                {fulfillmentPreview.remainingRisks > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    还有 {fulfillmentPreview.remainingRisks} 条风险未在预览中展示
+                  </p>
+                )}
+              </div>
+            )}
+          </CardContent>
+
+          <CardContent className="pt-0">
+            <h3 className="mb-3 text-sm font-medium">不可用记录预览</h3>
+            {fulfillmentPreview.unavailabilityPreviews.length === 0 ? (
+              <p className="text-sm text-muted-foreground">当前计划暂无重叠不可用记录</p>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {fulfillmentPreview.unavailabilityPreviews.map((unavail) => (
+                  <div
+                    key={unavail.unavailability_id}
+                    className="rounded-lg border bg-card p-3 text-sm"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">{unavail.staff_name} / {unavail.team_name}</span>
+                      <Badge variant={unavail.status === "active" ? "default" : "secondary"}>
+                        {unavailabilityStatusLabel(unavail.status)}
+                      </Badge>
+                    </div>
+                    <div className="mt-2 text-xs text-muted-foreground">
+                      <span className="font-mono">{unavail.start_time} - {unavail.end_time}</span>
+                      <span className="ml-4">{unavail.reason}</span>
+                      <span className="ml-4">{unavail.note}</span>
+                    </div>
+                    <Link
+                      href={`/unavailability/${encodeURIComponent(unavail.unavailability_id)}`}
+                      className="mt-2 inline-block text-xs text-primary hover:underline"
+                    >
+                      查看详情
+                    </Link>
+                  </div>
+                ))}
+                {fulfillmentPreview.remainingUnavailability > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    还有 {fulfillmentPreview.remainingUnavailability} 条不可用记录未在预览中展示
+                  </p>
+                )}
+              </div>
+            )}
+          </CardContent>
+
           <CardContent className="flex flex-wrap items-center gap-3 pt-0">
             <Button asChild variant="outline" size="sm">
               <Link href={`/schedule-risks?query=${riskQuery}`}>
@@ -232,6 +324,12 @@ export default async function SchedulePlanDetailPage({ params, searchParams }: P
       </main>
     </AppShell>
   )
+}
+
+function getRiskLevelBadgeVariant(level: "high" | "medium" | "low") {
+  if (level === "high") return "destructive"
+  if (level === "medium") return "default"
+  return "secondary"
 }
 
 function InlineMetric({

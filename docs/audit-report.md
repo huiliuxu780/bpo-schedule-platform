@@ -5830,3 +5830,19 @@
 - `components/data-table.tsx` 在筛选前应用复核优先排序，并展示筛选后总数、高严重度、待复核、可下钻数量摘要；Codex 修正 Qoder 初稿中 TanStack 默认 severity/status 排序覆盖业务排序的问题。
 - 新增 `scripts/tests/dashboard-chart-stability.test.mjs` 和 `scripts/tests/dashboard-table-scanability.test.mjs`，扩展 `scripts/tests/dashboard-anomaly-table-model.test.mjs` 以直接断言排序行为和非 mutation。
 - Focused dashboard、typecheck、diff check 和最终全量门禁结果见 IM254 Done Report。
+
+### 2026-06-26 - IM255 排班计划详情履约预览
+
+#### 审计计划
+
+- 承接 IM253 的排班计划详情 readiness 和 IM249 的履约问题处理，把详情页从汇总数字推进到可扫读的关联记录预览。
+- 采用一个中等 Qoder packet：纯模型 preview helper、详情页预览 UI、focused tests 一起完成；Codex 负责 diff review、边界修正、Harness 状态、全量验证、提交和推送决策。
+- 不新增后端 API、数据库、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- `lib/schedule-plans.ts` 新增 `buildSchedulePlanFulfillmentPreview()`，仅使用现有 schedule risks 与 unavailability rows，按 plan_id、站点/项目/日期/时段重叠过滤，并按处理优先级排序后限制预览数量。
+- `/schedule-plans/[planId]` 的履约处理摘要新增“关联风险预览”和“不可用记录预览”，展示状态、风险等级、缺口、原因、建议、人员、班组、不可用时间和备注。
+- Codex 修正 Qoder 初稿中的裸动态链接，改为 `encodeURIComponent()`；同时补齐风险建议和不可用备注展示，去掉新引入的箭头符号。
+- 新增 `scripts/tests/schedule-plan-fulfillment-preview-model.test.mjs`，覆盖过滤、排序、截断、剩余数量、空态、详情链接和内部术语边界。
+- Focused schedule-plan、typecheck、diff check 和最终全量门禁结果见 IM255 Done Report。

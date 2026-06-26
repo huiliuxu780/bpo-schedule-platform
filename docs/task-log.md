@@ -2928,3 +2928,12 @@
   action: 经营总览视觉稳定性与异常表可扫读性优化。
   status: `done`
   notes: Qoder 实现图表稳定性 Packet A 与异常表可扫读性 Packet B 后，Codex 复核并修正两处边界：图表 wrapper 不再用固定最小宽度撑破窄屏，异常表默认排序不再被 TanStack 字符串排序覆盖，而是由 `sortDashboardAnomaliesForReview()` 统一提供“高严重度、待复核、可下钻、ID”优先顺序。新增图表稳定性与表格可扫读性测试，并补充实际模型排序断言。未修改后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
+
+- task_id: `IM255`
+  source_ids:
+    - `R954`
+  story_ids:
+    - `US874`
+  action: 排班计划详情履约预览。
+  status: `done`
+  notes: Qoder 基于 `codex/im254-dashboard-visual-polish` 创建 `codex/im255-schedule-plan-fulfillment-preview` 并实现中等包后，Codex 复核并修正详情链接编码、风险原因/建议展示、不可用备注展示和可见文案。`/schedule-plans/[planId]` 的履约处理摘要现在展示最多 3 条关联风险预览和最多 3 条重叠不可用记录预览，保留原有汇总指标和列表入口，不新增后端、不自动重算覆盖、不引入审批/批量/导出/权限等生产能力；current queue 与 active tasks 仍为空。

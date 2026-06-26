@@ -675,6 +675,35 @@ export type SchedulePlanFulfillmentIssueSummary = {
   unavailabilityResolved: number
 }
 
+export type ScheduleRiskPreview = {
+  risk_id: string
+  interval_start: string
+  interval_end: string
+  risk_level: ScheduleRiskLevel
+  risk_status: ScheduleRiskStatus
+  gap_agents: number
+  reason: string
+  recommendation: string
+}
+
+export type UnavailabilityPreview = {
+  unavailability_id: string
+  staff_name: string
+  team_name: string
+  start_time: string
+  end_time: string
+  status: "active" | "resolved"
+  reason: string
+  note: string
+}
+
+export type SchedulePlanFulfillmentPreview = {
+  riskPreviews: ScheduleRiskPreview[]
+  unavailabilityPreviews: UnavailabilityPreview[]
+  remainingRisks: number
+  remainingUnavailability: number
+}
+
 export function getScheduleRiskActions(
   riskStatus: ScheduleRiskStatus
 ): ScheduleRiskAction[] {
@@ -756,6 +785,96 @@ export function summarizeSchedulePlanFulfillmentIssues(
   }
 }
 
+const MAX_PREVIEW_ITEMS = 3
+
+const riskStatusOrder: Record<ScheduleRiskStatus, number> = {
+  open: 0,
+  confirmed: 1,
+  resolved: 2,
+}
+
+const riskLevelOrder: Record<ScheduleRiskLevel, number> = {
+  high: 0,
+  medium: 1,
+  low: 2,
+}
+
+export function buildSchedulePlanFulfillmentPreview(
+  plan: SchedulePlanDetail,
+  risks: ScheduleRiskRow[],
+  unavailabilityRows: UnavailabilityRow[]
+): SchedulePlanFulfillmentPreview {
+  const relatedRisks = risks.filter((risk) => risk.plan_id === plan.summary.id)
+
+  const relatedUnavailability = unavailabilityRows.filter(
+    (row) =>
+      row.project_name === plan.summary.project_name &&
+      row.site_name === plan.summary.site_name &&
+      row.unavailable_date === plan.summary.plan_date &&
+      plan.intervals.some((intervalItem) =>
+        intervalsOverlap(
+          intervalItem.interval_start,
+          intervalItem.interval_end,
+          row.start_time,
+          row.end_time
+        )
+      )
+  )
+
+  const sortedRisks = [...relatedRisks].sort((a, b) => {
+    const statusDiff = riskStatusOrder[a.risk_status] - riskStatusOrder[b.risk_status]
+    if (statusDiff !== 0) return statusDiff
+
+    const levelDiff = riskLevelOrder[a.risk_level] - riskLevelOrder[b.risk_level]
+    if (levelDiff !== 0) return levelDiff
+
+    return a.interval_start.localeCompare(b.interval_start)
+  })
+
+  const sortedUnavailability = [...relatedUnavailability].sort((a, b) => {
+    if (a.status !== b.status) {
+      return a.status === "active" ? -1 : 1
+    }
+    return a.start_time.localeCompare(b.start_time)
+  })
+
+  const riskPreviews: ScheduleRiskPreview[] = sortedRisks
+    .slice(0, MAX_PREVIEW_ITEMS)
+    .map((risk) => ({
+      risk_id: risk.risk_id,
+      interval_start: risk.interval_start,
+      interval_end: risk.interval_end,
+      risk_level: risk.risk_level,
+      risk_status: risk.risk_status,
+      gap_agents: risk.gap_agents,
+      reason: risk.reason,
+      recommendation: risk.recommendation,
+    }))
+
+  const unavailabilityPreviews: UnavailabilityPreview[] = sortedUnavailability
+    .slice(0, MAX_PREVIEW_ITEMS)
+    .map((row) => ({
+      unavailability_id: row.unavailability_id,
+      staff_name: row.staff_name,
+      team_name: row.team_name,
+      start_time: row.start_time,
+      end_time: row.end_time,
+      status: row.status,
+      reason: row.reason,
+      note: row.note,
+    }))
+
+  return {
+    riskPreviews,
+    unavailabilityPreviews,
+    remainingRisks: Math.max(relatedRisks.length - MAX_PREVIEW_ITEMS, 0),
+    remainingUnavailability: Math.max(
+      relatedUnavailability.length - MAX_PREVIEW_ITEMS,
+      0
+    ),
+  }
+}
+
 export function getSchedulePlanLifecycleAction(
   status: SchedulePlanStatus
 ): SchedulePlanLifecycleAction | null {
@@ -833,6 +952,16 @@ export function scheduleRiskLevelLabel(level: ScheduleRiskLevel) {
   }
 
   return labels[level]
+}
+
+export function scheduleRiskStatusLabel(status: ScheduleRiskStatus) {
+  const labels: Record<ScheduleRiskStatus, string> = {
+    open: "待处理",
+    confirmed: "已确认",
+    resolved: "已处理",
+  }
+
+  return labels[status]
 }
 
 const fallbackScheduleRisks: ScheduleRiskRow[] = [
