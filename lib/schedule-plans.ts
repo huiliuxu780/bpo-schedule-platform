@@ -124,6 +124,25 @@ export type DataSourceResult<T> = {
   message: string
 }
 
+export type DetailDataSourceResult<T> = {
+  item: T | null
+  source: "api" | "fallback" | "missing"
+  failed: boolean
+  message: string
+}
+
+type FetchJsonResult<T> =
+  | {
+      ok: true
+      data: T
+      status: number
+    }
+  | {
+      ok: false
+      data: null
+      status: number | null
+    }
+
 const API_BASE_URL =
   process.env.BPO_API_BASE_URL?.replace(/\/$/, "") ?? "http://127.0.0.1:8000"
 
@@ -260,6 +279,29 @@ async function fetchJson<T>(path: string): Promise<T | null> {
   }
 }
 
+async function fetchJsonResult<T>(path: string): Promise<FetchJsonResult<T>> {
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      cache: "no-store",
+      headers: {
+        Accept: "application/json",
+      },
+    })
+
+    if (!response.ok) {
+      return { ok: false, data: null, status: response.status }
+    }
+
+    return {
+      ok: true,
+      data: (await response.json()) as T,
+      status: response.status,
+    }
+  } catch {
+    return { ok: false, data: null, status: null }
+  }
+}
+
 async function writeJson<T>(
   path: string,
   method: "POST" | "PUT",
@@ -331,6 +373,50 @@ export async function getSchedulePlan(
   return response ?? fallbackPlans.find((plan) => plan.summary.id === planId) ?? null
 }
 
+export async function getSchedulePlanResult(
+  planId: string
+): Promise<DetailDataSourceResult<SchedulePlanDetail>> {
+  const response = await fetchJsonResult<SchedulePlanDetail>(
+    `/api/v1/schedule-plans/${planId}`
+  )
+
+  if (response.ok) {
+    return {
+      item: response.data,
+      source: "api",
+      failed: false,
+      message: "详情数据来自当前本地排班计划。",
+    }
+  }
+
+  if (response.status === 404) {
+    return {
+      item: null,
+      source: "missing",
+      failed: false,
+      message: "未找到该排班计划",
+    }
+  }
+
+  const fallback = fallbackPlans.find((plan) => plan.summary.id === planId) ?? null
+
+  if (fallback) {
+    return {
+      item: fallback,
+      source: "fallback",
+      failed: true,
+      message: "API 请求失败，已使用本地兜底数据，请确认后端服务状态后再用于验收判断。",
+    }
+  }
+
+  return {
+    item: null,
+    source: "missing",
+    failed: true,
+    message: "排班计划读取失败，且本地兜底数据中没有该计划。",
+  }
+}
+
 export async function getShiftDetails(
   filters: SchedulePlanListFilters = {}
 ): Promise<ShiftDetailRow[]> {
@@ -394,6 +480,7 @@ export async function getSchedulePlansResult(
   filters: SchedulePlanListFilters = {}
 ): Promise<DataSourceResult<SchedulePlanSummary>> {
   const searchParams = new URLSearchParams()
+  const hasFilters = Boolean(filters.query?.trim() || filters.status)
 
   if (filters.query?.trim()) {
     searchParams.set("query", filters.query.trim())
@@ -418,7 +505,7 @@ export async function getSchedulePlansResult(
       items: fallbackItems,
       source: "fallback",
       failed: true,
-      message: "API 请求失败，已使用本地示例数据",
+      message: "API 请求失败，已使用本地兜底数据，请确认后端服务状态后再用于验收判断。",
     }
   }
 
@@ -427,7 +514,9 @@ export async function getSchedulePlansResult(
       items: [],
       source: "api_empty",
       failed: false,
-      message: "当前暂无排班计划数据",
+      message: hasFilters
+        ? "当前筛选没有匹配的排班计划。"
+        : "当前暂无本地排班计划数据。",
     }
   }
 
@@ -435,7 +524,7 @@ export async function getSchedulePlansResult(
     items: response.items,
     source: "api",
     failed: false,
-    message: "数据来自后端 API",
+    message: "数据来自当前本地排班计划。",
   }
 }
 

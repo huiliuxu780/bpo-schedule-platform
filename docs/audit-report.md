@@ -5797,3 +5797,20 @@
 - 不可用处理验收通过：`unavail-20260511-001` 从生效中标记已处理，API 回读为 `status=resolved`，关联风险数量随之变化。
 - 可见文本检查未发现 `Gate`、`PM`、`Harness`、`Codex`、`自动排班`、`自动修复`、`生产实时` 或 `real-time`。
 - 非阻塞观察：dashboard dev runtime 有 Recharts 尺寸 warning，但浏览器快照中图表可见，console error 为 0。
+
+### 2026-06-26 - IM253 排班计划列表与详情运营可用性闭环
+
+#### 审计计划
+
+- 承接 IM252 runtime acceptance，把排班计划列表和详情页从“能操作”推进到“可解释数据来源、可验收空态、可定位下游问题”。
+- 采用两个串行 Qoder packet：列表页 readiness、详情页 readiness 与下游入口；Codex 负责 diff review、边界修正、Harness 状态、全量验证、提交和推送决策。
+- 不新增后端 API、数据库、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- `/schedule-plans` 改为消费 `getSchedulePlansResult()`，通过 `ReadinessBanner` 展示 API、API 空数据和本地兜底数据来源。
+- `SchedulePlanTable` 新增 `sourceTotal`，区分源数据为空的 `暂无排班计划数据` 与表格内筛选无结果的 `暂无符合条件的排班计划`。
+- `lib/schedule-plans.ts` 新增 `getSchedulePlanResult()` 和 detail result contract；Codex 修正 Qoder 初稿中“API 404 也 fallback”的漏洞，确保 404 保留 notFound 行为。
+- `/schedule-plans/[planId]` 改为消费 detail result，并在履约处理摘要中增加只读入口：查看关联风险、查看不可用记录。
+- 新增 `scripts/tests/schedule-plan-readiness-model.test.mjs`，覆盖列表/详情数据来源、空态、fallback、404 不 fallback、下游入口和内部术语边界。
+- Focused schedule-plan、lint、typecheck、diff check 和最终全量门禁结果见 IM253 Done Report。

@@ -104,7 +104,9 @@ test("SchedulePlanTable delegates main table structure to MainTableShell", () =>
   assert.match(source, /columns=\{columns\}/)
   assert.match(source, /data=\{filteredPlans\}/)
   assert.match(source, /columnLabels=\{columnLabels\}/)
-  assert.match(source, /emptyMessage="暂无符合条件的排班计划"/)
+  assert.match(source, /emptyMessage=\{emptyMessage\}/)
+  assert.match(source, /暂无排班计划数据/)
+  assert.match(source, /暂无符合条件的排班计划/)
   assert.match(source, /initialSorting=\{\[\{ id: "plan_date", desc: false \}\]\}/)
 
   assert.doesNotMatch(source, /useReactTable/)

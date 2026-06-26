@@ -200,9 +200,11 @@ const columns: ColumnDef<SchedulePlanSummary>[] = [
 export function SchedulePlanTable({
   plans,
   filterLabel,
+  sourceTotal,
 }: {
   plans: SchedulePlanSummary[]
   filterLabel?: string
+  sourceTotal?: number
 }) {
   "use no memo"
 
@@ -224,6 +226,11 @@ export function SchedulePlanTable({
   const hasActiveFilters =
     globalFilter.trim() !== "" || statusFilter !== "all" || gapFilter !== "all"
 
+  const sourceIsEmpty = sourceTotal === 0
+  const emptyMessage = sourceIsEmpty
+    ? "暂无排班计划数据"
+    : "暂无符合条件的排班计划"
+
   return (
     <MainTableShell
       title="排班计划"
@@ -233,7 +240,7 @@ export function SchedulePlanTable({
       columns={columns}
       data={filteredPlans}
       columnLabels={columnLabels}
-      emptyMessage="暂无符合条件的排班计划"
+      emptyMessage={emptyMessage}
       initialSorting={[{ id: "plan_date", desc: false }]}
       summary={
         <>

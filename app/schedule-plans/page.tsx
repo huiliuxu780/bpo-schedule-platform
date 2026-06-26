@@ -2,12 +2,13 @@ import Link from "next/link"
 
 import { AppShell } from "@/components/app-shell"
 import { MetricCard } from "@/components/metric-card"
+import { ReadinessBanner } from "@/components/readiness-banner"
 import { SchedulePlanTable } from "@/components/schedule-plan-table"
 import { SearchInputBar } from "@/components/search-input-bar"
 import { StatusFilterPills } from "@/components/status-filter-pills"
 import {
   formatCoverageRate,
-  getSchedulePlansWithFilters,
+  getSchedulePlansResult,
   schedulePlanStatusLabel,
   type SchedulePlanStatus,
 } from "@/lib/schedule-plans"
@@ -58,7 +59,8 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
   const params = await searchParams
   const query = params.query?.trim() ?? ""
   const status = parseStatus(params.status)
-  const plans = await getSchedulePlansWithFilters({ query, status })
+  const result = await getSchedulePlansResult({ query, status })
+  const plans = result.items
   const totalForecast = plans.reduce((sum, plan) => sum + plan.forecast_agents, 0)
   const totalScheduled = plans.reduce(
     (sum, plan) => sum + plan.scheduled_agents,
@@ -74,6 +76,11 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
       breadcrumbItems={[{ label: "排班计划" }]}
     >
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+        <ReadinessBanner
+          message={result.message}
+          hasData={plans.length > 0}
+          overallSource={result.source}
+        />
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm text-muted-foreground">
@@ -112,6 +119,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
         </section>
         <SchedulePlanTable
           plans={plans}
+          sourceTotal={plans.length}
           filterLabel={
             status ? `${schedulePlanStatusLabel(status)} / ${query || "全部"}` : query
           }

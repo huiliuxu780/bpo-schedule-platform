@@ -2,10 +2,11 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
+import { ReadinessBanner } from "@/components/readiness-banner"
 import { SchedulePlanIntervalTable } from "@/components/schedule-plan-interval-table"
 import {
   formatCoverageRate,
-  getSchedulePlan,
+  getSchedulePlanResult,
   getSchedulePlanLifecycleAction,
   getScheduleRisks,
   schedulePlanStatusLabel,
@@ -39,11 +40,13 @@ type PageProps = {
 export default async function SchedulePlanDetailPage({ params, searchParams }: PageProps) {
   const { planId } = await params
   const resolvedSearchParams = searchParams ? await searchParams : {}
-  const plan = await getSchedulePlan(planId)
+  const result = await getSchedulePlanResult(planId)
 
-  if (!plan) {
+  if (!result.item) {
     notFound()
   }
+
+  const plan = result.item
 
   const gapIntervals = plan.intervals.filter((item) => item.gap_agents > 0)
   const lifecycleAction = getSchedulePlanLifecycleAction(plan.summary.status)
@@ -60,6 +63,9 @@ export default async function SchedulePlanDetailPage({ params, searchParams }: P
     unavailabilityRows
   )
 
+  const riskQuery = encodeURIComponent(plan.summary.site_name)
+  const unavailQuery = encodeURIComponent(plan.summary.site_name)
+
   return (
     <AppShell
       title="排班计划详情"
@@ -69,6 +75,12 @@ export default async function SchedulePlanDetailPage({ params, searchParams }: P
       ]}
     >
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+        <ReadinessBanner
+          message={result.message}
+          hasData={result.item !== null}
+          overallSource={result.source === "missing" ? "api_empty" : result.source}
+        />
+
         {lifecycleFeedback ? (
           <Card
             className={
@@ -188,6 +200,18 @@ export default async function SchedulePlanDetailPage({ params, searchParams }: P
               value={`${fulfillmentIssueSummary.unavailabilityActive}`}
               description={`已处理 ${fulfillmentIssueSummary.unavailabilityResolved}`}
             />
+          </CardContent>
+          <CardContent className="flex flex-wrap items-center gap-3 pt-0">
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/schedule-risks?query=${riskQuery}`}>
+                查看关联风险
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/unavailability?query=${unavailQuery}`}>
+                查看不可用记录
+              </Link>
+            </Button>
           </CardContent>
         </Card>
 

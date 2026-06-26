@@ -2910,3 +2910,12 @@
   action: 运营链路运行时验收。
   status: `done`
   notes: 新增 `docs/design/operational-runtime-acceptance.md`，记录本地 runtime 浏览器验收结果。使用 backend `127.0.0.1:8000` 和 frontend `127.0.0.1:3000` 验证 `/dashboard` readiness、排班计划 `draft -> review_ready -> published` 生命周期、风险确认/处理、不可用处理、处理后 dashboard 汇总刷新和 API 回读。可见文本未发现 Gate/PM/Harness/Codex 等内部术语或生产实时/自动排班/自动修复过度承诺。仅记录一个非阻塞 dev console 观察：Recharts 尺寸 warning，但图表在浏览器快照中可见。未修改产品实现、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM253`
+  source_ids:
+    - `R952`
+  story_ids:
+    - `US872`
+  action: 排班计划列表与详情运营可用性闭环。
+  status: `done`
+  notes: Qoder 串行实现列表页 Packet A 与详情页 Packet B 后，Codex 复核并修正详情读取边界：`getSchedulePlanResult()` 现在区分 API 404 和 API 失败，404 不再回退到本地兜底计划。`/schedule-plans` 改用 result-style reader 和 `ReadinessBanner` 显示数据来源，表格区分源数据为空与筛选无结果；`/schedule-plans/[planId]` 显示详情数据来源并增加只读下游入口到关联风险和不可用记录。未修改后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
