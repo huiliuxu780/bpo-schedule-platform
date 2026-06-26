@@ -2901,3 +2901,12 @@
   action: 经营总览运营可用性闭环。
   status: `done`
   notes: 完成 `/dashboard` 数据来源状态和空态降级闭环。新增 result-style 前端读取函数区分 API 数据、API 空数据和本地兜底数据；新增 operational dashboard view model 和 `ReadinessBanner`，页面以业务文案说明当前数据来源；热力图和异常表补齐空态，异常表继续保留排班计划、风险明细、不可用记录下游入口。Codex 修正 Qoder 初稿中的硬编码颜色，改为 shadcn Alert 和语义 token，并补 mocked-fetch 单测直接覆盖 result-style reader。未新增后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM252`
+  source_ids:
+    - `R951`
+  story_ids:
+    - `US871`
+  action: 运营链路运行时验收。
+  status: `done`
+  notes: 新增 `docs/design/operational-runtime-acceptance.md`，记录本地 runtime 浏览器验收结果。使用 backend `127.0.0.1:8000` 和 frontend `127.0.0.1:3000` 验证 `/dashboard` readiness、排班计划 `draft -> review_ready -> published` 生命周期、风险确认/处理、不可用处理、处理后 dashboard 汇总刷新和 API 回读。可见文本未发现 Gate/PM/Harness/Codex 等内部术语或生产实时/自动排班/自动修复过度承诺。仅记录一个非阻塞 dev console 观察：Recharts 尺寸 warning，但图表在浏览器快照中可见。未修改产品实现、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

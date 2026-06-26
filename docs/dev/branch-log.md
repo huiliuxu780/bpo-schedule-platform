@@ -5544,3 +5544,23 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM252 Operational Runtime Acceptance
+
+- branch_name: `codex/im252-operational-runtime-acceptance`
+- base_main_commit: `stacked on pushed codex/im251-dashboard-operational-readiness at f8467cd`
+- stacked_on: `codex/im251-dashboard-operational-readiness`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: QA acceptance block for the local operational workflow. Browser-check `/dashboard`, schedule plan lifecycle, schedule risk handling, and unavailability handling on local runtime, then record evidence.
+- qoder_mode: `false; Codex executed runtime acceptance directly because this is a serial QA verification block.`
+- allowed_files_check: acceptance evidence docs, current Harness context, audit report, task log, and branch log only.
+- scope_diff_check: expected QA documentation and Harness traceability only; no product implementation, backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, or external integration changes.
+- runtime_result: backend `127.0.0.1:8000` and frontend `127.0.0.1:3000` started with `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/dev.sh`; Playwright browser checks covered dashboard, schedule lifecycle, risk handling, and unavailability handling with API readback.
+- check_result: Runtime acceptance completed with backend `127.0.0.1:8000` and frontend `127.0.0.1:3000`; `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 595 Node tests (594 pass, 1 skipped), shadcn check, lint, typecheck, Next build, and 241 backend unittest tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -5777,3 +5777,23 @@
 - `BpoHeatmap` 在无 rows/slots 时展示 `暂无可展示的人力缺口时段`，不渲染空 grid。
 - `DataTable` 区分真实无异常 `暂无异常记录` 和筛选无结果 `暂无符合条件的异常记录`。
 - dashboard focused、lint、typecheck、state check、diff check 和最终全量门禁结果见 IM251 Done Report。
+
+### 2026-06-26 - IM252 运营链路运行时验收
+
+#### 审计计划
+
+- 承接 IM248-IM251，不新增产品行为，只验证本地运营链路在真实 runtime 中可用。
+- 串行验证 `/dashboard` readiness、排班计划生命周期、风险处理、不可用处理和处理后 dashboard 汇总刷新。
+- 使用浏览器快照和 API 回读记录证据，并检查可见 UI 是否泄露内部术语或过度声明生产能力。
+- 不新增后端 API、数据库、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- 新增 `docs/design/operational-runtime-acceptance.md`。
+- Runtime 使用 backend `127.0.0.1:8000` 和 frontend `127.0.0.1:3000`，启动命令为 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/dev.sh`。
+- Dashboard 验收通过：readiness banner、指标卡、heatmap、异常表和下钻链接可见；处理后汇总从 `1 个已发布 / 待处理风险 10 / 生效不可用 2` 刷新为 `2 个已发布 / 待处理风险 8 / 生效不可用 1`。
+- 排班计划生命周期验收通过：`plan-20260511-suzhou-bosch-v1` 从草稿提交复核，再发布为已发布，成功反馈和动作收敛均可见。
+- 风险处理验收通过：`risk-plan-20260511-shanghai-bosch-v1-09:30` 从待处理确认，再标记已处理，API 回读为 `risk_status=resolved`。
+- 不可用处理验收通过：`unavail-20260511-001` 从生效中标记已处理，API 回读为 `status=resolved`，关联风险数量随之变化。
+- 可见文本检查未发现 `Gate`、`PM`、`Harness`、`Codex`、`自动排班`、`自动修复`、`生产实时` 或 `real-time`。
+- 非阻塞观察：dashboard dev runtime 有 Recharts 尺寸 warning，但浏览器快照中图表可见，console error 为 0。
