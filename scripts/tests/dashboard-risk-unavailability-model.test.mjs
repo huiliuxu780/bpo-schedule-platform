@@ -50,6 +50,9 @@ test("schedule risk helpers filter rows and summarize risk exposure", () => {
     high: 1,
     medium: 1,
     low: 0,
+    open: 0,
+    confirmed: 0,
+    resolved: 2,
     totalGap: 3,
     affectedUnavailability: 1,
   });

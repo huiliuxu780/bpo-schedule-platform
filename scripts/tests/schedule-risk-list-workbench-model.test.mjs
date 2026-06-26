@@ -217,12 +217,36 @@ test("summarizeScheduleRiskRows handles empty input", () => {
   assert.equal(summary.affectedUnavailability, 0);
 });
 
+test("getScheduleRisksResult distinguishes source empty from filtered empty messaging", async () => {
+  const content = await readFile("lib/schedule-plans.ts", "utf-8");
+  assert.ok(
+    content.includes("当前暂无履约风险数据。"),
+    "unfiltered empty state uses source-empty wording",
+  );
+  assert.ok(
+    content.includes("当前筛选没有匹配的履约风险。"),
+    "filtered empty state uses filtered-empty wording",
+  );
+});
+
 // UI structure tests
 
 test("/schedule-risks/page.tsx imports and calls getScheduleRisksResult", async () => {
   const content = await readFile("app/schedule-risks/page.tsx", "utf-8");
   assert.ok(content.includes("getScheduleRisksResult"), "page imports getScheduleRisksResult");
   assert.ok(content.includes("getScheduleRisksResult("), "page calls getScheduleRisksResult");
+});
+
+test("/schedule-risks/page.tsx preserves filtered empty state instead of source-empty state", async () => {
+  const content = await readFile("app/schedule-risks/page.tsx", "utf-8");
+  assert.ok(
+    content.includes("const hasPageFilters = Boolean(query || status || level)"),
+    "page tracks whether URL filters are active",
+  );
+  assert.ok(
+    content.includes("sourceTotal={hasPageFilters ? undefined : sourceRisks.length}"),
+    "page avoids reporting source-empty when URL filters return no rows",
+  );
 });
 
 test("/schedule-risks/page.tsx renders SearchInputBar", async () => {

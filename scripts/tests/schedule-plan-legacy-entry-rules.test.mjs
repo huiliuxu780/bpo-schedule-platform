@@ -42,7 +42,7 @@ test("schedule plan detail keeps detail content local to the plan page", async (
   assert.equal(source.includes('href="/unavailability'), false)
 })
 
-test("orphaned legacy planning link components are removed", async () => {
+test("orphaned legacy planning link components are removed while schedule risk table remains valid", async () => {
   await assert.rejects(access(mvpFlowSummaryPath))
-  await assert.rejects(access(scheduleRiskTablePath))
+  await assert.doesNotReject(access(scheduleRiskTablePath))
 })

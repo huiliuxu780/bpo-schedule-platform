@@ -2937,3 +2937,12 @@
   action: 排班计划详情履约预览。
   status: `done`
   notes: Qoder 基于 `codex/im254-dashboard-visual-polish` 创建 `codex/im255-schedule-plan-fulfillment-preview` 并实现中等包后，Codex 复核并修正详情链接编码、风险原因/建议展示、不可用备注展示和可见文案。`/schedule-plans/[planId]` 的履约处理摘要现在展示最多 3 条关联风险预览和最多 3 条重叠不可用记录预览，保留原有汇总指标和列表入口，不新增后端、不自动重算覆盖、不引入审批/批量/导出/权限等生产能力；current queue 与 active tasks 仍为空。
+
+- task_id: `IM256`
+  source_ids:
+    - `R955`
+  story_ids:
+    - `US875`
+  action: 履约风险列表工作台。
+  status: `done`
+  notes: Qoder 基于 `codex/im255-schedule-plan-fulfillment-preview` 创建 `codex/im256-schedule-risk-list-workbench` 并实现 `/schedule-risks` 中等功能包后，Codex 复核实际 diff，修正筛选空态误判和 legacy guard 测试质量。`/schedule-risks` 现在补齐从经营总览/排班计划预览进入风险列表、再进入风险详情和计划详情的本地 MVP 操作链路，支持搜索、处理状态筛选、风险等级筛选、摘要指标、编码后的详情链接和数据来源提示。未新增后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。

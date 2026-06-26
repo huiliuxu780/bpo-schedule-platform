@@ -532,8 +532,9 @@ export async function getScheduleRisksResult(
   query = ""
 ): Promise<DataSourceResult<ScheduleRiskRow>> {
   const searchParams = new URLSearchParams()
+  const hasQuery = Boolean(query.trim())
 
-  if (query.trim()) {
+  if (hasQuery) {
     searchParams.set("query", query.trim())
   }
 
@@ -558,7 +559,9 @@ export async function getScheduleRisksResult(
       items: [],
       source: "api_empty",
       failed: false,
-      message: "当前暂无排班风险数据",
+      message: hasQuery
+        ? "当前筛选没有匹配的履约风险。"
+        : "当前暂无履约风险数据。",
     }
   }
 

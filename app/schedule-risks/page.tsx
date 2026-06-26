@@ -94,6 +94,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
 
   const result = await getScheduleRisksResult(query)
   const sourceRisks = result.items
+  const hasPageFilters = Boolean(query || status || level)
 
   const filteredRisks = filterScheduleRiskRows(sourceRisks, {
     query,
@@ -181,7 +182,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
         </section>
         <ScheduleRiskTable
           risks={filteredRisks}
-          sourceTotal={sourceRisks.length}
+          sourceTotal={hasPageFilters ? undefined : sourceRisks.length}
           filterLabel={filterLabel || undefined}
         />
       </main>

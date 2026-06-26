@@ -5846,3 +5846,22 @@
 - Codex 修正 Qoder 初稿中的裸动态链接，改为 `encodeURIComponent()`；同时补齐风险建议和不可用备注展示，去掉新引入的箭头符号。
 - 新增 `scripts/tests/schedule-plan-fulfillment-preview-model.test.mjs`，覆盖过滤、排序、截断、剩余数量、空态、详情链接和内部术语边界。
 - Focused schedule-plan、typecheck、diff check 和最终全量门禁结果见 IM255 Done Report。
+
+### 2026-06-27 - IM256 履约风险列表工作台
+
+#### 审计计划
+
+- 承接 IM255 的排班计划详情履约预览，补齐 `/schedule-risks` 列表页，使经营总览、排班计划详情、风险列表和风险详情形成完整本地 MVP 导航链路。
+- 采用一个完整需求功能包：风险列表页、风险表格、筛选/汇总模型和 focused tests 一起完成，不拆成文件级碎片。
+- Qoder 执行功能实现；Codex 负责实际 diff review、边界修正、Harness 状态、全量验证、提交和推送决策。
+- 不新增后端 API、数据库、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- 新增 `/schedule-risks` 页面，使用 `AppShell`、`ReadinessBanner`、`SearchInputBar`、`StatusFilterPills` 和 `MetricCard` 展示履约风险工作台。
+- 新增 `components/schedule-risk-table.tsx`，基于 `MainTableShell` 展示风险日期、时段、项目、职场、等级、处理状态、缺口、不可用影响、原因和操作入口。
+- `components/data-table-model.ts` 扩展 `filterScheduleRiskRows()` 和 `summarizeScheduleRiskRows()`，支持 query/status/level 筛选和 open/confirmed/resolved 计数。
+- Codex 修正 Qoder 初稿中 URL 筛选空结果会被误判为源数据为空的问题；`getScheduleRisksResult()` 现在区分源空态和筛选空态，页面在有 URL 筛选时不会向表格传入 source-empty 信号。
+- Codex 修正 legacy guard 测试，从注释说明改为真实断言：旧 `mvp-flow-summary` 仍应不存在，而新的 `schedule-risk-table.tsx` 是有效工作台组件。
+- Qoder 违反任务约束提前创建了本地提交；Codex 未直接信任该提交，重新审查实际 diff 并追加修正后再执行最终验证。
+- Focused schedule-risk、typecheck、diff check 和最终全量门禁结果见 IM256 Done Report。
