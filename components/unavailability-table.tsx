@@ -186,7 +186,13 @@ const columns: ColumnDef<UnavailabilityRow>[] = [
   },
 ]
 
-export function UnavailabilityTable({ rows }: { rows: UnavailabilityRow[] }) {
+export function UnavailabilityTable({
+  emptyMessage = "暂无符合条件的不可用记录",
+  rows,
+}: {
+  emptyMessage?: string
+  rows: UnavailabilityRow[]
+}) {
   "use no memo"
 
   const [globalFilter, setGlobalFilter] = React.useState("")
@@ -209,7 +215,7 @@ export function UnavailabilityTable({ rows }: { rows: UnavailabilityRow[] }) {
       columns={columns}
       data={filteredRows}
       columnLabels={columnLabels}
-      emptyMessage="暂无符合条件的不可用记录"
+      emptyMessage={emptyMessage}
       initialSorting={[{ id: "unavailable_date", desc: false }]}
       variant="embedded"
       summary={

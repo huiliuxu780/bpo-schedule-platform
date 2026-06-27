@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
 import { MetricCard } from "@/components/metric-card"
+import { ReadinessBanner } from "@/components/readiness-banner"
 import { ScheduleRiskShiftTable } from "@/components/schedule-risk-shift-table"
 import { ScheduleRiskUnavailabilityTable } from "@/components/schedule-risk-unavailability-table"
 import { Badge } from "@/components/ui/badge"
@@ -15,7 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
-  getScheduleRisk,
+  getScheduleRiskResult,
   getScheduleRiskActions,
   getShiftDetails,
   scheduleRiskLevelLabel,
@@ -38,7 +39,8 @@ type PageProps = {
 export default async function ScheduleRiskDetailPage({ params, searchParams }: PageProps) {
   const { riskId } = await params
   const resolvedSearchParams = searchParams ? await searchParams : {}
-  const risk = await getScheduleRisk(decodeURIComponent(riskId))
+  const result = await getScheduleRiskResult(decodeURIComponent(riskId))
+  const risk = result.item
 
   if (!risk) {
     notFound()
@@ -69,6 +71,13 @@ export default async function ScheduleRiskDetailPage({ params, searchParams }: P
   return (
     <AppShell title="风险明细">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+        <ReadinessBanner
+          message={result.message}
+          hasData={true}
+          overallSource={
+            result.source === "missing" ? "api_empty" : result.source
+          }
+        />
         {riskFeedback ? (
           <Card
             className={

@@ -5897,3 +5897,20 @@
 - Runtime acceptance 确认 10 个核心路由均返回 HTTP 200，并确认 `/shift-details`、`/schedule-plans/new`、`/schedule-plans/[planId]/edit` 均不是死链接。
 - 新增一致性 gap：`/schedule-risks/[riskId]` 与 `/unavailability` 相关页面一样缺少数据源提示，可作为下一轮中等功能包处理。
 - 未新增产品代码、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+### 2026-06-27 - IM259 运营详情页数据源一致性
+
+#### 审计计划
+
+- 承接 IM258 的 runtime gap，把剩余本地运营页的数据来源提示统一到 `ReadinessBanner` 和 result-style reader 模式。
+- 采用一个完整中等 Qoder packet，覆盖 `/schedule-risks/[riskId]`、`/unavailability`、`/unavailability/[unavailabilityId]`、`/shift-details`，不拆成页面级碎片。
+- 不新增后端 API、数据库、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- `lib/schedule-plans.ts` 新增 `getShiftDetailsResult()` 和 `getScheduleRiskResult()`，保留原 plain reader 兼容现有调用。
+- `lib/unavailability.ts` 新增 `getUnavailabilityRecordResult()`，并让 `getUnavailabilityResult()` 区分筛选空和源空文案。
+- 四个页面新增 `ReadinessBanner`，并改用 result-style reader；详情页保留 missing record 的 `notFound()` 行为。
+- Codex 修正 Qoder 初稿中列表表格空态不足的问题：`UnavailabilityTable` 和 `ShiftDetailsTable` 支持页面传入 source-aware empty message，避免源数据为空和筛选为空混用同一句。
+- 新增 `scripts/tests/im259-operational-source-consistency.test.mjs`，覆盖 result reader、页面接入、notFound 保留、source-aware empty message 和禁用术语。
+- Focused `node --test scripts/tests/im259-operational-source-consistency.test.mjs scripts/tests/*schedule*risk*.test.mjs scripts/tests/*unavailability*.test.mjs scripts/tests/dashboard-risk-unavailability-model.test.mjs` 通过 35 tests；`npm run typecheck` 和 `git diff --check` 通过。最终全量门禁结果见 IM259 Done Report。

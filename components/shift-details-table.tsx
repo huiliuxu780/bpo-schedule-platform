@@ -200,12 +200,18 @@ const columns: ColumnDef<ShiftDetailRow>[] = [
   },
 ]
 
-export function ShiftDetailsTable({ rows }: { rows: ShiftDetailRow[] }) {
+export function ShiftDetailsTable({
+  emptyMessage = "暂无符合条件的班次明细",
+  rows,
+}: {
+  emptyMessage?: string
+  rows: ShiftDetailRow[]
+}) {
   return (
     <SimpleTable
       columns={columns}
       data={rows}
-      emptyMessage="暂无符合条件的班次明细"
+      emptyMessage={emptyMessage}
       defaultSorting={[{ id: "plan_date", desc: false }]}
     />
   )

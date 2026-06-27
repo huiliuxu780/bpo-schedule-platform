@@ -5678,3 +5678,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `branch already pushed by Qoder; Codex corrective commit requires push to repair remote evidence`
 - blocked_reason: `N/A`
+
+### IM259 Operational Source Consistency
+
+- branch_name: `codex/im259-operational-source-consistency`
+- base_main_commit: `stacked on pushed codex/im258-operational-runtime-acceptance at 263589e`
+- stacked_on: `codex/im258-operational-runtime-acceptance`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium frontend-scaffold block for operational data-source consistency. Add result-style source messaging to schedule risk detail, unavailability list/detail, and shift details.
+- qoder_mode: `true; Qoder implemented the medium packet and obeyed no-commit/no-push instructions. Codex reviewed the staged diff, fixed source-aware empty-state gaps, owns Harness updates, final verification, local commit, and push decision.`
+- allowed_files_check: four operational pages, schedule plan/unavailability client files, small table empty-message props, focused IM259 test, current Harness context, audit report, task log, and branch log only.
+- scope_diff_check: expected source messaging model/UI/test and traceability updates only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, or external integration changes.
+- check_result: Focused `node --test scripts/tests/im259-operational-source-consistency.test.mjs` passed with 17 tests. Focused related `node --test scripts/tests/im259-operational-source-consistency.test.mjs scripts/tests/*schedule*risk*.test.mjs scripts/tests/*unavailability*.test.mjs scripts/tests/dashboard-risk-unavailability-model.test.mjs` passed with 35 tests. `npm run typecheck` and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 697 Node tests (696 pass, 1 skipped), shadcn check, lint, typecheck, Next build, 241 backend unittest tests OK, and project Harness check passed.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

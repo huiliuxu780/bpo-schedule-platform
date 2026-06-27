@@ -156,6 +156,7 @@ export async function getUnavailabilityResult(
   filters: UnavailabilityFilters = {}
 ): Promise<UnavailabilityDataSourceResult> {
   const searchParams = new URLSearchParams()
+  const hasFilters = Boolean(filters.query?.trim() || filters.status)
 
   if (filters.query?.trim()) {
     searchParams.set("query", filters.query.trim())
@@ -189,7 +190,9 @@ export async function getUnavailabilityResult(
       items: [],
       source: "api_empty",
       failed: false,
-      message: "当前暂无不可用记录",
+      message: hasFilters
+        ? "当前筛选没有匹配的不可用记录。"
+        : "当前暂无不可用记录。",
     }
   }
 
@@ -207,6 +210,45 @@ export async function getUnavailabilityRecord(
   const rows = await getUnavailability()
 
   return rows.find((row) => row.unavailability_id === unavailabilityId) ?? null
+}
+
+export type UnavailabilityDetailDataSourceResult = {
+  item: UnavailabilityRow | null
+  source: "api" | "fallback" | "missing"
+  failed: boolean
+  message: string
+}
+
+export async function getUnavailabilityRecordResult(
+  unavailabilityId: string
+): Promise<UnavailabilityDetailDataSourceResult> {
+  const allResult = await getUnavailabilityResult()
+  const item = allResult.items.find((row) => row.unavailability_id === unavailabilityId) ?? null
+
+  if (item === null) {
+    if (allResult.source === "fallback") {
+      return {
+        item: null,
+        source: allResult.source,
+        failed: true,
+        message: "API 请求失败，已使用本地示例数据，但未找到该不可用记录。",
+      }
+    }
+
+    return {
+      item: null,
+      source: "missing",
+      failed: false,
+      message: "未找到该不可用记录。",
+    }
+  }
+
+  return {
+    item,
+    source: allResult.source === "api_empty" ? "api" : allResult.source,
+    failed: allResult.failed,
+    message: allResult.message,
+  }
 }
 
 export async function resolveUnavailability(

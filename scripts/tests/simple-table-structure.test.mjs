@@ -211,7 +211,8 @@ test("ShiftDetailsTable delegates rendering to SimpleTable", () => {
   assert.match(source, /<SimpleTable/)
   assert.match(source, /columns=\{columns\}/)
   assert.match(source, /data=\{rows\}/)
-  assert.match(source, /emptyMessage="暂无符合条件的班次明细"/)
+  assert.match(source, /emptyMessage = "暂无符合条件的班次明细"/)
+  assert.match(source, /emptyMessage=\{emptyMessage\}/)
   assert.match(source, /defaultSorting=\{\[\{ id: "plan_date", desc: false \}\]\}/)
 
   assert.doesNotMatch(source, /useReactTable/)

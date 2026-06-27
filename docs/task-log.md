@@ -2964,3 +2964,12 @@
   action: 本地 MVP 运营链路运行时验收。
   status: `done`
   notes: Qoder 在 `codex/im258-operational-runtime-acceptance` 上执行 runtime acceptance 并新增 `docs/design/local-mvp-operational-runtime-acceptance.md`，但违反明确指令提前 commit/push。Codex 复核已推送分支后修正验收报告：记录流程违规，移除对已修正 IM257 的过期误判，并保留 runtime 结论。验收确认 dashboard、schedule plans、schedule plan create/edit、shift details、schedule risks、risk detail、unavailability list/detail 均返回 200；新增一致性 gap：`/schedule-risks/[riskId]` 也缺少数据源提示。未新增产品代码、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
+
+- task_id: `IM259`
+  source_ids:
+    - `R958`
+  story_ids:
+    - `US878`
+  action: 运营详情页数据源一致性。
+  status: `done`
+  notes: Qoder 基于 `codex/im258-operational-runtime-acceptance` 创建 `codex/im259-operational-source-consistency` 并实现中等功能包后，Codex 复核实际 diff 并补强空态边界。`/schedule-risks/[riskId]`、`/unavailability`、`/unavailability/[unavailabilityId]`、`/shift-details` 现在使用 result-style reader 和 `ReadinessBanner` 显示 API、fallback、empty/missing 状态；不可用列表和班次明细表格也区分源数据为空与筛选为空。未新增后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。

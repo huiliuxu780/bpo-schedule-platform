@@ -2,6 +2,7 @@ import Link from "next/link"
 
 import { AppShell } from "@/components/app-shell"
 import { MetricCard } from "@/components/metric-card"
+import { ReadinessBanner } from "@/components/readiness-banner"
 import { SearchInputBar } from "@/components/search-input-bar"
 import { StatusFilterPills } from "@/components/status-filter-pills"
 import { UnavailabilityTable } from "@/components/unavailability-table"
@@ -15,7 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
-  getUnavailability,
+  getUnavailabilityResult,
   unavailabilityStatusLabel,
   type UnavailabilityStatus,
 } from "@/lib/unavailability"
@@ -60,7 +61,9 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
   const params = await searchParams
   const query = params.query?.trim() ?? ""
   const status = parseStatus(params.status)
-  const rows = await getUnavailability({ query, status })
+  const result = await getUnavailabilityResult({ query, status })
+  const rows = result.items
+  const hasPageFilters = Boolean(query || status)
   const activeRows = rows.filter((row) => row.status === "active")
   const affectedIntervals = rows.reduce(
     (sum, row) => sum + row.affected_intervals,
@@ -72,6 +75,11 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
   return (
     <AppShell title="不可用管理">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+        <ReadinessBanner
+          message={result.message}
+          hasData={rows.length > 0}
+          overallSource={result.source}
+        />
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-lg font-semibold">不可用管理</h1>
@@ -119,9 +127,16 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
             <Badge variant="outline">不可用</Badge>
           </CardHeader>
           <CardContent>
-            <UnavailabilityTable rows={rows} />
-          </CardContent>
-        </Card>
+          <UnavailabilityTable
+            emptyMessage={
+              hasPageFilters
+                ? "暂无符合条件的不可用记录"
+                : "暂无不可用记录"
+            }
+            rows={rows}
+          />
+        </CardContent>
+      </Card>
       </main>
     </AppShell>
   )

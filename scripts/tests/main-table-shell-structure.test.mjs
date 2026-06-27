@@ -134,7 +134,8 @@ test("UnavailabilityTable delegates main table structure to MainTableShell", () 
   assert.match(source, /columns=\{columns\}/)
   assert.match(source, /data=\{filteredRows\}/)
   assert.match(source, /columnLabels=\{columnLabels\}/)
-  assert.match(source, /emptyMessage="暂无符合条件的不可用记录"/)
+  assert.match(source, /emptyMessage = "暂无符合条件的不可用记录"/)
+  assert.match(source, /emptyMessage=\{emptyMessage\}/)
   assert.match(
     source,
     /initialSorting=\{\[\{ id: "unavailable_date", desc: false \}\]\}/

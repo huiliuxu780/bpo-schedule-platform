@@ -2,6 +2,7 @@ import Link from "next/link"
 
 import { AppShell } from "@/components/app-shell"
 import { MetricCard } from "@/components/metric-card"
+import { ReadinessBanner } from "@/components/readiness-banner"
 import { SearchInputBar } from "@/components/search-input-bar"
 import { ShiftDetailsTable } from "@/components/shift-details-table"
 import { StatusFilterPills } from "@/components/status-filter-pills"
@@ -16,7 +17,7 @@ import {
 } from "@/components/ui/card"
 import {
   formatCoverageRate,
-  getShiftDetails,
+  getShiftDetailsResult,
   schedulePlanStatusLabel,
   type SchedulePlanStatus,
 } from "@/lib/schedule-plans"
@@ -66,7 +67,9 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
   const params = await searchParams
   const query = params.query?.trim() ?? ""
   const status = parseStatus(params.status)
-  const rows = await getShiftDetails({ query, status })
+  const result = await getShiftDetailsResult({ query, status })
+  const rows = result.items
+  const hasPageFilters = Boolean(query || status)
   const totalGap = rows.reduce((sum, row) => sum + row.gap_agents, 0)
   const gapRows = rows.filter((row) => row.gap_agents > 0)
   const maxGap = rows.reduce((max, row) => Math.max(max, row.gap_agents), 0)
@@ -78,6 +81,11 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
   return (
     <AppShell title="班次明细">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+        <ReadinessBanner
+          message={result.message}
+          hasData={rows.length > 0}
+          overallSource={result.source}
+        />
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-lg font-semibold">班次明细</h1>
@@ -125,7 +133,14 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
             <Badge variant="outline">明细</Badge>
           </CardHeader>
           <CardContent>
-            <ShiftDetailsTable rows={rows} />
+            <ShiftDetailsTable
+              emptyMessage={
+                hasPageFilters
+                  ? "暂无符合条件的班次明细"
+                  : "暂无班次明细数据"
+              }
+              rows={rows}
+            />
           </CardContent>
         </Card>
       </main>

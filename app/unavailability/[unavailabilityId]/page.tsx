@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
 import { MetricCard } from "@/components/metric-card"
+import { ReadinessBanner } from "@/components/readiness-banner"
 import { UnavailabilityImpactRiskTable } from "@/components/unavailability-impact-risk-table"
 import { UnavailabilityImpactShiftTable } from "@/components/unavailability-impact-shift-table"
 import { Badge } from "@/components/ui/badge"
@@ -20,7 +21,7 @@ import {
 } from "@/lib/schedule-plans"
 import {
   getUnavailabilityAction,
-  getUnavailabilityRecord,
+  getUnavailabilityRecordResult,
   summarizeUnavailabilityActionFeedback,
   unavailabilityStatusLabel,
 } from "@/lib/unavailability"
@@ -38,7 +39,8 @@ type PageProps = {
 export default async function UnavailabilityImpactPage({ params, searchParams }: PageProps) {
   const { unavailabilityId } = await params
   const resolvedSearchParams = searchParams ? await searchParams : {}
-  const record = await getUnavailabilityRecord(decodeURIComponent(unavailabilityId))
+  const result = await getUnavailabilityRecordResult(decodeURIComponent(unavailabilityId))
+  const record = result.item
 
   if (!record) {
     notFound()
@@ -77,6 +79,13 @@ export default async function UnavailabilityImpactPage({ params, searchParams }:
   return (
     <AppShell title="不可用影响定位">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+        <ReadinessBanner
+          message={result.message}
+          hasData={true}
+          overallSource={
+            result.source === "missing" ? "api_empty" : result.source
+          }
+        />
         {unavailabilityFeedback ? (
           <Card
             className={

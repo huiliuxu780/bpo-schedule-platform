@@ -438,6 +438,90 @@ export async function getShiftDetails(
   return response?.items ?? filterFallbackShiftDetails(flattenFallbackShiftDetails(), filters)
 }
 
+export async function getShiftDetailsResult(
+  filters: SchedulePlanListFilters = {}
+): Promise<DataSourceResult<ShiftDetailRow>> {
+  const searchParams = new URLSearchParams()
+  const hasFilters = Boolean(filters.query?.trim() || filters.status)
+
+  if (filters.query?.trim()) {
+    searchParams.set("query", filters.query.trim())
+  }
+
+  if (filters.status) {
+    searchParams.set("status", filters.status)
+  }
+
+  const path = `/api/v1/shift-details${
+    searchParams.size > 0 ? `?${searchParams.toString()}` : ""
+  }`
+
+  const response = await fetchJson<ShiftDetailListResponse>(path)
+
+  if (response === null) {
+    const fallbackItems = filterFallbackShiftDetails(
+      flattenFallbackShiftDetails(),
+      filters
+    )
+    return {
+      items: fallbackItems,
+      source: "fallback",
+      failed: true,
+      message: "API 请求失败，已使用本地示例数据",
+    }
+  }
+
+  if (response.items.length === 0) {
+    return {
+      items: [],
+      source: "api_empty",
+      failed: false,
+      message: hasFilters
+        ? "当前筛选没有匹配的班次明细。"
+        : "当前暂无班次明细数据。",
+    }
+  }
+
+  return {
+    items: response.items,
+    source: "api",
+    failed: false,
+    message: "班次明细数据来自后端 API",
+  }
+}
+
+export async function getScheduleRiskResult(
+  riskId: string
+): Promise<DetailDataSourceResult<ScheduleRiskRow>> {
+  const result = await getScheduleRisksResult()
+  const item = result.items.find((row) => row.risk_id === riskId) ?? null
+
+  if (item === null) {
+    if (result.source === "fallback") {
+      return {
+        item: null,
+        source: result.source,
+        failed: true,
+        message: "API 请求失败，已使用本地示例数据，但未找到该风险记录。",
+      }
+    }
+
+    return {
+      item: null,
+      source: "missing",
+      failed: false,
+      message: "未找到该履约风险记录。",
+    }
+  }
+
+  return {
+    item,
+    source: result.source === "api_empty" ? "api" : result.source,
+    failed: result.failed,
+    message: result.message,
+  }
+}
+
 export async function getDemandPlans(query = ""): Promise<DemandPlanRow[]> {
   const searchParams = new URLSearchParams()
 

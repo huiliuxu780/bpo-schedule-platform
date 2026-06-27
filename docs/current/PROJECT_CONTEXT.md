@@ -12,7 +12,7 @@ The active product boundary remains local MVP and operator-facing workflow scaff
 
 ## Current Queue
 
-No executable story is currently queued. IM257 completed the read-only local MVP operational workflow closeout after IM250-IM256. The next implementation should not assume missing routes without checking the current codebase; `/shift-details`, `/schedule-plans/new`, and `/schedule-plans/[planId]/edit` already exist and should be treated as acceptance/hardening candidates, not greenfield missing pages.
+No executable story is currently queued. IM259 completed operational data-source consistency for the remaining local MVP operational pages. The next implementation should not assume missing routes without checking the current codebase; `/shift-details`, `/schedule-plans/new`, and `/schedule-plans/[planId]/edit` already exist and should be treated as acceptance/hardening candidates, not greenfield missing pages.
 
 IM240 completed the PM-confirmed review-case live runtime smoke on the current branch using an isolated `.local/im240-runtime-smoke.db` runtime artifact. The smoke used backend `127.0.0.1:8000` and frontend `127.0.0.1:3002` because the existing `3000` BPO Next dev process was stale and unresponsive. It did not add product features or modify business UI/backend implementation beyond acceptance traceability.
 
@@ -44,6 +44,7 @@ IM243 completed the PM-confirmed manual browser walkthrough for that remaining g
 - IM256 completed schedule-risk list workbench: `/schedule-risks` now provides the missing operator list between dashboard/schedule-plan previews and risk detail pages, with search, status/level filters, summary cards, encoded risk/plan links, data-source messaging, and empty-state distinction.
 - IM257 completed the local MVP operational workflow closeout. Codex corrected Qoder's initial closeout findings where already-existing routes (`/shift-details`, `/schedule-plans/new`, `/schedule-plans/[planId]/edit`) had been incorrectly described as missing; the current remaining gaps are runtime acceptance, data-source consistency, and draft-form hardening rather than route creation from zero.
 - IM258 completed local MVP runtime acceptance on the IM257 baseline. Qoder violated the no-commit/no-push instruction, but Codex reviewed the pushed branch and corrected the evidence document. Runtime acceptance confirmed the corrected IM257 baseline and added one consistency gap: `/schedule-risks/[riskId]` also lacks data-source messaging.
+- IM259 completed operational source consistency: `/schedule-risks/[riskId]`, `/unavailability`, `/unavailability/[unavailabilityId]`, and `/shift-details` now use result-style readers and `ReadinessBanner`; Codex also tightened list empty-state wording for source-empty vs filtered-empty cases.
 - Harness state optimization is now the active maintenance concern: current context must stay compact, default reads must use the current layer, and history must be queried on demand through registry/legacy references.
 
 ## Current Execution Rules
@@ -71,4 +72,4 @@ IM243 completed the PM-confirmed manual browser walkthrough for that remaining g
 
 ## Current Recommendation
 
-Recommended next medium-sized candidates are: (1) operational detail-page data-source consistency for schedule risk detail and unavailability list/detail using the existing ReadinessBanner pattern, (2) draft create/edit hardening based on IM258 runtime findings, or (3) dashboard filter/trend planning before any implementation. Do not claim production readiness, add runtime automation, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.
+Recommended next medium-sized candidates are: (1) draft create/edit hardening based on runtime findings, (2) dashboard filter/trend product planning before implementation, or (3) a fresh browser acceptance pass if PM wants visual evidence after IM259. Do not claim production readiness, add runtime automation, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.
