@@ -5986,3 +5986,19 @@
 - Codex 让计划状态筛选不仅影响计划卡片和热力图，也通过 plan id / 项目职场日期上下文约束风险和不可用记录，避免总览口径不一致。
 - 趋势图保留静态本地样本边界说明，避免暗示实时数据或自动能力。
 - 新增 `scripts/tests/dashboard-operational-filter-console.test.mjs`，从字符串结构检查扩展到实际 view model 行为断言，覆盖项目、职场、计划状态对最终模型的影响，并明确禁止表格级筛选进入全局筛选栏。
+
+### 2026-06-28 - IM264 经营总览下钻入口一致性
+
+#### 审计计划
+
+- 承接 IM263 的 dashboard 筛选边界修正，把本轮限定为一个中等产品块：经营总览必须能稳定进入既有运营工作台，而不是继续堆叠新的顶部筛选。
+- Codex 直接实现本轮能力，不拆给 Qoder；不新增后端 API、数据库、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+- 下钻范围只覆盖现有页面：`/schedule-plans`、`/shift-details`、`/schedule-risks`、`/unavailability`。异常表原有行级链接保持不变。
+
+#### 执行结果
+
+- `lib/dashboard.ts` 新增 dashboard drilldown link model，把项目、职场合并为目标页支持的 `query` 参数，并把计划状态映射为目标页支持的 `status` 参数。
+- 四张指标卡分别增加下钻入口：排班计划总数到 `/schedule-plans`，平均覆盖率到 `/shift-details`，待处理风险到 `/schedule-risks?status=open`，生效不可用到 `/unavailability?status=active`。
+- `BpoHeatmap` 新增卡片级下钻入口“查看班次明细”，避免把每个热力格子都变成链接。
+- `app/dashboard/page.tsx` 只传入 view model 的下钻入口，不新增新的 dashboard header filter。HTTP 页面检查确认 `查看计划`、`查看班次`、`查看风险`、`查看不可用`、`查看班次明细` 均渲染，且顶部不再出现 `风险等级` / `问题状态`。
+- 新增 `scripts/tests/dashboard-drilldown-consistency.test.mjs`，覆盖默认链接、筛选上下文保留、指标卡下钻、热力图下钻、页面接入和禁用术语。

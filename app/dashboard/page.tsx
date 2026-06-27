@@ -87,6 +87,7 @@ export default async function DashboardPage({
           <BpoHeatmap
             rows={viewModel.heatmapRows}
             slots={viewModel.heatmapSlots}
+            drilldown={viewModel.heatmapDrilldown}
           />
         </section>
         <section className="grid gap-4 px-4 lg:px-6">

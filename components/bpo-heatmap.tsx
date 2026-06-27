@@ -1,6 +1,9 @@
+import Link from "next/link"
 import * as React from "react"
+import { ArrowRight } from "lucide-react"
 
 import { heatmapRows as fallbackRows, heatmapSlots as fallbackSlots } from "@/app/dashboard/data"
+import type { DashboardDrilldownLink } from "@/lib/dashboard"
 import { summarizeHeatmapRows } from "@/components/data-table-model"
 import {
   Card,
@@ -9,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 function heatClass(value: number) {
@@ -30,9 +34,10 @@ function heatClass(value: number) {
 type BpoHeatmapProps = {
   rows?: Array<{ day: string; slots: number[] }>
   slots?: string[]
+  drilldown?: DashboardDrilldownLink
 }
 
-export function BpoHeatmap({ rows, slots }: BpoHeatmapProps = {}) {
+export function BpoHeatmap({ rows, slots, drilldown }: BpoHeatmapProps = {}) {
   const displayRows = rows ?? fallbackRows
   const displaySlots = slots ?? fallbackSlots
   const summary = summarizeHeatmapRows(displayRows, displaySlots)
@@ -45,15 +50,25 @@ export function BpoHeatmap({ rows, slots }: BpoHeatmapProps = {}) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>时段人力缺口</CardTitle>
-        <CardDescription>
-          总缺口 {summary.totalDeficit} 人次 / 严重时段{" "}
-          {summary.severeSlotCount} 个 / 峰值{" "}
-          {summary.peak
-            ? `${summary.peak.day} ${summary.peak.slot} ${summary.peak.value}`
-            : "无"}
-        </CardDescription>
+      <CardHeader className="flex flex-row items-start justify-between gap-3">
+        <div className="grid min-w-0 gap-1">
+          <CardTitle>时段人力缺口</CardTitle>
+          <CardDescription>
+            总缺口 {summary.totalDeficit} 人次 / 严重时段{" "}
+            {summary.severeSlotCount} 个 / 峰值{" "}
+            {summary.peak
+              ? `${summary.peak.day} ${summary.peak.slot} ${summary.peak.value}`
+              : "无"}
+          </CardDescription>
+        </div>
+        {drilldown ? (
+          <Button asChild variant="outline" size="sm" className="shrink-0">
+            <Link href={drilldown.href}>
+              {drilldown.label}
+              <ArrowRight className="size-3.5" />
+            </Link>
+          </Button>
+        ) : null}
       </CardHeader>
       <CardContent>
         {isEmpty ? (

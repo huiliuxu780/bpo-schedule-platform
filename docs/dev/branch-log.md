@@ -5773,3 +5773,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM264 Dashboard Drilldown Consistency
+
+- branch_name: `codex/im264-dashboard-drilldown-consistency`
+- base_main_commit: `stacked on pushed codex/im263-dashboard-operational-filter-console at 35525b6`
+- stacked_on: `codex/im263-dashboard-operational-filter-console`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium frontend-scaffold block for dashboard drilldown consistency. Add stable metric-card and heatmap links from `/dashboard` to existing operational workbenches while preserving the IM263 global filter boundary.
+- qoder_mode: `false; PM asked Codex to implement this round directly.`
+- allowed_files_check: dashboard page, dashboard model, metric card component, heatmap component, focused dashboard drilldown test, current Harness context, audit report, task log, and branch log only.
+- scope_diff_check: expected dashboard drilldown model/UI/test and traceability updates only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, external integration, or additional dashboard header filters.
+- check_result: Focused `node --test scripts/tests/dashboard-drilldown-consistency.test.mjs` passed with 7 tests. Focused `node --test scripts/tests/*dashboard*.test.mjs` passed with 183 tests. `npm run lint`, `npm run typecheck`, `node scripts/check-shadcn-ui.mjs`, `git diff --check`, and HTTP `/dashboard` text check passed before final Harness verification. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 758 Node tests (757 pass, 1 skipped), shadcn check, lint, typecheck, Next build, 241 backend unittest tests OK, and project Harness check passed.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

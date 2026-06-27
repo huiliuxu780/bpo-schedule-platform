@@ -11,6 +11,12 @@ export type DashboardMetricCard = {
   change?: string
   insight?: string
   note?: string
+  drilldown?: DashboardDrilldownLink
+}
+
+export type DashboardDrilldownLink = {
+  label: string
+  href: string
 }
 
 export type DashboardHeatmapRow = {
@@ -52,6 +58,7 @@ export type DashboardOperationalViewModel = DashboardViewModel & {
   readiness: DashboardReadinessSummary
   filters: DashboardOperationalFilters
   hasActiveFilters: boolean
+  heatmapDrilldown: DashboardDrilldownLink
 }
 
 /**
@@ -292,6 +299,89 @@ export function hasActiveFilters(filters: DashboardOperationalFilters): boolean 
   )
 }
 
+function dashboardCompatibleQuery(filters: DashboardOperationalFilters) {
+  return [filters.project, filters.site].filter(Boolean).join(" ").trim()
+}
+
+function appendSearchParam(
+  searchParams: URLSearchParams,
+  key: string,
+  value: string | undefined
+) {
+  if (value?.trim()) {
+    searchParams.set(key, value.trim())
+  }
+}
+
+function buildDashboardHref(
+  pathname: string,
+  entries: Record<string, string | undefined>
+) {
+  const searchParams = new URLSearchParams()
+
+  for (const [key, value] of Object.entries(entries)) {
+    appendSearchParam(searchParams, key, value)
+  }
+
+  const suffix = searchParams.toString()
+  return `${pathname}${suffix ? `?${suffix}` : ""}`
+}
+
+export function buildDashboardDrilldownLinks(
+  filters: DashboardOperationalFilters
+) {
+  const query = dashboardCompatibleQuery(filters)
+
+  return {
+    schedulePlans: buildDashboardHref("/schedule-plans", {
+      query,
+      status: filters.planStatus,
+    }),
+    shiftDetails: buildDashboardHref("/shift-details", {
+      query,
+      status: filters.planStatus,
+    }),
+    scheduleRisks: buildDashboardHref("/schedule-risks", {
+      query,
+      status: "open",
+    }),
+    unavailability: buildDashboardHref("/unavailability", {
+      query,
+      status: "active",
+    }),
+  }
+}
+
+function attachDashboardMetricDrilldowns(
+  cards: DashboardMetricCard[],
+  filters: DashboardOperationalFilters
+) {
+  const links = buildDashboardDrilldownLinks(filters)
+  const linkByTitle: Record<string, DashboardDrilldownLink> = {
+    排班计划总数: {
+      label: "查看计划",
+      href: links.schedulePlans,
+    },
+    平均覆盖率: {
+      label: "查看班次",
+      href: links.shiftDetails,
+    },
+    待处理风险: {
+      label: "查看风险",
+      href: links.scheduleRisks,
+    },
+    生效不可用: {
+      label: "查看不可用",
+      href: links.unavailability,
+    },
+  }
+
+  return cards.map((card) => ({
+    ...card,
+    drilldown: linkByTitle[card.title],
+  }))
+}
+
 function filterPlans(plans: SchedulePlanSummary[], filters: DashboardOperationalFilters): SchedulePlanSummary[] {
   return plans.filter((plan) => {
     if (filters.site && !plan.site_name.includes(filters.site)) return false
@@ -386,6 +476,7 @@ export function buildDashboardOperationalViewModel(
 
   // Build view model with filtered data
   const baseViewModel = buildDashboardViewModel(filteredPlans, filteredRisks, filteredUnavailability)
+  const drilldownLinks = buildDashboardDrilldownLinks(filters)
 
   const hasAnyFailure = plansSource.failed || risksSource.failed || unavailabilitySource.failed
   const hasAnyFallback =
@@ -455,8 +546,16 @@ export function buildDashboardOperationalViewModel(
 
   return {
     ...baseViewModel,
+    metricCards: attachDashboardMetricDrilldowns(
+      baseViewModel.metricCards,
+      filters
+    ),
     readiness,
     filters,
     hasActiveFilters: activeFilters,
+    heatmapDrilldown: {
+      label: "查看班次明细",
+      href: drilldownLinks.shiftDetails,
+    },
   }
 }
