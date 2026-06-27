@@ -5811,3 +5811,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM266 Dashboard Information Hierarchy Fix
+
+- branch_name: `codex/im265-operational-browser-acceptance`
+- base_main_commit: `stacked on pushed codex/im265-operational-browser-acceptance at ed47ea5`
+- stacked_on: `codex/im265-operational-browser-acceptance`
+- remote_status: `not_pushed; local corrective commit pending PM push confirmation.`
+- scope: Corrective frontend fix for `/dashboard` information hierarchy after PM review. Remove the top-level filter console from the default dashboard while preserving URL deep-link filtering and dashboard drilldowns.
+- qoder_mode: `false; PM asked Codex to address the broken dashboard directly.`
+- allowed_files_check: dashboard page, deleted dashboard filter component, dashboard-focused test, current Harness context, audit report, task log, and branch log only.
+- scope_diff_check: expected dashboard information hierarchy fix only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, external integration, or new dashboard filter console changes.
+- check_result: Focused `node --test scripts/tests/*dashboard*.test.mjs` passed with 183 tests. `npm run typecheck`, `npm run lint`, `git diff --check`, and browser DOM/screenshot check passed before final Harness verification. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 761 Node tests (760 pass, 1 skipped), shadcn check, lint, typecheck, Next build, 241 backend unittest tests OK, and project Harness check passed.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

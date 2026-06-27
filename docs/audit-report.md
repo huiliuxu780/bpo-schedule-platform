@@ -6019,3 +6019,18 @@
 - Next server action form POST 验收通过：create 返回 `303 /schedule-plans/draft-20260518-001?draft=create_success`，edit 返回 `303 /schedule-plans/draft-20260518-001?draft=update_success`，后端 readback 确认记录创建和备注更新。
 - 浏览器反馈页验收通过：`草稿已创建`、`草稿已保存` 和更新后的时段备注均可见，且无内部术语泄漏。
 - 新增 `docs/design/local-mvp-dashboard-draft-browser-acceptance.md` 记录验收范围、结果和浏览器自动点击层观察项。
+
+### 2026-06-28 - IM266 经营总览信息架构修复
+
+#### 审计计划
+
+- 承接 PM 对 `/dashboard` 首屏体验的反馈，修正 IM263 将经营总览做成筛选控制台的产品设计偏差。
+- 本轮只做 dashboard 层级修复：默认页不再展示顶部筛选按钮墙；保留 URL 深链筛选能力和下钻参数传递，不新增后端/API/依赖。
+- 不扩展到权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- 删除 `components/global-filter-bar.tsx`，`/dashboard` 不再在 KPI 卡片前渲染项目、职场、计划状态的按钮墙。
+- `app/dashboard/page.tsx` 保留 `parseDashboardFilters()` 和 filtered view model，用于兼容已存在的深链筛选 URL；仅当 URL 已有筛选时，显示一条紧凑的“当前总览范围”提示和“查看全部”入口。
+- 更新 `scripts/tests/dashboard-operational-filter-console.test.mjs`，将旧的“筛选台存在”保护改为“dashboard 不应在 KPI 上方渲染筛选控制台”的回归保护。
+- 浏览器 DOM 检查确认 `/dashboard` 不含 `总览口径`、`计划状态`、`风险等级`、`问题状态` 等控制台文本，KPI 卡片仍可见；截图确认首屏回到 readiness + KPI 结构。

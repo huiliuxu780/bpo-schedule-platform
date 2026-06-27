@@ -3027,3 +3027,12 @@
   action: 经营总览与草稿工作流浏览器验收。
   status: `done`
   notes: Codex 基于 `codex/im264-dashboard-drilldown-consistency` 创建 `codex/im265-operational-browser-acceptance` 并直接执行验收和轻量修复。Dashboard 在本地浏览器中确认仅保留项目、职场、计划状态三类全局筛选，指标卡和热力图下钻链接可见且能携带兼容参数。草稿创建/编辑 server-action POST 均返回 303 成功跳转，详情页正确显示 `草稿已创建` 和 `草稿已保存` 反馈。Codex 同时修复草稿表单结构：`/schedule-plans/new` 和 `/schedule-plans/[planId]/edit` 现在在页面层直接绑定 create/update server action，共享表单组件只负责字段和控件。未新增依赖、package/lockfile、后端 schema、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
+
+- task_id: `IM266`
+  source_ids:
+    - `R965`
+  story_ids:
+    - `US885`
+  action: 经营总览信息架构修复。
+  status: `done`
+  notes: Codex 根据 PM 对 `/dashboard` 首屏筛选控件过重的反馈，直接修复 IM263 遗留的产品设计偏差。Dashboard 默认页删除顶部筛选控制台和 `GlobalFilterBar`，不再把项目、职场、计划状态按钮墙放在 KPI 卡片之前；URL 深链筛选能力保留，但只在 URL 已带筛选时显示一条轻量“当前总览范围”提示。Focused dashboard tests、typecheck、lint、browser DOM/screenshot check、diff check 和最终 `scripts/check.sh` 均通过。未新增依赖、package/lockfile、后端 schema、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。

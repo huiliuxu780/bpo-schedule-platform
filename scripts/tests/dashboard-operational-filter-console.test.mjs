@@ -16,7 +16,6 @@ function readProject(relativePath) {
 
 const dashboardPageSrc = readProject("app/dashboard/page.tsx");
 const dashboardLibSrc = readProject("lib/dashboard.ts");
-const globalFilterBarSrc = readProject("components/global-filter-bar.tsx");
 const chartAreaInteractiveSrc = readProject("components/chart-area-interactive.tsx");
 
 const baseSource = { source: "api", failed: false };
@@ -149,14 +148,11 @@ test("parseDashboardFilters only accepts global dashboard dimensions", () => {
   );
 });
 
-test("GlobalFilterBar renders only global scope controls", () => {
-  assert.match(globalFilterBarSrc, /总览口径/);
-  assert.match(globalFilterBarSrc, /项目/);
-  assert.match(globalFilterBarSrc, /职场/);
-  assert.match(globalFilterBarSrc, /计划状态/);
-  assert.doesNotMatch(globalFilterBarSrc, /关键词/);
-  assert.doesNotMatch(globalFilterBarSrc, /风险等级/);
-  assert.doesNotMatch(globalFilterBarSrc, /问题状态/);
+test("dashboard does not render a filter console above the KPI cards", () => {
+  assert.doesNotMatch(dashboardPageSrc, /GlobalFilterBar/);
+  assert.doesNotMatch(dashboardPageSrc, /总览口径/);
+  assert.match(dashboardPageSrc, /当前总览范围/);
+  assert.match(dashboardPageSrc, /SectionCards/);
 });
 
 test("DashboardOperationalFilters does not include table-level filters", () => {
@@ -242,7 +238,6 @@ test("touched dashboard product files do not expose forbidden terminology", () =
   for (const src of [
     dashboardPageSrc,
     dashboardLibSrc,
-    globalFilterBarSrc,
     chartAreaInteractiveSrc,
   ]) {
     for (const term of forbiddenTerms) {

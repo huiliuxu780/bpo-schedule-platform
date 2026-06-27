@@ -1,11 +1,15 @@
+import Link from "next/link"
+
 import { AppShell } from "@/components/app-shell"
-import { GlobalFilterBar } from "@/components/global-filter-bar"
 import { BpoHeatmap } from "@/components/bpo-heatmap"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { DataTable } from "@/components/data-table"
 import { ReadinessBanner } from "@/components/readiness-banner"
 import { SectionCards } from "@/components/section-cards"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
+  type DashboardOperationalFilters,
   buildDashboardOperationalViewModel,
   parseDashboardFilters,
 } from "@/lib/dashboard"
@@ -14,6 +18,28 @@ import {
   getScheduleRisksResult,
 } from "@/lib/schedule-plans"
 import { getUnavailabilityResult } from "@/lib/unavailability"
+
+const planStatusLabels: Record<string, string> = {
+  draft: "草稿",
+  review_ready: "待复核",
+  published: "已发布",
+}
+
+function dashboardScopeLabels(filters: DashboardOperationalFilters): string[] {
+  const labels: string[] = []
+
+  if (filters.project) {
+    labels.push(`项目：${filters.project}`)
+  }
+  if (filters.site) {
+    labels.push(`职场：${filters.site}`)
+  }
+  if (filters.planStatus) {
+    labels.push(`计划状态：${planStatusLabels[filters.planStatus] ?? filters.planStatus}`)
+  }
+
+  return labels
+}
 
 export default async function DashboardPage({
   searchParams,
@@ -28,27 +54,6 @@ export default async function DashboardPage({
     getScheduleRisksResult(),
     getUnavailabilityResult(),
   ])
-
-  const sites = Array.from(
-    new Set([
-      ...plansResult.items.map((p) => p.site_name),
-      ...risksResult.items.map((r) => r.site_name),
-      ...unavailabilityResult.items.map((u) => u.site_name),
-    ])
-  ).sort()
-
-  const projects = Array.from(
-    new Set([
-      ...plansResult.items.map((p) => p.project_name),
-      ...risksResult.items.map((r) => r.project_name),
-      ...unavailabilityResult.items.map((u) => u.project_name),
-    ])
-  ).sort()
-
-  const planStatusOrder = ["draft", "review_ready", "published"]
-  const planStatuses = planStatusOrder.filter((status) =>
-    plansResult.items.some((plan) => plan.status === status)
-  )
 
   const viewModel = buildDashboardOperationalViewModel({
     plans: plansResult.items,
@@ -65,6 +70,7 @@ export default async function DashboardPage({
   const bannerSource = viewModel.readiness.isFilteredEmpty
     ? "api_empty"
     : viewModel.readiness.overallSource
+  const scopeLabels = dashboardScopeLabels(viewModel.filters)
 
   return (
     <AppShell title="经营总览">
@@ -74,13 +80,19 @@ export default async function DashboardPage({
           hasData={viewModel.readiness.hasFilteredData}
           overallSource={bannerSource}
         />
-        <GlobalFilterBar
-          filters={viewModel.filters}
-          hasActiveFilters={viewModel.hasActiveFilters}
-          sites={sites}
-          projects={projects}
-          planStatuses={planStatuses}
-        />
+        {viewModel.hasActiveFilters ? (
+          <section className="mx-4 flex flex-wrap items-center gap-2 rounded-lg border bg-muted/25 px-3 py-2 text-sm lg:mx-6">
+            <span className="font-medium text-foreground">当前总览范围</span>
+            {scopeLabels.map((label) => (
+              <Badge key={label} variant="outline">
+                {label}
+              </Badge>
+            ))}
+            <Button asChild variant="ghost" size="sm" className="ml-auto">
+              <Link href="/dashboard">查看全部</Link>
+            </Button>
+          </section>
+        ) : null}
         <SectionCards cards={viewModel.metricCards} />
         <section className="grid gap-4 px-4 lg:grid-cols-[1.25fr_0.75fr] lg:px-6">
           <ChartAreaInteractive />
