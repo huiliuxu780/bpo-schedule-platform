@@ -6002,3 +6002,20 @@
 - `BpoHeatmap` 新增卡片级下钻入口“查看班次明细”，避免把每个热力格子都变成链接。
 - `app/dashboard/page.tsx` 只传入 view model 的下钻入口，不新增新的 dashboard header filter。HTTP 页面检查确认 `查看计划`、`查看班次`、`查看风险`、`查看不可用`、`查看班次明细` 均渲染，且顶部不再出现 `风险等级` / `问题状态`。
 - 新增 `scripts/tests/dashboard-drilldown-consistency.test.mjs`，覆盖默认链接、筛选上下文保留、指标卡下钻、热力图下钻、页面接入和禁用术语。
+
+### 2026-06-28 - IM265 经营总览与草稿工作流浏览器验收
+
+#### 审计计划
+
+- 承接 IM263/IM264 的 dashboard 筛选和下钻改动，以及 IM260/IM262 的草稿 create/edit 链路，做一次中等范围 runtime/browser acceptance。
+- Codex 直接执行，不拆给 Qoder；允许轻量修复验收发现的 UI/链路问题。
+- 不新增依赖、E2E 工具、后端 API、数据库 schema、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- Dashboard 基础页浏览器 DOM 验收通过：顶部全局筛选只包含项目、职场、计划状态；不包含风险等级或问题状态；指标卡和热力图下钻入口均可见；可见文本未发现内部术语。
+- Dashboard 筛选页浏览器 DOM 验收通过：`project=博西客服`、`site=上海职场`、`planStatus=published` 能传递到计划、班次、风险和不可用下游链接的兼容 `query`/`status` 参数。
+- 草稿 create/edit 验收发现共享表单组件内部绑定 server action 不利于稳定提交链路。Codex 将 `<form action={createDraftAction}>` 和 `<form action={updateDraftAction}>` 上移到页面层，`SchedulePlanDraftForm` 保留为字段/控件组件。
+- Next server action form POST 验收通过：create 返回 `303 /schedule-plans/draft-20260518-001?draft=create_success`，edit 返回 `303 /schedule-plans/draft-20260518-001?draft=update_success`，后端 readback 确认记录创建和备注更新。
+- 浏览器反馈页验收通过：`草稿已创建`、`草稿已保存` 和更新后的时段备注均可见，且无内部术语泄漏。
+- 新增 `docs/design/local-mvp-dashboard-draft-browser-acceptance.md` 记录验收范围、结果和浏览器自动点击层观察项。

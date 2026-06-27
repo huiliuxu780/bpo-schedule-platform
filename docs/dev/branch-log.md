@@ -5792,3 +5792,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM265 Operational Browser Acceptance
+
+- branch_name: `codex/im265-operational-browser-acceptance`
+- base_main_commit: `stacked on pushed codex/im264-dashboard-drilldown-consistency at 9baa692`
+- stacked_on: `codex/im264-dashboard-drilldown-consistency`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium QA plus light fix block for dashboard filter/drilldown browser acceptance and schedule-plan draft create/edit submit-chain acceptance.
+- qoder_mode: `false; PM asked Codex to continue directly.`
+- allowed_files_check: schedule-plan new/edit pages, shared draft form component, focused draft workflow tests, dashboard/draft acceptance report, current Harness context, audit report, task log, and branch log only.
+- scope_diff_check: expected page-level form action binding fix, focused tests, acceptance documentation, and traceability updates only; no dependency, package/lockfile, backend schema/API, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, external integration, or E2E infrastructure changes.
+- check_result: Dashboard browser DOM acceptance passed for global filter boundary and drilldown links. HTTP form POST acceptance passed for schedule-plan create and edit server actions with 303 redirects and backend readback. Browser feedback rendering passed for create and update success states. Focused `node --test scripts/tests/schedule-plan-draft-workflow-closeout-model.test.mjs scripts/tests/schedule-plan-draft-hardening-model.test.mjs` passed with 46 tests. Focused draft+dashboard test run passed with 229 tests. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 761 Node tests (760 pass, 1 skipped), shadcn check, lint, typecheck, Next build, 241 backend unittest tests OK, and project Harness check passed.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

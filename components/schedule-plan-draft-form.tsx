@@ -28,7 +28,6 @@ type IntervalRow = {
 
 type SchedulePlanDraftFormProps = {
   mode: DraftMode
-  action: (formData: FormData) => Promise<void>
   planFields: PlanFields
   intervals: IntervalRow[]
   submitLabel: string
@@ -38,7 +37,6 @@ type SchedulePlanDraftFormProps = {
 
 export function SchedulePlanDraftForm({
   mode,
-  action,
   planFields,
   intervals,
   submitLabel,
@@ -51,7 +49,7 @@ export function SchedulePlanDraftForm({
       : "保存后由后端重新计算预测、已排、缺口和覆盖率"
 
   return (
-    <form action={action} className="flex flex-col gap-4">
+    <>
       {mode === "edit" && planId && (
         <input type="hidden" name="plan_id" value={planId} />
       )}
@@ -155,6 +153,6 @@ export function SchedulePlanDraftForm({
         </Button>
         <Button type="submit">{submitLabel}</Button>
       </div>
-    </form>
+    </>
   )
 }

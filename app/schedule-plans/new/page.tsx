@@ -77,19 +77,20 @@ export default async function NewSchedulePlanPage({ searchParams }: PageProps) {
 
         <SchedulePlanDraftSummary intervals={defaultIntervals} />
 
-        <SchedulePlanDraftForm
-          mode="create"
-          action={createDraftAction}
-          planFields={{
-            plan_date: "2026-05-13",
-            project_name: "博西客服",
-            site_name: "上海职场",
-            version: "v1",
-          }}
-          intervals={defaultIntervals}
-          submitLabel="创建草稿"
-          cancelHref="/schedule-plans"
-        />
+        <form action={createDraftAction} className="flex flex-col gap-4">
+          <SchedulePlanDraftForm
+            mode="create"
+            planFields={{
+              plan_date: "2026-05-13",
+              project_name: "博西客服",
+              site_name: "上海职场",
+              version: "v1",
+            }}
+            intervals={defaultIntervals}
+            submitLabel="创建草稿"
+            cancelHref="/schedule-plans"
+          />
+        </form>
       </main>
     </AppShell>
   )

@@ -27,6 +27,16 @@ test("new page uses shared form component", () => {
   assert.ok(newPageSource.includes("import") && newPageSource.includes("schedule-plan-draft-form"));
 });
 
+test("new page binds create server action at the page-level form", () => {
+  const newPageSource = readFileSync(
+    join(import.meta.dirname, "../../app/schedule-plans/new/page.tsx"),
+    "utf-8"
+  );
+
+  assert.ok(newPageSource.includes("<form action={createDraftAction}"));
+  assert.ok(!newPageSource.includes("action={createDraftAction}\n          planFields"));
+});
+
 test("edit page uses shared form component", () => {
   const editPageSource = readFileSync(
     join(import.meta.dirname, "../../app/schedule-plans/[planId]/edit/page.tsx"),
@@ -35,6 +45,16 @@ test("edit page uses shared form component", () => {
   
   assert.ok(editPageSource.includes("SchedulePlanDraftForm"));
   assert.ok(editPageSource.includes("import") && editPageSource.includes("schedule-plan-draft-form"));
+});
+
+test("edit page binds update server action at the page-level form", () => {
+  const editPageSource = readFileSync(
+    join(import.meta.dirname, "../../app/schedule-plans/[planId]/edit/page.tsx"),
+    "utf-8"
+  );
+
+  assert.ok(editPageSource.includes("<form action={updateDraftAction}"));
+  assert.ok(!editPageSource.includes("action={updateDraftAction}\n              planFields"));
 });
 
 test("shared form preserves field names expected by server actions", () => {
@@ -54,6 +74,16 @@ test("shared form preserves field names expected by server actions", () => {
   assert.ok(formSource.includes("forecast_agents_"));
   assert.ok(formSource.includes("scheduled_agents_"));
   assert.ok(formSource.includes("note_"));
+});
+
+test("shared draft form does not own the server action form element", () => {
+  const formSource = readFileSync(
+    join(import.meta.dirname, "../../components/schedule-plan-draft-form.tsx"),
+    "utf-8"
+  );
+
+  assert.ok(!formSource.includes("<form action={action}"));
+  assert.ok(!formSource.includes("action: (formData: FormData) => Promise<void>"));
 });
 
 test("new page no longer duplicates interval form markup", () => {

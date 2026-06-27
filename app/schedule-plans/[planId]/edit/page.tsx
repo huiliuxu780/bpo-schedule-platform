@@ -102,20 +102,21 @@ export default async function EditSchedulePlanPage({ params, searchParams }: Pag
         ) : (
           <>
             <SchedulePlanDraftSummary intervals={plan.intervals} />
-            <SchedulePlanDraftForm
-              mode="edit"
-              action={updateDraftAction}
-              planFields={{
-                plan_date: plan.summary.plan_date,
-                project_name: plan.summary.project_name,
-                site_name: plan.summary.site_name,
-                version: plan.summary.version,
-              }}
-              intervals={plan.intervals}
-              submitLabel="保存草稿"
-              cancelHref={`/schedule-plans/${encodeURIComponent(plan.summary.id)}`}
-              planId={plan.summary.id}
-            />
+            <form action={updateDraftAction} className="flex flex-col gap-4">
+              <SchedulePlanDraftForm
+                mode="edit"
+                planFields={{
+                  plan_date: plan.summary.plan_date,
+                  project_name: plan.summary.project_name,
+                  site_name: plan.summary.site_name,
+                  version: plan.summary.version,
+                }}
+                intervals={plan.intervals}
+                submitLabel="保存草稿"
+                cancelHref={`/schedule-plans/${encodeURIComponent(plan.summary.id)}`}
+                planId={plan.summary.id}
+              />
+            </form>
           </>
         )}
       </main>

@@ -3018,3 +3018,12 @@
   action: 经营总览下钻入口一致性。
   status: `done`
   notes: Codex 基于 `codex/im263-dashboard-operational-filter-console` 创建 `codex/im264-dashboard-drilldown-consistency` 并直接实现本轮能力，不拆给 Qoder。`/dashboard` 指标卡现在分别下钻到排班计划、班次明细、待处理风险和生效不可用工作台；热力图卡片提供单一“查看班次明细”入口。下钻链接复用目标页既有 `query`/`status` 参数，携带兼容的项目、职场和计划状态上下文；异常表原有行级详情链接保持不变。未新增 dashboard 顶部筛选、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
+
+- task_id: `IM265`
+  source_ids:
+    - `R964`
+  story_ids:
+    - `US884`
+  action: 经营总览与草稿工作流浏览器验收。
+  status: `done`
+  notes: Codex 基于 `codex/im264-dashboard-drilldown-consistency` 创建 `codex/im265-operational-browser-acceptance` 并直接执行验收和轻量修复。Dashboard 在本地浏览器中确认仅保留项目、职场、计划状态三类全局筛选，指标卡和热力图下钻链接可见且能携带兼容参数。草稿创建/编辑 server-action POST 均返回 303 成功跳转，详情页正确显示 `草稿已创建` 和 `草稿已保存` 反馈。Codex 同时修复草稿表单结构：`/schedule-plans/new` 和 `/schedule-plans/[planId]/edit` 现在在页面层直接绑定 create/update server action，共享表单组件只负责字段和控件。未新增依赖、package/lockfile、后端 schema、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
