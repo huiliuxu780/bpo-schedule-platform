@@ -2982,3 +2982,12 @@
   action: 排班计划草稿创建与编辑加固。
   status: `done`
   notes: Qoder 基于 `codex/im259-operational-source-consistency` 创建 `codex/im260-schedule-plan-draft-hardening` 并实现草稿创建/编辑加固后，Codex 复核实际 diff 并修正未使用 import。`/schedule-plans/new` 现在提交成功后回到详情并显示创建成功反馈，失败时回到新建页显示创建失败反馈；`/schedule-plans/[planId]/edit` 改用 result-style detail reader 和 `ReadinessBanner`，保留 missing 404 与非草稿不可编辑 blocker，保存成功/失败均显示明确反馈；create/update actions 使用动态 `interval_count`、保留 0 值、编码动态 plan id。未新增后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
+
+- task_id: `IM261`
+  source_ids:
+    - `R960`
+  story_ids:
+    - `US880`
+  action: 运营数据源与草稿反馈浏览器验收。
+  status: `done`
+  notes: Qoder 基于 `codex/im260-schedule-plan-draft-hardening` 创建 `codex/im261-operational-browser-acceptance` 并执行浏览器验收后，Codex 复核报告并修正过度结论。最终验收记录为 accepted with observations：IM259 source banner、IM260 feedback URL 渲染、非草稿编辑阻止和禁止术语检查通过；但运行时没有 draft 状态计划，且报告未记录真实创建提交后生成的新 plan id，因此真实 create-submit 与 draft edit-submit redirect 链未完整验证。未新增产品代码、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。

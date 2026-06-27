@@ -5934,3 +5934,20 @@
 - Codex 修正 Qoder 初稿中 `app/schedule-plans/new/page.tsx` 的未使用 import，避免 lint 失败。
 - 新增 `scripts/tests/schedule-plan-draft-hardening-model.test.mjs`，覆盖反馈模型、页面接入、redirect 语义、plan id 编码、0 值保留、interval_count、非草稿 blocker 和禁用术语。
 - Focused `node --test scripts/tests/schedule-plan-draft-hardening-model.test.mjs` 通过 22 tests；focused `node --test scripts/tests/*schedule-plan*.test.mjs` 通过 79 tests；`npm run typecheck` 和 `git diff --check` 通过。最终全量门禁结果见 IM260 Done Report。
+
+### 2026-06-27 - IM261 运营数据源与草稿反馈浏览器验收
+
+#### 审计计划
+
+- 承接 IM259 和 IM260，用真实本地 runtime 与浏览器验证数据源提示、草稿反馈、非草稿编辑阻止和禁止术语边界。
+- 采用 QA/browser acceptance 文档任务，只允许写入 `docs/design/local-mvp-operational-source-draft-acceptance.md`；不新增产品实现、测试脚本、浏览器自动化依赖或 backend/schema 变更。
+- Qoder 执行浏览器验收；Codex 负责实际报告复核、结论修正、Harness 状态、验证、提交和推送决策。
+
+#### 执行结果
+
+- IM259 相关页面的数据源提示通过浏览器验收：dashboard、schedule plan list/detail baseline 未回归，schedule risk detail、unavailability list/detail 和 shift details 均显示 API 数据来源。
+- IM260 的 URL feedback 卡片通过浏览器验收：create/update success 和 failed 参数均能显示对应反馈，非草稿计划编辑页正确显示不可编辑 blocker。
+- 禁止术语检查未发现用户可见文本泄漏 Gate、Harness、Codex、Qoder、自动排班、自动修复、production ready 等词。
+- Codex 修正 Qoder 初稿中的过度结论：运行时没有 draft 状态计划，报告也未记录真实创建提交后生成的新 plan id，因此真实 create-submit 与 draft edit-submit redirect 链不能记为完整端到端通过。
+- Codex 同步修正两处事实错误：`/schedule-plans/new` 当前不渲染 `ReadinessBanner`，失败反馈文案为“检查输入后重试”而非“检查网络连接后重试”。
+- 最终结论为 accepted with observations；剩余观察项是受控 runtime 中补一个 draft plan 后再验证编辑表单和 update redirect。

@@ -5716,3 +5716,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM261 Operational Browser Acceptance
+
+- branch_name: `codex/im261-operational-browser-acceptance`
+- base_main_commit: `stacked on pushed codex/im260-schedule-plan-draft-hardening at 40d6288`
+- stacked_on: `codex/im260-schedule-plan-draft-hardening`
+- remote_status: `not_pushed; local branch until verification/commit and PM push confirmation.`
+- scope: QA/browser acceptance for IM259 source messaging and IM260 draft feedback hardening. Record runtime evidence without changing product code.
+- qoder_mode: `true; Qoder executed browser acceptance and obeyed no-commit/no-push instructions. Codex reviewed the report, corrected overstatements and factual errors, owns Harness updates, verification, local commit, and push decision.`
+- allowed_files_check: `docs/design/local-mvp-operational-source-draft-acceptance.md`, current Harness context, audit report, task log, and branch log only.
+- scope_diff_check: expected acceptance documentation and traceability updates only; no app, components, lib, backend, scripts, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, or external integration changes.
+- check_result: Focused `git diff --check` and `bash scripts/check-state.sh --strict` passed. Full `scripts/check.sh` was intentionally not rerun because this is a docs-only browser acceptance record with no product or test code changes.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
