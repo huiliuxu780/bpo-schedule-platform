@@ -984,6 +984,53 @@ export function getSchedulePlanLifecycleAction(
   return null
 }
 
+export type SchedulePlanDraftFeedbackKey =
+  | "create_success"
+  | "create_failed"
+  | "update_success"
+  | "update_failed"
+
+export type SchedulePlanDraftFeedback = {
+  tone: "success" | "error"
+  title: string
+  description: string
+}
+
+export function summarizeSchedulePlanDraftFeedback(
+  value?: string | null
+): SchedulePlanDraftFeedback | null {
+  if (!value) {
+    return null
+  }
+
+  const feedbackMap: Record<SchedulePlanDraftFeedbackKey, SchedulePlanDraftFeedback> = {
+    create_success: {
+      tone: "success",
+      title: "草稿已创建",
+      description: "排班草稿已创建，可继续完善时段后提交复核。",
+    },
+    create_failed: {
+      tone: "error",
+      title: "创建草稿失败",
+      description: "排班草稿创建失败，请检查输入后重试。",
+    },
+    update_success: {
+      tone: "success",
+      title: "草稿已保存",
+      description: "排班草稿已保存，可继续完善或提交复核。",
+    },
+    update_failed: {
+      tone: "error",
+      title: "保存草稿失败",
+      description: "排班草稿保存失败，请检查输入后重试。",
+    },
+  }
+
+  return value in feedbackMap
+    ? feedbackMap[value as SchedulePlanDraftFeedbackKey]
+    : null
+}
+
 export function summarizeSchedulePlanLifecycleFeedback(
   value?: string | null
 ): SchedulePlanLifecycleFeedback | null {

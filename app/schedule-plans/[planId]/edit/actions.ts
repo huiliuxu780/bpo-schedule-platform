@@ -14,12 +14,13 @@ function formText(formData: FormData, key: string) {
 
 function formNumber(formData: FormData, key: string) {
   const value = Number(formData.get(key) ?? 0)
-  return Number.isFinite(value) && value > 0 ? value : 0
+  return Number.isFinite(value) && value >= 0 ? value : 0
 }
 
 export async function updateDraftAction(formData: FormData) {
   const planId = formText(formData, "plan_id")
   const intervalCount = formNumber(formData, "interval_count")
+  const encodedId = encodeURIComponent(planId)
   const intervals: SchedulePlanIntervalInput[] = Array.from(
     { length: intervalCount },
     (_, index) => ({
@@ -42,8 +43,8 @@ export async function updateDraftAction(formData: FormData) {
   const updated = await updateSchedulePlanDraft(planId, payload)
 
   if (!updated) {
-    redirect(`/schedule-plans/${planId}?draft=failed`)
+    redirect(`/schedule-plans/${encodedId}/edit?draft=update_failed`)
   }
 
-  redirect(`/schedule-plans/${updated.summary.id}`)
+  redirect(`/schedule-plans/${encodeURIComponent(updated.summary.id)}?draft=update_success`)
 }

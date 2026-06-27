@@ -14,6 +14,7 @@ import {
   scheduleRiskLevelLabel,
   scheduleRiskStatusLabel,
   summarizeSchedulePlanFulfillmentIssues,
+  summarizeSchedulePlanDraftFeedback,
   summarizeSchedulePlanLifecycleFeedback,
 } from "@/lib/schedule-plans"
 import { getUnavailability, unavailabilityStatusLabel } from "@/lib/unavailability"
@@ -37,6 +38,7 @@ type PageProps = {
   }>
   searchParams?: Promise<{
     lifecycle?: string
+    draft?: string
   }>
 }
 
@@ -55,6 +57,9 @@ export default async function SchedulePlanDetailPage({ params, searchParams }: P
   const lifecycleAction = getSchedulePlanLifecycleAction(plan.summary.status)
   const lifecycleFeedback = summarizeSchedulePlanLifecycleFeedback(
     resolvedSearchParams.lifecycle
+  )
+  const draftFeedback = summarizeSchedulePlanDraftFeedback(
+    resolvedSearchParams.draft
   )
   const [scheduleRisks, unavailabilityRows] = await Promise.all([
     getScheduleRisks(plan.summary.site_name),
@@ -100,6 +105,21 @@ export default async function SchedulePlanDetailPage({ params, searchParams }: P
             <CardHeader>
               <CardTitle className="text-base">{lifecycleFeedback.title}</CardTitle>
               <CardDescription>{lifecycleFeedback.description}</CardDescription>
+            </CardHeader>
+          </Card>
+        ) : null}
+
+        {draftFeedback ? (
+          <Card
+            className={
+              draftFeedback.tone === "error"
+                ? "border-destructive/50"
+                : undefined
+            }
+          >
+            <CardHeader>
+              <CardTitle className="text-base">{draftFeedback.title}</CardTitle>
+              <CardDescription>{draftFeedback.description}</CardDescription>
             </CardHeader>
           </Card>
         ) : null}

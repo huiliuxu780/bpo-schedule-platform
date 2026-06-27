@@ -8,25 +8,27 @@ import {
   type SchedulePlanIntervalInput,
 } from "@/lib/schedule-plans"
 
-const slotKeys = ["0", "1", "2", "3"] as const
-
 function formText(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim()
 }
 
 function formNumber(formData: FormData, key: string) {
   const value = Number(formData.get(key) ?? 0)
-  return Number.isFinite(value) && value > 0 ? value : 0
+  return Number.isFinite(value) && value >= 0 ? value : 0
 }
 
 export async function createDraftAction(formData: FormData) {
-  const intervals: SchedulePlanIntervalInput[] = slotKeys.map((slot) => ({
-    interval_start: formText(formData, `interval_start_${slot}`),
-    interval_end: formText(formData, `interval_end_${slot}`),
-    forecast_agents: formNumber(formData, `forecast_agents_${slot}`),
-    scheduled_agents: formNumber(formData, `scheduled_agents_${slot}`),
-    note: formText(formData, `note_${slot}`) || "草稿待复核",
-  }))
+  const intervalCount = formNumber(formData, "interval_count")
+  const intervals: SchedulePlanIntervalInput[] = Array.from(
+    { length: intervalCount },
+    (_, index) => ({
+      interval_start: formText(formData, `interval_start_${index}`),
+      interval_end: formText(formData, `interval_end_${index}`),
+      forecast_agents: formNumber(formData, `forecast_agents_${index}`),
+      scheduled_agents: formNumber(formData, `scheduled_agents_${index}`),
+      note: formText(formData, `note_${index}`) || "草稿待复核",
+    })
+  )
 
   const payload: SchedulePlanDraftPayload = {
     plan_date: formText(formData, "plan_date"),
@@ -39,8 +41,9 @@ export async function createDraftAction(formData: FormData) {
   const created = await createSchedulePlanDraft(payload)
 
   if (!created) {
-    redirect("/schedule-plans?draft=failed")
+    redirect("/schedule-plans/new?draft=create_failed")
   }
 
-  redirect(`/schedule-plans/${created.summary.id}`)
+  const encodedId = encodeURIComponent(created.summary.id)
+  redirect(`/schedule-plans/${encodedId}?draft=create_success`)
 }

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 
 import { updateDraftAction } from "./actions"
 import { AppShell } from "@/components/app-shell"
+import { ReadinessBanner } from "@/components/readiness-banner"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -12,34 +13,65 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { getSchedulePlan, schedulePlanStatusLabel } from "@/lib/schedule-plans"
+import {
+  getSchedulePlanResult,
+  schedulePlanStatusLabel,
+  summarizeSchedulePlanDraftFeedback,
+} from "@/lib/schedule-plans"
 
 type PageProps = {
   params: Promise<{
     planId: string
   }>
+  searchParams?: Promise<{
+    draft?: string
+  }>
 }
 
-export default async function EditSchedulePlanPage({ params }: PageProps) {
+export default async function EditSchedulePlanPage({ params, searchParams }: PageProps) {
   const { planId } = await params
-  const plan = await getSchedulePlan(planId)
+  const resolvedSearchParams = searchParams ? await searchParams : {}
+  const result = await getSchedulePlanResult(planId)
+  const plan = result.item
 
   if (!plan) {
     notFound()
   }
 
   const isDraft = plan.summary.status === "draft"
+  const draftFeedback = summarizeSchedulePlanDraftFeedback(resolvedSearchParams.draft)
 
   return (
     <AppShell
       title="编辑排班草稿"
       breadcrumbItems={[
         { label: "排班计划", href: "/schedule-plans" },
-        { label: "排班计划详情", href: `/schedule-plans/${plan.summary.id}` },
+        { label: "排班计划详情", href: `/schedule-plans/${encodeURIComponent(plan.summary.id)}` },
         { label: "编辑排班草稿" },
       ]}
     >
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+        <ReadinessBanner
+          message={result.message}
+          hasData={result.item !== null}
+          overallSource={result.source === "missing" ? "api_empty" : result.source}
+        />
+
+        {draftFeedback ? (
+          <Card
+            className={
+              draftFeedback.tone === "error"
+                ? "border-destructive/50"
+                : undefined
+            }
+          >
+            <CardHeader>
+              <CardTitle className="text-base">{draftFeedback.title}</CardTitle>
+              <CardDescription>{draftFeedback.description}</CardDescription>
+            </CardHeader>
+          </Card>
+        ) : null}
+
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm text-muted-foreground">
@@ -48,7 +80,7 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
             </p>
           </div>
           <Button asChild variant="outline" size="sm">
-            <Link href={`/schedule-plans/${plan.summary.id}`}>返回详情</Link>
+            <Link href={`/schedule-plans/${encodeURIComponent(plan.summary.id)}`}>返回详情</Link>
           </Button>
         </div>
 
@@ -164,7 +196,7 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
 
             <div className="flex justify-end gap-2">
               <Button asChild variant="outline">
-                <Link href={`/schedule-plans/${plan.summary.id}`}>取消</Link>
+                <Link href={`/schedule-plans/${encodeURIComponent(plan.summary.id)}`}>取消</Link>
               </Button>
               <Button type="submit">保存草稿</Button>
             </div>

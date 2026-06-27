@@ -5697,3 +5697,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM260 Schedule Plan Draft Hardening
+
+- branch_name: `codex/im260-schedule-plan-draft-hardening`
+- base_main_commit: `stacked on pushed codex/im259-operational-source-consistency at 3a3a948`
+- stacked_on: `codex/im259-operational-source-consistency`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium frontend-scaffold block for schedule-plan draft create/edit hardening. Add clear draft feedback, result-style edit-page data-source messaging, robust interval parsing, and encoded redirect targets.
+- qoder_mode: `true; Qoder implemented the medium packet and obeyed no-commit/no-push instructions. Codex reviewed the diff, removed an unused import that would fail lint, owns Harness updates, final verification, local commit, and push decision.`
+- allowed_files_check: schedule-plan new/edit/detail frontend files, schedule-plan client/model file, focused draft-hardening test, current Harness context, audit report, task log, and branch log only.
+- scope_diff_check: expected schedule-plan draft feedback/model/UI/action/test and traceability updates only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, or external integration changes.
+- check_result: Focused `node --test scripts/tests/schedule-plan-draft-hardening-model.test.mjs` passed with 22 tests. Focused `node --test scripts/tests/*schedule-plan*.test.mjs` passed with 79 tests. `npm run typecheck` and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 719 Node tests (718 pass, 1 skipped), shadcn check, lint, typecheck, Next build, 241 backend unittest tests OK, and project Harness check passed.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

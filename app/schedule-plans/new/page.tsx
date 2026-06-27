@@ -2,6 +2,9 @@ import Link from "next/link"
 
 import { createDraftAction } from "@/app/schedule-plans/new/actions"
 import { AppShell } from "@/components/app-shell"
+import {
+  summarizeSchedulePlanDraftFeedback,
+} from "@/lib/schedule-plans"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -19,7 +22,16 @@ const defaultSlots = [
   ["10:30", "11:00", 17, 16, "临时请假待复核"],
 ] as const
 
-export default function NewSchedulePlanPage() {
+type PageProps = {
+  searchParams?: Promise<{
+    draft?: string
+  }>
+}
+
+export default async function NewSchedulePlanPage({ searchParams }: PageProps) {
+  const resolvedSearchParams = searchParams ? await searchParams : {}
+  const draftFeedback = summarizeSchedulePlanDraftFeedback(resolvedSearchParams.draft)
+
   return (
     <AppShell
       title="新建排班草稿"
@@ -29,6 +41,21 @@ export default function NewSchedulePlanPage() {
       ]}
     >
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+        {draftFeedback ? (
+          <Card
+            className={
+              draftFeedback.tone === "error"
+                ? "border-destructive/50"
+                : undefined
+            }
+          >
+            <CardHeader>
+              <CardTitle className="text-base">{draftFeedback.title}</CardTitle>
+              <CardDescription>{draftFeedback.description}</CardDescription>
+            </CardHeader>
+          </Card>
+        ) : null}
+
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm text-muted-foreground">
@@ -41,6 +68,11 @@ export default function NewSchedulePlanPage() {
         </div>
 
         <form action={createDraftAction} className="flex flex-col gap-4">
+          <input
+            type="hidden"
+            name="interval_count"
+            value={`${defaultSlots.length}`}
+          />
           <Card>
             <CardHeader>
               <CardTitle>计划信息</CardTitle>

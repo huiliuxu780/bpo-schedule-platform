@@ -5914,3 +5914,23 @@
 - Codex 修正 Qoder 初稿中列表表格空态不足的问题：`UnavailabilityTable` 和 `ShiftDetailsTable` 支持页面传入 source-aware empty message，避免源数据为空和筛选为空混用同一句。
 - 新增 `scripts/tests/im259-operational-source-consistency.test.mjs`，覆盖 result reader、页面接入、notFound 保留、source-aware empty message 和禁用术语。
 - Focused `node --test scripts/tests/im259-operational-source-consistency.test.mjs scripts/tests/*schedule*risk*.test.mjs scripts/tests/*unavailability*.test.mjs scripts/tests/dashboard-risk-unavailability-model.test.mjs` 通过 35 tests；`npm run typecheck` 和 `git diff --check` 通过。最终全量门禁结果见 IM259 Done Report。
+
+### 2026-06-27 - IM260 排班计划草稿创建与编辑加固
+
+#### 审计计划
+
+- 承接 IM258 runtime acceptance 和 IM259 数据源一致性，把已存在的 `/schedule-plans/new` 与 `/schedule-plans/[planId]/edit` 从“页面存在”推进到“提交结果可解释、失败可恢复、编辑页数据来源一致”。
+- 采用一个完整中等 Qoder packet，覆盖新建页、编辑页、详情页反馈、server actions 和 focused tests，不拆成文件级碎片。
+- Qoder 执行功能实现；Codex 负责实际 diff review、边界修正、Harness 状态、最终验证、提交和推送决策。
+- 不新增后端 API、数据库、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- `lib/schedule-plans.ts` 新增 `summarizeSchedulePlanDraftFeedback()`，为草稿创建/保存的成功和失败提供独立反馈，不混入 lifecycle feedback。
+- `/schedule-plans/new` 支持 `?draft=create_failed` 反馈，并在提交成功后跳转到详情页 `?draft=create_success`；表单新增 `interval_count` 以避免 action 依赖固定 slot 数量。
+- `/schedule-plans/[planId]/edit` 改用 `getSchedulePlanResult()` 和 `ReadinessBanner`，保留 missing record 的 `notFound()` 行为和非草稿不可编辑 blocker。
+- 新建与编辑 actions 均保留 0 值、将负数/非数值归零，并对动态 plan id redirect 使用 `encodeURIComponent()`。
+- `/schedule-plans/[planId]` 独立展示 draft feedback，同时保留原 lifecycle feedback 行为。
+- Codex 修正 Qoder 初稿中 `app/schedule-plans/new/page.tsx` 的未使用 import，避免 lint 失败。
+- 新增 `scripts/tests/schedule-plan-draft-hardening-model.test.mjs`，覆盖反馈模型、页面接入、redirect 语义、plan id 编码、0 值保留、interval_count、非草稿 blocker 和禁用术语。
+- Focused `node --test scripts/tests/schedule-plan-draft-hardening-model.test.mjs` 通过 22 tests；focused `node --test scripts/tests/*schedule-plan*.test.mjs` 通过 79 tests；`npm run typecheck` 和 `git diff --check` 通过。最终全量门禁结果见 IM260 Done Report。

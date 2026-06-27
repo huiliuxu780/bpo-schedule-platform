@@ -2973,3 +2973,12 @@
   action: 运营详情页数据源一致性。
   status: `done`
   notes: Qoder 基于 `codex/im258-operational-runtime-acceptance` 创建 `codex/im259-operational-source-consistency` 并实现中等功能包后，Codex 复核实际 diff 并补强空态边界。`/schedule-risks/[riskId]`、`/unavailability`、`/unavailability/[unavailabilityId]`、`/shift-details` 现在使用 result-style reader 和 `ReadinessBanner` 显示 API、fallback、empty/missing 状态；不可用列表和班次明细表格也区分源数据为空与筛选为空。未新增后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
+
+- task_id: `IM260`
+  source_ids:
+    - `R959`
+  story_ids:
+    - `US879`
+  action: 排班计划草稿创建与编辑加固。
+  status: `done`
+  notes: Qoder 基于 `codex/im259-operational-source-consistency` 创建 `codex/im260-schedule-plan-draft-hardening` 并实现草稿创建/编辑加固后，Codex 复核实际 diff 并修正未使用 import。`/schedule-plans/new` 现在提交成功后回到详情并显示创建成功反馈，失败时回到新建页显示创建失败反馈；`/schedule-plans/[planId]/edit` 改用 result-style detail reader 和 `ReadinessBanner`，保留 missing 404 与非草稿不可编辑 blocker，保存成功/失败均显示明确反馈；create/update actions 使用动态 `interval_count`、保留 0 值、编码动态 plan id。未新增后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
