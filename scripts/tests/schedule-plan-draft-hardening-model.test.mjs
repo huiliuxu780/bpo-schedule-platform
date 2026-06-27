@@ -67,15 +67,15 @@ test("new page renders create failure feedback and uses create action", () => {
   );
 });
 
-test("new page includes interval_count hidden field", () => {
+test("shared draft form includes interval_count hidden field", () => {
   const content = readFileSync(
-    join(import.meta.dirname, "../../app/schedule-plans/new/page.tsx"),
+    join(import.meta.dirname, "../../components/schedule-plan-draft-form.tsx"),
     "utf-8"
   );
 
   assert.ok(
     content.includes('name="interval_count"'),
-    "new page form must include interval_count hidden field"
+    "shared draft form must include interval_count hidden field"
   );
 });
 

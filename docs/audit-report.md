@@ -5951,3 +5951,20 @@
 - Codex 修正 Qoder 初稿中的过度结论：运行时没有 draft 状态计划，报告也未记录真实创建提交后生成的新 plan id，因此真实 create-submit 与 draft edit-submit redirect 链不能记为完整端到端通过。
 - Codex 同步修正两处事实错误：`/schedule-plans/new` 当前不渲染 `ReadinessBanner`，失败反馈文案为“检查输入后重试”而非“检查网络连接后重试”。
 - 最终结论为 accepted with observations；剩余观察项是受控 runtime 中补一个 draft plan 后再验证编辑表单和 update redirect。
+
+### 2026-06-27 - IM262 排班计划草稿工作流 UI 收口
+
+#### 审计计划
+
+- 承接 IM260 草稿加固与 IM261 观察项，把本轮限定为一个中等产品块：共享草稿表单、保存前摘要、create/edit 页面复用和 focused coverage。
+- 不把本轮降级为单纯“补一个验收”；同时不扩展到后端 seed、schema、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+- Qoder 执行实现；Codex 负责实际 diff review、产品边界修正、Harness 状态、最终验证、提交和推送决策。
+
+#### 执行结果
+
+- 新增 `components/schedule-plan-draft-form.tsx`，统一 `/schedule-plans/new` 与 `/schedule-plans/[planId]/edit` 的计划字段和 0.5h 时段表单，保留原 server action 所需字段名和 `interval_count`。
+- 新增 `components/schedule-plan-draft-summary.tsx`，在 create/edit 表单前展示时段数、总预测、总已排、总缺口和覆盖率。
+- Codex 修正 Qoder 初稿中的缺口口径：总缺口按非负值汇总，避免超排时显示负缺口；同时补充“按当前录入时段汇总，用于保存前复核草稿口径”的文案。
+- `/schedule-plans/new` 与 `/schedule-plans/[planId]/edit` 移除重复时段表单 markup，改用共享组件；edit 页继续保留 `ReadinessBanner`、missing notFound 和非草稿 blocker。
+- `docs/design/local-mvp-operational-source-draft-acceptance.md` 更新 IM262 验证记录，同时保留真实 create-submit 与 draft edit-submit browser 链未完整验证的 observation。
+- 新增 `scripts/tests/schedule-plan-draft-workflow-closeout-model.test.mjs` 并更新 IM260 hardening 测试；focused schedule-plan tests 通过 100 tests，typecheck 通过，diff check 后续见 IM262 Done Report。

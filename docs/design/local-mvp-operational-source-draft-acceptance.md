@@ -164,7 +164,7 @@
 | `/schedule-plans/new?draft=create_failed` | ✅ Clean | 无禁止术语 |
 | `/schedule-plans/plan-20260511-suzhou-bosch-v1/edit?draft=update_failed` | ✅ Clean | 无禁止术语 |
 
-**说明**: 
+**说明**:
 - 初始检查发现 "Codex", "gate", "pm" 匹配，但均在 Next.js RSC 序列化和开发工具文件路径中（如 `/Users/mac/Documents/Codex/...`、`StatusFilterPills`），非用户可见文本。
 - 生产构建中不会出现这些匹配。
 
@@ -176,7 +176,7 @@
 
 **未执行**。
 
-**原因**: 
+**原因**:
 - 模拟 API 失败需要修改代码或重启 backend，会影响现有 runtime。
 - 当前 backend 正常运行，API 返回正常数据。
 - 单元测试已覆盖 fallback 逻辑（IM259/IM260 测试套件）。
@@ -209,7 +209,7 @@
 - 草稿更新后的重定向链
 - 编辑表单中的 ReadinessBanner 渲染
 
-**缓解**: 
+**缓解**:
 - ✅ 非草稿阻止机制已验证（review_ready/published 计划正确阻止编辑）
 - ✅ ReadinessBanner 在编辑页面已验证（即使表单被阻止，banner 仍渲染）
 - ✅ 单元测试覆盖草稿编辑逻辑（IM260 测试套件）
@@ -228,22 +228,101 @@
 
 ---
 
-## 9. 验收结论
+## 9. IM262 草稿工作流收口验证
+
+### 9.1 共享草稿表单组件
+
+**组件位置**: `components/schedule-plan-draft-form.tsx`
+
+| 检查项 | 结果 | 说明 |
+|--------|------|------|
+| 组件存在 | ✅ | 提取自新建/编辑页面的表单逻辑 |
+| 新建页面使用 | ✅ | `/schedule-plans/new` 使用共享组件 |
+| 编辑页面使用 | ✅ | `/schedule-plans/[planId]/edit` 使用共享组件 |
+| 字段名一致性 | ✅ | 保留 plan_date, project_name, site_name, version, interval_start_*, interval_end_*, forecast_agents_*, scheduled_agents_*, note_* |
+| interval_count 隐藏字段 | ✅ | 表单包含 interval_count hidden input |
+
+**验证方法**:
+- TypeScript 编译通过
+- schedule-plan focused tests 100/100 通过
+- curl 访问 `/schedule-plans/new` 页面渲染包含 draft-summary 组件
+
+### 9.2 草稿摘要组件
+
+**组件位置**: `components/schedule-plan-draft-summary.tsx`
+
+| 检查项 | 结果 | 说明 |
+|--------|------|------|
+| 组件存在 | ✅ | 显示草稿计划的关键统计信息 |
+| 新建页面使用 | ✅ | 在表单前显示摘要 |
+| 编辑页面使用 | ✅ | 在表单前显示摘要 |
+| 统计信息完整 | ✅ | 时段数、总预测、总已排、总缺口、覆盖率 |
+| 缺口口径 | ✅ | 缺口按非负值汇总，避免超排时显示负缺口 |
+| 文案边界 | ✅ | 说明摘要按当前录入时段汇总，用于保存前复核草稿口径 |
+
+### 9.3 代码质量改进
+
+**消除重复**:
+- 新建页面和编辑页面的表单代码完全统一到共享组件
+- 时段行渲染逻辑统一处理
+- 表单验证和提交逻辑统一处理
+
+**测试结果**:
+- IM262 focused tests: 21 个
+- schedule-plan focused tests: 100/100
+- TypeScript 类型检查: ✅ 通过
+- git diff --check: ✅ 无空白错误
+
+---
+
+## 10. 验收结论
 
 ### 通过项
 
-✅ **基线路由健康**: 10/10 路由可达  
-✅ **回归验证**: 3/3 原有 banner 正常  
-✅ **IM259 新增 banner**: 4/4 新 banner 正常渲染  
-✅ **IM260 反馈消息**: 4/4 URL feedback 卡片正确显示  
-✅ **IM260 阻止机制**: 3/3 非草稿计划正确阻止编辑  
-✅ **禁止术语检查**: 15/15 页面无禁止术语  
+✅ **基线路由健康**: 10/10 路由可达
+✅ **回归验证**: 3/3 原有 banner 正常
+✅ **IM259 新增 banner**: 4/4 新 banner 正常渲染
+✅ **IM260 反馈消息**: 4/4 URL feedback 卡片正确显示
+✅ **IM260 阻止机制**: 3/3 非草稿计划正确阻止编辑
+✅ **禁止术语检查**: 15/15 页面无禁止术语
+✅ **IM262 共享表单组件**: 成功提取并验证
+✅ **IM262 草稿摘要组件**: 成功实现并验证，缺口按非负口径汇总
+✅ **IM262 测试覆盖**: schedule-plan focused tests 100/100 通过
 
 ### 未完整验证项
 
-⚠️ **新建草稿真实提交链**: 本报告验证了 `/schedule-plans/new` 页面和 `?draft=create_success` 反馈显示，但未记录真实点击“创建草稿”后生成的新 plan ID 与跳转链。  
-⚠️ **草稿编辑表单与 update redirect**: 运行时无 draft 计划，因此未验证草稿编辑表单完整渲染、保存提交和 `?draft=update_success` 真实跳转。  
-⚠️ **Fallback 机制**: 未模拟 API 失败  
+⚠️ **新建草稿真实提交链**: 本报告验证了 `/schedule-plans/new` 页面和 `?draft=create_success` 反馈显示，但未记录真实点击"创建草稿"后生成的新 plan ID 与跳转链。
+⚠️ **草稿编辑表单与 update redirect**: 运行时无 draft 计划，因此未验证草稿编辑表单完整渲染、保存提交和 `?draft=update_success` 真实跳转。
+⚠️ **Fallback 机制**: 未模拟 API 失败
+
+### 最终判定
+
+**✅ ACCEPTED WITH OBSERVATIONS**
+
+IM259 浏览器验收通过。IM260 的可见反馈、非草稿阻止和数据源提示通过。IM262 成功提取共享表单组件和草稿摘要组件，消除代码重复并提升保存前扫读性。真实创建/编辑提交链仍需要在具备 draft 数据的 runtime 中补充验收。未发现回归问题或禁止术语泄漏。未完整验证项已有 focused tests 覆盖，当前风险可控但不应记录为完整端到端通过。
+
+**建议**:
+1. 如需完整验证草稿编辑流程，可手动创建 draft 计划或使用测试环境。
+2. 如需验证 fallback 机制，可在独立环境中停止 backend API 进行观察。
+
+---
+
+## 11. 技术细节
+
+### 通过项
+
+✅ **基线路由健康**: 10/10 路由可达
+✅ **回归验证**: 3/3 原有 banner 正常
+✅ **IM259 新增 banner**: 4/4 新 banner 正常渲染
+✅ **IM260 反馈消息**: 4/4 URL feedback 卡片正确显示
+✅ **IM260 阻止机制**: 3/3 非草稿计划正确阻止编辑
+✅ **禁止术语检查**: 15/15 页面无禁止术语
+
+### 未完整验证项
+
+⚠️ **新建草稿真实提交链**: 本报告验证了 `/schedule-plans/new` 页面和 `?draft=create_success` 反馈显示，但未记录真实点击“创建草稿”后生成的新 plan ID 与跳转链。
+⚠️ **草稿编辑表单与 update redirect**: 运行时无 draft 计划，因此未验证草稿编辑表单完整渲染、保存提交和 `?draft=update_success` 真实跳转。
+⚠️ **Fallback 机制**: 未模拟 API 失败
 
 ### 最终判定
 

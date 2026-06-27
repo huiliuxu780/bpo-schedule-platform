@@ -2,18 +2,18 @@ import Link from "next/link"
 
 import { createDraftAction } from "@/app/schedule-plans/new/actions"
 import { AppShell } from "@/components/app-shell"
-import {
-  summarizeSchedulePlanDraftFeedback,
-} from "@/lib/schedule-plans"
+import { SchedulePlanDraftForm } from "@/components/schedule-plan-draft-form"
+import { SchedulePlanDraftSummary } from "@/components/schedule-plan-draft-summary"
 import { Button } from "@/components/ui/button"
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+import {
+  summarizeSchedulePlanDraftFeedback,
+} from "@/lib/schedule-plans"
 
 const defaultSlots = [
   ["09:00", "09:30", 16, 15, "早高峰缺口待补"],
@@ -21,6 +21,14 @@ const defaultSlots = [
   ["10:00", "10:30", 18, 18, "覆盖正常"],
   ["10:30", "11:00", 17, 16, "临时请假待复核"],
 ] as const
+
+const defaultIntervals = defaultSlots.map(([start, end, forecast, scheduled, note]) => ({
+  interval_start: start,
+  interval_end: end,
+  forecast_agents: forecast,
+  scheduled_agents: scheduled,
+  note,
+}))
 
 type PageProps = {
   searchParams?: Promise<{
@@ -67,97 +75,21 @@ export default async function NewSchedulePlanPage({ searchParams }: PageProps) {
           </Button>
         </div>
 
-        <form action={createDraftAction} className="flex flex-col gap-4">
-          <input
-            type="hidden"
-            name="interval_count"
-            value={`${defaultSlots.length}`}
-          />
-          <Card>
-            <CardHeader>
-              <CardTitle>计划信息</CardTitle>
-              <CardDescription>
-                创建后由后端计算预测、已排、缺口和覆盖率
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-3 md:grid-cols-4">
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="font-medium">日期</span>
-                <Input name="plan_date" type="date" defaultValue="2026-05-13" />
-              </label>
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="font-medium">项目</span>
-                <Input name="project_name" defaultValue="博西客服" />
-              </label>
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="font-medium">职场</span>
-                <Input name="site_name" defaultValue="上海职场" />
-              </label>
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="font-medium">版本</span>
-                <Input name="version" defaultValue="v1" />
-              </label>
-            </CardContent>
-          </Card>
+        <SchedulePlanDraftSummary intervals={defaultIntervals} />
 
-          <Card>
-            <CardHeader>
-              <CardTitle>0.5h 时段</CardTitle>
-              <CardDescription>
-                维护核心时段的预测、已排、缺口和备注。
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3">
-              {defaultSlots.map((slot, index) => (
-                <div
-                  key={`${slot[0]}-${slot[1]}`}
-                  className="grid gap-3 rounded-md border p-3 md:grid-cols-[7rem_7rem_1fr_1fr_2fr]"
-                >
-                  <label className="flex flex-col gap-1 text-sm">
-                    <span className="font-medium">开始</span>
-                    <Input
-                      name={`interval_start_${index}`}
-                      defaultValue={slot[0]}
-                    />
-                  </label>
-                  <label className="flex flex-col gap-1 text-sm">
-                    <span className="font-medium">结束</span>
-                    <Input name={`interval_end_${index}`} defaultValue={slot[1]} />
-                  </label>
-                  <label className="flex flex-col gap-1 text-sm">
-                    <span className="font-medium">预测</span>
-                    <Input
-                      name={`forecast_agents_${index}`}
-                      type="number"
-                      min="0"
-                      defaultValue={`${slot[2]}`}
-                    />
-                  </label>
-                  <label className="flex flex-col gap-1 text-sm">
-                    <span className="font-medium">已排</span>
-                    <Input
-                      name={`scheduled_agents_${index}`}
-                      type="number"
-                      min="0"
-                      defaultValue={`${slot[3]}`}
-                    />
-                  </label>
-                  <label className="flex flex-col gap-1 text-sm">
-                    <span className="font-medium">备注</span>
-                    <Input name={`note_${index}`} defaultValue={slot[4]} />
-                  </label>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          <div className="flex justify-end gap-2">
-            <Button asChild variant="outline">
-              <Link href="/schedule-plans">取消</Link>
-            </Button>
-            <Button type="submit">创建草稿</Button>
-          </div>
-        </form>
+        <SchedulePlanDraftForm
+          mode="create"
+          action={createDraftAction}
+          planFields={{
+            plan_date: "2026-05-13",
+            project_name: "博西客服",
+            site_name: "上海职场",
+            version: "v1",
+          }}
+          intervals={defaultIntervals}
+          submitLabel="创建草稿"
+          cancelHref="/schedule-plans"
+        />
       </main>
     </AppShell>
   )

@@ -2991,3 +2991,12 @@
   action: 运营数据源与草稿反馈浏览器验收。
   status: `done`
   notes: Qoder 基于 `codex/im260-schedule-plan-draft-hardening` 创建 `codex/im261-operational-browser-acceptance` 并执行浏览器验收后，Codex 复核报告并修正过度结论。最终验收记录为 accepted with observations：IM259 source banner、IM260 feedback URL 渲染、非草稿编辑阻止和禁止术语检查通过；但运行时没有 draft 状态计划，且报告未记录真实创建提交后生成的新 plan id，因此真实 create-submit 与 draft edit-submit redirect 链未完整验证。未新增产品代码、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
+
+- task_id: `IM262`
+  source_ids:
+    - `R961`
+  story_ids:
+    - `US881`
+  action: 排班计划草稿工作流 UI 收口。
+  status: `done`
+  notes: Qoder 基于 `codex/im261-operational-browser-acceptance` 创建 `codex/im262-schedule-plan-draft-workflow-closeout` 并实现共享草稿表单和草稿摘要后，Codex 复核实际 diff，修正摘要缺口口径为非负值并补充草稿口径说明。`/schedule-plans/new` 与 `/schedule-plans/[planId]/edit` 现在共用 `SchedulePlanDraftForm`，保存前展示时段数、预测、已排、缺口、覆盖率摘要，保留原字段名、`interval_count`、draft feedback、edit page readiness 和非草稿 blocker。真实 create-submit 与 draft edit-submit browser 链仍未完整验证，需另有 runtime draft 数据后再验收。未新增后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。

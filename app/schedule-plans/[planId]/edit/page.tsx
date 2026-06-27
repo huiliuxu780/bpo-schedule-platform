@@ -4,6 +4,8 @@ import { notFound } from "next/navigation"
 import { updateDraftAction } from "./actions"
 import { AppShell } from "@/components/app-shell"
 import { ReadinessBanner } from "@/components/readiness-banner"
+import { SchedulePlanDraftForm } from "@/components/schedule-plan-draft-form"
+import { SchedulePlanDraftSummary } from "@/components/schedule-plan-draft-summary"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -12,7 +14,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import {
   getSchedulePlanResult,
   schedulePlanStatusLabel,
@@ -99,108 +100,23 @@ export default async function EditSchedulePlanPage({ params, searchParams }: Pag
             </CardContent>
           </Card>
         ) : (
-          <form action={updateDraftAction} className="flex flex-col gap-4">
-            <input type="hidden" name="plan_id" value={plan.summary.id} />
-            <input
-              type="hidden"
-              name="interval_count"
-              value={`${plan.intervals.length}`}
+          <>
+            <SchedulePlanDraftSummary intervals={plan.intervals} />
+            <SchedulePlanDraftForm
+              mode="edit"
+              action={updateDraftAction}
+              planFields={{
+                plan_date: plan.summary.plan_date,
+                project_name: plan.summary.project_name,
+                site_name: plan.summary.site_name,
+                version: plan.summary.version,
+              }}
+              intervals={plan.intervals}
+              submitLabel="保存草稿"
+              cancelHref={`/schedule-plans/${encodeURIComponent(plan.summary.id)}`}
+              planId={plan.summary.id}
             />
-            <Card>
-              <CardHeader>
-                <CardTitle>计划信息</CardTitle>
-                <CardDescription>
-                  保存后由后端重新计算预测、已排、缺口和覆盖率
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-3 md:grid-cols-4">
-                <label className="flex flex-col gap-1 text-sm">
-                  <span className="font-medium">日期</span>
-                  <Input
-                    name="plan_date"
-                    type="date"
-                    defaultValue={plan.summary.plan_date}
-                  />
-                </label>
-                <label className="flex flex-col gap-1 text-sm">
-                  <span className="font-medium">项目</span>
-                  <Input
-                    name="project_name"
-                    defaultValue={plan.summary.project_name}
-                  />
-                </label>
-                <label className="flex flex-col gap-1 text-sm">
-                  <span className="font-medium">职场</span>
-                  <Input name="site_name" defaultValue={plan.summary.site_name} />
-                </label>
-                <label className="flex flex-col gap-1 text-sm">
-                  <span className="font-medium">版本</span>
-                  <Input name="version" defaultValue={plan.summary.version} />
-                </label>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>0.5h 时段</CardTitle>
-                <CardDescription>
-                  保存草稿明细中的预测、已排、缺口和备注。
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-3">
-                {plan.intervals.map((item, index) => (
-                  <div
-                    key={`${item.interval_start}-${item.interval_end}`}
-                    className="grid gap-3 rounded-md border p-3 md:grid-cols-[7rem_7rem_1fr_1fr_2fr]"
-                  >
-                    <label className="flex flex-col gap-1 text-sm">
-                      <span className="font-medium">开始</span>
-                      <Input
-                        name={`interval_start_${index}`}
-                        defaultValue={item.interval_start}
-                      />
-                    </label>
-                    <label className="flex flex-col gap-1 text-sm">
-                      <span className="font-medium">结束</span>
-                      <Input
-                        name={`interval_end_${index}`}
-                        defaultValue={item.interval_end}
-                      />
-                    </label>
-                    <label className="flex flex-col gap-1 text-sm">
-                      <span className="font-medium">预测</span>
-                      <Input
-                        name={`forecast_agents_${index}`}
-                        type="number"
-                        min="0"
-                        defaultValue={`${item.forecast_agents}`}
-                      />
-                    </label>
-                    <label className="flex flex-col gap-1 text-sm">
-                      <span className="font-medium">已排</span>
-                      <Input
-                        name={`scheduled_agents_${index}`}
-                        type="number"
-                        min="0"
-                        defaultValue={`${item.scheduled_agents}`}
-                      />
-                    </label>
-                    <label className="flex flex-col gap-1 text-sm">
-                      <span className="font-medium">备注</span>
-                      <Input name={`note_${index}`} defaultValue={item.note} />
-                    </label>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            <div className="flex justify-end gap-2">
-              <Button asChild variant="outline">
-                <Link href={`/schedule-plans/${encodeURIComponent(plan.summary.id)}`}>取消</Link>
-              </Button>
-              <Button type="submit">保存草稿</Button>
-            </div>
-          </form>
+          </>
         )}
       </main>
     </AppShell>
