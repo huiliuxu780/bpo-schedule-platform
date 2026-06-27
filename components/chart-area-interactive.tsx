@@ -40,6 +40,9 @@ export function ChartAreaInteractive() {
           <CardDescription>
             排班实现率、排班拟合度、排班遵守率趋势
           </CardDescription>
+          <p className="mt-1 text-xs text-muted-foreground">
+            当前展示本地样本趋势参考，暂未接入筛选条件或运行时数据
+          </p>
         </div>
         <div className="flex rounded-md border p-0.5">
           {ranges.map((item) => (

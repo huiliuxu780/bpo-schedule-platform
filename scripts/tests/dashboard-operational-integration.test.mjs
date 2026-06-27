@@ -27,8 +27,8 @@ describe("Dashboard Page - Operational Integration", () => {
     assert.match(pageContent, /readiness\.message/);
   });
 
-  it("should pass readiness hasData to readiness banner", () => {
-    assert.match(pageContent, /readiness\.hasData/);
+  it("should pass readiness hasFilteredData to readiness banner", () => {
+    assert.match(pageContent, /readiness\.hasFilteredData/);
   });
 
   it("should pass readiness overallSource to readiness banner", () => {

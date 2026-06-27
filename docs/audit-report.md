@@ -5968,3 +5968,21 @@
 - `/schedule-plans/new` 与 `/schedule-plans/[planId]/edit` 移除重复时段表单 markup，改用共享组件；edit 页继续保留 `ReadinessBanner`、missing notFound 和非草稿 blocker。
 - `docs/design/local-mvp-operational-source-draft-acceptance.md` 更新 IM262 验证记录，同时保留真实 create-submit 与 draft edit-submit browser 链未完整验证的 observation。
 - 新增 `scripts/tests/schedule-plan-draft-workflow-closeout-model.test.mjs` 并更新 IM260 hardening 测试；focused schedule-plan tests 通过 100 tests，typecheck 通过，diff check 后续见 IM262 Done Report。
+
+### 2026-06-27 - IM263 经营总览运营筛选控制台
+
+#### 审计计划
+
+- 承接 IM262 后的本地 MVP 运营链路，把本轮限定为一个中等产品块：让 `/dashboard` 的全局筛选从装饰性按钮变成真实 URL 驱动控制台。
+- Qoder 执行功能实现；Codex 负责实际 diff review、产品边界修正、Harness 状态、最终验证、提交和推送决策。
+- 不新增后端 API、数据库、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- 新增 `components/global-filter-bar.tsx`，支持项目、职场、计划状态三类全局总览口径筛选，所有筛选通过 URL query 参数表达并支持重置。
+- `app/dashboard/page.tsx` 读取 `searchParams`，用 `parseDashboardFilters()` 生成筛选模型，并把筛选项传入 `buildDashboardOperationalViewModel()`；筛选后的指标卡、热力图和异常表来自同一个 view model。
+- `lib/dashboard.ts` 新增 operational filter 模型、解析函数、活跃筛选判断和计划/风险/不可用记录过滤逻辑；readiness 现在区分源数据为空、筛选为空和筛选后仍有数据。
+- Codex 修正 Qoder 初稿中的产品边界错误：关键词、风险等级和问题状态不属于 dashboard header 的全局筛选，风险等级和问题状态应继续留在异常明细表内部。
+- Codex 让计划状态筛选不仅影响计划卡片和热力图，也通过 plan id / 项目职场日期上下文约束风险和不可用记录，避免总览口径不一致。
+- 趋势图保留静态本地样本边界说明，避免暗示实时数据或自动能力。
+- 新增 `scripts/tests/dashboard-operational-filter-console.test.mjs`，从字符串结构检查扩展到实际 view model 行为断言，覆盖项目、职场、计划状态对最终模型的影响，并明确禁止表格级筛选进入全局筛选栏。

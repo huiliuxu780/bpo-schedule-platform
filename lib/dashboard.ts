@@ -42,11 +42,16 @@ export type DashboardReadinessSummary = {
   overallSource: DashboardDataSourceKind
   message: string
   hasData: boolean
+  hasFilteredData: boolean
+  isFilteredEmpty: boolean
+  isSourceEmpty: boolean
   sourceStates: DashboardDataSourceState
 }
 
 export type DashboardOperationalViewModel = DashboardViewModel & {
   readiness: DashboardReadinessSummary
+  filters: DashboardOperationalFilters
+  hasActiveFilters: boolean
 }
 
 /**
@@ -257,6 +262,90 @@ export type DataSourceInfo = {
   failed: boolean
 }
 
+export type DashboardOperationalFilters = {
+  site?: string
+  project?: string
+  planStatus?: string
+}
+
+export function parseDashboardFilters(searchParams: Record<string, string | string[] | undefined>): DashboardOperationalFilters {
+  const filters: DashboardOperationalFilters = {}
+
+  if (typeof searchParams.site === "string" && searchParams.site.trim()) {
+    filters.site = searchParams.site.trim()
+  }
+  if (typeof searchParams.project === "string" && searchParams.project.trim()) {
+    filters.project = searchParams.project.trim()
+  }
+  if (typeof searchParams.planStatus === "string" && searchParams.planStatus.trim()) {
+    filters.planStatus = searchParams.planStatus.trim()
+  }
+
+  return filters
+}
+
+export function hasActiveFilters(filters: DashboardOperationalFilters): boolean {
+  return Boolean(
+    filters.site ||
+    filters.project ||
+    filters.planStatus
+  )
+}
+
+function filterPlans(plans: SchedulePlanSummary[], filters: DashboardOperationalFilters): SchedulePlanSummary[] {
+  return plans.filter((plan) => {
+    if (filters.site && !plan.site_name.includes(filters.site)) return false
+    if (filters.project && !plan.project_name.includes(filters.project)) return false
+    if (filters.planStatus && plan.status !== filters.planStatus) return false
+    return true
+  })
+}
+
+function filterRisks(
+  risks: ScheduleRiskRow[],
+  filters: DashboardOperationalFilters,
+  filteredPlanIds?: Set<string>
+): ScheduleRiskRow[] {
+  return risks.filter((risk) => {
+    if (filters.site && !risk.site_name.includes(filters.site)) return false
+    if (filters.project && !risk.project_name.includes(filters.project)) return false
+    if (filteredPlanIds && !filteredPlanIds.has(risk.plan_id)) return false
+    return true
+  })
+}
+
+function filterUnavailability(
+  unavailability: UnavailabilityRow[],
+  filters: DashboardOperationalFilters,
+  filteredPlanContexts?: Set<string>
+): UnavailabilityRow[] {
+  return unavailability.filter((unavail) => {
+    if (filters.site && !unavail.site_name.includes(filters.site)) return false
+    if (filters.project && !unavail.project_name.includes(filters.project)) return false
+    if (
+      filteredPlanContexts &&
+      !filteredPlanContexts.has(
+        planContextKey({
+          project_name: unavail.project_name,
+          site_name: unavail.site_name,
+          plan_date: unavail.unavailable_date,
+        })
+      )
+    ) {
+      return false
+    }
+    return true
+  })
+}
+
+function planContextKey(context: {
+  project_name: string
+  site_name: string
+  plan_date: string
+}) {
+  return `${context.project_name}::${context.site_name}::${context.plan_date}`
+}
+
 export type DashboardOperationalInput = {
   plans: SchedulePlanSummary[]
   risks: ScheduleRiskRow[]
@@ -264,14 +353,39 @@ export type DashboardOperationalInput = {
   plansSource: DataSourceInfo
   risksSource: DataSourceInfo
   unavailabilitySource: DataSourceInfo
+  filters?: DashboardOperationalFilters
 }
 
 export function buildDashboardOperationalViewModel(
   input: DashboardOperationalInput
 ): DashboardOperationalViewModel {
-  const { plans, risks, unavailability, plansSource, risksSource, unavailabilitySource } = input
+  const {
+    plans,
+    risks,
+    unavailability,
+    plansSource,
+    risksSource,
+    unavailabilitySource,
+    filters = {},
+  } = input
 
-  const baseViewModel = buildDashboardViewModel(plans, risks, unavailability)
+  // Apply filters to data
+  const filteredPlans = filterPlans(plans, filters)
+  const filteredPlanIds = filters.planStatus
+    ? new Set(filteredPlans.map((plan) => plan.id))
+    : undefined
+  const filteredPlanContexts = filters.planStatus
+    ? new Set(filteredPlans.map((plan) => planContextKey(plan)))
+    : undefined
+  const filteredRisks = filterRisks(risks, filters, filteredPlanIds)
+  const filteredUnavailability = filterUnavailability(
+    unavailability,
+    filters,
+    filteredPlanContexts
+  )
+
+  // Build view model with filtered data
+  const baseViewModel = buildDashboardViewModel(filteredPlans, filteredRisks, filteredUnavailability)
 
   const hasAnyFailure = plansSource.failed || risksSource.failed || unavailabilitySource.failed
   const hasAnyFallback =
@@ -311,9 +425,15 @@ export function buildDashboardOperationalViewModel(
   }
 
   const hasData = plans.length > 0 || risks.length > 0 || unavailability.length > 0
+  const hasFilteredData = filteredPlans.length > 0 || filteredRisks.length > 0 || filteredUnavailability.length > 0
+  const activeFilters = hasActiveFilters(filters)
+  const isSourceEmpty = !hasData
+  const isFilteredEmpty = hasData && !hasFilteredData && activeFilters
 
   let message: string
-  if (overallSource === "fallback" || (overallSource === "mixed" && hasAnyFallback)) {
+  if (isFilteredEmpty) {
+    message = "当前筛选条件下暂无数据，请调整筛选条件或查看全部数据。"
+  } else if (overallSource === "fallback" || (overallSource === "mixed" && hasAnyFallback)) {
     message = "部分经营总览数据使用本地兜底数据，请确认后端服务状态后再用于验收判断。"
   } else if (overallSource === "api_empty") {
     message = "当前本地数据为空，请先创建排班计划、风险或不可用记录。"
@@ -327,11 +447,16 @@ export function buildDashboardOperationalViewModel(
     overallSource,
     message,
     hasData,
+    hasFilteredData,
+    isFilteredEmpty,
+    isSourceEmpty,
     sourceStates,
   }
 
   return {
     ...baseViewModel,
     readiness,
+    filters,
+    hasActiveFilters: activeFilters,
   }
 }

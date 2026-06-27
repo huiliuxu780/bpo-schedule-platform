@@ -3000,3 +3000,12 @@
   action: 排班计划草稿工作流 UI 收口。
   status: `done`
   notes: Qoder 基于 `codex/im261-operational-browser-acceptance` 创建 `codex/im262-schedule-plan-draft-workflow-closeout` 并实现共享草稿表单和草稿摘要后，Codex 复核实际 diff，修正摘要缺口口径为非负值并补充草稿口径说明。`/schedule-plans/new` 与 `/schedule-plans/[planId]/edit` 现在共用 `SchedulePlanDraftForm`，保存前展示时段数、预测、已排、缺口、覆盖率摘要，保留原字段名、`interval_count`、draft feedback、edit page readiness 和非草稿 blocker。真实 create-submit 与 draft edit-submit browser 链仍未完整验证，需另有 runtime draft 数据后再验收。未新增后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
+
+- task_id: `IM263`
+  source_ids:
+    - `R962`
+  story_ids:
+    - `US882`
+  action: 经营总览运营筛选控制台。
+  status: `done`
+  notes: Qoder 基于 `codex/im262-schedule-plan-draft-workflow-closeout` 创建 `codex/im263-dashboard-operational-filter-console` 并实现 dashboard 筛选包后，Codex 复核实际 diff 并修正产品边界偏差：总览顶部不应混入异常表级筛选，也不应堆叠关键词、风险等级、问题状态等局部控件。`/dashboard` 现在只通过 URL 参数驱动项目、职场、计划状态三类全局口径筛选，筛选后统一进入 `buildDashboardOperationalViewModel()`，再渲染指标卡、热力图和异常表；风险等级和问题状态继续留在异常明细表内部。筛选无结果与源数据为空分开提示，趋势图保留本地样本边界说明。未新增后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
