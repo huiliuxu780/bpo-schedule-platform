@@ -6067,3 +6067,20 @@
 - `components/chart-area-interactive.tsx` 删除无真实数据切换能力的 `日` / `周` / `月` 控件，趋势图仅保留当前参考说明，避免暗示筛选或时间粒度已接入。
 - `lib/dashboard.ts` 调整 fallback、empty、mixed readiness 文案，删除 `后端 API`、`本地数据源`、`验收判断` 等实现/流程口径，改为业务可理解的经营数据状态。
 - 更新 dashboard operational 和 global shell 测试，防止伪入口、disabled logout、伪 chart controls 和内部口径文案回流到用户界面。
+
+### 2026-06-28 - IM269 经营总览 KPI 卡片视觉基线修复
+
+#### 审计计划
+
+- 承接 PM 对 shadcn dashboard-01 参考图的强反馈，把本轮限定为 `/dashboard` 首屏卡片视觉修复，而不是新增功能。
+- 重点修复 KPI cards 与参考图的明显差距：卡片高度、数值层级、badge 圆角和位置、底部 insight/note 布局、阴影重量、渐变方向、整卡点击区域。
+- 不安装依赖、不覆盖 `components/ui/**`、不切换 preset、不新增后端/API/业务能力。
+
+#### 执行结果
+
+- `components/section-cards.tsx` 抽出 `MetricCard`，使用 `@container/card flex-col` 结构，避免横向 flex 错位。
+- KPI 卡片高度从 160px 提升到 196px，数值层级提升到 `text-4xl` / container `text-5xl`，底部 insight/note 使用 `mt-auto` 固定到下半区。
+- `change` badge 改为圆形 outline badge，带轻量背景和阴影，贴近参考图右上角胶囊形状态。
+- 指标下钻从右下角 ghost button 改为整卡 `Link`，减少卡片内按钮噪音，同时保留真实 drilldown 能力。
+- `ChartAreaInteractive` 与 `BpoHeatmap` 的卡片阴影统一为 `shadow-md shadow-black/5`，避免首屏卡片重量不一致。
+- 浏览器自动化接口未暴露 in-app tab，系统截图又被 Codex 窗口遮挡，因此本轮没有可用浏览器截图证据；验收依据为源码 diff、focused tests、shadcn check、typecheck/lint 和最终 Harness 门禁。

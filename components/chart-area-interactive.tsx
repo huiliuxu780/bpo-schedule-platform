@@ -28,7 +28,7 @@ const TrendAreaChart = dynamic(() => Promise.resolve(TrendAreaChartContent), {
 
 export function ChartAreaInteractive() {
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-md shadow-black/5">
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div>
           <CardTitle>履约指标趋势</CardTitle>

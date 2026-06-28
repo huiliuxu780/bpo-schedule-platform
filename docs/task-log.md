@@ -3054,3 +3054,12 @@
   action: 经营总览伪入口与示例边界清理。
   status: `done`
   notes: Qoder 基于 `codex/im267-shadcn-dashboard-baseline-alignment` 创建 `codex/im268-remove-pseudo-actions-sample-boundaries` 并执行清理后，Codex 复核实际 diff 并进一步修正 readiness 文案。全局 sidebar 删除 placeholder 帮助/搜索入口和 disabled 退出登录菜单；dashboard 趋势图删除无真实行为的日/周/月切换按钮；fallback、empty、mixed 文案不再暴露后端 API、本地数据源、验收判断或实现边界。Focused dashboard/global-shell/navigation tests、typecheck、lint、shadcn check、diff check 均通过；最终 `scripts/check.sh` 结果记录在 branch log。未新增业务能力、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
+
+- task_id: `IM269`
+  source_ids:
+    - `R968`
+  story_ids:
+    - `US888`
+  action: 经营总览 KPI 卡片视觉基线修复。
+  status: `done`
+  notes: Codex 基于 `codex/im268-remove-pseudo-actions-sample-boundaries` 创建 `codex/im269-dashboard-card-visual-alignment` 并直接修复 PM 指出的 shadcn dashboard-01 卡片样式差距。`SectionCards` 现在使用更接近参考图的 metric-card 比例：`@container/card`、`flex-col`、更大数值层级、圆形 outline badge、底部固定 insight/note、整卡 drilldown 链接、`shadow-md shadow-black/5` 和轻量渐变；趋势图和热力图卡片也统一 shadow weight。Focused dashboard/card tests、typecheck、lint、shadcn check、diff check 均通过；最终 `scripts/check.sh` 结果记录在 branch log。未新增业务能力、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。

@@ -5868,3 +5868,23 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM269 Dashboard Card Visual Alignment
+
+- branch_name: `codex/im269-dashboard-card-visual-alignment`
+- base_main_commit: `stacked on local codex/im268-remove-pseudo-actions-sample-boundaries at f010923`
+- stacked_on: `codex/im268-remove-pseudo-actions-sample-boundaries`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium frontend-scaffold visual correction for `/dashboard` KPI cards and first-screen card shadow weight after PM compared the current UI against shadcn dashboard-01.
+- qoder_mode: `false; PM asked Codex to fix directly after rejecting the visual gap.`
+- allowed_files_check: dashboard KPI card component, dashboard chart/heatmap card wrappers, focused dashboard baseline tests, current Harness context, audit report, task log, and branch log only.
+- scope_diff_check: expected visual alignment only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, external integration, or new dashboard controls.
+- check_result: Focused dashboard/card regression run passed with 63 tests. `npm run typecheck`, `npm run lint`, `node scripts/check-shadcn-ui.mjs`, and `git diff --check` passed before final Harness verification. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 767 Node tests (766 pass, 1 skipped), shadcn check, lint, typecheck, Next build, 241 backend unittest tests OK, and project Harness check passed.
+- visual_evidence: Browser automation did not expose an in-app tab, and system screenshot was obstructed by the Codex window; no browser screenshot evidence is claimed for this task.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

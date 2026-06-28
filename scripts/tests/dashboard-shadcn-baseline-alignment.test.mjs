@@ -48,11 +48,20 @@ test("dashboard content keeps dashboard-01 section rhythm", () => {
 })
 
 test("dashboard cards use the shadcn metric-card visual rhythm", () => {
-  assert.match(sectionCardsSrc, /data-\[slot=card\]/)
+  assert.match(sectionCardsSrc, /data-slot="card"/)
+  assert.match(sectionCardsSrc, /@container\/card/)
+  assert.match(sectionCardsSrc, /flex-col/)
   assert.match(sectionCardsSrc, /bg-gradient-to-t/)
-  assert.match(sectionCardsSrc, /shadow-sm/)
+  assert.match(sectionCardsSrc, /min-h-\[196px\]/)
+  assert.match(sectionCardsSrc, /shadow-md/)
+  assert.match(sectionCardsSrc, /shadow-black\/5/)
+  assert.match(sectionCardsSrc, /rounded-full/)
   assert.match(sectionCardsSrc, /tabular-nums/)
-  assert.match(sectionCardsSrc, /text-4xl/)
+  assert.match(sectionCardsSrc, /text-5xl/)
+  assert.match(sectionCardsSrc, /mt-auto/)
+  assert.match(sectionCardsSrc, /href=\{item\.drilldown\.href\}/)
+  assert.match(sectionCardsSrc, /className="block h-full"/)
+  assert.doesNotMatch(sectionCardsSrc, /variant="ghost" size="sm"/)
 })
 
 test("dashboard table uses tabs and column controls like the reference workbench", () => {
