@@ -6052,3 +6052,23 @@
 - `DataTable` 改为 tabs + column control 的工作台结构，并加宽表格固定列宽，修复中文项目列被压成竖排的问题。
 - `ReadinessBanner` 保留空态、兜底、混合状态提示，但删除正常状态常驻提示；兜底文案改为业务可读的“本地示例数据”提示，不再暴露后端/API/验收判断口径。
 - 新增 `scripts/tests/dashboard-shadcn-baseline-alignment.test.mjs`，并更新 global-shell/dashboard chart 测试，保护 dashboard baseline、flat sidebar、四卡节奏、tabs table 和无顶部筛选台边界。
+
+### 2026-06-28 - IM269 Roadmap / Task Board / GAP Matrix 治理板补齐
+
+#### 审计计划
+
+- 承接 PM 对项目方向跑偏的反馈，本轮只做 current 层治理文档和同步规则，不做业务实现。
+- 新增 Roadmap、Task Board、GAP Matrix，分别回答未来要做什么、当前需求/故事/任务池哪些可做或不可做、哪些是真功能/假功能/缺失能力。
+- 将三份治理板纳入默认读集和当前执行规则，并记录 Feishu Base 同步要求。
+- 不修改前端业务代码、后端、数据库、依赖、package/lockfile、权限、审批、导出、批量、外部集成、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 新增 `docs/current/ROADMAP.md`，定义产品方向、当前基线、Horizon 0-3、默认后续推荐和 Feishu 同步规则。
+- 新增 `docs/current/TASK_BOARD.md`，把当前可塑形候选、阻塞/延后生产主题和候选任务边界集中管理；明确 current queue 仍为空，候选不等于可执行任务。
+- 新增 `docs/current/GAP_MATRIX.md`，按 True Local Function、Controlled Local Function、Visual / Static Function、Planning / Doc Only、Missing、Blocked Production Capability 标记当前能力真实性。
+- 更新 `AGENTS.md` 和 `docs/current/PROJECT_CONTEXT.md`，要求后续非 trivial 任务审阅/更新三份治理板，并在可写且预览确认后同步 Feishu Base。
+- 更新 `docs/registry/TRACE_INDEX.yaml` current file pointers，便于后续快速定位。
+- 已读取目标 Feishu Base 结构：当前只有 `数据表` 和单字段 `文本`，存在 5 条空记录。实际写入会涉及字段结构改造和记录写入，需先预览后执行。
+- Feishu 写入已执行并回读确认：字段扩展为 `Artifact`、`Category`、`Status`、`Can Execute`、`Priority`、`Summary`、`Next Action`、`Source Path`、`Updated At`，5 条原空记录已写入 ROADMAP、TASK_BOARD、GAP_MATRIX、Execution Rule、Verification 摘要。
+- 最终验证使用独立 worktree 中被 gitignore 的 `node_modules` 和 `.venv` symlink 复用主工作区既有依赖；未执行依赖安装、未改 package/lockfile。最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过：767 Node tests（766 pass, 1 skipped）、shadcn、backend runtime、lint、typecheck、Next build、241 backend unittest tests OK。

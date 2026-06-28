@@ -5849,3 +5849,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM269 Roadmap Task Board Gap Matrix
+
+- branch_name: `codex/im269-roadmap-task-board-gap-matrix`
+- base_main_commit: `5b5bd53a4640d31c0ea7f69f64961319a0feec5b`
+- stacked_on: `codex/im268-remove-pseudo-actions-sample-boundaries HEAD only; dirty IM268 worktree changes were not included`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Documentation and governance task to add PM-facing Roadmap, Task Board, GAP Matrix, and Feishu sync rule.
+- qoder_mode: `false; Codex executed directly.`
+- allowed_files_check: `AGENTS.md`, `docs/current/ROADMAP.md`, `docs/current/TASK_BOARD.md`, `docs/current/GAP_MATRIX.md`, `docs/current/PROJECT_CONTEXT.md`, `docs/registry/TRACE_INDEX.yaml`, `docs/task-log.md`, `docs/audit-report.md`, and `docs/dev/branch-log.md` only.
+- scope_diff_check: expected governance docs and traceability updates only; no frontend business code, backend, scripts, dependencies, package/lockfile, database, auth, permission, approval, export, batch-operation, external integration, automatic scheduling, production formula, settlement, or charge-factor changes.
+- check_result: `bash scripts/check-state.sh --strict` passed. `git diff --check` passed. Feishu Base schema/readback passed with 9 fields and 5 governance rows in target view. First full `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` attempt in the isolated worktree failed before frontend tests because `node_modules` was absent; second attempt reused ignored `node_modules` symlink and passed frontend/Next but failed backend unittest because current worktree had no `.venv`; final attempt reused ignored `.venv` symlink from the main workspace and passed: 767 Node tests (766 pass, 1 skipped), shadcn check, backend runtime check, lint, typecheck, Next build, 241 backend unittest tests OK, and project Harness check passed.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

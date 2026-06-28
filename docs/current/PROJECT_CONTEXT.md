@@ -14,6 +14,8 @@ The active product boundary remains local MVP and operator-facing workflow scaff
 
 No executable story is currently queued. IM267 aligned the dashboard shell and `/dashboard` composition with the shadcn dashboard-01 baseline after PM review: inset sidebar, flat workbench navigation without duplicate sidebar group labels, compact header rhythm, four KPI cards, chart + right summary, and tabbed anomaly table. Normal ready data states no longer render a data-source banner; only empty, fallback, or mixed states may show business-facing status copy. URL-driven project/site/plan-status filtering remains available for deep links, but the default page must not reintroduce a top-level filter console above KPI cards. The next implementation should not assume missing routes without checking the current codebase; `/shift-details`, `/schedule-plans/new`, and `/schedule-plans/[planId]/edit` already exist and should be treated as acceptance/hardening candidates, not greenfield missing pages.
 
+IM269 added the missing PM-facing governance layer: `docs/current/ROADMAP.md`, `docs/current/TASK_BOARD.md`, and `docs/current/GAP_MATRIX.md`. These files now define future direction, candidate task pool, blocked/deferred production topics, and true-vs-static-vs-missing capability status. Future non-trivial tasks must review these files and either update them or state they were unchanged; the concise summary should be mirrored to the configured Feishu Base when write access is available and the write preview is confirmed.
+
 IM240 completed the PM-confirmed review-case live runtime smoke on the current branch using an isolated `.local/im240-runtime-smoke.db` runtime artifact. The smoke used backend `127.0.0.1:8000` and frontend `127.0.0.1:3002` because the existing `3000` BPO Next dev process was stale and unresponsive. It did not add product features or modify business UI/backend implementation beyond acceptance traceability.
 
 IM241 completed the review-case write-action runtime smoke using `BPO_DATABASE_URL` and an isolated `.local/im241-review-case-action-smoke.db` database. It did not add new product behavior, implementation code, schema/migration, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors.
@@ -59,6 +61,7 @@ IM243 completed the PM-confirmed manual browser walkthrough for that remaining g
 
 - Read current files by default, not historical archive files.
 - Treat `docs/current/**` as the execution queue source.
+- Treat `docs/current/ROADMAP.md`, `docs/current/TASK_BOARD.md`, and `docs/current/GAP_MATRIX.md` as the PM-facing direction, candidate, and feature-reality board.
 - Treat `docs/registry/**` as lookup indexes only.
 - Do not execute from archive files.
 - Keep subagents read-only for `docs/current/**` and `docs/registry/**`; the main Worker is the single writer.
@@ -66,6 +69,7 @@ IM243 completed the PM-confirmed manual browser walkthrough for that remaining g
 - Run `bash scripts/check-state.sh` for state changes.
 - `bash scripts/check.sh` runs strict state checks by default.
 - Run `bash scripts/check.sh` before reporting a task complete.
+- Mirror Roadmap / Task Board / GAP Matrix updates to the Feishu Base when the write preview is confirmed; if Feishu is unavailable, report local-only sync status.
 
 ## Current Stop Conditions
 
@@ -80,4 +84,4 @@ IM243 completed the PM-confirmed manual browser walkthrough for that remaining g
 
 ## Current Recommendation
 
-Recommended next medium-sized candidates are: (1) continue shadcn baseline alignment on the schedule-plan and risk workbench pages, (2) schedule-plan interval editing usability improvements if the current dense row editor is not enough, or (3) dashboard trend data definition if PM wants to replace the current local sample trend boundary. Do not add another dashboard top-level filter console, claim production readiness, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.
+Recommended next medium-sized candidates are now tracked in `docs/current/TASK_BOARD.md`: (1) continue shadcn baseline alignment on the schedule-plan and risk workbench pages, (2) schedule-plan interval editing usability improvements if the current dense row editor is not enough, or (3) dashboard trend data definition if PM wants to replace the current local sample trend boundary. Do not add another dashboard top-level filter console, claim production readiness, install E2E dependencies, or expand into permissions, approval, export, batch operations, formulas, settlement rules, or charge factors unless a new task is defined.

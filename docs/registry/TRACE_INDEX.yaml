@@ -9,6 +9,9 @@ current_files:
   story_queue: "docs/current/STORY_QUEUE.yaml"
   active_tasks: "docs/current/ACTIVE_TASKS.yaml"
   blockers: "docs/current/BLOCKERS.md"
+  roadmap: "docs/current/ROADMAP.md"
+  task_board: "docs/current/TASK_BOARD.md"
+  gap_matrix: "docs/current/GAP_MATRIX.md"
 stories:
   US065:
     file: "docs/user-stories.md"

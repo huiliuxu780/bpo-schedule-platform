@@ -42,7 +42,10 @@ Before every non-trivial task, Codex must read the default current-state set:
 4. `docs/current/ACTIVE_TASKS.yaml`
 5. `docs/current/BLOCKERS.md`
 6. `docs/quality/GATE_REGISTRY.md`
-7. Current task files
+7. `docs/current/ROADMAP.md`
+8. `docs/current/TASK_BOARD.md`
+9. `docs/current/GAP_MATRIX.md`
+10. Current task files
 
 Legacy files such as `tasks/backlog.yaml`, `docs/user-stories.md`, `docs/raw-requirements.md`, `docs/audit-report.md`, `docs/task-log.md`, and `docs/dev/branch-log.md` are not default startup context after the current layer exists.
 
@@ -162,8 +165,36 @@ Story Runner must:
 - keep small UI feedback and acceptance corrections inside the current story when they do not expand scope
 - avoid guessing the next task when the ready queue is empty
 - run `bash scripts/check-state.sh` after current or registry state changes
+- refresh `docs/current/ROADMAP.md`, `docs/current/TASK_BOARD.md`, and `docs/current/GAP_MATRIX.md` when task direction, executable candidates, blocked topics, or feature reality changes
+- sync the Roadmap / Task Board / GAP Matrix summary to the PM Feishu Base when Feishu write access is available and the write preview is confirmed
 
 Bounded subagents may be used in Story Runner Mode only for independent, non-overlapping write scopes. The main Codex worker remains responsible for dispatch design, diff review, final verification, traceability, commits, and Done Report. Outside Story Runner Mode, subagents require explicit PM/user permission and a confirmed Gate.
+
+## Roadmap, Task Board, GAP Matrix, And Feishu Sync
+
+The current PM-facing governance board is:
+
+- `docs/current/ROADMAP.md`
+- `docs/current/TASK_BOARD.md`
+- `docs/current/GAP_MATRIX.md`
+
+These files explain where the project is going, which demand/story/task candidates exist, which items are executable or blocked, and which product surfaces are true local functions, visual/static functions, missing, or blocked production capabilities.
+
+The PM-visible Feishu Base is:
+
+- `https://bsh-group.feishu.cn/base/SfHQbFp2iayfiCsMypccBz7Knwb?table=tblo03qLQkgtNoYa&view=vewGvE45jR`
+
+Every non-trivial task must either:
+
+- update the three governance files and sync a concise summary to Feishu, or
+- state in the Done Report that Roadmap / Task Board / GAP Matrix were reviewed and unchanged.
+
+Feishu write safety:
+
+- Read the target Base schema before writing.
+- Preview planned field and record changes before mutating Feishu.
+- If Feishu is unavailable, blocked by permission, or awaiting PM confirmation, keep the repo files authoritative and report the sync status in the Done Report.
+- Do not let Feishu replace the repo source of truth; Feishu is the PM-visible mirror.
 
 ## Qoder / Subagent Task Splitting Rules
 

@@ -3045,3 +3045,12 @@
   action: 经营总览 shadcn dashboard 基线对齐。
   status: `done`
   notes: Codex 根据 PM 对官方 shadcn dashboard-01 的对比反馈，直接对齐全局 shell 和 `/dashboard` 的信息架构与视觉节奏。`AppSidebar` 改为 inset flat workbench navigation，移除展开目录式导航和重复的“运营数据/运营工作台”分组层级；`ReadinessBanner` 正常 ready 状态不再渲染，兜底/空态文案不再暴露后端/API/验收口径；`AppShell`/`SiteHeader` 使用 dashboard-01 的 sidebar/header 尺寸节奏；`/dashboard` 保持四张 KPI 卡、图表+右侧摘要、tabs 异常表的顺序；`SectionCards` 使用 shadcn metric card 栅格，`DataTable` 使用 tabs/column control，并修复宽表列被压成竖排的问题。未新增业务能力、依赖、package/lockfile、后端 schema、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
+
+- task_id: `IM269`
+  source_ids:
+    - `PM-2026-06-28-roadmap-task-board-gap-matrix`
+  story_ids:
+    - `N/A`
+  action: Roadmap / Task Board / GAP Matrix 治理板补齐。
+  status: `done`
+  notes: Codex 根据 PM 对项目跑偏和缺少 Roadmap/Task Board/GAP Matrix 的反馈，在独立分支新增 `docs/current/ROADMAP.md`、`docs/current/TASK_BOARD.md`、`docs/current/GAP_MATRIX.md`，并把三份治理板纳入 `AGENTS.md` 默认读集和 `PROJECT_CONTEXT.md` 当前执行规则。目标 Feishu Base 已读取结构，当前 Base 只有单字段空表；实际写入需要先预览字段/记录变更后再执行。未修改业务 UI、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、外部集成、自动排班、生产公式、结算或收费因子。
