@@ -95,13 +95,12 @@ test("dashboard page passes metricCards to SectionCards", () => {
   assert.match(pageSrc, /cards=\{viewModel\.metricCards\}/);
 });
 
-test("dashboard page follows dashboard-01 chart-first layout without the side heatmap", () => {
-  assert.doesNotMatch(pageSrc, /BpoHeatmap/);
-  assert.match(pageSrc, /<ChartAreaInteractive \/>/);
+test("dashboard page passes heatmapRows to BpoHeatmap", () => {
+  assert.match(pageSrc, /rows=\{viewModel\.heatmapRows\}/);
 });
 
-test("dashboard page keeps the main chart in a full-width section", () => {
-  assert.match(pageSrc, /<section className="px-4 lg:px-6">[\s\S]+?<ChartAreaInteractive \/>[\s\S]+?<\/section>/);
+test("dashboard page passes heatmapSlots to BpoHeatmap", () => {
+  assert.match(pageSrc, /slots=\{viewModel\.heatmapSlots\}/);
 });
 
 test("dashboard page passes anomalies to DataTable", () => {

@@ -22,14 +22,7 @@ export function CardHeader({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div
-      data-slot="card-header"
-      className={cn(
-        "grid auto-rows-min gap-1.5 p-4 has-data-[slot=card-action]:grid-cols-[1fr_auto] lg:p-6",
-        className
-      )}
-      {...props}
-    />
+    <div className={cn("grid gap-1.5 p-4 lg:p-6", className)} {...props} />
   )
 }
 
@@ -50,27 +43,7 @@ export function CardDescription({
   ...props
 }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
-    <p
-      data-slot="card-description"
-      className={cn("text-sm text-muted-foreground", className)}
-      {...props}
-    />
-  )
-}
-
-export function CardAction({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      data-slot="card-action"
-      className={cn(
-        "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
-        className
-      )}
-      {...props}
-    />
+    <p className={cn("text-sm text-muted-foreground", className)} {...props} />
   )
 }
 
@@ -85,11 +58,5 @@ export function CardFooter({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      data-slot="card-footer"
-      className={cn("flex items-center p-4 pt-0 lg:p-6 lg:pt-0", className)}
-      {...props}
-    />
-  )
+  return <div className={cn("flex items-center p-4 pt-0 lg:p-6 lg:pt-0", className)} {...props} />
 }

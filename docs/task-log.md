@@ -3063,12 +3063,3 @@
   action: 经营总览 KPI 卡片视觉基线修复。
   status: `done`
   notes: Codex 基于 `codex/im268-remove-pseudo-actions-sample-boundaries` 创建 `codex/im269-dashboard-card-visual-alignment` 并直接修复 PM 指出的 shadcn dashboard-01 卡片样式差距。`SectionCards` 现在使用更接近参考图的 metric-card 比例：`@container/card`、`flex-col`、更大数值层级、圆形 outline badge、底部固定 insight/note、整卡 drilldown 链接、`shadow-md shadow-black/5` 和轻量渐变；趋势图和热力图卡片也统一 shadow weight。Focused dashboard/card tests、typecheck、lint、shadcn check、diff check 均通过；最终 `scripts/check.sh` 结果记录在 branch log。未新增业务能力、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
-
-- task_id: `IM270`
-  source_ids:
-    - `R969`
-  story_ids:
-    - `US889`
-  action: 经营总览 dashboard-01 结构还原。
-  status: `done`
-  notes: Codex 基于 `codex/im269-dashboard-card-visual-alignment` 创建 `codex/im270-dashboard-01-restoration` 并直接修复 PM 指出的“假改”和导航/卡片/布局偏差。本轮不再按单点样式补丁处理，而是对照 shadcn dashboard-01 重建 dashboard shell 结构：`AppSidebar` 改为 offcanvas dashboard sidebar，主数据导航使用不同图标，`components/ui/card.tsx` 补齐 `CardAction` slot，KPI cards 使用 `CardAction`/`CardFooter` 和 dashboard-01 metric-card grid/shadow rhythm，趋势图改为全宽 shadcn `ChartContainer`，首屏移除拥挤的侧栏 heatmap，异常表保留真实筛选但回到 tabs + column-control 的工作台节奏。Focused dashboard/global-shell tests、typecheck、lint、shadcn check、diff check 均通过；最终 `scripts/check.sh` 结果记录在 branch log。未新增业务能力、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
