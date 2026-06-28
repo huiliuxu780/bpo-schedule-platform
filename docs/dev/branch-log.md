@@ -5830,3 +5830,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM267 Dashboard Shadcn Baseline Alignment
+
+- branch_name: `codex/im267-shadcn-dashboard-baseline-alignment`
+- base_main_commit: `stacked on pushed codex/im265-operational-browser-acceptance at 37908b1`
+- stacked_on: `codex/im265-operational-browser-acceptance`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium frontend-scaffold correction for aligning the global shell and `/dashboard` with the shadcn dashboard-01 baseline after PM review.
+- qoder_mode: `false; PM asked Codex to continue directly.`
+- allowed_files_check: app shell, sidebar, header, dashboard page, dashboard card/table/chart components, focused dashboard/global-shell tests, current Harness context, audit report, task log, and branch log only.
+- scope_diff_check: expected shadcn baseline layout correction only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, external integration, or new dashboard top-level filter console.
+- check_result: Focused dashboard/global-shell/source-message regression run `node --test scripts/tests/dashboard-shadcn-baseline-alignment.test.mjs scripts/tests/product-structure-global-shell.test.mjs scripts/tests/im259-operational-source-consistency.test.mjs scripts/tests/dashboard-operational-model.test.mjs scripts/tests/schedule-plan-readiness-model.test.mjs` passed with 66 tests after correcting the duplicate sidebar label and normal-state data-source banner. Playwright snapshot check for `/dashboard` confirmed the visible sidebar no longer repeats `运营数据/运营工作台` and no normal `数据来自后端 API` banner is rendered. `npm run lint`, `npm run typecheck`, `node scripts/check-shadcn-ui.mjs`, `bash scripts/check-state.sh --strict`, and `git diff --check` passed before final Harness verification.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

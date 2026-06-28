@@ -49,7 +49,7 @@ export function BpoHeatmap({ rows, slots, drilldown }: BpoHeatmapProps = {}) {
   const isEmpty = displayRows.length === 0 || displaySlots.length === 0
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardHeader className="flex flex-row items-start justify-between gap-3">
         <div className="grid min-w-0 gap-1">
           <CardTitle>时段人力缺口</CardTitle>

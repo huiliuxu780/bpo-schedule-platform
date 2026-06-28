@@ -252,7 +252,7 @@ describe("IM253 Packet A - Schedule Plan List Readiness", () => {
       )
     })
 
-    it("uses fallback rows with an explicit non-live acceptance message when API fails", async () => {
+    it("uses fallback rows with an explicit local example message when data cannot update", async () => {
       await withMockedFetch(
         async () => {
           throw new Error("backend unavailable")
@@ -263,8 +263,9 @@ describe("IM253 Packet A - Schedule Plan List Readiness", () => {
           assert.equal(result.source, "fallback")
           assert.equal(result.failed, true)
           assert.ok(result.items.length > 0)
-          assert.match(result.message, /本地兜底数据/)
+          assert.match(result.message, /本地示例数据/)
           assert.doesNotMatch(result.message, /生产实时|real-time/i)
+          assert.doesNotMatch(result.message, /API|后端|验收/)
         }
       )
     })
@@ -419,7 +420,7 @@ describe("IM253 Packet B - Schedule Plan Detail Readiness", () => {
       )
     })
 
-    it("uses fallback detail only when the API request fails before a not-found response", async () => {
+    it("uses fallback detail only when the data request fails before a not-found response", async () => {
       await withMockedFetch(
         async () => {
           throw new Error("network unavailable")
@@ -430,7 +431,8 @@ describe("IM253 Packet B - Schedule Plan Detail Readiness", () => {
           assert.equal(result.source, "fallback")
           assert.equal(result.failed, true)
           assert.equal(result.item?.summary.id, fallbackPlanId)
-          assert.match(result.message, /本地兜底数据/)
+          assert.match(result.message, /本地示例数据/)
+          assert.doesNotMatch(result.message, /API|后端|验收/)
         }
       )
     })
@@ -446,7 +448,7 @@ describe("IM253 Packet B - Schedule Plan Detail Readiness", () => {
           assert.equal(result.item, null)
           assert.equal(
             result.message,
-            "排班计划读取失败，且本地兜底数据中没有该计划。"
+            "排班计划暂时无法读取，且本地示例数据中没有该计划。"
           )
         }
       )

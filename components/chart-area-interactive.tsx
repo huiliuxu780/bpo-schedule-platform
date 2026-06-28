@@ -33,7 +33,7 @@ export function ChartAreaInteractive() {
   const [range, setRange] = React.useState("日")
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div>
           <CardTitle>履约指标趋势</CardTitle>
@@ -58,7 +58,7 @@ export function ChartAreaInteractive() {
           ))}
         </div>
       </CardHeader>
-      <CardContent className="h-[280px] min-h-[200px] min-w-0">
+      <CardContent className="h-[320px] min-h-[240px] min-w-0 px-2 pt-4 sm:px-6 sm:pt-6">
         <div className="h-full min-h-[200px] w-full min-w-0">
           <TrendAreaChart />
         </div>

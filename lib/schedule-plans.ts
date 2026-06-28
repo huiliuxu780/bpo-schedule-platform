@@ -405,7 +405,7 @@ export async function getSchedulePlanResult(
       item: fallback,
       source: "fallback",
       failed: true,
-      message: "API 请求失败，已使用本地兜底数据，请确认后端服务状态后再用于验收判断。",
+      message: "排班计划暂时无法更新，已显示本地示例数据。",
     }
   }
 
@@ -413,7 +413,7 @@ export async function getSchedulePlanResult(
     item: null,
     source: "missing",
     failed: true,
-    message: "排班计划读取失败，且本地兜底数据中没有该计划。",
+    message: "排班计划暂时无法读取，且本地示例数据中没有该计划。",
   }
 }
 
@@ -467,7 +467,7 @@ export async function getShiftDetailsResult(
       items: fallbackItems,
       source: "fallback",
       failed: true,
-      message: "API 请求失败，已使用本地示例数据",
+      message: "班次明细暂时无法更新，已显示本地示例数据。",
     }
   }
 
@@ -486,7 +486,7 @@ export async function getShiftDetailsResult(
     items: response.items,
     source: "api",
     failed: false,
-    message: "班次明细数据来自后端 API",
+    message: "班次明细已更新。",
   }
 }
 
@@ -502,7 +502,7 @@ export async function getScheduleRiskResult(
         item: null,
         source: result.source,
         failed: true,
-        message: "API 请求失败，已使用本地示例数据，但未找到该风险记录。",
+        message: "履约风险暂时无法更新，已显示本地示例数据，但未找到该风险记录。",
       }
     }
 
@@ -589,7 +589,7 @@ export async function getSchedulePlansResult(
       items: fallbackItems,
       source: "fallback",
       failed: true,
-      message: "API 请求失败，已使用本地兜底数据，请确认后端服务状态后再用于验收判断。",
+      message: "排班计划暂时无法更新，已显示本地示例数据。",
     }
   }
 
@@ -634,7 +634,7 @@ export async function getScheduleRisksResult(
       items: fallbackItems,
       source: "fallback",
       failed: true,
-      message: "API 请求失败，已使用本地示例数据",
+      message: "履约风险暂时无法更新，已显示本地示例数据。",
     }
   }
 
@@ -653,7 +653,7 @@ export async function getScheduleRisksResult(
     items: response.items,
     source: "api",
     failed: false,
-    message: "数据来自后端 API",
+    message: "履约风险已更新。",
   }
 }
 

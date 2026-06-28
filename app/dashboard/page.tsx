@@ -74,37 +74,39 @@ export default async function DashboardPage({
 
   return (
     <AppShell title="经营总览">
-      <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto pb-6">
-        <ReadinessBanner
-          message={viewModel.readiness.message}
-          hasData={viewModel.readiness.hasFilteredData}
-          overallSource={bannerSource}
-        />
-        {viewModel.hasActiveFilters ? (
-          <section className="mx-4 flex flex-wrap items-center gap-2 rounded-lg border bg-muted/25 px-3 py-2 text-sm lg:mx-6">
-            <span className="font-medium text-foreground">当前总览范围</span>
-            {scopeLabels.map((label) => (
-              <Badge key={label} variant="outline">
-                {label}
-              </Badge>
-            ))}
-            <Button asChild variant="ghost" size="sm" className="ml-auto">
-              <Link href="/dashboard">查看全部</Link>
-            </Button>
-          </section>
-        ) : null}
-        <SectionCards cards={viewModel.metricCards} />
-        <section className="grid gap-4 px-4 lg:grid-cols-[1.25fr_0.75fr] lg:px-6">
-          <ChartAreaInteractive />
-          <BpoHeatmap
-            rows={viewModel.heatmapRows}
-            slots={viewModel.heatmapSlots}
-            drilldown={viewModel.heatmapDrilldown}
-          />
-        </section>
-        <section className="grid gap-4 px-4 lg:px-6">
-          <DataTable anomalies={viewModel.anomalies} />
-        </section>
+      <main className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
+        <div className="@container/main flex flex-1 flex-col gap-2">
+          <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+            <ReadinessBanner
+              message={viewModel.readiness.message}
+              hasData={viewModel.readiness.hasFilteredData}
+              overallSource={bannerSource}
+            />
+            {viewModel.hasActiveFilters ? (
+              <section className="mx-4 flex flex-wrap items-center gap-2 rounded-lg border bg-muted/25 px-3 py-2 text-sm lg:mx-6">
+                <span className="font-medium text-foreground">当前总览范围</span>
+                {scopeLabels.map((label) => (
+                  <Badge key={label} variant="outline">
+                    {label}
+                  </Badge>
+                ))}
+                <Button asChild variant="ghost" size="sm" className="ml-auto">
+                  <Link href="/dashboard">查看全部</Link>
+                </Button>
+              </section>
+            ) : null}
+            <SectionCards cards={viewModel.metricCards} />
+            <section className="grid gap-4 px-4 lg:grid-cols-[1.35fr_0.65fr] lg:px-6">
+              <ChartAreaInteractive />
+              <BpoHeatmap
+                rows={viewModel.heatmapRows}
+                slots={viewModel.heatmapSlots}
+                drilldown={viewModel.heatmapDrilldown}
+              />
+            </section>
+            <DataTable anomalies={viewModel.anomalies} />
+          </div>
+        </div>
       </main>
     </AppShell>
   )

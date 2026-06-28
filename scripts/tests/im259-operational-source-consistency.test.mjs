@@ -83,7 +83,8 @@ test("getShiftDetailsResult returns api source with data", async () => {
     assert.equal(result.source, "api");
     assert.equal(result.failed, false);
     assert.equal(result.items.length, 1);
-    assert.ok(result.message.includes("后端 API"));
+    assert.ok(result.message.includes("已更新"));
+    assert.equal(result.message.includes("后端 API"), false);
   });
 });
 
@@ -97,7 +98,8 @@ test("getShiftDetailsResult returns fallback when API fails", async () => {
     assert.equal(result.source, "fallback");
     assert.equal(result.failed, true);
     assert.ok(result.items.length > 0);
-    assert.ok(result.message.includes("示例数据") || result.message.includes("API 请求失败"));
+    assert.ok(result.message.includes("示例数据"));
+    assert.equal(result.message.includes("API 请求失败"), false);
   });
 });
 

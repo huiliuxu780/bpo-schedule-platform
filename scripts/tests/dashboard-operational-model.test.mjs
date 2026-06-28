@@ -89,7 +89,7 @@ test("operational model reports api source when all data sources succeed", () =>
   assert.equal(result.readiness.hasData, true);
   assert.equal(
     result.readiness.message,
-    "经营总览数据来自当前本地排班计划、风险和不可用状态。"
+    "经营总览已更新。"
   );
 });
 
@@ -157,7 +157,7 @@ test("operational model reports fallback source when any data source fails", () 
   assert.equal(result.readiness.sourceStates.hasAnyFallback, true);
   assert.equal(
     result.readiness.message,
-    "部分经营总览数据使用本地兜底数据，请确认后端服务状态后再用于验收判断。"
+    "部分经营总览暂时无法更新，已显示本地示例数据。"
   );
 });
 
@@ -176,7 +176,7 @@ test("operational model reports fallback when all sources use fallback", () => {
   assert.equal(result.readiness.sourceStates.hasAnyFallback, true);
   assert.equal(
     result.readiness.message,
-    "部分经营总览数据使用本地兜底数据，请确认后端服务状态后再用于验收判断。"
+    "部分经营总览暂时无法更新，已显示本地示例数据。"
   );
 });
 

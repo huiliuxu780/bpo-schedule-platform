@@ -23,16 +23,16 @@ export function SectionCards({ cards }: SectionCardsProps = {}) {
 
   return (
     <section className="@container/main px-4 lg:px-6">
-      <div className="grid gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+      <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-sm @xl/main:grid-cols-2 @3xl/main:grid-cols-4">
         {displayCards.map((item) => (
           <Card
             key={item.title}
-            className="min-h-[204px] overflow-hidden bg-gradient-to-t from-card to-muted/20"
+            className="min-h-[160px] overflow-hidden shadow-sm"
           >
             <CardHeader className="flex flex-row items-start justify-between gap-3 pb-2">
               <div className="grid gap-1">
                 <CardDescription>{item.title}</CardDescription>
-                <CardTitle className="text-[30px] leading-9 font-semibold tabular-nums">
+                <CardTitle className="text-3xl font-semibold tabular-nums @[250px]/card:text-4xl">
                   {item.value}
                 </CardTitle>
               </div>
@@ -47,13 +47,13 @@ export function SectionCards({ cards }: SectionCardsProps = {}) {
                 </Badge>
               )}
             </CardHeader>
-            <CardContent>
+            <CardContent className="pb-2">
               <div className="text-sm font-medium">{item.insight}</div>
             </CardContent>
-            <CardFooter className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
+            <CardFooter className="flex flex-col items-start gap-2 pt-0 text-xs text-muted-foreground">
               <span className="min-w-0">{item.note}</span>
               {item.drilldown ? (
-                <Button asChild variant="ghost" size="sm" className="shrink-0">
+                <Button asChild variant="ghost" size="sm" className="h-7 px-2">
                   <Link href={item.drilldown.href}>
                     {item.drilldown.label}
                     <ArrowRight className="size-3.5" />

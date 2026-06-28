@@ -181,7 +181,7 @@ export async function getUnavailabilityResult(
       items: fallbackItems,
       source: "fallback",
       failed: true,
-      message: "API 请求失败，已使用本地示例数据",
+      message: "不可用记录暂时无法更新，已显示本地示例数据。",
     }
   }
 
@@ -200,7 +200,7 @@ export async function getUnavailabilityResult(
     items: response.items,
     source: "api",
     failed: false,
-    message: "数据来自后端 API",
+    message: "不可用记录已更新。",
   }
 }
 
@@ -231,7 +231,7 @@ export async function getUnavailabilityRecordResult(
         item: null,
         source: allResult.source,
         failed: true,
-        message: "API 请求失败，已使用本地示例数据，但未找到该不可用记录。",
+        message: "不可用记录暂时无法更新，已显示本地示例数据，但未找到该记录。",
       }
     }
 

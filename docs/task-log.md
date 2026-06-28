@@ -3036,3 +3036,12 @@
   action: 经营总览信息架构修复。
   status: `done`
   notes: Codex 根据 PM 对 `/dashboard` 首屏筛选控件过重的反馈，直接修复 IM263 遗留的产品设计偏差。Dashboard 默认页删除顶部筛选控制台和 `GlobalFilterBar`，不再把项目、职场、计划状态按钮墙放在 KPI 卡片之前；URL 深链筛选能力保留，但只在 URL 已带筛选时显示一条轻量“当前总览范围”提示。Focused dashboard tests、typecheck、lint、browser DOM/screenshot check、diff check 和最终 `scripts/check.sh` 均通过。未新增依赖、package/lockfile、后端 schema、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
+
+- task_id: `IM267`
+  source_ids:
+    - `R966`
+  story_ids:
+    - `US886`
+  action: 经营总览 shadcn dashboard 基线对齐。
+  status: `done`
+  notes: Codex 根据 PM 对官方 shadcn dashboard-01 的对比反馈，直接对齐全局 shell 和 `/dashboard` 的信息架构与视觉节奏。`AppSidebar` 改为 inset flat workbench navigation，移除展开目录式导航和重复的“运营数据/运营工作台”分组层级；`ReadinessBanner` 正常 ready 状态不再渲染，兜底/空态文案不再暴露后端/API/验收口径；`AppShell`/`SiteHeader` 使用 dashboard-01 的 sidebar/header 尺寸节奏；`/dashboard` 保持四张 KPI 卡、图表+右侧摘要、tabs 异常表的顺序；`SectionCards` 使用 shadcn metric card 栅格，`DataTable` 使用 tabs/column control，并修复宽表列被压成竖排的问题。未新增业务能力、依赖、package/lockfile、后端 schema、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。

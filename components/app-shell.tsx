@@ -25,9 +25,17 @@ export function AppShell({
 }: AppShellProps) {
   return (
     <TooltipProvider>
-      <SidebarProvider defaultOpen>
-        <AppSidebar />
-        <SidebarInset className="h-svh overflow-hidden">
+      <SidebarProvider
+        defaultOpen
+        style={
+          {
+            "--sidebar-width": "calc(var(--spacing) * 72)",
+            "--header-height": "calc(var(--spacing) * 12)",
+          } as React.CSSProperties
+        }
+      >
+        <AppSidebar variant="inset" />
+        <SidebarInset className="overflow-hidden">
           <SiteHeader
             title={title}
             breadcrumbItems={breadcrumbItems}

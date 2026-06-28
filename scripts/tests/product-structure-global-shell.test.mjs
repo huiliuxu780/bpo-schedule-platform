@@ -10,7 +10,6 @@ const siteHeaderPath = new URL("../../components/site-header.tsx", import.meta.u
 const uiAlertPath = new URL("../../components/ui/alert.tsx", import.meta.url);
 const uiAvatarPath = new URL("../../components/ui/avatar.tsx", import.meta.url);
 const uiBreadcrumbPath = new URL("../../components/ui/breadcrumb.tsx", import.meta.url);
-const uiCollapsiblePath = new URL("../../components/ui/collapsible.tsx", import.meta.url);
 const uiDialogPath = new URL("../../components/ui/dialog.tsx", import.meta.url);
 
 async function collectSourceFiles(directoryUrl) {
@@ -36,31 +35,29 @@ async function collectSourceFiles(directoryUrl) {
   return files;
 }
 
-test("sidebar expands all groups by default and inherits master data detail state", async () => {
+test("sidebar follows dashboard baseline with flat workbench navigation", async () => {
   const source = await readFile(appSidebarPath, "utf8");
 
-  assert.equal(
-    source.includes("new Set(nav.map((group) => group.title))"),
-    true,
-    "sidebar should default all nav groups to expanded",
+  assert.match(
+    source,
+    /title: "运营工作台"[\s\S]+?title: "经营总览",\s+href: "\/dashboard",\s+activeMatch: "exact"/,
+    "dashboard should stay the first primary workbench entry",
   );
   assert.match(
     source,
-    /title: "职场",\s+href: "\/master-data\/sites",\s+activeMatch: "prefix"/,
-    "workplace detail routes should inherit the workplace nav item",
+    /href="\/schedule-plans\/new"/,
+    "sidebar should expose a dashboard-01 style quick-create entry",
   );
-  assert.match(
-    source,
-    /title: "供应商",\s+href: "\/master-data\/vendors",\s+activeMatch: "prefix"/,
-    "vendor detail routes should inherit the vendor nav item",
-  );
+  assert.equal(source.includes("CollapsibleTrigger"), false);
+  assert.equal(source.includes("CollapsibleContent"), false);
+  assert.equal(source.includes("SidebarMenuSub"), false);
+  assert.equal(source.includes("运营数据"), false);
 });
 
 test("global shell uses shadcn sidebar and header breadcrumb primitives", async () => {
   await access(uiAlertPath);
   await access(uiAvatarPath);
   await access(uiBreadcrumbPath);
-  await access(uiCollapsiblePath);
   await access(uiDialogPath);
 
   const shellSource = await readFile(appShellPath, "utf8");
@@ -71,13 +68,10 @@ test("global shell uses shadcn sidebar and header breadcrumb primitives", async 
   assert.equal(shellSource.includes("SidebarInset"), true);
   assert.equal(shellSource.includes("sidebarCollapsed"), false);
   assert.equal(sidebarSource.includes("@/components/ui/sidebar"), true);
-  assert.equal(sidebarSource.includes("@/components/ui/collapsible"), true);
   assert.equal(sidebarSource.includes("<Sidebar"), true);
-  assert.equal(sidebarSource.includes("CollapsibleTrigger"), true);
-  assert.equal(sidebarSource.includes("CollapsibleContent"), true);
-  assert.equal(sidebarSource.includes("SidebarMenuSub"), true);
-  assert.equal(sidebarSource.includes("SidebarMenuSubButton"), true);
-  assert.equal(sidebarSource.includes("SidebarMenuSubItem"), true);
+  assert.equal(sidebarSource.includes("CollapsibleTrigger"), false);
+  assert.equal(sidebarSource.includes("CollapsibleContent"), false);
+  assert.equal(sidebarSource.includes("SidebarMenuSub"), false);
   assert.equal(sidebarSource.includes("<aside"), false);
   assert.equal(sidebarSource.includes("collapsed"), false);
   assert.equal(sidebarSource.includes("SidebarGroupLabel asChild"), false);

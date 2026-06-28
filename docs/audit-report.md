@@ -6034,3 +6034,21 @@
 - `app/dashboard/page.tsx` 保留 `parseDashboardFilters()` 和 filtered view model，用于兼容已存在的深链筛选 URL；仅当 URL 已有筛选时，显示一条紧凑的“当前总览范围”提示和“查看全部”入口。
 - 更新 `scripts/tests/dashboard-operational-filter-console.test.mjs`，将旧的“筛选台存在”保护改为“dashboard 不应在 KPI 上方渲染筛选控制台”的回归保护。
 - 浏览器 DOM 检查确认 `/dashboard` 不含 `总览口径`、`计划状态`、`风险等级`、`问题状态` 等控制台文本，KPI 卡片仍可见；截图确认首屏回到 readiness + KPI 结构。
+
+### 2026-06-28 - IM267 经营总览 shadcn dashboard 基线对齐
+
+#### 审计计划
+
+- 承接 PM 对官方 shadcn `dashboard-01` 的对比反馈，把本轮限定为一个中等视觉/结构修复块：全局 shell、dashboard KPI/chart/table 结构回到 shadcn dashboard 基线。
+- 不安装依赖、不切换全局 preset、不覆盖 `components/ui/**`，不新增业务能力或后端能力。
+- 保留 IM266 的产品边界：默认 dashboard 不再出现顶部筛选控制台，URL 深链筛选只显示紧凑当前范围。
+
+#### 执行结果
+
+- `AppSidebar` 从展开目录式导航改为 shadcn dashboard-01 风格的 inset flat workbench navigation：品牌、快速新建、待处理风险、主导航、底部设置/帮助/搜索和用户菜单；按 PM 反馈删除重复的“运营数据”外层标签，避免与“运营工作台”形成同义层级。
+- `AppShell` 与 `SiteHeader` 使用 `--sidebar-width`、`--header-height`、`SidebarInset` 和紧凑 sticky header，贴近 dashboard-01 页面框架。
+- `/dashboard` 保持 KPI cards -> chart/right summary -> anomaly table 的顺序，去掉多余页面 section 包裹，采用 `@container/main` 和 dashboard-01 间距节奏；正常 ready 状态不再渲染数据来源横幅。
+- `SectionCards` 改为四卡指标行和 shadcn metric-card 视觉节奏，避免 2x2 把首屏拉长。
+- `DataTable` 改为 tabs + column control 的工作台结构，并加宽表格固定列宽，修复中文项目列被压成竖排的问题。
+- `ReadinessBanner` 保留空态、兜底、混合状态提示，但删除正常状态常驻提示；兜底文案改为业务可读的“本地示例数据”提示，不再暴露后端/API/验收判断口径。
+- 新增 `scripts/tests/dashboard-shadcn-baseline-alignment.test.mjs`，并更新 global-shell/dashboard chart 测试，保护 dashboard baseline、flat sidebar、四卡节奏、tabs table 和无顶部筛选台边界。

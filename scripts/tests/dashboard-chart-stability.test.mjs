@@ -36,7 +36,7 @@ describe("Dashboard Chart Stability", () => {
         "utf-8"
       )
       assert.ok(
-        content.includes("h-[280px]"),
+        content.includes("h-[320px]"),
         "CardContent should have fixed height"
       )
       assert.ok(

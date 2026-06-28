@@ -1,5 +1,5 @@
 import type { JSX } from "react"
-import { AlertCircle, AlertTriangle, CheckCircle2, Info } from "lucide-react"
+import { AlertCircle, AlertTriangle, Info } from "lucide-react"
 
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { cn } from "@/lib/utils"
@@ -19,13 +19,6 @@ type BannerVariant = {
 }
 
 function getBannerVariant(source: DataSource): BannerVariant {
-  if (source === "api") {
-    return {
-      icon: <CheckCircle2 className="size-4" />,
-      className: "border-primary/30 bg-primary/5 text-foreground",
-    }
-  }
-
   if (source === "fallback") {
     return {
       icon: <AlertTriangle className="size-4" />,
@@ -59,6 +52,10 @@ export function ReadinessBanner({
   overallSource,
   className,
 }: ReadinessProps) {
+  if (overallSource === "api") {
+    return null
+  }
+
   const variant = getBannerVariant(overallSource)
   const emptyLabel = !hasData ? "当前无可展示数据。" : null
 

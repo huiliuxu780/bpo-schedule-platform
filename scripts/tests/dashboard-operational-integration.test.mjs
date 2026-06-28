@@ -187,8 +187,9 @@ describe("Readiness Banner - Component Structure", () => {
     assert.doesNotMatch(bannerContent, /bg-gray|text-gray|border-gray/);
   });
 
-  it("should handle api source styling", () => {
-    assert.match(bannerContent, /source === ["']api["']/);
+  it("should not render normal api source as an operator-facing banner", () => {
+    assert.match(bannerContent, /overallSource === ["']api["'][\s\S]+?return null/);
+    assert.doesNotMatch(bannerContent, /后端 API/);
   });
 
   it("should handle fallback source styling", () => {

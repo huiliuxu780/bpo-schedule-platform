@@ -36,13 +36,6 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -66,6 +59,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const columnLabels: Record<string, string> = {
   id: "异常编号",
@@ -89,6 +83,19 @@ const statusRank: Record<Anomaly["status"], number> = {
   待复核: 0,
   已确认: 1,
   已忽略: 2,
+}
+
+const columnWidthClass: Record<string, string> = {
+  id: "w-[104px]",
+  type: "w-[120px]",
+  team: "w-[140px]",
+  headcount: "w-[72px]",
+  impactedHours: "w-[96px]",
+  severity: "w-[88px]",
+  status: "w-[96px]",
+  project: "w-[120px]",
+  shiftTime: "w-[168px]",
+  actions: "w-[152px]",
 }
 
 function severityVariant(severity: Anomaly["severity"]) {
@@ -247,6 +254,9 @@ const columns: ColumnDef<Anomaly>[] = [
   {
     accessorKey: "project",
     header: "项目",
+    cell: ({ row }) => (
+      <span className="whitespace-nowrap">{row.original.project}</span>
+    ),
   },
   {
     accessorKey: "shiftTime",
@@ -295,11 +305,14 @@ type DataTableProps = {
   anomalies?: Anomaly[]
 }
 
+type DashboardTableView = "issues" | "high" | "pending" | "drillable"
+
 export function DataTable({ anomalies }: DataTableProps = {}) {
   "use no memo"
 
   const sourceAnomalies = anomalies ?? fallbackAnomalies
 
+  const [tableView, setTableView] = React.useState<DashboardTableView>("issues")
   const [globalFilter, setGlobalFilter] = React.useState("")
   const [severityFilter, setSeverityFilter] =
     React.useState<Anomaly["severity"] | "all">("all")
@@ -341,11 +354,26 @@ export function DataTable({ anomalies }: DataTableProps = {}) {
       drillable: drillableCount,
     }
   }, [filteredData])
+  const visibleData = React.useMemo(() => {
+    if (tableView === "high") {
+      return filteredData.filter((row) => row.severity === "高")
+    }
+
+    if (tableView === "pending") {
+      return filteredData.filter((row) => row.status === "待复核")
+    }
+
+    if (tableView === "drillable") {
+      return filteredData.filter((row) => row.downstreamEntry != null)
+    }
+
+    return filteredData
+  }, [filteredData, tableView])
 
   // TanStack Table exposes an imperative table service that React Compiler cannot memoize.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    data: filteredData,
+    data: visibleData,
     columns,
     state: {
       columnVisibility,
@@ -360,7 +388,7 @@ export function DataTable({ anomalies }: DataTableProps = {}) {
     getSortedRowModel: getSortedRowModel(),
   })
 
-  const filteredRowCount = filteredData.length
+  const filteredRowCount = visibleData.length
   const pageCount = Math.max(1, table.getPageCount())
   const currentPage = pagination.pageIndex + 1
   const paginationRange = getDashboardPaginationRange({
@@ -389,43 +417,66 @@ export function DataTable({ anomalies }: DataTableProps = {}) {
   }, [filteredRowCount, pagination.pageIndex, pagination.pageSize])
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
-        <div>
-          <CardTitle>BPO 异常明细</CardTitle>
-          <CardDescription>
-            支持搜索、排序、列显示、分页；仅在下游 ID 稳定时开放跳转
-          </CardDescription>
+    <Tabs
+      value={tableView}
+      onValueChange={(value) => {
+        setTableView(value as DashboardTableView)
+        table.setPageIndex(0)
+      }}
+      className="w-full flex-col justify-start gap-4"
+    >
+      <div className="flex flex-col gap-3 px-4 lg:px-6">
+        <div className="flex flex-col gap-3 @4xl/main:flex-row @4xl/main:items-center @4xl/main:justify-between">
+          <div className="grid gap-1">
+            <h2 className="text-base font-semibold">BPO 异常明细</h2>
+            <p className="text-sm text-muted-foreground">
+              支持搜索、排序、列显示、分页；仅在下游 ID 稳定时开放跳转
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <TabsList className="hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:bg-muted-foreground/30 **:data-[slot=badge]:px-1 @4xl/main:flex">
+              <TabsTrigger value="issues">异常明细</TabsTrigger>
+              <TabsTrigger value="high">
+                高严重度 <Badge variant="secondary">{summary.high}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="pending">
+                待复核 <Badge variant="secondary">{summary.pendingReview}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="drillable">
+                可下钻 <Badge variant="secondary">{summary.drillable}</Badge>
+              </TabsTrigger>
+            </TabsList>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Columns3 data-icon="inline-start" />
+                  列控制
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuLabel>显示字段</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {table
+                  .getAllLeafColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {columnLabels[column.id] ?? column.id}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm">
-              <Columns3 className="size-4" />
-              列控制
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-44">
-            <DropdownMenuLabel>显示字段</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {table
-              .getAllLeafColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                >
-                  {columnLabels[column.id] ?? column.id}
-                </DropdownMenuCheckboxItem>
-              ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </CardHeader>
-      <CardContent>
-        <div className="mb-3 flex items-center gap-2">
+        <div className="flex flex-col gap-2 @3xl/main:flex-row @3xl/main:items-center">
           <div className="flex max-w-sm flex-1 items-center gap-2 rounded-md border px-2">
-            <Search className="size-4 text-muted-foreground" />
+            <Search className="text-muted-foreground" />
             <Input
               value={globalFilter}
               onChange={(event) => {
@@ -499,11 +550,11 @@ export function DataTable({ anomalies }: DataTableProps = {}) {
               table.setPageIndex(0)
             }}
           >
-            <RotateCcw className="size-4" />
+            <RotateCcw data-icon="inline-start" />
             重置
           </Button>
         </div>
-        <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
           <Badge variant="outline">筛选后 {summary.total} 条</Badge>
           <Badge variant="destructive" className="text-xs">
             高严重度 {summary.high}
@@ -519,13 +570,21 @@ export function DataTable({ anomalies }: DataTableProps = {}) {
           </span>
           <span>状态：{statusFilter === "all" ? "全部" : statusFilter}</span>
         </div>
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
+      </div>
+      <TabsContent
+        value={tableView}
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+      >
+        <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+          <Table className="min-w-[1156px] table-fixed">
+            <TableHeader className="bg-muted">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className={columnWidthClass[header.column.id]}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -541,7 +600,10 @@ export function DataTable({ anomalies }: DataTableProps = {}) {
               {table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className={columnWidthClass[cell.column.id]}
+                    >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -562,19 +624,19 @@ export function DataTable({ anomalies }: DataTableProps = {}) {
             </TableBody>
           </Table>
         </div>
-        <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
-          <div>
+        <div className="flex flex-col gap-3 px-1 text-sm text-muted-foreground @3xl/main:flex-row @3xl/main:items-center @3xl/main:justify-between">
+          <div className="flex-1">
             共 {filteredRowCount} 条，显示 {paginationRange.from}-
             {paginationRange.to}，当前第 {currentPage} / {pageCount} 页
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 @3xl/main:ml-auto">
             <Button
               variant="outline"
               size="sm"
               disabled={!table.getCanPreviousPage()}
               onClick={() => table.setPageIndex(0)}
             >
-              <ChevronsLeft className="size-4" />
+              <ChevronsLeft data-icon="inline-start" />
               首页
             </Button>
             <Button
@@ -583,7 +645,7 @@ export function DataTable({ anomalies }: DataTableProps = {}) {
               disabled={!table.getCanPreviousPage()}
               onClick={() => table.previousPage()}
             >
-              <ChevronLeft className="size-4" />
+              <ChevronLeft data-icon="inline-start" />
               上一页
             </Button>
             <Button
@@ -593,7 +655,7 @@ export function DataTable({ anomalies }: DataTableProps = {}) {
               onClick={() => table.nextPage()}
             >
               下一页
-              <ChevronRight className="size-4" />
+              <ChevronRight data-icon="inline-end" />
             </Button>
             <Button
               variant="outline"
@@ -602,11 +664,11 @@ export function DataTable({ anomalies }: DataTableProps = {}) {
               onClick={() => table.setPageIndex(pageCount - 1)}
             >
               末页
-              <ChevronsRight className="size-4" />
+              <ChevronsRight data-icon="inline-end" />
             </Button>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </TabsContent>
+    </Tabs>
   )
 }

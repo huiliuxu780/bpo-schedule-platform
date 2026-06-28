@@ -525,13 +525,13 @@ export function buildDashboardOperationalViewModel(
   if (isFilteredEmpty) {
     message = "当前筛选条件下暂无数据，请调整筛选条件或查看全部数据。"
   } else if (overallSource === "fallback" || (overallSource === "mixed" && hasAnyFallback)) {
-    message = "部分经营总览数据使用本地兜底数据，请确认后端服务状态后再用于验收判断。"
+    message = "部分经营总览暂时无法更新，已显示本地示例数据。"
   } else if (overallSource === "api_empty") {
     message = "当前本地数据为空，请先创建排班计划、风险或不可用记录。"
   } else if (overallSource === "mixed") {
     message = "经营总览数据来自部分本地数据源，建议确认所有数据源状态。"
   } else {
-    message = "经营总览数据来自当前本地排班计划、风险和不可用状态。"
+    message = "经营总览已更新。"
   }
 
   const readiness: DashboardReadinessSummary = {

@@ -9,6 +9,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 
 export type AppBreadcrumbItem = {
@@ -30,9 +31,10 @@ export function SiteHeader({
   return (
     <header
       data-slot="site-header"
-      className="sticky top-0 z-20 flex min-h-12 shrink-0 items-center gap-3 border-b bg-background/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:px-6"
+      className="sticky top-0 z-20 flex h-(--header-height) shrink-0 items-center gap-2 border-b bg-background px-4 transition-[width,height] ease-linear lg:px-6"
     >
-      <SidebarTrigger aria-label="切换导航栏" className="hidden md:inline-flex" />
+      <SidebarTrigger aria-label="切换导航栏" className="-ml-1" />
+      <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
       <div className="flex min-w-0 flex-1 items-center">
         {breadcrumbItems.length > 0 ? (
           <>
