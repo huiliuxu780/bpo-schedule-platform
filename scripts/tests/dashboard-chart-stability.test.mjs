@@ -15,18 +15,18 @@ describe("Dashboard Chart Stability", () => {
       )
     })
 
-    it("should preserve day/week/month range controls", async () => {
+    it("should not expose fake day/week/month range controls", async () => {
       const content = await readFile(
         "components/chart-area-interactive.tsx",
         "utf-8"
       )
       assert.ok(
-        content.includes('const ranges = ["日", "周", "月"]'),
-        "Should preserve day/week/month range options"
+        !content.includes('const ranges = ["日", "周", "月"]'),
+        "Should not preserve fake day/week/month range options"
       )
       assert.ok(
-        content.includes("range === item"),
-        "Should have range selection logic"
+        !content.includes("range === item"),
+        "Should not have fake range selection logic"
       )
     })
 

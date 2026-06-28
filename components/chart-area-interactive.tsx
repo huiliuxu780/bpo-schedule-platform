@@ -20,9 +20,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-
-const ranges = ["日", "周", "月"]
 
 const TrendAreaChart = dynamic(() => Promise.resolve(TrendAreaChartContent), {
   ssr: false,
@@ -30,8 +27,6 @@ const TrendAreaChart = dynamic(() => Promise.resolve(TrendAreaChartContent), {
 })
 
 export function ChartAreaInteractive() {
-  const [range, setRange] = React.useState("日")
-
   return (
     <Card className="shadow-sm">
       <CardHeader className="flex flex-row items-start justify-between gap-4">
@@ -41,21 +36,8 @@ export function ChartAreaInteractive() {
             排班实现率、排班拟合度、排班遵守率趋势
           </CardDescription>
           <p className="mt-1 text-xs text-muted-foreground">
-            当前展示本地样本趋势参考，暂未接入筛选条件或运行时数据
+            示例数据趋势参考，暂未纳入当前筛选范围
           </p>
-        </div>
-        <div className="flex rounded-md border p-0.5">
-          {ranges.map((item) => (
-            <Button
-              key={item}
-              variant={range === item ? "secondary" : "ghost"}
-              size="sm"
-              className="h-7 px-3"
-              onClick={() => setRange(item)}
-            >
-              {item}
-            </Button>
-          ))}
         </div>
       </CardHeader>
       <CardContent className="h-[320px] min-h-[240px] min-w-0 px-2 pt-4 sm:px-6 sm:pt-6">

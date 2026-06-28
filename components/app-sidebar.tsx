@@ -10,13 +10,10 @@ import {
   Database,
   Inbox,
   LayoutDashboard,
-  LifeBuoy,
-  LogOut,
   Moon,
   MoreHorizontal,
   PanelTop,
   PlusCircle,
-  Search,
   Settings,
   Sun,
   type LucideIcon,
@@ -28,7 +25,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -142,18 +138,6 @@ const navSecondary: NavItem[] = [
     href: "/master-data/agents",
     icon: Settings,
     activeMatch: "prefix",
-  },
-  {
-    title: "帮助",
-    href: "#",
-    icon: LifeBuoy,
-    activeMatch: "exact",
-  },
-  {
-    title: "搜索",
-    href: "#",
-    icon: Search,
-    activeMatch: "exact",
   },
 ]
 
@@ -302,13 +286,6 @@ export function AppSidebar({
                   >
                     {isDark ? <Sun /> : <Moon />}
                     <span>{isDark ? "切换为浅色" : "切换为深色"}</span>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem disabled>
-                    <LogOut />
-                    <span>退出登录</span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>

@@ -3045,3 +3045,12 @@
   action: 经营总览 shadcn dashboard 基线对齐。
   status: `done`
   notes: Codex 根据 PM 对官方 shadcn dashboard-01 的对比反馈，直接对齐全局 shell 和 `/dashboard` 的信息架构与视觉节奏。`AppSidebar` 改为 inset flat workbench navigation，移除展开目录式导航和重复的“运营数据/运营工作台”分组层级；`ReadinessBanner` 正常 ready 状态不再渲染，兜底/空态文案不再暴露后端/API/验收口径；`AppShell`/`SiteHeader` 使用 dashboard-01 的 sidebar/header 尺寸节奏；`/dashboard` 保持四张 KPI 卡、图表+右侧摘要、tabs 异常表的顺序；`SectionCards` 使用 shadcn metric card 栅格，`DataTable` 使用 tabs/column control，并修复宽表列被压成竖排的问题。未新增业务能力、依赖、package/lockfile、后端 schema、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
+
+- task_id: `IM268`
+  source_ids:
+    - `R967`
+  story_ids:
+    - `US887`
+  action: 经营总览伪入口与示例边界清理。
+  status: `done`
+  notes: Qoder 基于 `codex/im267-shadcn-dashboard-baseline-alignment` 创建 `codex/im268-remove-pseudo-actions-sample-boundaries` 并执行清理后，Codex 复核实际 diff 并进一步修正 readiness 文案。全局 sidebar 删除 placeholder 帮助/搜索入口和 disabled 退出登录菜单；dashboard 趋势图删除无真实行为的日/周/月切换按钮；fallback、empty、mixed 文案不再暴露后端 API、本地数据源、验收判断或实现边界。Focused dashboard/global-shell/navigation tests、typecheck、lint、shadcn check、diff check 均通过；最终 `scripts/check.sh` 结果记录在 branch log。未新增业务能力、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。

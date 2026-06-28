@@ -6052,3 +6052,18 @@
 - `DataTable` 改为 tabs + column control 的工作台结构，并加宽表格固定列宽，修复中文项目列被压成竖排的问题。
 - `ReadinessBanner` 保留空态、兜底、混合状态提示，但删除正常状态常驻提示；兜底文案改为业务可读的“本地示例数据”提示，不再暴露后端/API/验收判断口径。
 - 新增 `scripts/tests/dashboard-shadcn-baseline-alignment.test.mjs`，并更新 global-shell/dashboard chart 测试，保护 dashboard baseline、flat sidebar、四卡节奏、tabs table 和无顶部筛选台边界。
+
+### 2026-06-28 - IM268 经营总览伪入口与示例边界清理
+
+#### 审计计划
+
+- 承接 PM 对 shadcn dashboard baseline 的继续反馈，把本轮限定为一个中等 UI 收口块：删除仍在产品表面出现的伪入口、伪交互和实现口径文案。
+- Qoder 执行初始清理；Codex 负责实际 diff review、文案边界修正、Harness 状态、最终验证、提交和推送决策。
+- 不新增业务功能、后端 API、数据库、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- `components/app-sidebar.tsx` 删除 placeholder `帮助`、`搜索` 导航入口，以及不可用的 `退出登录` 菜单项。Sidebar 只保留当前真实可达或已确认的产品能力入口。
+- `components/chart-area-interactive.tsx` 删除无真实数据切换能力的 `日` / `周` / `月` 控件，趋势图仅保留当前参考说明，避免暗示筛选或时间粒度已接入。
+- `lib/dashboard.ts` 调整 fallback、empty、mixed readiness 文案，删除 `后端 API`、`本地数据源`、`验收判断` 等实现/流程口径，改为业务可理解的经营数据状态。
+- 更新 dashboard operational 和 global shell 测试，防止伪入口、disabled logout、伪 chart controls 和内部口径文案回流到用户界面。

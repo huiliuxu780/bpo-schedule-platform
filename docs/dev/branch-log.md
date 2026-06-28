@@ -5849,3 +5849,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM268 Remove Pseudo Actions And Sample Boundaries
+
+- branch_name: `codex/im268-remove-pseudo-actions-sample-boundaries`
+- base_main_commit: `stacked on pushed codex/im267-shadcn-dashboard-baseline-alignment at 5b5bd53`
+- stacked_on: `codex/im267-shadcn-dashboard-baseline-alignment`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium frontend-scaffold cleanup for removing pseudo sidebar actions, fake chart range controls, and implementation-facing dashboard readiness wording after PM review.
+- qoder_mode: `true; Qoder performed initial edits under bounded task prompt; Codex reviewed actual diff and corrected readiness wording before final verification.`
+- allowed_files_check: app sidebar, dashboard chart component, dashboard view-model wording, focused dashboard/global-shell tests, current Harness context, audit report, task log, and branch log only.
+- scope_diff_check: expected UI cleanup and test/traceability updates only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, external integration, or new dashboard top-level controls.
+- check_result: Focused dashboard/chart/global-shell regression run passed with 73 tests after Codex updated stale chart tests and preserved explicit `示例数据` trend-boundary wording. `npm run typecheck`, `npm run lint`, `node scripts/check-shadcn-ui.mjs`, `bash scripts/check-state.sh --strict`, and `git diff --check` passed before final Harness verification. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with 767 Node tests (766 pass, 1 skipped), shadcn check, lint, typecheck, Next build, 241 backend unittest tests OK, and project Harness check passed.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

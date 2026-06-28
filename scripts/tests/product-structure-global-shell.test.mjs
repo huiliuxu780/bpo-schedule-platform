@@ -95,7 +95,7 @@ test("global shell uses shadcn sidebar and header breadcrumb primitives", async 
   assert.equal(sidebarSource.includes("<AvatarFallback"), true);
   assert.equal(sidebarSource.includes("DropdownMenu"), true);
   assert.equal(sidebarSource.includes("切换为"), true);
-  assert.equal(sidebarSource.includes("退出登录"), true);
+  assert.equal(sidebarSource.includes("退出登录"), false);
 });
 
 test("global header shell does not retain the removed search placeholder API", async () => {
