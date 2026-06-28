@@ -1,7 +1,6 @@
 import Link from "next/link"
 
 import { AppShell } from "@/components/app-shell"
-import { BpoHeatmap } from "@/components/bpo-heatmap"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { DataTable } from "@/components/data-table"
 import { ReadinessBanner } from "@/components/readiness-banner"
@@ -96,13 +95,8 @@ export default async function DashboardPage({
               </section>
             ) : null}
             <SectionCards cards={viewModel.metricCards} />
-            <section className="grid gap-4 px-4 lg:grid-cols-[1.35fr_0.65fr] lg:px-6">
+            <section className="px-4 lg:px-6">
               <ChartAreaInteractive />
-              <BpoHeatmap
-                rows={viewModel.heatmapRows}
-                slots={viewModel.heatmapSlots}
-                drilldown={viewModel.heatmapDrilldown}
-              />
             </section>
             <DataTable anomalies={viewModel.anomalies} />
           </div>

@@ -203,10 +203,12 @@ test("filtered empty state is distinguishable from source empty state", () => {
   assert.match(model.readiness.message, /当前筛选条件下暂无数据/);
 });
 
-test("dashboard page passes one filtered model to cards, heatmap, and table", () => {
+test("dashboard page passes one filtered model to cards and table without crowding the first screen", () => {
   assert.match(dashboardPageSrc, /viewModel\.metricCards/);
-  assert.match(dashboardPageSrc, /viewModel\.heatmapRows/);
   assert.match(dashboardPageSrc, /viewModel\.anomalies/);
+  assert.doesNotMatch(dashboardPageSrc, /BpoHeatmap/);
+  assert.doesNotMatch(dashboardPageSrc, /viewModel\.heatmapRows/);
+  assert.doesNotMatch(dashboardPageSrc, /viewModel\.heatmapSlots/);
 });
 
 test("trend chart has explicit static boundary and no auto-capability wording", () => {

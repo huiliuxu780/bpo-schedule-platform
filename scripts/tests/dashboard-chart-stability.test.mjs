@@ -30,33 +30,33 @@ describe("Dashboard Chart Stability", () => {
       )
     })
 
-    it("should have stable chart container dimensions", async () => {
+    it("should have stable shadcn chart container dimensions", async () => {
       const content = await readFile(
         "components/chart-area-interactive.tsx",
         "utf-8"
       )
       assert.ok(
-        content.includes("h-[320px]"),
-        "CardContent should have fixed height"
+        content.includes("h-[250px]"),
+        "ChartContainer should have fixed dashboard-01 height"
       )
       assert.ok(
-        content.includes("min-w-0") || content.includes("min-w-[320px]"),
-        "CardContent should have min-width constraint"
+        content.includes("aspect-auto"),
+        "ChartContainer should use dashboard-01 aspect-auto sizing"
       )
     })
 
-    it("should use ResponsiveContainer with initialDimension", async () => {
+    it("should use shadcn ChartContainer with initialDimension", async () => {
       const content = await readFile(
         "components/chart-area-interactive.tsx",
         "utf-8"
       )
       assert.ok(
-        content.includes("ResponsiveContainer"),
-        "Should use ResponsiveContainer from recharts"
+        content.includes("ChartContainer"),
+        "Should use shadcn ChartContainer"
       )
       assert.ok(
         content.includes("initialDimension"),
-        "ResponsiveContainer should have initialDimension prop for stable rendering"
+        "ChartContainer should pass initialDimension for stable rendering"
       )
     })
 
@@ -151,9 +151,9 @@ describe("Dashboard Chart Stability", () => {
         "utf-8"
       )
       const hasStableWrapper =
-        content.includes('<div className="h-full w-full') ||
-        content.includes("min-w-") ||
-        content.includes("min-h-")
+        content.includes("ChartContainer") &&
+        content.includes("h-[250px]") &&
+        content.includes("w-full")
       assert.ok(
         hasStableWrapper,
         "Should wrap chart in stable container with dimension constraints"

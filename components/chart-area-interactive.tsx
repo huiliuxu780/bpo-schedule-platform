@@ -1,13 +1,10 @@
 "use client"
 
 import * as React from "react"
-import dynamic from "next/dynamic"
 import {
   Area,
   AreaChart,
   CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts"
@@ -15,143 +12,155 @@ import {
 import { trendData } from "@/app/dashboard/data"
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart"
+import { Badge } from "@/components/ui/badge"
 
-const TrendAreaChart = dynamic(() => Promise.resolve(TrendAreaChartContent), {
-  ssr: false,
-  loading: () => <div className="h-full w-full rounded-md bg-muted/40" />,
-})
+const chartConfig = {
+  realization: {
+    label: "排班实现率",
+    color: "var(--chart-1)",
+  },
+  fit: {
+    label: "排班拟合度",
+    color: "var(--chart-2)",
+  },
+  adherence: {
+    label: "排班遵守率",
+    color: "var(--chart-3)",
+  },
+} satisfies ChartConfig
+
+const CHART_INITIAL_DIMENSION = { width: 320, height: 250 } as const
 
 export function ChartAreaInteractive() {
   return (
-    <Card className="shadow-md shadow-black/5">
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
-        <div>
-          <CardTitle>履约指标趋势</CardTitle>
-          <CardDescription>
+    <Card className="@container/card">
+      <CardHeader>
+        <CardTitle>履约指标趋势</CardTitle>
+        <CardDescription>
+          <span className="hidden @[540px]/card:block">
             排班实现率、排班拟合度、排班遵守率趋势
-          </CardDescription>
-          <p className="mt-1 text-xs text-muted-foreground">
-            示例数据趋势参考，暂未纳入当前筛选范围
-          </p>
-        </div>
+          </span>
+          <span className="@[540px]/card:hidden">履约趋势</span>
+        </CardDescription>
+        <CardAction>
+          <Badge variant="outline">示例数据</Badge>
+        </CardAction>
       </CardHeader>
-      <CardContent className="h-[320px] min-h-[240px] min-w-0 px-2 pt-4 sm:px-6 sm:pt-6">
-        <div className="h-full min-h-[200px] w-full min-w-0">
-          <TrendAreaChart />
-        </div>
+      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+        <ChartContainer
+          config={chartConfig}
+          initialDimension={CHART_INITIAL_DIMENSION}
+          className="aspect-auto h-[250px] w-full"
+        >
+          <AreaChart data={trendData} margin={{ left: 4, right: 12 }}>
+            <defs>
+              <linearGradient id="fillRealization" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-realization)"
+                  stopOpacity={1}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-realization)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+              <linearGradient id="fillFit" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-fit)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-fit)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+              <linearGradient id="fillAdherence" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-adherence)"
+                  stopOpacity={0.65}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-adherence)"
+                  stopOpacity={0.08}
+                />
+              </linearGradient>
+            </defs>
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              minTickGap={28}
+            />
+            <YAxis
+              axisLine={false}
+              tickLine={false}
+              tickMargin={8}
+              domain={[80, 100]}
+              tickFormatter={(value) => `${value}%`}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={
+                <ChartTooltipContent
+                  indicator="dot"
+                  formatter={(value, name) => (
+                    <>
+                      <span className="text-muted-foreground">
+                        {chartConfig[name as keyof typeof chartConfig]?.label ??
+                          name}
+                      </span>
+                      <span className="ml-auto font-mono font-medium tabular-nums text-foreground">
+                        {Number(value).toFixed(1)}%
+                      </span>
+                    </>
+                  )}
+                />
+              }
+            />
+            <Area
+              dataKey="realization"
+              type="natural"
+              fill="url(#fillRealization)"
+              stroke="var(--color-realization)"
+              stackId="a"
+            />
+            <Area
+              dataKey="fit"
+              type="natural"
+              fill="url(#fillFit)"
+              stroke="var(--color-fit)"
+              stackId="a"
+            />
+            <Area
+              dataKey="adherence"
+              type="natural"
+              fill="url(#fillAdherence)"
+              stroke="var(--color-adherence)"
+              stackId="a"
+            />
+          </AreaChart>
+        </ChartContainer>
       </CardContent>
     </Card>
-  )
-}
-
-const CHART_INITIAL_DIMENSION = { width: 320, height: 200 } as const
-
-function TrendAreaChartContent() {
-  return (
-    <ResponsiveContainer
-      width="100%"
-      height="100%"
-      initialDimension={CHART_INITIAL_DIMENSION}
-    >
-      <AreaChart data={trendData} margin={{ left: -18, right: 12 }}>
-        <defs>
-          <linearGradient id="realization" x1="0" x2="0" y1="0" y2="1">
-            <stop
-              offset="5%"
-              stopColor="var(--chart-1)"
-              stopOpacity={0.32}
-            />
-            <stop
-              offset="95%"
-              stopColor="var(--chart-1)"
-              stopOpacity={0.04}
-            />
-          </linearGradient>
-          <linearGradient id="fit" x1="0" x2="0" y1="0" y2="1">
-            <stop
-              offset="5%"
-              stopColor="var(--chart-2)"
-              stopOpacity={0.26}
-            />
-            <stop
-              offset="95%"
-              stopColor="var(--chart-2)"
-              stopOpacity={0.04}
-            />
-          </linearGradient>
-          <linearGradient id="adherence" x1="0" x2="0" y1="0" y2="1">
-            <stop
-              offset="5%"
-              stopColor="var(--chart-3)"
-              stopOpacity={0.22}
-            />
-            <stop
-              offset="95%"
-              stopColor="var(--chart-3)"
-              stopOpacity={0.04}
-            />
-          </linearGradient>
-        </defs>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-        <XAxis
-          dataKey="date"
-          axisLine={false}
-          tickLine={false}
-          tickMargin={10}
-          fontSize={12}
-        />
-        <YAxis
-          axisLine={false}
-          tickLine={false}
-          tickMargin={8}
-          domain={[80, 100]}
-          fontSize={12}
-          tickFormatter={(value) => `${value}%`}
-        />
-        <Tooltip
-          cursor={false}
-          contentStyle={{
-            background: "var(--card)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius)",
-            color: "var(--card-foreground)",
-          }}
-          formatter={(value, name) => [
-            `${Number(value).toFixed(1)}%`,
-            name === "realization"
-              ? "排班实现率"
-              : name === "fit"
-                ? "排班拟合度"
-                : "排班遵守率",
-          ]}
-        />
-        <Area
-          dataKey="realization"
-          type="natural"
-          stroke="var(--chart-1)"
-          fill="url(#realization)"
-          strokeWidth={2}
-        />
-        <Area
-          dataKey="fit"
-          type="natural"
-          stroke="var(--chart-2)"
-          fill="url(#fit)"
-          strokeWidth={2}
-        />
-        <Area
-          dataKey="adherence"
-          type="natural"
-          stroke="var(--chart-3)"
-          fill="url(#adherence)"
-          strokeWidth={2}
-        />
-      </AreaChart>
-    </ResponsiveContainer>
   )
 }

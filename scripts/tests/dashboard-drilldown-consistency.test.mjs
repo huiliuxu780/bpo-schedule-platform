@@ -153,10 +153,11 @@ test("operational dashboard model exposes one heatmap drilldown", () => {
   assert.equal(href.searchParams.get("status"), "published")
 })
 
-test("dashboard page passes the heatmap drilldown into BpoHeatmap", () => {
+test("dashboard page keeps heatmap drilldown out of the dashboard-01 first screen", () => {
   const source = readFileSync("app/dashboard/page.tsx", "utf8")
 
-  assert.match(source, /drilldown=\{viewModel\.heatmapDrilldown\}/)
+  assert.doesNotMatch(source, /BpoHeatmap/)
+  assert.doesNotMatch(source, /drilldown=\{viewModel\.heatmapDrilldown\}/)
 })
 
 test("dashboard drilldown UI does not add extra top-level filter controls", () => {

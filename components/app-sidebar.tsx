@@ -5,21 +5,27 @@ import Link from "next/link"
 import { useTheme } from "next-themes"
 import { usePathname } from "next/navigation"
 import {
+  Activity,
+  AlertTriangle,
   CalendarDays,
-  CircleHelp,
-  Database,
+  CirclePlus,
+  ClipboardList,
+  Command,
+  FileSpreadsheet,
+  Handshake,
   Inbox,
   LayoutDashboard,
+  MapPin,
   Moon,
-  MoreHorizontal,
-  PanelTop,
-  PlusCircle,
-  Settings,
+  Network,
   Sun,
+  UserRound,
+  Users,
+  Wrench,
   type LucideIcon,
 } from "lucide-react"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,110 +39,97 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from "@/components/ui/sidebar"
 
 type NavItem = {
   title: string
   href: string
-  icon?: LucideIcon
+  icon: LucideIcon
   activeMatch?: "exact" | "prefix"
 }
 
-type NavGroup = {
-  title: string
-  icon: LucideIcon
-  items: NavItem[]
-}
-
-const nav: NavGroup[] = [
+const primaryNav: NavItem[] = [
   {
-    title: "运营工作台",
+    title: "经营总览",
+    href: "/dashboard",
     icon: LayoutDashboard,
-    items: [
-      {
-        title: "经营总览",
-        href: "/dashboard",
-        activeMatch: "exact",
-      },
-    ],
+    activeMatch: "exact",
   },
   {
-    title: "计划与排班",
+    title: "排班计划",
+    href: "/schedule-plans",
     icon: CalendarDays,
-    items: [
-      {
-        title: "需求计划",
-        href: "/demand-plans",
-        icon: PanelTop,
-        activeMatch: "prefix",
-      },
-      {
-        title: "排班计划",
-        href: "/schedule-plans",
-        activeMatch: "prefix",
-      },
-      {
-        title: "履约风险",
-        href: "/schedule-risks",
-        icon: CircleHelp,
-        activeMatch: "prefix",
-      },
-    ],
+    activeMatch: "prefix",
   },
   {
-    title: "日志数据",
-    icon: Database,
-    items: [
-      {
-        title: "登录/状态日志",
-        href: "/actual-logs/production",
-        activeMatch: "prefix",
-      },
-    ],
+    title: "履约风险",
+    href: "/schedule-risks",
+    icon: AlertTriangle,
+    activeMatch: "prefix",
   },
   {
-    title: "主数据",
-    icon: Settings,
-    items: [
-      {
-        title: "客服人员",
-        href: "/master-data/agents",
-        activeMatch: "prefix",
-      },
-      {
-        title: "组织",
-        href: "/master-data/organizations",
-        activeMatch: "prefix",
-      },
-      {
-        title: "职场",
-        href: "/master-data/sites",
-        activeMatch: "prefix",
-      },
-      {
-        title: "供应商",
-        href: "/master-data/vendors",
-        activeMatch: "prefix",
-      },
-      {
-        title: "技能",
-        href: "/master-data/skills",
-        activeMatch: "prefix",
-      },
-    ],
+    title: "不可用记录",
+    href: "/unavailability",
+    icon: Activity,
+    activeMatch: "prefix",
+  },
+  {
+    title: "班次明细",
+    href: "/shift-details",
+    icon: ClipboardList,
+    activeMatch: "prefix",
   },
 ]
 
-const navSecondary: NavItem[] = [
+const dataNav: NavItem[] = [
   {
-    title: "设置",
+    title: "需求计划",
+    href: "/demand-plans",
+    icon: FileSpreadsheet,
+    activeMatch: "prefix",
+  },
+  {
+    title: "登录/状态日志",
+    href: "/actual-logs/production",
+    icon: Inbox,
+    activeMatch: "prefix",
+  },
+]
+
+const masterDataNav: NavItem[] = [
+  {
+    title: "客服人员",
     href: "/master-data/agents",
-    icon: Settings,
+    icon: Users,
+    activeMatch: "prefix",
+  },
+  {
+    title: "组织",
+    href: "/master-data/organizations",
+    icon: Network,
+    activeMatch: "prefix",
+  },
+  {
+    title: "职场",
+    href: "/master-data/sites",
+    icon: MapPin,
+    activeMatch: "prefix",
+  },
+  {
+    title: "供应商",
+    href: "/master-data/vendors",
+    icon: Handshake,
+    activeMatch: "prefix",
+  },
+  {
+    title: "技能",
+    href: "/master-data/skills",
+    icon: Wrench,
     activeMatch: "prefix",
   },
 ]
@@ -149,19 +142,13 @@ function isActivePath(pathname: string, item: NavItem) {
   return pathname.startsWith(item.href)
 }
 
-function NavList({
-  groupIcon,
-  items,
-}: {
-  groupIcon?: LucideIcon
-  items: NavItem[]
-}) {
+function NavMenu({ items }: { items: NavItem[] }) {
   const pathname = usePathname()
 
   return (
     <SidebarMenu>
       {items.map((item) => {
-        const Icon = item.icon ?? groupIcon ?? LayoutDashboard
+        const Icon = item.icon
 
         return (
           <SidebarMenuItem key={item.title}>
@@ -182,84 +169,81 @@ function NavList({
   )
 }
 
-function BrandMark() {
-  return (
-    <div className="flex size-6 items-center justify-center rounded-md border bg-background text-foreground">
-      <LayoutDashboard />
-    </div>
-  )
-}
-
-export function AppSidebar({
-  variant = "inset",
-}: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { resolvedTheme, setTheme } = useTheme()
   const isDark = resolvedTheme === "dark"
 
   return (
-    <Sidebar collapsible="icon" variant={variant}>
+    <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild size="lg">
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:p-1.5!"
+            >
               <Link href="/dashboard">
-                <BrandMark />
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">BPO WFM</span>
-                  <span className="truncate text-xs text-muted-foreground">
-                    人力计划与履约管理
-                  </span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground">
-              <Link href="/schedule-plans/new">
-                <PlusCircle />
-                <span>快速新建</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href="/schedule-risks?status=open">
-                <Inbox />
-                <span>待处理风险</span>
+                <Command className="size-5!" />
+                <span className="text-base font-semibold">BPO WFM</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupContent>
-            {nav.map((group) => (
-              <div key={group.title} className="mb-3 last:mb-0">
-                <div className="px-2 pb-1 text-xs font-medium text-muted-foreground group-data-[collapsible=icon]:hidden">
-                  {group.title}
-                </div>
-                <NavList groupIcon={group.icon} items={group.items} />
-              </div>
-            ))}
+          <SidebarGroupContent className="flex flex-col gap-2">
+            <SidebarMenu>
+              <SidebarMenuItem className="flex items-center gap-2">
+                <SidebarMenuButton
+                  asChild
+                  tooltip="快速新建"
+                  className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
+                >
+                  <Link href="/schedule-plans/new">
+                    <CirclePlus />
+                    <span>快速新建</span>
+                  </Link>
+                </SidebarMenuButton>
+                <SidebarMenuButton
+                  asChild
+                  tooltip="待处理风险"
+                  className="size-8 shrink-0 border bg-background p-0 group-data-[collapsible=icon]:opacity-0"
+                >
+                  <Link href="/schedule-risks?status=open">
+                    <Inbox />
+                    <span className="sr-only">待处理风险</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+            <NavMenu items={primaryNav} />
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarGroup className="mt-auto">
+
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel>运营数据</SidebarGroupLabel>
           <SidebarGroupContent>
-            <NavList items={navSecondary} />
+            <NavMenu items={dataNav} />
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel>主数据</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <NavMenu items={masterDataNav} />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton size="lg">
-                  <Avatar className="rounded-lg">
-                    <AvatarImage src="/shadcn-avatar.jpg" alt="本地用户" />
+                  <Avatar className="rounded-lg grayscale">
                     <AvatarFallback className="rounded-lg">本</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
@@ -268,14 +252,14 @@ export function AppSidebar({
                       本地环境
                     </span>
                   </div>
-                  <MoreHorizontal className="ml-auto" />
+                  <UserRound className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 side="right"
                 align="end"
                 sideOffset={8}
-                className="w-56"
+                className="w-56 rounded-lg"
               >
                 <DropdownMenuGroup>
                   <DropdownMenuItem
@@ -293,7 +277,6 @@ export function AppSidebar({
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   )
 }

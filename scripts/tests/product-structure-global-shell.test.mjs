@@ -40,9 +40,16 @@ test("sidebar follows dashboard baseline with flat workbench navigation", async 
 
   assert.match(
     source,
-    /title: "运营工作台"[\s\S]+?title: "经营总览",\s+href: "\/dashboard",\s+activeMatch: "exact"/,
+    /const primaryNav[\s\S]+?title: "经营总览",\s+href: "\/dashboard",\s+icon: LayoutDashboard,\s+activeMatch: "exact"/,
     "dashboard should stay the first primary workbench entry",
   );
+  assert.match(source, /collapsible="offcanvas"/);
+  assert.match(source, /SidebarGroupLabel>主数据/);
+  assert.match(source, /icon: Users/);
+  assert.match(source, /icon: Network/);
+  assert.match(source, /icon: MapPin/);
+  assert.match(source, /icon: Handshake/);
+  assert.match(source, /icon: Wrench/);
   assert.match(
     source,
     /href="\/schedule-plans\/new"/,
@@ -51,7 +58,7 @@ test("sidebar follows dashboard baseline with flat workbench navigation", async 
   assert.equal(source.includes("CollapsibleTrigger"), false);
   assert.equal(source.includes("CollapsibleContent"), false);
   assert.equal(source.includes("SidebarMenuSub"), false);
-  assert.equal(source.includes("运营数据"), false);
+  assert.equal(source.includes("SidebarGroupLabel>运营数据"), true);
 });
 
 test("global shell uses shadcn sidebar and header breadcrumb primitives", async () => {
@@ -90,8 +97,8 @@ test("global shell uses shadcn sidebar and header breadcrumb primitives", async 
   assert.equal(headerSource.includes("ThemeToggle"), false);
   assert.equal(sidebarSource.includes("SidebarFooter"), true);
   assert.equal(sidebarSource.includes("@/components/ui/avatar"), true);
-  assert.equal(sidebarSource.includes("AvatarImage"), true);
-  assert.equal(sidebarSource.includes("/shadcn-avatar.jpg"), true);
+  assert.equal(sidebarSource.includes("AvatarImage"), false);
+  assert.equal(sidebarSource.includes("/shadcn-avatar.jpg"), false);
   assert.equal(sidebarSource.includes("<AvatarFallback"), true);
   assert.equal(sidebarSource.includes("DropdownMenu"), true);
   assert.equal(sidebarSource.includes("切换为"), true);

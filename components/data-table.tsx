@@ -423,58 +423,73 @@ export function DataTable({ anomalies }: DataTableProps = {}) {
         setTableView(value as DashboardTableView)
         table.setPageIndex(0)
       }}
-      className="w-full flex-col justify-start gap-4"
+      className="w-full flex-col justify-start gap-6"
     >
-      <div className="flex flex-col gap-3 px-4 lg:px-6">
-        <div className="flex flex-col gap-3 @4xl/main:flex-row @4xl/main:items-center @4xl/main:justify-between">
-          <div className="grid gap-1">
-            <h2 className="text-base font-semibold">BPO 异常明细</h2>
-            <p className="text-sm text-muted-foreground">
-              支持搜索、排序、列显示、分页；仅在下游 ID 稳定时开放跳转
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <TabsList className="hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:bg-muted-foreground/30 **:data-[slot=badge]:px-1 @4xl/main:flex">
-              <TabsTrigger value="issues">异常明细</TabsTrigger>
-              <TabsTrigger value="high">
-                高严重度 <Badge variant="secondary">{summary.high}</Badge>
-              </TabsTrigger>
-              <TabsTrigger value="pending">
-                待复核 <Badge variant="secondary">{summary.pendingReview}</Badge>
-              </TabsTrigger>
-              <TabsTrigger value="drillable">
-                可下钻 <Badge variant="secondary">{summary.drillable}</Badge>
-              </TabsTrigger>
-            </TabsList>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Columns3 data-icon="inline-start" />
-                  列控制
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-44">
-                <DropdownMenuLabel>显示字段</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {table
-                  .getAllLeafColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column) => (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {columnLabels[column.id] ?? column.id}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+      <div className="flex items-center justify-between px-4 lg:px-6">
+        <TabsList className="hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:bg-muted-foreground/30 **:data-[slot=badge]:px-1 @4xl/main:flex">
+          <TabsTrigger value="issues">异常明细</TabsTrigger>
+          <TabsTrigger value="high">
+            高严重度 <Badge variant="secondary">{summary.high}</Badge>
+          </TabsTrigger>
+          <TabsTrigger value="pending">
+            待复核 <Badge variant="secondary">{summary.pendingReview}</Badge>
+          </TabsTrigger>
+          <TabsTrigger value="drillable">
+            可下钻 <Badge variant="secondary">{summary.drillable}</Badge>
+          </TabsTrigger>
+        </TabsList>
+        <Select
+          value={tableView}
+          onValueChange={(value) => {
+            setTableView(value as DashboardTableView)
+            table.setPageIndex(0)
+          }}
+        >
+          <SelectTrigger
+            size="sm"
+            className="flex w-fit @4xl/main:hidden"
+            aria-label="选择视图"
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="issues">异常明细</SelectItem>
+            <SelectItem value="high">高严重度</SelectItem>
+            <SelectItem value="pending">待复核</SelectItem>
+            <SelectItem value="drillable">可下钻</SelectItem>
+          </SelectContent>
+        </Select>
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Columns3 data-icon="inline-start" />
+                列控制
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44">
+              <DropdownMenuLabel>显示字段</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {table
+                .getAllLeafColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {columnLabels[column.id] ?? column.id}
+                  </DropdownMenuCheckboxItem>
+                ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        <div className="flex flex-col gap-2 @3xl/main:flex-row @3xl/main:items-center">
+      </div>
+      <div className="flex flex-col gap-3 px-4 lg:px-6">
+        <div className="flex items-center gap-2">
           <div className="flex max-w-sm flex-1 items-center gap-2 rounded-md border px-2">
             <Search className="text-muted-foreground" />
             <Input
@@ -575,7 +590,7 @@ export function DataTable({ anomalies }: DataTableProps = {}) {
         value={tableView}
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
-        <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+        <div className="overflow-hidden rounded-lg border">
           <Table className="min-w-[1156px] table-fixed">
             <TableHeader className="bg-muted">
               {table.getHeaderGroups().map((headerGroup) => (
