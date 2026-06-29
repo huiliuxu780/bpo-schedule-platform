@@ -1,11 +1,10 @@
 import Link from "next/link"
 import {
-  MoreHorizontal,
   RotateCcw,
   Search,
-  Settings2,
 } from "lucide-react"
 import { uploadImportCsvAction } from "@/app/data-quality/actions"
+import { MasterDataAgentTable } from "@/components/master-data-agent-table"
 import { AgentImportDialog } from "@/components/master-data-agent-import-dialog"
 import {
   type MasterDataAgentMaintenanceFeedback,
@@ -13,9 +12,9 @@ import {
   type MasterDataAgentManagementSummary,
   type MasterDataEntitySourceContext,
 } from "@/components/master-data-maintenance-model"
+import { MetricCard as SummaryMetricCard } from "@/components/metric-card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   Dialog,
   DialogContent,
@@ -24,13 +23,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -90,11 +82,36 @@ export function MasterDataAgentManagementPage({
 
       <AgentManagementFilterPanel summary={managementSummary} />
 
-      <AgentManagementListToolbar summary={managementSummary} />
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <SummaryMetricCard
+          title="客服人员"
+          value={managementSummary.totalEmployees.toLocaleString("zh-CN")}
+          description="筛选后条目"
+        />
+        <SummaryMetricCard
+          title="生效"
+          value={managementSummary.activeEmployees.toLocaleString("zh-CN")}
+          description="当前可排班人员"
+        />
+        <SummaryMetricCard
+          title="自有员工"
+          value={managementSummary.internalEmployees.toLocaleString("zh-CN")}
+          description="内部人员"
+        />
+        <SummaryMetricCard
+          title="外包员工"
+          value={managementSummary.outsourcedEmployees.toLocaleString("zh-CN")}
+          description="供应商人员"
+        />
+      </section>
 
-      <AgentManagementTablePanel
-        summary={managementSummary}
-        employeeListError={employeeListError ?? null}
+      <MasterDataAgentTable
+        rows={employeeListError ? [] : managementSummary.rows}
+        emptyMessage={
+          employeeListError
+            ? `人员列表读取失败：${employeeListError}`
+            : "暂无符合条件的客服人员"
+        }
       />
 
       {freezeEmployee ? (
@@ -122,7 +139,7 @@ function AgentManagementFilterPanel({
   summary: MasterDataAgentManagementSummary
 }) {
   return (
-    <section className="rounded-lg border bg-background p-4">
+    <section className="rounded-xl border bg-card p-4 shadow-xs">
       <form action="/master-data/agents" className="grid gap-4">
         <div className="grid gap-x-12 gap-y-3 lg:grid-cols-3">
           {summary.filterFields.map((field) => (
@@ -149,28 +166,6 @@ function AgentManagementFilterPanel({
           </Button>
         </div>
       </form>
-    </section>
-  )
-}
-
-function AgentManagementListToolbar({
-  summary,
-}: {
-  summary: MasterDataAgentManagementSummary
-}) {
-  return (
-    <section
-      data-action-scope="list"
-      className="flex min-h-9 flex-wrap items-center justify-start gap-3 px-1"
-    >
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-sm text-muted-foreground">已选 0 项</span>
-        {summary.bulkActions.map((action) => (
-          <Button key={action.key} size="sm" variant="outline" disabled>
-            {action.label}
-          </Button>
-        ))}
-      </div>
     </section>
   )
 }
@@ -212,110 +207,6 @@ function AgentManagementFilterField({
         </Select>
       )}
     </label>
-  )
-}
-
-function AgentManagementTablePanel({
-  summary,
-  employeeListError,
-}: {
-  summary: MasterDataAgentManagementSummary
-  employeeListError: string | null
-}) {
-  return (
-    <section className="rounded-lg border bg-background p-4">
-      {employeeListError ? (
-        <div className="rounded-md border p-4 text-sm text-muted-foreground">
-          人员列表读取失败：{employeeListError}
-        </div>
-      ) : summary.rows.length === 0 ? (
-        <div className="rounded-md border p-4 text-sm text-muted-foreground">
-          暂无符合条件的客服人员。
-        </div>
-      ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-10">
-                <Checkbox disabled aria-label="选择全部客服人员" />
-              </TableHead>
-              {summary.tableColumns.map((column) => (
-                <TableHead
-                  key={column.key}
-                  className={column.key === "actions" ? "text-right" : undefined}
-                >
-                  <span className="inline-flex items-center gap-2">
-                    {column.label}
-                    {column.key === "actions" ? <Settings2 /> : null}
-                  </span>
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {summary.rows.map((row) => (
-              <TableRow key={row.employee_id}>
-                <TableCell className="w-10">
-                  <Checkbox disabled aria-label={`选择${row.employee_name}`} />
-                </TableCell>
-                <TableCell className="font-medium">{row.employee_name}</TableCell>
-                <TableCell>{row.display.accountLabel}</TableCell>
-                <TableCell>{row.display.jobNumberLabel}</TableCell>
-                <TableCell>{row.display.publicNameLabel}</TableCell>
-                <TableCell className="max-w-[13rem] truncate">
-                  {row.display.organizationLabel}
-                </TableCell>
-                <TableCell className="max-w-[14rem] truncate">
-                  {row.display.skillSummary}
-                </TableCell>
-                <TableCell>{row.display.levelLabel}</TableCell>
-                <TableCell>
-                  <Badge variant={row.status === "active" ? "outline" : "secondary"}>
-                    {row.display.statusLabel}
-                  </Badge>
-                </TableCell>
-                <TableCell>{row.display.freezeReasonLabel}</TableCell>
-                <TableCell>{row.employee_id}</TableCell>
-                <TableCell className="whitespace-nowrap text-right">
-                  <div
-                    data-action-scope="row"
-                    className="flex items-center justify-end gap-1"
-                  >
-                    <AgentRowActionLink href={row.display.detailHref}>
-                      查看
-                    </AgentRowActionLink>
-                    <AgentRowActionLink href={row.display.editHref}>
-                      编辑
-                    </AgentRowActionLink>
-                    <AgentRowActionLink href={row.display.freezeHref}>
-                      冻结
-                    </AgentRowActionLink>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button size="icon-xs" variant="ghost" aria-label="更多操作">
-                          <MoreHorizontal />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem asChild>
-                            <Link
-                              href={row.display.skillsEditHref}
-                            >
-                              技能维护
-                            </Link>
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
-    </section>
   )
 }
 
@@ -444,25 +335,6 @@ export function MasterDataAgentDetailPage({
         <AgentFormBlockedState detail="未找到该客服人员，请返回列表重新选择。" />
       )}
     </main>
-  )
-}
-
-function AgentRowActionLink({
-  href,
-  children,
-}: {
-  href: string
-  children: React.ReactNode
-}) {
-  return (
-    <Button
-      asChild
-      size="sm"
-      variant="ghost"
-      className="px-2 text-primary hover:text-primary"
-    >
-      <Link href={href}>{children}</Link>
-    </Button>
   )
 }
 

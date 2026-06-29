@@ -581,11 +581,6 @@ export type MasterDataAgentManagementFilterField = {
   }[]
 }
 
-export type MasterDataAgentManagementAction = {
-  key: "employee_type" | "organization" | "skill_group" | "freeze"
-  label: string
-}
-
 export type MasterDataAgentImportDialogStep = {
   key: "upload" | "mapping" | "result"
   title: string
@@ -643,7 +638,6 @@ export type MasterDataAgentManagementSummary = MasterDataEmployeeListSummary & {
   importDialog: MasterDataAgentImportDialogSummary
   activeFilters: MasterDataAgentManagementFilters
   filterFields: MasterDataAgentManagementFilterField[]
-  bulkActions: MasterDataAgentManagementAction[]
   tableColumns: MasterDataAgentManagementColumn[]
 }
 

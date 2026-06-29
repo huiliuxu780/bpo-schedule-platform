@@ -5,11 +5,12 @@ import test from "node:test";
 const files = {
   siteHeader: new URL("../../components/site-header.tsx", import.meta.url),
   agents: new URL("../../components/master-data-maintenance-agents.tsx", import.meta.url),
+  agentTable: new URL("../../components/master-data-agent-table.tsx", import.meta.url),
   actions: new URL("../../components/master-data-maintenance-actions.tsx", import.meta.url),
 };
 
 test("visible action placement is encoded in header, filter, list, row, and dialog scopes", async () => {
-  const [siteHeader, agents, actions] = await Promise.all(
+  const [siteHeader, agents, agentTable, actions] = await Promise.all(
     Object.values(files).map((file) => readFile(file, "utf8"))
   );
 
@@ -25,12 +26,12 @@ test("visible action placement is encoded in header, filter, list, row, and dial
     "filter submit/reset controls must stay inside a filter action scope"
   );
   assert.match(
-    agents,
-    /function AgentManagementListToolbar[\s\S]+data-action-scope="list"/,
-    "bulk/list controls must stay inside a list toolbar scope"
+    agentTable,
+    /data-action-scope="row"/,
+    "list rows must keep row actions inside the dedicated table shell"
   );
   assert.match(
-    agents,
+    agentTable,
     /data-action-scope="row"/,
     "view/edit/freeze controls must stay inside a row action scope"
   );
@@ -41,19 +42,16 @@ test("visible action placement is encoded in header, filter, list, row, and dial
   );
 
   const filterPanel = agents.match(
-    /function AgentManagementFilterPanel[\s\S]+?function AgentManagementListToolbar/
+    /function AgentManagementFilterPanel[\s\S]+?function AgentManagementFilterField/
   )?.[0] ?? "";
   assert.match(filterPanel, /查询/);
   assert.match(filterPanel, /重置/);
   assert.doesNotMatch(filterPanel, /新建/);
   assert.doesNotMatch(filterPanel, /批量导入/);
 
-  const listToolbar = agents.match(
-    /function AgentManagementListToolbar[\s\S]+?function AgentManagementFilterField/
-  )?.[0] ?? "";
-  assert.match(listToolbar, /bulkActions\.map/);
-  assert.doesNotMatch(listToolbar, /新建/);
-  assert.doesNotMatch(listToolbar, /批量导入/);
+  assert.doesNotMatch(agents, /function AgentManagementListToolbar/);
+  assert.doesNotMatch(agents, /bulkActions\.map/);
+  assert.doesNotMatch(agents, /已选 0 项/);
 
   assert.match(actions, /^export function MasterDataAgentPageActions/m);
   assert.match(actions, /新建/);

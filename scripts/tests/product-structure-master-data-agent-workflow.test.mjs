@@ -13,19 +13,10 @@ test("agent list keeps page actions and filter actions in their own zones", asyn
   const agentsSource = await readFile(masterDataAgentsComponentPath, "utf8");
   const filterSource = agentsSource.slice(
     agentsSource.indexOf("function AgentManagementFilterPanel"),
-    agentsSource.indexOf("function AgentManagementListToolbar"),
-  );
-  const toolbarSource = agentsSource.slice(
-    agentsSource.indexOf("function AgentManagementListToolbar"),
     agentsSource.indexOf("function AgentManagementFilterField"),
   );
-  const tablePanelSource = agentsSource.slice(
-    agentsSource.indexOf("function AgentManagementTablePanel"),
-    agentsSource.indexOf("function AgentRowActionLink"),
-  );
   const filterCallIndex = agentsSource.indexOf("<AgentManagementFilterPanel");
-  const toolbarCallIndex = agentsSource.indexOf("<AgentManagementListToolbar");
-  const tableCallIndex = agentsSource.indexOf("<AgentManagementTablePanel");
+  const tableCallIndex = agentsSource.indexOf("<MasterDataAgentTable");
 
   assert.equal(
     entitySource.includes("actions={"),
@@ -38,39 +29,19 @@ test("agent list keeps page actions and filter actions in their own zones", asyn
     "agent create/import actions should live in the page header actions slot",
   );
   assert.equal(
-    filterCallIndex > -1 && toolbarCallIndex > filterCallIndex,
+    filterCallIndex > -1 && tableCallIndex > filterCallIndex,
     true,
-    "agent filter panel should render above the list toolbar",
+    "agent filter panel should render above the agent table",
   );
   assert.equal(
-    toolbarCallIndex > -1 && tableCallIndex > toolbarCallIndex,
-    true,
-    "agent list toolbar should sit directly above the table panel",
-  );
-  assert.equal(
-    toolbarSource.includes("justify-start"),
-    true,
-    "agent list toolbar should only align selected/bulk actions",
-  );
-  assert.equal(
-    toolbarSource.includes("summary.bulkActions.map"),
-    true,
-    "agent bulk actions should live in the shared list toolbar",
-  );
-  assert.equal(
-    toolbarSource.includes("summary.createHref"),
+    agentsSource.includes("AgentManagementListToolbar"),
     false,
-    "agent page create action should not live in the list toolbar",
+    "agent list should not render disabled pseudo bulk actions",
   );
   assert.equal(
-    toolbarSource.includes("summary.importDialog.openHref"),
+    agentsSource.includes("summary.bulkActions.map"),
     false,
-    "agent page import action should not live in the list toolbar",
-  );
-  assert.equal(
-    tablePanelSource.includes("summary.bulkActions.map"),
-    false,
-    "agent table panel should not own bulk actions",
+    "agent list should not map disabled pseudo bulk actions",
   );
   assert.equal(
     filterSource.includes('action="/master-data/agents"'),

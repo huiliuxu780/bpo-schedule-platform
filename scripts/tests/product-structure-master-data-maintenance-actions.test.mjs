@@ -5,6 +5,7 @@ import test from "node:test";
 const masterDataEntityPagePath = new URL("../../app/master-data/[entityKey]/page.tsx", import.meta.url);
 const masterDataActionsPath = new URL("../../app/master-data/[entityKey]/actions.ts", import.meta.url);
 const masterDataReferenceComponentPath = new URL("../../components/master-data-maintenance-references.tsx", import.meta.url);
+const masterDataReferenceTablePath = new URL("../../components/master-data-reference-table.tsx", import.meta.url);
 const masterDataPayloadsPath = new URL("../../components/master-data-maintenance-payloads.ts", import.meta.url);
 const masterDataEntitiesPath = new URL("../../components/master-data-maintenance-entities.ts", import.meta.url);
 const masterDataWorkplaceCreatePagePath = new URL("../../app/master-data/sites/new/page.tsx", import.meta.url);
@@ -45,17 +46,19 @@ test("skill maintenance uses child pages and a freeze dialog instead of list-pag
 
 test("master data reference detail actions use a consistent view label", async () => {
   const referencesSource = await readFile(masterDataReferenceComponentPath, "utf8");
+  const referenceTableSource = await readFile(masterDataReferenceTablePath, "utf8");
 
   assert.equal(
-    referencesSource.includes(">详情</Link>"),
+    `${referencesSource}\n${referenceTableSource}`.includes(">详情</Link>"),
     false,
     "reference master-data rows should not mix 详情 with the established 查看 row action label",
   );
   assert.equal(
-    referencesSource.includes(">查看</Link>"),
+    referenceTableSource.includes("查看"),
     true,
     "reference master-data rows should expose the detail link as 查看",
   );
+  assert.equal(referenceTableSource.includes("detailHref"), true);
 });
 
 test("workplace maintenance uses child pages and freeze dialog instead of list-page forms", async () => {

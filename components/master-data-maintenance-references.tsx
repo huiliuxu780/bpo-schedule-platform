@@ -1,4 +1,6 @@
 import Link from "next/link"
+import { MasterDataOrganizationTable } from "@/components/master-data-organization-table"
+import { MasterDataReferenceTable } from "@/components/master-data-reference-table"
 import {
   type MasterDataAgentMaintenanceFeedback,
   type MasterDataEntitySourceContext,
@@ -7,7 +9,7 @@ import {
   type MasterDataReferenceManagementSummary,
   type MasterDataReferenceListViewRow,
 } from "@/components/master-data-maintenance-model"
-import { Badge } from "@/components/ui/badge"
+import { MetricCard } from "@/components/metric-card"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -18,17 +20,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
   MasterDataListError,
   AgentMaintenanceFeedbackCard,
-  MetricCard,
 } from "./master-data-maintenance-fields"
 
 export function MasterDataReferenceManagementPage({
@@ -70,114 +63,35 @@ export function MasterDataReferenceManagementPage({
       ? listSummary.rows.find((row) => row.reference_id === selectedFreezeSkillId) ??
         null
       : null
-  const hasActionRows = listSummary.rows.some(
-    (row) =>
-      row.display.detailHref || row.display.editHref || row.display.freezeHref
-  )
-
   return (
     <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
       {error ? <MasterDataListError title={`${listSummary.title}列表读取失败`} error={error} /> : null}
       {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
 
-      <section className="grid gap-3 md:grid-cols-3">
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MetricCard
-          label="记录数"
+          title="记录数"
           value={listSummary.totalRecords.toLocaleString("zh-CN")}
-          detail={summary.sourceVersionLabel}
-          tone="default"
+          description={summary.sourceVersionLabel}
         />
         <MetricCard
-          label="生效"
+          title="生效"
           value={listSummary.activeRecords.toLocaleString("zh-CN")}
-          detail="当前可引用记录"
-          tone={listSummary.activeRecords > 0 ? "ready" : "default"}
+          description="当前可引用记录"
         />
         <MetricCard
-          label="冻结"
+          title="冻结"
           value={listSummary.frozenRecords.toLocaleString("zh-CN")}
-          detail="不可继续引用记录"
-          tone={listSummary.frozenRecords > 0 ? "blocked" : "default"}
+          description="不可继续引用记录"
+        />
+        <MetricCard
+          title="维护对象"
+          value={listSummary.title}
+          description="主数据引用表"
         />
       </section>
 
-      <section className="rounded-lg border bg-background p-4">
-        {listSummary.rows.length === 0 ? (
-          <div className="rounded-md border p-4 text-sm text-muted-foreground">
-            暂无{listSummary.title}记录。
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>名称</TableHead>
-                <TableHead>编码</TableHead>
-                <TableHead>属性</TableHead>
-                <TableHead>状态</TableHead>
-                <TableHead>有效期</TableHead>
-                <TableHead>来源批次</TableHead>
-                {hasActionRows ? <TableHead className="text-right">操作</TableHead> : null}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {listSummary.rows.map((row) => (
-                <TableRow key={row.reference_id}>
-                  <TableCell className="font-medium">
-                    {row.display.referenceNameLabel}
-                  </TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {row.display.referenceIdLabel}
-                  </TableCell>
-                  <TableCell>{row.display.skillCategoryLabel}</TableCell>
-                  <TableCell>
-                    <Badge variant={row.status === "active" ? "outline" : "secondary"}>
-                      {row.display.statusLabel}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{row.display.effectivePeriodLabel}</TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {row.display.sourceBatchLabel}
-                  </TableCell>
-                  {hasActionRows ? (
-                    <TableCell className="whitespace-nowrap text-right">
-                      {row.display.detailHref ? (
-                        <Button
-                          asChild
-                          size="xs"
-                          variant="ghost"
-                          className="px-1.5 text-primary hover:text-primary"
-                        >
-                          <Link href={row.display.detailHref}>查看</Link>
-                        </Button>
-                      ) : null}
-                      {row.display.editHref ? (
-                        <Button
-                          asChild
-                          size="xs"
-                          variant="ghost"
-                          className="px-1.5 text-primary hover:text-primary"
-                        >
-                          <Link href={row.display.editHref}>编辑</Link>
-                        </Button>
-                      ) : null}
-                      {row.display.freezeHref ? (
-                        <Button
-                          asChild
-                          size="xs"
-                          variant="ghost"
-                          className="px-1.5 text-destructive hover:text-destructive"
-                        >
-                          <Link href={row.display.freezeHref}>冻结</Link>
-                        </Button>
-                      ) : null}
-                    </TableCell>
-                  ) : null}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </section>
+      <MasterDataReferenceTable title={listSummary.title} rows={listSummary.rows} />
 
       {selectedFreezeWorkplace && workplaceSubmitAction ? (
         <MasterDataWorkplaceFreezeDialog
@@ -407,100 +321,30 @@ export function MasterDataOrganizationManagementPage({
       {error ? <MasterDataListError title="组织列表读取失败" error={error} /> : null}
       {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
 
-      <section className="grid gap-3 md:grid-cols-3">
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MetricCard
-          label="记录数"
+          title="记录数"
           value={listSummary.totalRecords.toLocaleString("zh-CN")}
-          detail={summary.sourceVersionLabel}
-          tone="default"
+          description={summary.sourceVersionLabel}
         />
         <MetricCard
-          label="生效"
+          title="生效"
           value={listSummary.activeRecords.toLocaleString("zh-CN")}
-          detail="当前可引用组织"
-          tone={listSummary.activeRecords > 0 ? "ready" : "default"}
+          description="当前可引用组织"
         />
         <MetricCard
-          label="冻结"
+          title="冻结"
           value={listSummary.frozenRecords.toLocaleString("zh-CN")}
-          detail="不可继续引用组织"
-          tone={listSummary.frozenRecords > 0 ? "blocked" : "default"}
+          description="不可继续引用组织"
+        />
+        <MetricCard
+          title="维护对象"
+          value={listSummary.title}
+          description="组织层级表"
         />
       </section>
 
-      <section className="rounded-lg border bg-background p-4">
-        {listSummary.rows.length === 0 ? (
-          <div className="rounded-md border p-4 text-sm text-muted-foreground">
-            暂无组织记录。
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>组织名称</TableHead>
-                <TableHead>组织编码</TableHead>
-                <TableHead>层级</TableHead>
-                <TableHead>上级组织</TableHead>
-                <TableHead>组织路径</TableHead>
-                <TableHead>状态</TableHead>
-                <TableHead>有效期</TableHead>
-                <TableHead>来源批次</TableHead>
-                <TableHead className="text-right">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {listSummary.rows.map((row) => (
-                <TableRow key={row.organization_id}>
-                  <TableCell className="font-medium">
-                    {row.display.organizationNameLabel}
-                  </TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {row.display.organizationIdLabel}
-                  </TableCell>
-                  <TableCell>{row.display.organizationLevelLabel}</TableCell>
-                  <TableCell>{row.display.parentOrganizationLabel}</TableCell>
-                  <TableCell>{row.display.organizationPathLabel}</TableCell>
-                  <TableCell>
-                    <Badge variant={row.status === "active" ? "outline" : "secondary"}>
-                      {row.display.statusLabel}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{row.display.effectivePeriodLabel}</TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {row.display.sourceBatchLabel}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-right">
-                    <Button
-                      asChild
-                      size="xs"
-                      variant="ghost"
-                      className="px-1.5 text-primary hover:text-primary"
-                    >
-                      <Link href={row.display.detailHref}>查看</Link>
-                    </Button>
-                    <Button
-                      asChild
-                      size="xs"
-                      variant="ghost"
-                      className="px-1.5 text-primary hover:text-primary"
-                    >
-                      <Link href={row.display.editHref}>编辑</Link>
-                    </Button>
-                    <Button
-                      asChild
-                      size="xs"
-                      variant="ghost"
-                      className="px-1.5 text-destructive hover:text-destructive"
-                    >
-                      <Link href={row.display.freezeHref}>冻结</Link>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </section>
+      <MasterDataOrganizationTable rows={listSummary.rows} />
       {selectedFreezeOrganization && organizationSubmitAction ? (
         <MasterDataOrganizationFreezeDialog
           summary={summary}

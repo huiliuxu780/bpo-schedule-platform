@@ -247,12 +247,6 @@ export function summarizeMasterDataAgentManagement(
         ],
       },
     ],
-    bulkActions: [
-      { key: "employee_type", label: "人员类型" },
-      { key: "organization", label: "组织架构" },
-      { key: "skill_group", label: "技能组" },
-      { key: "freeze", label: "冻结/解冻" },
-    ],
     tableColumns: [
       { key: "name", label: "姓名" },
       { key: "account", label: "账号" },

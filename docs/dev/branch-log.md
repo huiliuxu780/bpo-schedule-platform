@@ -21,6 +21,25 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM272 Master Data Workbench Alignment
+
+- branch_name: `codex/im272-master-data-workbench-alignment`
+- base_main_commit: `stacked on pushed codex/im271-workbench-visual-consistency`
+- stacked_on: `codex/im271-workbench-visual-consistency`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium frontend-scaffold correction for master-data list workbenches: keep real sidebar entries and active navigation state, remove disabled pseudo bulk actions from the agent list, migrate agent/reference/organization list tables to the shared table shell, and align list metric cards with the shared shadcn-style metric card.
+- qoder_mode: `false; PM selected option B and asked Codex to execute directly with visual verification.`
+- allowed_files_check: master-data maintenance list components/models/types, dedicated master-data table components, focused master-data/action-placement tests, and branch log only.
+- scope_diff_check: expected frontend visual/workbench alignment only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, external integration, or dashboard changes.
+- check_result: Focused master-data/action-placement tests passed. `npm run typecheck`, `npm run lint`, `node scripts/check-shadcn-ui.mjs`, and `git diff --check` passed before final Harness verification. Browser verification on `/master-data/agents` confirmed the sidebar only marks `客服人员` active, no `设置` pseudo entry is selected, disabled `已选 0 项` bulk actions are gone, and the agent list uses the shared metric-card/table-shell layout.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM250 Dashboard Real-Data Linkage
 
 - branch_name: `codex/im250-dashboard-real-data-linkage`

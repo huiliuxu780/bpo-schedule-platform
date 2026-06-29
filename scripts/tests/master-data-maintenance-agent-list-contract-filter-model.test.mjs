@@ -40,10 +40,7 @@ test("agent management page exposes customer service list layout contract", () =
     summary.filterFields.map((field) => field.label),
     ["客服名", "技能组", "账号", "状态", "组织", "职场", "坐席类型"],
   );
-  assert.deepEqual(
-    summary.bulkActions.map((action) => action.label),
-    ["人员类型", "组织架构", "技能组", "冻结/解冻"],
-  );
+  assert.equal("bulkActions" in summary, false);
   assert.deepEqual(
     summary.tableColumns.map((column) => column.label),
     ["姓名", "账号", "工号", "对外展示名", "组织", "技能组", "级别", "状态", "冻结/解冻原因", "ID", "操作"],
