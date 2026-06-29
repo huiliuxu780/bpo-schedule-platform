@@ -5888,3 +5888,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM270 Dashboard Heatmap And Card Corrective Fix
+
+- branch_name: `codex/im270-dashboard-01-restoration`
+- base_main_commit: `stacked on local reverted dashboard restoration branch after PM-requested rollback`
+- stacked_on: `codex/im270-dashboard-01-restoration`
+- remote_status: `not_pushed; local corrective commit pending PM push confirmation.`
+- scope: Fast corrective frontend fix after PM review of the restored dashboard: preserve schedule interval heatmap granularity, keep accepted sidebar navigation while restoring distinct item icons and active/hover interaction, and bring KPI card structure closer to shadcn dashboard-01 metric cards.
+- qoder_mode: `false; PM explicitly asked Codex to do the quick fix directly.`
+- allowed_files_check: dashboard page, dashboard view model, dashboard KPI cards, shared Card primitive data slots, app sidebar icon mapping, and focused dashboard tests only.
+- scope_diff_check: expected frontend UI/model correction only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, external integration, or new dashboard filter console changes.
+- check_result: Focused dashboard/global-shell regression run passed with 199 tests. `npm run typecheck`, `npm run lint`, `node scripts/check-shadcn-ui.mjs`, and `git diff --check` passed before final Harness verification. Runtime HTML check on `http://127.0.0.1:3000/dashboard` found `时段人力缺口`, interval labels `09:00` through `11:30`, and zero `全天` labels on the current dashboard response.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

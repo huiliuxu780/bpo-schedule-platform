@@ -2,6 +2,7 @@ import type { Anomaly } from "../app/dashboard/data"
 import type {
   SchedulePlanSummary,
   ScheduleRiskRow,
+  ShiftDetailRow,
 } from "./schedule-plans"
 import type { UnavailabilityRow } from "./unavailability"
 
@@ -117,16 +118,45 @@ export function buildDashboardMetricCards(
  * Groups plans by date and shows gap trends.
  */
 export function buildDashboardHeatmap(
-  plans: SchedulePlanSummary[]
+  plans: SchedulePlanSummary[],
+  shiftDetails: ShiftDetailRow[] = []
 ): {
   rows: DashboardHeatmapRow[]
   slots: DashboardHeatmapSlot[]
 } {
-  if (plans.length === 0) {
+  if (plans.length === 0 && shiftDetails.length === 0) {
     return { rows: [], slots: [] }
   }
 
-  // Group plans by date
+  if (shiftDetails.length > 0) {
+    const slots = Array.from(
+      new Set(shiftDetails.map((row) => row.interval_start))
+    ).sort()
+    const slotIndex = new Map(slots.map((slot, index) => [slot, index]))
+    const rowsByDate = new Map<string, number[]>()
+
+    for (const row of shiftDetails) {
+      const values = rowsByDate.get(row.plan_date) ?? Array(slots.length).fill(0)
+      const index = slotIndex.get(row.interval_start)
+
+      if (index !== undefined) {
+        values[index] += -row.gap_agents
+      }
+
+      rowsByDate.set(row.plan_date, values)
+    }
+
+    return {
+      rows: Array.from(rowsByDate.entries())
+        .sort(([leftDate], [rightDate]) => leftDate.localeCompare(rightDate))
+        .map(([date, values]) => ({
+          day: formatDateLabel(date),
+          slots: values,
+        })),
+      slots,
+    }
+  }
+
   const plansByDate = new Map<string, SchedulePlanSummary[]>()
   for (const plan of plans) {
     const existing = plansByDate.get(plan.plan_date) ?? []
@@ -134,25 +164,18 @@ export function buildDashboardHeatmap(
     plansByDate.set(plan.plan_date, existing)
   }
 
-  // Sort dates
   const sortedDates = Array.from(plansByDate.keys()).sort()
 
-  // Build rows: each row is a date, slots are time periods
-  // We'll use a simple approach: show gap_agents as negative values
   const rows: DashboardHeatmapRow[] = sortedDates.map((date) => {
     const dayPlans = plansByDate.get(date) ?? []
-
-    // Aggregate gap by project/site for this date
-    // Since we don't have interval data, we'll create a single "day" slot
     const totalGap = dayPlans.reduce((sum, p) => sum + p.gap_agents, 0)
 
     return {
       day: formatDateLabel(date),
-      slots: [-totalGap], // Negative value indicates gap
+      slots: [-totalGap],
     }
   })
 
-  // Single slot representing "全天"
   const slots: DashboardHeatmapSlot[] = ["全天"]
 
   return { rows, slots }
@@ -252,9 +275,10 @@ export function buildDashboardAnomalies(
 export function buildDashboardViewModel(
   plans: SchedulePlanSummary[],
   risks: ScheduleRiskRow[],
-  unavailability: UnavailabilityRow[]
+  unavailability: UnavailabilityRow[],
+  shiftDetails: ShiftDetailRow[] = []
 ): DashboardViewModel {
-  const heatmap = buildDashboardHeatmap(plans)
+  const heatmap = buildDashboardHeatmap(plans, shiftDetails)
 
   return {
     metricCards: buildDashboardMetricCards(plans, risks, unavailability),
@@ -428,6 +452,20 @@ function filterUnavailability(
   })
 }
 
+function filterShiftDetails(
+  shiftDetails: ShiftDetailRow[],
+  filters: DashboardOperationalFilters,
+  filteredPlanIds?: Set<string>
+): ShiftDetailRow[] {
+  return shiftDetails.filter((row) => {
+    if (filters.site && !row.site_name.includes(filters.site)) return false
+    if (filters.project && !row.project_name.includes(filters.project)) return false
+    if (filters.planStatus && row.status !== filters.planStatus) return false
+    if (filteredPlanIds && !filteredPlanIds.has(row.plan_id)) return false
+    return true
+  })
+}
+
 function planContextKey(context: {
   project_name: string
   site_name: string
@@ -440,6 +478,7 @@ export type DashboardOperationalInput = {
   plans: SchedulePlanSummary[]
   risks: ScheduleRiskRow[]
   unavailability: UnavailabilityRow[]
+  shiftDetails?: ShiftDetailRow[]
   plansSource: DataSourceInfo
   risksSource: DataSourceInfo
   unavailabilitySource: DataSourceInfo
@@ -453,6 +492,7 @@ export function buildDashboardOperationalViewModel(
     plans,
     risks,
     unavailability,
+    shiftDetails = [],
     plansSource,
     risksSource,
     unavailabilitySource,
@@ -473,9 +513,18 @@ export function buildDashboardOperationalViewModel(
     filters,
     filteredPlanContexts
   )
+  const filteredShiftDetails = filterShiftDetails(
+    shiftDetails,
+    filters,
+    filteredPlanIds
+  )
 
-  // Build view model with filtered data
-  const baseViewModel = buildDashboardViewModel(filteredPlans, filteredRisks, filteredUnavailability)
+  const baseViewModel = buildDashboardViewModel(
+    filteredPlans,
+    filteredRisks,
+    filteredUnavailability,
+    filteredShiftDetails
+  )
   const drilldownLinks = buildDashboardDrilldownLinks(filters)
 
   const hasAnyFailure = plansSource.failed || risksSource.failed || unavailabilitySource.failed

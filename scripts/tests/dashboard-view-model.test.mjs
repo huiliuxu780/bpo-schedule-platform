@@ -151,6 +151,53 @@ const unavailResolved = {
 const allPlans = [planA, planB, planC];
 const allRisks = [riskOpenHigh, riskOpenMedium, riskConfirmed, riskResolved];
 const allUnavailability = [unavailActive, unavailResolved];
+const allShiftDetails = [
+  {
+    plan_id: "plan-a",
+    plan_date: "2026-05-11",
+    project_name: "博西客服",
+    site_name: "上海职场",
+    version: "v1",
+    status: "published",
+    interval_start: "09:00",
+    interval_end: "09:30",
+    forecast_agents: 16,
+    scheduled_agents: 15,
+    gap_agents: 1,
+    coverage_rate: 0.9375,
+    note: "早高峰轻微缺口",
+  },
+  {
+    plan_id: "plan-a",
+    plan_date: "2026-05-11",
+    project_name: "博西客服",
+    site_name: "上海职场",
+    version: "v1",
+    status: "published",
+    interval_start: "09:30",
+    interval_end: "10:00",
+    forecast_agents: 18,
+    scheduled_agents: 16,
+    gap_agents: 2,
+    coverage_rate: 0.8889,
+    note: "预测需求上升",
+  },
+  {
+    plan_id: "plan-b",
+    plan_date: "2026-05-12",
+    project_name: "博西客服",
+    site_name: "苏州职场",
+    version: "v1",
+    status: "draft",
+    interval_start: "09:00",
+    interval_end: "09:30",
+    forecast_agents: 14,
+    scheduled_agents: 14,
+    gap_agents: 0,
+    coverage_rate: 1,
+    note: "覆盖正常",
+  },
+];
 
 // ── 1. Schedule plan summary -> metric cards ──
 
@@ -325,6 +372,17 @@ test("heatmap groups plans by date and shows gap as negative values", () => {
   const may12Row = rows.find((r) => r.day === "05-12");
   assert.notEqual(may12Row, undefined);
   assert.equal(Math.abs(may12Row?.slots[0] ?? 0), 0);
+});
+
+test("heatmap uses shift detail intervals instead of collapsing to all-day", () => {
+  const { rows, slots } = buildDashboardHeatmap(allPlans, allShiftDetails);
+
+  assert.deepEqual(slots, ["09:00", "09:30"]);
+  assert.equal(rows.length, 2);
+  assert.equal(rows.find((row) => row.day === "05-11")?.slots[0], -1);
+  assert.equal(rows.find((row) => row.day === "05-11")?.slots[1], -2);
+  assert.equal(rows.find((row) => row.day === "05-12")?.slots[0], 0);
+  assert.notEqual(slots[0], "全天");
 });
 
 // ── 7. Forbidden terminology ──

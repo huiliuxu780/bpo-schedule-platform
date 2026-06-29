@@ -28,6 +28,11 @@ test("dashboard page calls getUnavailabilityResult", () => {
   assert.match(pageSrc, /getUnavailabilityResult\s*\(/);
 });
 
+test("dashboard page calls getShiftDetailsResult for interval heatmap data", () => {
+  assert.match(pageSrc, /getShiftDetailsResult\s*\(/);
+  assert.match(pageSrc, /shiftDetails:\s*shiftDetailsResult\.items/);
+});
+
 // ── 2. Dashboard page calls the view model builder ──
 
 test("dashboard page calls buildDashboardOperationalViewModel", () => {

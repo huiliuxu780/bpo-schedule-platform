@@ -8,15 +8,20 @@ import {
   CalendarDays,
   CircleHelp,
   Database,
+  Handshake,
   Inbox,
   LayoutDashboard,
+  MapPin,
   Moon,
   MoreHorizontal,
+  Network,
   PanelTop,
   PlusCircle,
   Settings,
   Sun,
   type LucideIcon,
+  Users,
+  Wrench,
 } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -78,6 +83,7 @@ const nav: NavGroup[] = [
       {
         title: "排班计划",
         href: "/schedule-plans",
+        icon: CalendarDays,
         activeMatch: "prefix",
       },
       {
@@ -95,6 +101,7 @@ const nav: NavGroup[] = [
       {
         title: "登录/状态日志",
         href: "/actual-logs/production",
+        icon: Inbox,
         activeMatch: "prefix",
       },
     ],
@@ -106,26 +113,31 @@ const nav: NavGroup[] = [
       {
         title: "客服人员",
         href: "/master-data/agents",
+        icon: Users,
         activeMatch: "prefix",
       },
       {
         title: "组织",
         href: "/master-data/organizations",
+        icon: Network,
         activeMatch: "prefix",
       },
       {
         title: "职场",
         href: "/master-data/sites",
+        icon: MapPin,
         activeMatch: "prefix",
       },
       {
         title: "供应商",
         href: "/master-data/vendors",
+        icon: Handshake,
         activeMatch: "prefix",
       },
       {
         title: "技能",
         href: "/master-data/skills",
+        icon: Wrench,
         activeMatch: "prefix",
       },
     ],
@@ -193,6 +205,7 @@ function BrandMark() {
 export function AppSidebar({
   variant = "inset",
 }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname()
   const { resolvedTheme, setTheme } = useTheme()
   const isDark = resolvedTheme === "dark"
 
@@ -216,7 +229,10 @@ export function AppSidebar({
         </SidebarMenu>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground">
+            <SidebarMenuButton
+              asChild
+              isActive={pathname === "/schedule-plans/new"}
+            >
               <Link href="/schedule-plans/new">
                 <PlusCircle />
                 <span>快速新建</span>

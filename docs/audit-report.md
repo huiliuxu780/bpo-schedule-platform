@@ -6084,3 +6084,18 @@
 - 指标下钻从右下角 ghost button 改为整卡 `Link`，减少卡片内按钮噪音，同时保留真实 drilldown 能力。
 - `ChartAreaInteractive` 与 `BpoHeatmap` 的卡片阴影统一为 `shadow-md shadow-black/5`，避免首屏卡片重量不一致。
 - 浏览器自动化接口未暴露 in-app tab，系统截图又被 Codex 窗口遮挡，因此本轮没有可用浏览器截图证据；验收依据为源码 diff、focused tests、shadcn check、typecheck/lint 和最终 Harness 门禁。
+
+### 2026-06-29 - IM270 经营总览热力图与卡片快速纠偏
+
+#### 审计计划
+
+- 承接 PM 对回滚后 dashboard 的三点明确反馈：时段人力缺口不能降级为全天粒度、导航修改可保留但交互和图标不能丢、KPI 卡片必须继续向 shadcn dashboard-01 靠近。
+- 本轮只做快速纠偏，不重新引入顶部筛选控制台，不新增功能入口，不改后端/API/依赖。
+- 不扩展到权限、审批、导出、批量、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- `/dashboard` 页面读取 `getShiftDetailsResult()` 并传入 dashboard operational view model，`buildDashboardHeatmap()` 优先使用班次明细的 `interval_start` 生成时段列，保留真正的时段人力缺口热力图；只有没有班次明细数据时才退回 `全天` 汇总。
+- Sidebar 保留 flat workbench 导航结构，补齐不同二级导航图标，继续使用既有 `SidebarMenuButton` active/hover/collapsed 状态，不再把主数据多个入口都显示成同一个分组图标。
+- `components/ui/card.tsx` 补齐 `CardAction` 和 card data slots，`SectionCards` 使用更接近 shadcn dashboard-01 的 metric card 结构：右上角 badge、较大数值层级、底部 insight/note、semantic shadow 和轻量渐变。
+- Runtime HTML 检查确认当前 `/dashboard` 响应包含 `时段人力缺口` 和 `09:00`、`09:30`、`10:00`、`10:30`、`11:00`、`11:30` 等时段标签，且不包含 `全天` 标签。

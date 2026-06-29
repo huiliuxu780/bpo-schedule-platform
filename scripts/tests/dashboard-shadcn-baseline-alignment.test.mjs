@@ -16,6 +16,7 @@ const siteHeaderSrc = readProject("components/site-header.tsx")
 const sectionCardsSrc = readProject("components/section-cards.tsx")
 const dataTableSrc = readProject("components/data-table.tsx")
 const readinessBannerSrc = readProject("components/readiness-banner.tsx")
+const sidebarSrc = readProject("components/ui/sidebar.tsx")
 
 test("app shell uses the dashboard-01 inset sidebar frame", () => {
   assert.match(appShellSrc, /--sidebar-width/)
@@ -31,6 +32,17 @@ test("sidebar uses flat workbench navigation rather than expanded directory grou
   assert.doesNotMatch(appSidebarSrc, /运营数据/)
   assert.doesNotMatch(appSidebarSrc, /CollapsibleTrigger/)
   assert.doesNotMatch(appSidebarSrc, /SidebarMenuSub/)
+})
+
+test("sidebar active interaction uses the dashboard-01 primary pill treatment", () => {
+  assert.match(sidebarSrc, /data-\[active=true\]:bg-primary/)
+  assert.match(sidebarSrc, /data-\[active=true\]:text-primary-foreground/)
+  assert.match(sidebarSrc, /data-\[active=true\]:hover:bg-primary/)
+  assert.match(sidebarSrc, /data-active=\{isActive \? "true" : undefined\}/)
+  assert.doesNotMatch(sidebarSrc, /data-active=\{isActive\}/)
+  assert.match(appSidebarSrc, /isActive=\{pathname === "\/schedule-plans\/new"\}/)
+  assert.match(appSidebarSrc, /快速新建/)
+  assert.doesNotMatch(appSidebarSrc, /className="bg-primary text-primary-foreground/)
 })
 
 test("normal readiness state stays out of the operator surface", () => {

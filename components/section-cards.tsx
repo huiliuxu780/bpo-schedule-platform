@@ -5,8 +5,9 @@ import type { DashboardMetricCard } from "@/lib/dashboard"
 import { metricCards as fallbackMetricCards } from "@/app/dashboard/data"
 import {
   Card,
-  CardContent,
+  CardAction,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -21,7 +22,7 @@ export function SectionCards({ cards }: SectionCardsProps = {}) {
 
   return (
     <section className="@container/main px-4 lg:px-6">
-      <div className="grid gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card">
         {displayCards.map((item) => (
           <MetricCard key={item.title} item={item} />
         ))}
@@ -34,33 +35,32 @@ function MetricCard({ item }: { item: DashboardMetricCard }) {
   const content = (
     <Card
       data-slot="card"
-      className="@container/card group relative flex min-h-[196px] flex-col overflow-hidden rounded-xl border bg-gradient-to-t from-primary/5 to-card shadow-md shadow-black/5 transition-shadow hover:shadow-lg dark:from-primary/10 dark:to-card"
+      className="@container/card group flex min-h-[196px] flex-col overflow-hidden shadow-md shadow-black/5 transition-shadow hover:shadow-lg"
     >
-      <CardHeader className="flex w-full flex-row items-start justify-between gap-4 p-6 pb-0">
+      <CardHeader>
         <div className="min-w-0">
-          <CardDescription className="text-base leading-none">
+          <CardDescription className="text-base">
             {item.title}
           </CardDescription>
-          <CardTitle className="mt-6 text-4xl font-semibold tracking-normal tabular-nums text-foreground @[280px]/card:text-5xl">
+          <CardTitle className="mt-3 text-4xl font-semibold tabular-nums @[250px]/card:text-5xl">
             {item.value}
           </CardTitle>
         </div>
         {item.change && (
-          <Badge
-            variant="outline"
-            className="h-8 shrink-0 rounded-full border-border/70 bg-background/70 px-3 text-sm font-semibold shadow-xs backdrop-blur-sm"
-          >
-            {item.change.startsWith("+") ? (
-              <TrendingUp data-icon="inline-start" />
-            ) : (
-              <TrendingDown data-icon="inline-start" />
-            )}
-            {item.change}
-          </Badge>
+          <CardAction>
+            <Badge variant="outline" className="rounded-full px-3 py-1 text-sm font-semibold">
+              {item.change.startsWith("+") ? (
+                <TrendingUp data-icon="inline-start" />
+              ) : (
+                <TrendingDown data-icon="inline-start" />
+              )}
+              {item.change}
+            </Badge>
+          </CardAction>
         )}
       </CardHeader>
-      <CardContent className="mt-auto flex flex-col gap-2 p-6 pt-0">
-        <div className="flex items-center gap-2 text-base font-semibold leading-none text-foreground">
+      <CardFooter className="mt-auto flex-col items-start gap-1.5 text-sm">
+        <div className="line-clamp-1 flex items-center gap-2 font-medium">
           <span className="truncate">{item.insight}</span>
           {item.drilldown ? (
             <ArrowUpRight
@@ -69,10 +69,10 @@ function MetricCard({ item }: { item: DashboardMetricCard }) {
             />
           ) : null}
         </div>
-        <p className="text-base leading-none text-muted-foreground">
+        <p className="text-muted-foreground">
           {item.note}
         </p>
-      </CardContent>
+      </CardFooter>
     </Card>
   )
 

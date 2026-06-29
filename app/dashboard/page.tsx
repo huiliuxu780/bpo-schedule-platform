@@ -14,6 +14,7 @@ import {
   parseDashboardFilters,
 } from "@/lib/dashboard"
 import {
+  getShiftDetailsResult,
   getSchedulePlansResult,
   getScheduleRisksResult,
 } from "@/lib/schedule-plans"
@@ -49,16 +50,23 @@ export default async function DashboardPage({
   const resolvedSearchParams = (await searchParams) || {}
   const filters = parseDashboardFilters(resolvedSearchParams)
 
-  const [plansResult, risksResult, unavailabilityResult] = await Promise.all([
+  const [
+    plansResult,
+    risksResult,
+    unavailabilityResult,
+    shiftDetailsResult,
+  ] = await Promise.all([
     getSchedulePlansResult(),
     getScheduleRisksResult(),
     getUnavailabilityResult(),
+    getShiftDetailsResult(),
   ])
 
   const viewModel = buildDashboardOperationalViewModel({
     plans: plansResult.items,
     risks: risksResult.items,
     unavailability: unavailabilityResult.items,
+    shiftDetails: shiftDetailsResult.items,
     plansSource: { source: plansResult.source, failed: plansResult.failed },
     risksSource: { source: risksResult.source, failed: risksResult.failed },
     unavailabilitySource: {

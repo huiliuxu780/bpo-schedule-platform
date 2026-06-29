@@ -3063,3 +3063,12 @@
   action: 经营总览 KPI 卡片视觉基线修复。
   status: `done`
   notes: Codex 基于 `codex/im268-remove-pseudo-actions-sample-boundaries` 创建 `codex/im269-dashboard-card-visual-alignment` 并直接修复 PM 指出的 shadcn dashboard-01 卡片样式差距。`SectionCards` 现在使用更接近参考图的 metric-card 比例：`@container/card`、`flex-col`、更大数值层级、圆形 outline badge、底部固定 insight/note、整卡 drilldown 链接、`shadow-md shadow-black/5` 和轻量渐变；趋势图和热力图卡片也统一 shadow weight。Focused dashboard/card tests、typecheck、lint、shadcn check、diff check 均通过；最终 `scripts/check.sh` 结果记录在 branch log。未新增业务能力、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
+
+- task_id: `IM270`
+  source_ids:
+    - `R969`
+  story_ids:
+    - `US889`
+  action: 经营总览热力图与卡片快速纠偏。
+  status: `done`
+  notes: Codex 在 PM 要求回滚后，基于 `codex/im270-dashboard-01-restoration` 直接做快速纠偏：Dashboard 热力图重新消费 `getShiftDetailsResult()` 的时段明细，优先按 `interval_start` 构造 `09:00`、`09:30`、`10:00` 等时段列，仅在没有班次明细时才退回 `全天`；Sidebar 保留已接受的导航结构，同时补齐排班、日志、客服人员、组织、职场、供应商、技能的不同图标并沿用既有 active/hover/collapsed 交互；KPI 卡片使用 `CardAction`/`CardFooter` 和 shadcn dashboard-01 更接近的 metric card 栅格、阴影、badge、底部 insight/note 结构。Focused dashboard/global-shell tests、typecheck、lint、shadcn check、runtime HTML check 和 diff check 均通过。未新增业务能力、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
