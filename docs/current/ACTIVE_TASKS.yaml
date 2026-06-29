@@ -5,4 +5,53 @@ notes:
   - "Only current executable tasks belong here."
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
-tasks: []
+tasks:
+  - id: IM274
+    story_ids: [US-IM274]
+    title: "排班计划草稿时段编辑工作台"
+    status: in_progress
+    branch: "codex/im274-schedule-plan-draft-editor-workbench"
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/schedule-plans/new/**"
+      - "app/schedule-plans/[planId]/edit/**"
+      - "app/schedule-plans/[planId]/page.tsx"
+      - "components/schedule-plan-draft-form.tsx"
+      - "components/schedule-plan-draft-summary.tsx"
+      - "components/ui/**"
+      - "lib/schedule-plans.ts"
+      - "scripts/tests/**"
+      - "docs/current/**"
+      - "docs/prompts/im274-qoder-task-packets.md"
+      - "docs/dev/branch-log.md"
+      - "docs/audit-report.md"
+      - "docs/task-log.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "docs/registry/**"
+      - "project-progress/**"
+      - "app/dashboard/**"
+      - "components/app-sidebar.tsx"
+      - "components/section-cards.tsx"
+      - "components/chart-area-interactive.tsx"
+      - "components/bpo-heatmap.tsx"
+      - "components/data-table.tsx"
+    non_goals:
+      - "不做自动排班、自动修复、批量生成、审批、权限、导出或生产公式能力。"
+      - "不改后端 API 语义、数据库 schema、migration、仓储或真实外部集成。"
+      - "不新增依赖，不修改 package/lockfile。"
+      - "不继续调整 dashboard、sidebar 或运营列表页视觉。"
+    verification:
+      focused:
+        - "node --test scripts/tests/*schedule-plan*draft*.test.mjs"
+        - "npm run typecheck"
+        - "npm run lint"
+        - "git diff --check"
+      browser:
+        - "Verify /schedule-plans/new renders the draft editor and can create a draft."
+        - "Verify /schedule-plans/[draftId]/edit renders the editor for a draft plan after create flow."
+        - "Verify non-draft edit pages still show the blocker."
+      final:
+        - "bash scripts/check.sh"

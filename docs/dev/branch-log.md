@@ -5964,3 +5964,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM274 Schedule Plan Draft Editor Workbench
+
+- branch_name: `codex/im274-schedule-plan-draft-editor-workbench`
+- base_main_commit: `stacked on pushed codex/im273-operational-workbench-shadcn-baseline at e18b6f2`
+- stacked_on: `codex/im273-operational-workbench-shadcn-baseline`
+- remote_status: `not_pushed; definition and Qoder task packets prepared locally.`
+- scope: Medium frontend-scaffold product capability for schedule-plan draft create/edit interval editing: shared editor, 0.5h rows, add/delete row controls, summary, feedback, blocker preservation, and browser acceptance.
+- qoder_mode: `planned; Qoder may execute Packet A then Packet B serially using docs/prompts/im274-qoder-task-packets.md. Codex remains owner of current state, diff review, final check, commit, and push.`
+- allowed_files_check: schedule-plan create/edit pages and actions, draft form/summary, schedule-plan frontend helpers, focused tests, prompt packet, current Harness context, audit/task/branch logs only.
+- scope_diff_check: expected frontend draft editor UI/model/test changes only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, external integration, dashboard, or sidebar changes.
+- check_result: `pending implementation`
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after implementation and local commit`
+- blocked_reason: `N/A`

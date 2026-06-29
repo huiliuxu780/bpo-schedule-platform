@@ -5,4 +5,19 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US-IM274
+    title: "排班计划草稿时段编辑工作台"
+    status: ready
+    priority: high
+    requirement_id: REQ-IM274
+    module: "schedule-plan-draft"
+    summary: "把 `/schedule-plans/new` 和 `/schedule-plans/[planId]/edit` 的草稿表单升级为可维护 0.5h 时段的编辑工作台，支持清晰的时段行、保存前摘要、新增/删除行、非负数值保护、反馈和浏览器验收。"
+    acceptance:
+      - "新建和编辑页共用同一个草稿编辑组件，展示计划基础信息、0.5h 时段行和保存前摘要。"
+      - "时段行展示开始、结束、预测、已排、缺口和备注；支持新增行、删除非最后一行，并至少保留一行。"
+      - "预测/已排输入保留 0，负数或非法值必须被阻止、提示或安全归零；缺口和覆盖率口径清晰。"
+      - "非草稿计划编辑页继续显示不可编辑 blocker，不渲染可提交表单。"
+      - "创建/编辑成功或失败的 redirect 与反馈保持可见且不泄露内部术语。"
+      - "必须包含聚焦模型/源码结构测试、typecheck/lint/diff check，以及浏览器实际验收路径。"
+    required_workflow: frontend-scaffold
