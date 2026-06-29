@@ -5907,3 +5907,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM271 Workbench Visual Consistency
+
+- branch_name: `codex/im271-workbench-visual-consistency`
+- base_main_commit: `stacked on pushed codex/im270-dashboard-01-restoration at a8dd5db`
+- stacked_on: `codex/im270-dashboard-01-restoration`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium frontend-scaffold visual consistency pass for operational workbench shared metrics, search/filter surfaces, table shell card styling, and demand/shift/unavailability table-shell migration.
+- qoder_mode: `false; PM asked Codex to continue directly after IM270 corrective push.`
+- allowed_files_check: shared MetricCard, SearchInputBar, StatusFilterPills, MainTableShell, demand/shift/unavailability pages and table components, focused structure tests, and branch log only.
+- scope_diff_check: expected frontend visual/system consistency only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, external integration, or new dashboard filter console changes.
+- check_result: Focused workbench visual consistency and shared structure tests passed with 52 tests. `npm run typecheck`, `npm run lint`, `node scripts/check-shadcn-ui.mjs`, and `git diff --check` passed before final Harness verification. Runtime checks on `/dashboard`, `/schedule-risks?status=open`, `/demand-plans`, `/shift-details`, and `/unavailability` returned HTTP 200; browser state confirmed the dashboard interval heatmap still renders 09:00-12:30 cells and the metric cards use shadcn-style shadowed cards.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

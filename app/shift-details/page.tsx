@@ -6,15 +6,7 @@ import { ReadinessBanner } from "@/components/readiness-banner"
 import { SearchInputBar } from "@/components/search-input-bar"
 import { ShiftDetailsTable } from "@/components/shift-details-table"
 import { StatusFilterPills } from "@/components/status-filter-pills"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import {
   formatCoverageRate,
   getShiftDetailsResult,
@@ -122,27 +114,19 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
           <MetricCard title="整体覆盖率" value={formatCoverageRate(coverageRate)} description="当前筛选结果" />
         </section>
 
-        <Card>
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
-            <div>
-              <CardTitle>班次明细</CardTitle>
-              <CardDescription>
-                {status ? `${schedulePlanStatusLabel(status)} / ${query || "全部"}` : query || "全部计划"}
-              </CardDescription>
-            </div>
-            <Badge variant="outline">明细</Badge>
-          </CardHeader>
-          <CardContent>
-            <ShiftDetailsTable
-              emptyMessage={
-                hasPageFilters
-                  ? "暂无符合条件的班次明细"
-                  : "暂无班次明细数据"
-              }
-              rows={rows}
-            />
-          </CardContent>
-        </Card>
+        <ShiftDetailsTable
+          description={
+            status
+              ? `${schedulePlanStatusLabel(status)} / ${query || "全部"}`
+              : query || "全部计划"
+          }
+          emptyMessage={
+            hasPageFilters
+              ? "暂无符合条件的班次明细"
+              : "暂无班次明细数据"
+          }
+          rows={rows}
+        />
       </main>
     </AppShell>
   )

@@ -6,15 +6,7 @@ import { ReadinessBanner } from "@/components/readiness-banner"
 import { SearchInputBar } from "@/components/search-input-bar"
 import { StatusFilterPills } from "@/components/status-filter-pills"
 import { UnavailabilityTable } from "@/components/unavailability-table"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import {
   getUnavailabilityResult,
   unavailabilityStatusLabel,
@@ -116,27 +108,19 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
           <MetricCard title="涉及团队" value={`${teamCount}`} description={`${siteCount} 个职场`} />
         </section>
 
-        <Card>
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
-            <div>
-              <CardTitle>不可用记录</CardTitle>
-              <CardDescription>
-                {status ? `${unavailabilityStatusLabel(status)} / ${query || "全部"}` : query || "全部记录"}
-              </CardDescription>
-            </div>
-            <Badge variant="outline">不可用</Badge>
-          </CardHeader>
-          <CardContent>
-          <UnavailabilityTable
-            emptyMessage={
-              hasPageFilters
-                ? "暂无符合条件的不可用记录"
-                : "暂无不可用记录"
-            }
-            rows={rows}
-          />
-        </CardContent>
-      </Card>
+        <UnavailabilityTable
+          filterLabel={
+            status
+              ? `${unavailabilityStatusLabel(status)} / ${query || "全部"}`
+              : query || "全部记录"
+          }
+          emptyMessage={
+            hasPageFilters
+              ? "暂无符合条件的不可用记录"
+              : "暂无不可用记录"
+          }
+          rows={rows}
+        />
       </main>
     </AppShell>
   )

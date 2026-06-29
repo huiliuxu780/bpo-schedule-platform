@@ -3,14 +3,24 @@
 import { ArrowUpDown } from "lucide-react"
 import { type ColumnDef } from "@tanstack/react-table"
 
+import { MainTableShell } from "@/components/main-table-shell"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { SimpleTable } from "@/components/simple-table"
 import { type DemandPlanRow } from "@/lib/schedule-plans"
 
 const statusRank: Record<DemandPlanRow["status"], number> = {
   mapped: 0,
   imported: 1,
+}
+
+const columnLabels: Record<string, string> = {
+  plan_date: "日期",
+  interval: "时段",
+  project_name: "项目",
+  site_name: "职场",
+  forecast_agents: "预测人数",
+  source: "来源",
+  status: "状态",
 }
 
 const columns: ColumnDef<DemandPlanRow>[] = [
@@ -124,13 +134,22 @@ const columns: ColumnDef<DemandPlanRow>[] = [
   },
 ]
 
-export function DemandPlanTable({ rows }: { rows: DemandPlanRow[] }) {
+export function DemandPlanTable({
+  description,
+  rows,
+}: {
+  description?: string
+  rows: DemandPlanRow[]
+}) {
   return (
-    <SimpleTable
+    <MainTableShell
+      title="预测需求"
+      description={description}
       columns={columns}
       data={rows}
+      columnLabels={columnLabels}
       emptyMessage="暂无符合条件的预测需求"
-      defaultSorting={[{ id: "plan_date", desc: false }]}
+      initialSorting={[{ id: "plan_date", desc: false }]}
     />
   )
 }

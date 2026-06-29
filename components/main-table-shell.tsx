@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button"
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -192,115 +193,115 @@ export function MainTableShell<TData>({
 
   const tableContent = (
     <>
-        {renderToolbar ? (
-          <div
-            data-slot="main-table-shell-toolbar"
-            className="mb-3 flex flex-wrap items-center gap-2"
-          >
-            {renderToolbar({
-              columnVisibilityControl,
-              pageSizeSelect,
-              resetPageIndex,
-            })}
-          </div>
-        ) : null}
-        {summary ? (
-          <div
-            data-slot="main-table-shell-summary"
-            className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"
-          >
-            {summary}
-          </div>
-        ) : null}
-        <div data-slot="main-table-shell-table" className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-              {table.getRowModel().rows.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={table.getVisibleLeafColumns().length}
-                    className="h-24 text-center text-sm text-muted-foreground"
-                  >
-                    {emptyMessage}
-                  </TableCell>
-                </TableRow>
-              ) : null}
-            </TableBody>
-          </Table>
-        </div>
+      {renderToolbar ? (
         <div
-          data-slot="main-table-shell-pagination"
-          className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground"
+          data-slot="main-table-shell-toolbar"
+          className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border bg-muted/30 p-2"
         >
-          <div>
-            共 {data.length} 条，显示 {paginationRange.from}-{paginationRange.to}
-            ，当前第 {pagination.pageIndex + 1} / {pageCount} 页
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!table.getCanPreviousPage()}
-              onClick={() => table.setPageIndex(0)}
-            >
-              <ChevronsLeft data-icon="inline-start" />
-              首页
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!table.getCanPreviousPage()}
-              onClick={() => table.previousPage()}
-            >
-              <ChevronLeft data-icon="inline-start" />
-              上一页
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!table.getCanNextPage()}
-              onClick={() => table.nextPage()}
-            >
-              下一页
-              <ChevronRight data-icon="inline-end" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!table.getCanNextPage()}
-              onClick={() => table.setPageIndex(pageCount - 1)}
-            >
-              末页
-              <ChevronsRight data-icon="inline-end" />
-            </Button>
-          </div>
+          {renderToolbar({
+            columnVisibilityControl,
+            pageSizeSelect,
+            resetPageIndex,
+          })}
         </div>
-      </>
+      ) : null}
+      {summary ? (
+        <div
+          data-slot="main-table-shell-summary"
+          className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"
+        >
+          {summary}
+        </div>
+      ) : null}
+      <div data-slot="main-table-shell-table" className="overflow-x-auto">
+        <Table>
+          <TableHeader className="bg-muted">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+            {table.getRowModel().rows.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={table.getVisibleLeafColumns().length}
+                  className="h-24 text-center text-sm text-muted-foreground"
+                >
+                  {emptyMessage}
+                </TableCell>
+              </TableRow>
+            ) : null}
+          </TableBody>
+        </Table>
+      </div>
+      <div
+        data-slot="main-table-shell-pagination"
+        className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground"
+      >
+        <div>
+          共 {data.length} 条，显示 {paginationRange.from}-{paginationRange.to}
+          ，当前第 {pagination.pageIndex + 1} / {pageCount} 页
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!table.getCanPreviousPage()}
+            onClick={() => table.setPageIndex(0)}
+          >
+            <ChevronsLeft data-icon="inline-start" />
+            首页
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!table.getCanPreviousPage()}
+            onClick={() => table.previousPage()}
+          >
+            <ChevronLeft data-icon="inline-start" />
+            上一页
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!table.getCanNextPage()}
+            onClick={() => table.nextPage()}
+          >
+            下一页
+            <ChevronRight data-icon="inline-end" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!table.getCanNextPage()}
+            onClick={() => table.setPageIndex(pageCount - 1)}
+          >
+            末页
+            <ChevronsRight data-icon="inline-end" />
+          </Button>
+        </div>
+      </div>
+    </>
   )
 
   if (variant === "embedded") {
@@ -308,15 +309,15 @@ export function MainTableShell<TData>({
   }
 
   return (
-    <Card data-slot="main-table-shell">
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
+    <Card data-slot="main-table-shell" className="shadow-md shadow-black/5">
+      <CardHeader>
         <div>
-          <CardTitle>{title}</CardTitle>
+          <CardTitle className="text-base font-semibold">{title}</CardTitle>
           {description ? (
             <CardDescription>{description}</CardDescription>
           ) : null}
         </div>
-        {columnVisibilityControl}
+        <CardAction>{columnVisibilityControl}</CardAction>
       </CardHeader>
       <CardContent>{tableContent}</CardContent>
     </Card>

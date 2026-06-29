@@ -4,7 +4,7 @@ import Link from "next/link"
 import { ArrowUpDown } from "lucide-react"
 import { type ColumnDef } from "@tanstack/react-table"
 
-import { SimpleTable } from "@/components/simple-table"
+import { MainTableShell } from "@/components/main-table-shell"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -18,6 +18,19 @@ const statusRank: Record<SchedulePlanStatus, number> = {
   draft: 0,
   review_ready: 1,
   published: 2,
+}
+
+const columnLabels: Record<string, string> = {
+  plan_date: "日期",
+  interval: "时段",
+  project_name: "项目",
+  site_name: "职场",
+  status: "状态",
+  forecast_agents: "预测",
+  scheduled_agents: "已排",
+  gap_agents: "缺口",
+  coverage_rate: "覆盖率",
+  note: "备注",
 }
 
 const columns: ColumnDef<ShiftDetailRow>[] = [
@@ -203,16 +216,21 @@ const columns: ColumnDef<ShiftDetailRow>[] = [
 export function ShiftDetailsTable({
   emptyMessage = "暂无符合条件的班次明细",
   rows,
+  description,
 }: {
   emptyMessage?: string
   rows: ShiftDetailRow[]
+  description?: string
 }) {
   return (
-    <SimpleTable
+    <MainTableShell
+      title="班次明细"
+      description={description}
       columns={columns}
       data={rows}
+      columnLabels={columnLabels}
       emptyMessage={emptyMessage}
-      defaultSorting={[{ id: "plan_date", desc: false }]}
+      initialSorting={[{ id: "plan_date", desc: false }]}
     />
   )
 }

@@ -26,7 +26,12 @@ export function StatusFilterPills<T extends string>({
             variant={active ? "default" : "outline"}
             size="sm"
           >
-            <Link href={buildHref(option.value)}>{option.label}</Link>
+            <Link
+              aria-current={active ? "page" : undefined}
+              href={buildHref(option.value)}
+            >
+              {option.label}
+            </Link>
           </Button>
         )
       })}

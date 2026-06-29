@@ -188,9 +188,11 @@ const columns: ColumnDef<UnavailabilityRow>[] = [
 
 export function UnavailabilityTable({
   emptyMessage = "暂无符合条件的不可用记录",
+  filterLabel,
   rows,
 }: {
   emptyMessage?: string
+  filterLabel?: string
   rows: UnavailabilityRow[]
 }) {
   "use no memo"
@@ -212,12 +214,12 @@ export function UnavailabilityTable({
   return (
     <MainTableShell
       title="不可用记录"
+      description={filterLabel || "全部记录"}
       columns={columns}
       data={filteredRows}
       columnLabels={columnLabels}
       emptyMessage={emptyMessage}
       initialSorting={[{ id: "unavailable_date", desc: false }]}
-      variant="embedded"
       summary={
         <>
           <Badge variant="outline">筛选后 {summary.total} 条</Badge>

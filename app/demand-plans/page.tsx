@@ -4,15 +4,7 @@ import { AppShell } from "@/components/app-shell"
 import { DemandPlanTable } from "@/components/demand-plan-table"
 import { MetricCard } from "@/components/metric-card"
 import { SearchInputBar } from "@/components/search-input-bar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { getDemandPlans, type DemandPlanRow } from "@/lib/schedule-plans"
 
 type PageProps = {
@@ -72,18 +64,7 @@ export default async function DemandPlansPage({ searchParams }: PageProps) {
           />
         </section>
 
-        <Card>
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
-            <div>
-              <CardTitle>预测需求</CardTitle>
-              <CardDescription>{query || "全部需求"}</CardDescription>
-            </div>
-            <Badge variant="outline">需求</Badge>
-          </CardHeader>
-          <CardContent>
-            <DemandPlanTable rows={rows} />
-          </CardContent>
-        </Card>
+        <DemandPlanTable description={query || "全部需求"} rows={rows} />
       </main>
     </AppShell>
   )

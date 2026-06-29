@@ -10,7 +10,9 @@ const boundarySpecPath = "docs/design/main-table-shell-boundary-spec.md"
 const structureGuardPath = "docs/design/main-table-shell-structure-guard.md"
 const mainTableShellPath = "components/main-table-shell.tsx"
 const candidateTablePaths = [
+  "components/demand-plan-table.tsx",
   "components/schedule-plan-table.tsx",
+  "components/shift-details-table.tsx",
   "components/unavailability-table.tsx",
   "components/data-table.tsx",
 ]
@@ -122,6 +124,51 @@ test("SchedulePlanTable delegates main table structure to MainTableShell", () =>
   assert.doesNotMatch(source, /<TableBody\b/)
 })
 
+test("DemandPlanTable delegates main table structure to MainTableShell", () => {
+  const source = read("components/demand-plan-table.tsx")
+
+  assert.match(
+    source,
+    /import \{ MainTableShell \} from "@\/components\/main-table-shell"/,
+    "DemandPlanTable should import MainTableShell"
+  )
+  assert.match(source, /<MainTableShell/)
+  assert.match(source, /title="预测需求"/)
+  assert.match(source, /columns=\{columns\}/)
+  assert.match(source, /data=\{rows\}/)
+  assert.match(source, /columnLabels=\{columnLabels\}/)
+  assert.match(source, /emptyMessage="暂无符合条件的预测需求"/)
+  assert.match(source, /initialSorting=\{\[\{ id: "plan_date", desc: false \}\]\}/)
+
+  assert.doesNotMatch(source, /SimpleTable/)
+  assert.doesNotMatch(source, /useReactTable/)
+  assert.doesNotMatch(source, /flexRender/)
+  assert.doesNotMatch(source, /<Table\b/)
+})
+
+test("ShiftDetailsTable delegates main table structure to MainTableShell", () => {
+  const source = read("components/shift-details-table.tsx")
+
+  assert.match(
+    source,
+    /import \{ MainTableShell \} from "@\/components\/main-table-shell"/,
+    "ShiftDetailsTable should import MainTableShell"
+  )
+  assert.match(source, /<MainTableShell/)
+  assert.match(source, /title="班次明细"/)
+  assert.match(source, /columns=\{columns\}/)
+  assert.match(source, /data=\{rows\}/)
+  assert.match(source, /columnLabels=\{columnLabels\}/)
+  assert.match(source, /emptyMessage = "暂无符合条件的班次明细"/)
+  assert.match(source, /emptyMessage=\{emptyMessage\}/)
+  assert.match(source, /initialSorting=\{\[\{ id: "plan_date", desc: false \}\]\}/)
+
+  assert.doesNotMatch(source, /SimpleTable/)
+  assert.doesNotMatch(source, /useReactTable/)
+  assert.doesNotMatch(source, /flexRender/)
+  assert.doesNotMatch(source, /<Table\b/)
+})
+
 test("UnavailabilityTable delegates main table structure to MainTableShell", () => {
   const source = read("components/unavailability-table.tsx")
 
@@ -140,7 +187,7 @@ test("UnavailabilityTable delegates main table structure to MainTableShell", () 
     source,
     /initialSorting=\{\[\{ id: "unavailable_date", desc: false \}\]\}/
   )
-  assert.match(source, /variant="embedded"/)
+  assert.doesNotMatch(source, /variant="embedded"/)
   assert.match(source, /columnVisibilityControl/)
 
   assert.doesNotMatch(source, /useReactTable/)
@@ -167,6 +214,8 @@ test("remaining candidates do not wire MainTableShell before their slices", () =
     (path) =>
       ![
         "components/schedule-plan-table.tsx",
+        "components/demand-plan-table.tsx",
+        "components/shift-details-table.tsx",
         "components/unavailability-table.tsx",
       ].includes(path)
   )) {

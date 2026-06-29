@@ -16,14 +16,14 @@ export function MetricCard({
   description: string
 }) {
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardDescription>{title}</CardDescription>
-        <CardTitle className="text-2xl font-semibold tabular-nums">
+    <Card className="@container/card min-h-32 bg-gradient-to-t from-primary/5 to-card shadow-md shadow-black/5 transition-shadow hover:shadow-lg">
+      <CardHeader className="pb-1">
+        <CardDescription className="text-sm">{title}</CardDescription>
+        <CardTitle className="text-3xl font-semibold tabular-nums @[240px]/card:text-4xl">
           {value}
         </CardTitle>
       </CardHeader>
-      <CardContent className="text-xs text-muted-foreground">
+      <CardContent className="text-sm text-muted-foreground">
         {description}
       </CardContent>
     </Card>
