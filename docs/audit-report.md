@@ -6099,3 +6099,19 @@
 - Sidebar 保留 flat workbench 导航结构，补齐不同二级导航图标，继续使用既有 `SidebarMenuButton` active/hover/collapsed 状态，不再把主数据多个入口都显示成同一个分组图标。
 - `components/ui/card.tsx` 补齐 `CardAction` 和 card data slots，`SectionCards` 使用更接近 shadcn dashboard-01 的 metric card 结构：右上角 badge、较大数值层级、底部 insight/note、semantic shadow 和轻量渐变。
 - Runtime HTML 检查确认当前 `/dashboard` 响应包含 `时段人力缺口` 和 `09:00`、`09:30`、`10:00`、`10:30`、`11:00`、`11:30` 等时段标签，且不包含 `全天` 标签。
+
+### 2026-06-29 - IM273 运营工作台 shadcn 视觉基线统一
+
+#### 审计计划
+
+- 承接 PM 对运营页视觉和导航一致性的反馈，把本轮限定为一个中等 UI 收口块：排班计划、履约风险、不可用记录、班次明细四个运营工作台页面的 shadcn dashboard-01/New York v4 视觉节奏统一。
+- 保留真实业务数据、搜索、筛选、表格分页和下钻行为；不新增伪入口、不重新引入 dashboard 顶部筛选台、不显示正常状态的后端/API/数据来源口径。
+- 不改后端、API 语义、数据库、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 新增 `WorkbenchPageHeader`，四个运营列表页共用紧凑说明区和可选操作区，避免重复大标题。
+- `MetricCard` 改为 dashboard-01 风格结构：`@container/card`、较大数值层级、`CardAction`、`CardFooter`、底部说明、轻量渐变和 `shadow-md shadow-black/5`。
+- `SearchInputBar` 和 `MainTableShell` 统一为 shadcn card/table 节奏；列控制只保留在表格卡片右上角，移除不可用记录表格内的重复列控制入口。
+- `ReadinessBanner` 在非正常状态仍可提示，但正常 ready 页面不再暴露实现来源文案。
+- 浏览器截图检查了 `/schedule-risks?status=open`、`/schedule-plans`、`/unavailability`、`/shift-details`：导航当前项高亮正确，指标卡和表格容器一致，班次明细保留 0.5h 颗粒度。

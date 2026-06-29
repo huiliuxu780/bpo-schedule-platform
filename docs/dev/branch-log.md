@@ -5945,3 +5945,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM273 Operational Workbench Shadcn Baseline
+
+- branch_name: `codex/im273-operational-workbench-shadcn-baseline`
+- base_main_commit: `stacked on pushed codex/im272-navigation-active-state-fix`
+- stacked_on: `codex/im272-navigation-active-state-fix`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium frontend-scaffold visual consistency pass for operational workbench list pages: schedule plans, schedule risks, unavailability records, and shift details.
+- qoder_mode: `false; PM asked Codex to do this pass directly and use visual verification.`
+- allowed_files_check: operational workbench pages, shared MetricCard/SearchInputBar/MainTableShell/ReadinessBanner, unavailability table duplicate column-control cleanup, focused structure tests, current Harness context, audit report, task log, and branch log only.
+- scope_diff_check: expected UI structure/style/test/traceability changes only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, external integration, or dashboard filter console changes.
+- check_result: Focused workbench/shadcn baseline run passed with 43 tests. `npm run typecheck`, `npm run lint`, and `git diff --check` passed before final Harness verification. Browser screenshot checks covered `/schedule-risks?status=open`, `/schedule-plans`, `/unavailability`, and `/shift-details`; shift details retained 0.5h rows.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

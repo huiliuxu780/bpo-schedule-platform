@@ -6,6 +6,7 @@ import { ReadinessBanner } from "@/components/readiness-banner"
 import { SearchInputBar } from "@/components/search-input-bar"
 import { StatusFilterPills } from "@/components/status-filter-pills"
 import { UnavailabilityTable } from "@/components/unavailability-table"
+import { WorkbenchPageHeader } from "@/components/workbench-page-header"
 import { Button } from "@/components/ui/button"
 import {
   getUnavailabilityResult,
@@ -65,24 +66,24 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
   const siteCount = new Set(rows.map((row) => row.site_name)).size
 
   return (
-    <AppShell title="不可用管理">
-      <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+    <AppShell
+      title="不可用记录"
+      breadcrumbItems={[{ label: "不可用记录" }]}
+    >
+      <main className="@container/main flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-4 md:gap-6 lg:p-6">
         <ReadinessBanner
           message={result.message}
           hasData={rows.length > 0}
           overallSource={result.source}
         />
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="text-lg font-semibold">不可用管理</h1>
-            <p className="text-sm text-muted-foreground">
-              查看人员不可用时段，提前识别排班覆盖风险
-            </p>
-          </div>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/schedule-plans">查看排班计划</Link>
-          </Button>
-        </div>
+        <WorkbenchPageHeader
+          description="查看人员不可用时段，提前识别排班覆盖风险。"
+          actions={
+            <Button asChild variant="outline" size="sm">
+              <Link href="/schedule-plans">查看排班计划</Link>
+            </Button>
+          }
+        />
 
         <SearchInputBar
           defaultQuery={query}
@@ -101,7 +102,7 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
           ) : null}
         </SearchInputBar>
 
-        <section className="grid gap-4 md:grid-cols-4">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <MetricCard title="不可用记录" value={`${rows.length}`} description="当前筛选结果" />
           <MetricCard title="生效中" value={`${activeRows.length}`} description="需要排班复核" />
           <MetricCard title="影响时段" value={`${affectedIntervals}`} description="按 0.5h 颗粒度" />

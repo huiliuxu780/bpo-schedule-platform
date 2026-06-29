@@ -36,7 +36,7 @@ test("components/metric-card.tsx imports required pieces from @/components/ui/ca
     "CardHeader",
     "CardDescription",
     "CardTitle",
-    "CardContent",
+    "CardFooter",
   ]) {
     assert.match(
       importBody,

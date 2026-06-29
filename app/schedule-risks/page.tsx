@@ -6,6 +6,7 @@ import { ReadinessBanner } from "@/components/readiness-banner"
 import { ScheduleRiskTable } from "@/components/schedule-risk-table"
 import { SearchInputBar } from "@/components/search-input-bar"
 import { StatusFilterPills } from "@/components/status-filter-pills"
+import { WorkbenchPageHeader } from "@/components/workbench-page-header"
 import {
   getScheduleRisksResult,
   type ScheduleRiskLevel,
@@ -117,19 +118,13 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
       title="履约风险"
       breadcrumbItems={[{ label: "履约风险" }]}
     >
-      <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+      <main className="@container/main flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-4 md:gap-6 lg:p-6">
         <ReadinessBanner
           message={result.message}
           hasData={sourceRisks.length > 0}
           overallSource={result.source}
         />
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-sm text-muted-foreground">
-              查看履约风险列表，跟踪处理进度与影响范围
-            </p>
-          </div>
-        </div>
+        <WorkbenchPageHeader description="查看履约风险列表，跟踪处理进度与影响范围。" />
         <SearchInputBar
           defaultQuery={query}
           placeholder="搜索风险编号、计划编号、项目、职场、日期、时段、原因、建议"
@@ -158,7 +153,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
             </Button>
           ) : null}
         </SearchInputBar>
-        <section className="grid gap-4 md:grid-cols-4">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <MetricCard
             title="风险总数"
             value={`${summary.total}`}

@@ -3072,3 +3072,12 @@
   action: 经营总览热力图与卡片快速纠偏。
   status: `done`
   notes: Codex 在 PM 要求回滚后，基于 `codex/im270-dashboard-01-restoration` 直接做快速纠偏：Dashboard 热力图重新消费 `getShiftDetailsResult()` 的时段明细，优先按 `interval_start` 构造 `09:00`、`09:30`、`10:00` 等时段列，仅在没有班次明细时才退回 `全天`；Sidebar 保留已接受的导航结构，同时补齐排班、日志、客服人员、组织、职场、供应商、技能的不同图标并沿用既有 active/hover/collapsed 交互；KPI 卡片使用 `CardAction`/`CardFooter` 和 shadcn dashboard-01 更接近的 metric card 栅格、阴影、badge、底部 insight/note 结构。Focused dashboard/global-shell tests、typecheck、lint、shadcn check、runtime HTML check 和 diff check 均通过。未新增业务能力、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 仍为空。
+
+- task_id: `IM273`
+  source_ids:
+    - `REQ-IM273`
+  story_ids:
+    - `US-IM273`
+  action: 运营工作台 shadcn 视觉基线统一。
+  status: `done`
+  notes: Codex 基于 `codex/im272-navigation-active-state-fix` 创建 `codex/im273-operational-workbench-shadcn-baseline` 并直接执行一个中等视觉收口块。`/schedule-plans`、`/schedule-risks`、`/unavailability`、`/shift-details` 现在共用紧凑页面说明头、dashboard-01 风格指标卡、统一搜索/筛选容器和单一表格列控制入口；正常 ready 状态不再显示后端/API/数据来源口径。浏览器截图检查确认排班计划、履约风险、不可用记录、班次明细四页视觉结构和导航选中态正常，班次明细仍保留 0.5h 颗粒度。未新增业务能力、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

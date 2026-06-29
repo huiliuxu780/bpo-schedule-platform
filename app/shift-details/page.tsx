@@ -6,6 +6,7 @@ import { ReadinessBanner } from "@/components/readiness-banner"
 import { SearchInputBar } from "@/components/search-input-bar"
 import { ShiftDetailsTable } from "@/components/shift-details-table"
 import { StatusFilterPills } from "@/components/status-filter-pills"
+import { WorkbenchPageHeader } from "@/components/workbench-page-header"
 import { Button } from "@/components/ui/button"
 import {
   formatCoverageRate,
@@ -71,24 +72,24 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
     rows.length === 0 ? 0 : totalForecast === 0 ? 1 : totalScheduled / totalForecast
 
   return (
-    <AppShell title="班次明细">
-      <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+    <AppShell
+      title="班次明细"
+      breadcrumbItems={[{ label: "班次明细" }]}
+    >
+      <main className="@container/main flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-4 md:gap-6 lg:p-6">
         <ReadinessBanner
           message={result.message}
           hasData={rows.length > 0}
           overallSource={result.source}
         />
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="text-lg font-semibold">班次明细</h1>
-            <p className="text-sm text-muted-foreground">
-              按 0.5h 时段查看预测、已排、缺口和备注
-            </p>
-          </div>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/schedule-plans">返回排班计划</Link>
-          </Button>
-        </div>
+        <WorkbenchPageHeader
+          description="按 0.5h 时段查看预测、已排、缺口和备注。"
+          actions={
+            <Button asChild variant="outline" size="sm">
+              <Link href="/schedule-plans">返回排班计划</Link>
+            </Button>
+          }
+        />
 
         <SearchInputBar
           defaultQuery={query}
@@ -107,7 +108,7 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
           ) : null}
         </SearchInputBar>
 
-        <section className="grid gap-4 md:grid-cols-4">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <MetricCard title="班次数量" value={`${rows.length}`} description="0.5h 颗粒度" />
           <MetricCard title="缺口班次" value={`${gapRows.length}`} description={`合计缺口 ${totalGap} 人次`} />
           <MetricCard title="最大缺口" value={`${maxGap}`} description="单个时段最大缺口" />

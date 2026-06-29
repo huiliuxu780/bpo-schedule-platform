@@ -62,7 +62,7 @@ export function ReadinessBanner({
   return (
     <Alert
       className={cn(
-        "mx-4 flex items-center gap-2 lg:mx-6",
+        "flex items-center gap-2",
         variant.className,
         className
       )}

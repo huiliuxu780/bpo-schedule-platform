@@ -188,7 +188,7 @@ test("UnavailabilityTable delegates main table structure to MainTableShell", () 
     /initialSorting=\{\[\{ id: "unavailable_date", desc: false \}\]\}/
   )
   assert.doesNotMatch(source, /variant="embedded"/)
-  assert.match(source, /columnVisibilityControl/)
+  assert.doesNotMatch(source, /columnVisibilityControl/)
 
   assert.doesNotMatch(source, /useReactTable/)
   assert.doesNotMatch(source, /flexRender/)

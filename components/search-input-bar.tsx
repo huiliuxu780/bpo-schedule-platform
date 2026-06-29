@@ -18,9 +18,12 @@ export function SearchInputBar({
   children,
 }: SearchInputBarProps) {
   return (
-    <section className="flex flex-wrap items-center gap-3 rounded-xl border bg-card p-3 shadow-xs">
+    <section
+      data-slot="workbench-search-bar"
+      className="flex flex-wrap items-center gap-3 rounded-xl border bg-card p-3 shadow-md shadow-black/5"
+    >
       <form className="flex min-w-[min(28rem,100%)] flex-1 items-center gap-2">
-        <div className="flex flex-1 items-center gap-2 rounded-md border bg-background px-2">
+        <div className="flex flex-1 items-center gap-2 rounded-md border bg-background px-2 shadow-xs">
           <Search className="size-4 text-muted-foreground" />
           <Input
             name="query"

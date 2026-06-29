@@ -196,7 +196,7 @@ export function MainTableShell<TData>({
       {renderToolbar ? (
         <div
           data-slot="main-table-shell-toolbar"
-          className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border bg-muted/30 p-2"
+          className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border bg-background p-2 shadow-xs"
         >
           {renderToolbar({
             columnVisibilityControl,
@@ -213,7 +213,10 @@ export function MainTableShell<TData>({
           {summary}
         </div>
       ) : null}
-      <div data-slot="main-table-shell-table" className="overflow-x-auto">
+      <div
+        data-slot="main-table-shell-table"
+        className="overflow-x-auto rounded-lg border"
+      >
         <Table>
           <TableHeader className="bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -309,7 +312,10 @@ export function MainTableShell<TData>({
   }
 
   return (
-    <Card data-slot="main-table-shell" className="shadow-md shadow-black/5">
+    <Card
+      data-slot="main-table-shell"
+      className="shadow-md shadow-black/5"
+    >
       <CardHeader>
         <div>
           <CardTitle className="text-base font-semibold">{title}</CardTitle>

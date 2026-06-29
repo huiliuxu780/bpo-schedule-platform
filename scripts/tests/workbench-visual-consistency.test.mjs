@@ -16,7 +16,7 @@ test("shared metric card keeps dashboard-style shadow and responsive number trea
   assert.match(source, /shadow-black\/5/)
   assert.match(source, /hover:shadow-lg/)
   assert.match(source, /tabular-nums/)
-  assert.match(source, /@\[240px\]\/card:text-4xl/)
+  assert.match(source, /@\[250px\]\/card:text-5xl/)
 })
 
 test("shared search bar is a compact shadcn-style toolbar surface", () => {
@@ -37,7 +37,8 @@ test("main table shell owns the visual card, header action, toolbar, and muted t
   assert.match(source, /data-slot="main-table-shell"/)
   assert.match(source, /shadow-md shadow-black\/5/)
   assert.match(source, /data-slot="main-table-shell-toolbar"/)
-  assert.match(source, /bg-muted\/30/)
+  assert.match(source, /bg-background/)
+  assert.match(source, /shadow-xs/)
   assert.match(source, /<TableHeader className="bg-muted">/)
   assert.match(source, /<CardAction>\{columnVisibilityControl\}<\/CardAction>/)
 })
@@ -80,4 +81,3 @@ test("secondary workbench tables use the shared MainTableShell instead of ad hoc
     assert.doesNotMatch(source, /variant="embedded"/)
   }
 })
-

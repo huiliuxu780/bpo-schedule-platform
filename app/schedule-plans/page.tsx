@@ -6,6 +6,7 @@ import { ReadinessBanner } from "@/components/readiness-banner"
 import { SchedulePlanTable } from "@/components/schedule-plan-table"
 import { SearchInputBar } from "@/components/search-input-bar"
 import { StatusFilterPills } from "@/components/status-filter-pills"
+import { WorkbenchPageHeader } from "@/components/workbench-page-header"
 import {
   formatCoverageRate,
   getSchedulePlansResult,
@@ -75,22 +76,20 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
       title="排班计划"
       breadcrumbItems={[{ label: "排班计划" }]}
     >
-      <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+      <main className="@container/main flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-4 md:gap-6 lg:p-6">
         <ReadinessBanner
           message={result.message}
           hasData={plans.length > 0}
           overallSource={result.source}
         />
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-sm text-muted-foreground">
-              查看计划列表，并创建 draft 草稿
-            </p>
-          </div>
-          <Button asChild size="sm">
-            <Link href="/schedule-plans/new">新建草稿</Link>
-          </Button>
-        </div>
+        <WorkbenchPageHeader
+          description="查看排班计划列表，跟踪草稿、待复核与已发布计划的覆盖情况。"
+          actions={
+            <Button asChild size="sm">
+              <Link href="/schedule-plans/new">新建草稿</Link>
+            </Button>
+          }
+        />
         <SearchInputBar
           defaultQuery={query}
           placeholder="搜索计划编号、日期、项目、职场"
@@ -107,7 +106,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
             </Button>
           ) : null}
         </SearchInputBar>
-        <section className="grid gap-4 md:grid-cols-4">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <MetricCard title="计划数量" value={`${plans.length}`} description="计划基线" />
           <MetricCard title="预测人次" value={`${totalForecast}`} description="0.5h 时段汇总" />
           <MetricCard title="已排人次" value={`${totalScheduled}`} description="种子数据回传" />

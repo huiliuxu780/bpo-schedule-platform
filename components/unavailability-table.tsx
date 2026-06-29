@@ -230,11 +230,7 @@ export function UnavailabilityTable({
           <span>职场 {summary.siteCount}</span>
         </>
       }
-      renderToolbar={({
-        columnVisibilityControl,
-        pageSizeSelect,
-        resetPageIndex,
-      }) => (
+      renderToolbar={({ pageSizeSelect, resetPageIndex }) => (
         <>
           <div className="flex min-w-56 flex-1 items-center gap-2 rounded-md border px-2">
             <Search className="size-4 text-muted-foreground" />
@@ -278,7 +274,6 @@ export function UnavailabilityTable({
             <RotateCcw data-icon="inline-start" />
             重置
           </Button>
-          {columnVisibilityControl}
         </>
       )}
     />
