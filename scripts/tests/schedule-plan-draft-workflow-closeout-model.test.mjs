@@ -140,24 +140,24 @@ test("draft summary uses non-negative gap totals", () => {
   assert.ok(summarySource.includes("Math.max"));
 });
 
-test("new page uses draft summary component", () => {
+test("new page does not use external draft summary component", () => {
   const newPageSource = readFileSync(
     join(import.meta.dirname, "../../app/schedule-plans/new/page.tsx"),
     "utf-8"
   );
   
-  assert.ok(newPageSource.includes("SchedulePlanDraftSummary"));
-  assert.ok(newPageSource.includes("import") && newPageSource.includes("schedule-plan-draft-summary"));
+  assert.ok(!newPageSource.includes("SchedulePlanDraftSummary"), "New page must not render external summary");
+  assert.ok(!newPageSource.includes("schedule-plan-draft-summary"), "New page must not import summary component");
 });
 
-test("edit page uses draft summary component", () => {
+test("edit page does not use external draft summary component", () => {
   const editPageSource = readFileSync(
     join(import.meta.dirname, "../../app/schedule-plans/[planId]/edit/page.tsx"),
     "utf-8"
   );
   
-  assert.ok(editPageSource.includes("SchedulePlanDraftSummary"));
-  assert.ok(editPageSource.includes("import") && editPageSource.includes("schedule-plan-draft-summary"));
+  assert.ok(!editPageSource.includes("SchedulePlanDraftSummary"), "Edit page must not render external summary");
+  assert.ok(!editPageSource.includes("schedule-plan-draft-summary"), "Edit page must not import summary component");
 });
 
 // ── Edit page blocker tests ──

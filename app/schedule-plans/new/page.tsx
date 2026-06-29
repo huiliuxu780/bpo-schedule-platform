@@ -3,7 +3,6 @@ import Link from "next/link"
 import { createDraftAction } from "@/app/schedule-plans/new/actions"
 import { AppShell } from "@/components/app-shell"
 import { SchedulePlanDraftForm } from "@/components/schedule-plan-draft-form"
-import { SchedulePlanDraftSummary } from "@/components/schedule-plan-draft-summary"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -74,8 +73,6 @@ export default async function NewSchedulePlanPage({ searchParams }: PageProps) {
             <Link href="/schedule-plans">返回列表</Link>
           </Button>
         </div>
-
-        <SchedulePlanDraftSummary intervals={defaultIntervals} />
 
         <form action={createDraftAction} className="flex flex-col gap-4">
           <SchedulePlanDraftForm

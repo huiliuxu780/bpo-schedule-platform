@@ -6115,3 +6115,19 @@
 - `SearchInputBar` 和 `MainTableShell` 统一为 shadcn card/table 节奏；列控制只保留在表格卡片右上角，移除不可用记录表格内的重复列控制入口。
 - `ReadinessBanner` 在非正常状态仍可提示，但正常 ready 页面不再暴露实现来源文案。
 - 浏览器截图检查了 `/schedule-risks?status=open`、`/schedule-plans`、`/unavailability`、`/shift-details`：导航当前项高亮正确，指标卡和表格容器一致，班次明细保留 0.5h 颗粒度。
+
+### 2026-06-29 - IM274 排班计划草稿时段编辑工作台
+
+#### 审计计划
+
+- 承接排班计划草稿流程缺口，把本轮限定为一个中等产品能力：新建/编辑草稿的 0.5h 时段编辑工作台。
+- Qoder 串行执行 Packet A/B；Codex 负责纠偏、实际 diff review、focused verification、浏览器验收、Harness 状态和最终门禁。
+- 不新增后端/API/数据库/依赖，不触碰 dashboard/sidebar，不扩展到权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- `SchedulePlanDraftForm` 改为共享 client draft editor，内部维护 rows state，保留既有 server-action 字段名和 page-level form action。
+- 每个 0.5h 时段行展示开始、结束、预测、已排、缺口、备注；缺口按 `Math.max(forecast - scheduled, 0)` 实时计算。
+- 新增时段按钮继承上一行结束时间并默认推进 30 分钟；删除按钮至少保留一行，最后一行禁用删除。
+- `SchedulePlanDraftSummary` 嵌入表单并基于当前 rows state 实时汇总时段数量、总预测、总已排、总缺口和覆盖率；新建页和编辑页删除页面外部重复摘要。
+- Focused draft tests、typecheck、lint、diff check 均通过；浏览器验收确认 `/schedule-plans/new` 的实时缺口、实时摘要、新增行、删除保护和单摘要边界。

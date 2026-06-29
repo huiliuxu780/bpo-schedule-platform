@@ -3081,3 +3081,12 @@
   action: 运营工作台 shadcn 视觉基线统一。
   status: `done`
   notes: Codex 基于 `codex/im272-navigation-active-state-fix` 创建 `codex/im273-operational-workbench-shadcn-baseline` 并直接执行一个中等视觉收口块。`/schedule-plans`、`/schedule-risks`、`/unavailability`、`/shift-details` 现在共用紧凑页面说明头、dashboard-01 风格指标卡、统一搜索/筛选容器和单一表格列控制入口；正常 ready 状态不再显示后端/API/数据来源口径。浏览器截图检查确认排班计划、履约风险、不可用记录、班次明细四页视觉结构和导航选中态正常，班次明细仍保留 0.5h 颗粒度。未新增业务能力、后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM274`
+  source_ids:
+    - `REQ-IM274`
+  story_ids:
+    - `US-IM274`
+  action: 排班计划草稿时段编辑工作台。
+  status: `done`
+  notes: Codex 基于 `codex/im273-operational-workbench-shadcn-baseline` 创建 `codex/im274-schedule-plan-draft-editor-workbench` 并先定义详细 Qoder Packet A/B。Qoder 执行时曾越界修改 `docs/prompts/**`，Codex 复核后要求回退；最终实现限定在草稿新建/编辑页、共享草稿表单/摘要和 focused tests。`SchedulePlanDraftForm` 现在作为 client editor 维护 0.5h 时段 rows state，保留 server-action 字段名，支持新增/删除行、实时缺口、最后一行删除保护，并在表单内显示实时草稿摘要；页面外部重复摘要已删除，非草稿 blocker、draft feedback 和 page-level server actions 保持不变。Focused tests、typecheck、lint、diff check 和浏览器验收通过；未新增后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

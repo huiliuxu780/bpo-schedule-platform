@@ -5,7 +5,6 @@ import { updateDraftAction } from "./actions"
 import { AppShell } from "@/components/app-shell"
 import { ReadinessBanner } from "@/components/readiness-banner"
 import { SchedulePlanDraftForm } from "@/components/schedule-plan-draft-form"
-import { SchedulePlanDraftSummary } from "@/components/schedule-plan-draft-summary"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -101,7 +100,6 @@ export default async function EditSchedulePlanPage({ params, searchParams }: Pag
           </Card>
         ) : (
           <>
-            <SchedulePlanDraftSummary intervals={plan.intervals} />
             <form action={updateDraftAction} className="flex flex-col gap-4">
               <SchedulePlanDraftForm
                 mode="edit"

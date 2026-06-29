@@ -5970,12 +5970,12 @@
 - branch_name: `codex/im274-schedule-plan-draft-editor-workbench`
 - base_main_commit: `stacked on pushed codex/im273-operational-workbench-shadcn-baseline at e18b6f2`
 - stacked_on: `codex/im273-operational-workbench-shadcn-baseline`
-- remote_status: `not_pushed; definition and Qoder task packets prepared locally.`
+- remote_status: `not_pushed; implementation completed locally pending final commit and PM push confirmation.`
 - scope: Medium frontend-scaffold product capability for schedule-plan draft create/edit interval editing: shared editor, 0.5h rows, add/delete row controls, summary, feedback, blocker preservation, and browser acceptance.
 - qoder_mode: `planned; Qoder may execute Packet A then Packet B serially using docs/prompts/im274-qoder-task-packets.md. Codex remains owner of current state, diff review, final check, commit, and push.`
 - allowed_files_check: schedule-plan create/edit pages and actions, draft form/summary, schedule-plan frontend helpers, focused tests, prompt packet, current Harness context, audit/task/branch logs only.
 - scope_diff_check: expected frontend draft editor UI/model/test changes only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, external integration, dashboard, or sidebar changes.
-- check_result: `pending implementation`
+- check_result: Focused draft editor run passed with 65 tests. `npm run typecheck`, `npm run lint`, and `git diff --check` passed. Browser acceptance on `http://127.0.0.1:3000/schedule-plans/new` confirmed a single draft summary, four initial interval rows, `interval_count=4`, live gap/summary updates after editing forecast from 16 to 20, add-row inheritance to `11:00-11:30` with `interval_count=5`, and last-row delete protection with disabled delete button.
 - local_commit_sha: `pending`
 - integration_status: `not_started`
 - integration_method: `N/A`
