@@ -44,6 +44,11 @@ test("master-data detail create and edit pages use parent-path sidebar matching"
   assertPrefixNavItem("技能", "/master-data/skills")
 })
 
+test("sidebar does not map placeholder settings to customer personnel", () => {
+  assert.doesNotMatch(sidebar, /title: "设置"[\s\S]+?href: "\/master-data\/agents"/)
+  assert.doesNotMatch(sidebar, /const navSecondary: NavItem\[\]/)
+})
+
 test("breadcrumb is owned by the app shell header", () => {
   assert.match(appShell, /<SiteHeader[\s\S]+breadcrumbItems={breadcrumbItems}/)
   assert.match(siteHeader, /data-slot="site-header"/)

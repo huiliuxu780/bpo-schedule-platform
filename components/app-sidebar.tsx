@@ -144,15 +144,6 @@ const nav: NavGroup[] = [
   },
 ]
 
-const navSecondary: NavItem[] = [
-  {
-    title: "设置",
-    href: "/master-data/agents",
-    icon: Settings,
-    activeMatch: "prefix",
-  },
-]
-
 function isActivePath(pathname: string, item: NavItem) {
   if (item.activeMatch === "exact") {
     return pathname === item.href
@@ -260,11 +251,6 @@ export function AppSidebar({
                 <NavList groupIcon={group.icon} items={group.items} />
               </div>
             ))}
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup className="mt-auto">
-          <SidebarGroupContent>
-            <NavList items={navSecondary} />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
