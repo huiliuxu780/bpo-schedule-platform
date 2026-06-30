@@ -191,3 +191,66 @@ test("Summary displays interval count, totals, and coverage rate", () => {
   assert.ok(content.includes("总缺口"), "Must display total gap")
   assert.ok(content.includes("覆盖率"), "Must display coverage rate")
 })
+
+// ── Packet B: Validation integration tests ──
+
+// Test 20: Form imports validateSchedulePlanDraft
+test("Form imports validateSchedulePlanDraft", () => {
+  const formPath = join(projectRoot, "components/schedule-plan-draft-form.tsx")
+  const content = readFileSync(formPath, "utf-8")
+  assert.ok(
+    content.includes("validateSchedulePlanDraft"),
+    "Form must import validateSchedulePlanDraft"
+  )
+})
+
+// Test 21: Form imports SchedulePlanDraftValidationPanel
+test("Form imports SchedulePlanDraftValidationPanel", () => {
+  const formPath = join(projectRoot, "components/schedule-plan-draft-form.tsx")
+  const content = readFileSync(formPath, "utf-8")
+  assert.ok(
+    content.includes("SchedulePlanDraftValidationPanel"),
+    "Form must import SchedulePlanDraftValidationPanel"
+  )
+})
+
+// Test 22: Form renders validation panel
+test("Form renders SchedulePlanDraftValidationPanel", () => {
+  const formPath = join(projectRoot, "components/schedule-plan-draft-form.tsx")
+  const content = readFileSync(formPath, "utf-8")
+  assert.ok(
+    content.includes("<SchedulePlanDraftValidationPanel"),
+    "Form must render SchedulePlanDraftValidationPanel"
+  )
+})
+
+// Test 23: Submit button is disabled when canSubmit is false
+test("Form submit button has disabled attribute", () => {
+  const formPath = join(projectRoot, "components/schedule-plan-draft-form.tsx")
+  const content = readFileSync(formPath, "utf-8")
+  assert.ok(
+    content.includes("disabled={!validationSummary.canSubmit}") ||
+    content.includes('disabled={!validationSummary.canSubmit}'),
+    "Submit button must be disabled when canSubmit is false"
+  )
+})
+
+// Test 24: Form maintains planFieldState for validation
+test("Form maintains planFieldState for validation", () => {
+  const formPath = join(projectRoot, "components/schedule-plan-draft-form.tsx")
+  const content = readFileSync(formPath, "utf-8")
+  assert.ok(
+    content.includes("planFieldState"),
+    "Form must maintain planFieldState for validation input"
+  )
+})
+
+// Test 25: Form calls validation with plan fields and rows
+test("Form calls validation with planFieldState and rows", () => {
+  const formPath = join(projectRoot, "components/schedule-plan-draft-form.tsx")
+  const content = readFileSync(formPath, "utf-8")
+  assert.ok(
+    content.includes("validateSchedulePlanDraft(planFieldState, rows)"),
+    "Form must call validation with planFieldState and rows"
+  )
+})

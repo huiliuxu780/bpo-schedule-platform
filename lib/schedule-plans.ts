@@ -1068,6 +1068,268 @@ export function formatCoverageRate(value: number) {
   return `${Math.round(value * 1000) / 10}%`
 }
 
+// ── Draft validation model ──
+
+export type SchedulePlanDraftValidationIssue = {
+  kind: string
+  severity: "error" | "warning"
+  message: string
+  field?: string
+  rowIndex?: number
+}
+
+export type SchedulePlanDraftValidationSummary = {
+  issues: SchedulePlanDraftValidationIssue[]
+  errorCount: number
+  warningCount: number
+  canSubmit: boolean
+  totalGap: number
+  zeroForecastRows: number
+  zeroScheduledRows: number
+}
+
+type PlanFields = {
+  plan_date: string
+  project_name: string
+  site_name: string
+  version: string
+}
+
+type IntervalRow = {
+  interval_start: string
+  interval_end: string
+  forecast_agents: number
+  scheduled_agents: number
+  note: string
+}
+
+function parseHHmmToMinutes(value: string): number | null {
+  if (!/^\d{2}:\d{2}$/.test(value)) {
+    return null
+  }
+
+  const [h, m] = value.split(":").map(Number)
+  if (h < 0 || h > 23 || m < 0 || m > 59) {
+    return null
+  }
+
+  return h * 60 + m
+}
+
+function isValidHHmm(value: string): boolean {
+  return parseHHmmToMinutes(value) !== null
+}
+
+export function validateSchedulePlanDraft(
+  planFields: PlanFields,
+  rows: IntervalRow[]
+): SchedulePlanDraftValidationSummary {
+  const issues: SchedulePlanDraftValidationIssue[] = []
+  let errorCount = 0
+  let warningCount = 0
+  let totalGap = 0
+  let zeroForecastRows = 0
+  let zeroScheduledRows = 0
+
+  // Plan field validation
+  if (!planFields.plan_date) {
+    issues.push({
+      kind: "missing_plan_date",
+      severity: "error",
+      message: "缺少日期",
+      field: "plan_date",
+    })
+    errorCount++
+  }
+
+  if (!planFields.project_name) {
+    issues.push({
+      kind: "missing_project_name",
+      severity: "error",
+      message: "缺少项目",
+      field: "project_name",
+    })
+    errorCount++
+  }
+
+  if (!planFields.site_name) {
+    issues.push({
+      kind: "missing_site_name",
+      severity: "error",
+      message: "缺少职场",
+      field: "site_name",
+    })
+    errorCount++
+  }
+
+  if (!planFields.version) {
+    issues.push({
+      kind: "missing_version",
+      severity: "error",
+      message: "缺少版本",
+      field: "version",
+    })
+    errorCount++
+  }
+
+  // Interval validation
+  if (!rows || rows.length === 0) {
+    issues.push({
+      kind: "no_intervals",
+      severity: "error",
+      message: "至少需要一个时段",
+    })
+    errorCount++
+  } else {
+    // Validate each interval
+    const sortedRows = rows
+      .map((row, index) => ({ row, index }))
+      .filter(
+        (item) =>
+          parseHHmmToMinutes(item.row.interval_start) !== null &&
+          parseHHmmToMinutes(item.row.interval_end) !== null
+      )
+      .sort(
+        (a, b) =>
+          parseHHmmToMinutes(a.row.interval_start)! -
+          parseHHmmToMinutes(b.row.interval_start)!
+      )
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i]
+      const forecast = Math.max(row.forecast_agents, 0)
+      const scheduled = Math.max(row.scheduled_agents, 0)
+
+      // Time format validation
+      if (!isValidHHmm(row.interval_start)) {
+        issues.push({
+          kind: "invalid_start_format",
+          severity: "error",
+          message: `时段 ${i + 1} 开始时间格式错误`,
+          rowIndex: i,
+          field: "interval_start",
+        })
+        errorCount++
+      }
+
+      if (!isValidHHmm(row.interval_end)) {
+        issues.push({
+          kind: "invalid_end_format",
+          severity: "error",
+          message: `时段 ${i + 1} 结束时间格式错误`,
+          rowIndex: i,
+          field: "interval_end",
+        })
+        errorCount++
+      }
+
+      // Time range validation (only if both times are valid)
+      const startMinutes = parseHHmmToMinutes(row.interval_start)
+      const endMinutes = parseHHmmToMinutes(row.interval_end)
+
+      if (startMinutes !== null && endMinutes !== null) {
+        if (endMinutes <= startMinutes) {
+          issues.push({
+            kind: "invalid_time_range",
+            severity: "error",
+            message: `时段 ${i + 1} 结束时间必须晚于开始时间`,
+            rowIndex: i,
+            field: "interval_end",
+          })
+          errorCount++
+        }
+      }
+
+      // Gap calculation
+      const gap = Math.max(forecast - scheduled, 0)
+      totalGap += gap
+
+      // Gap warning
+      if (gap > 0) {
+        issues.push({
+          kind: "gap_exists",
+          severity: "warning",
+          message: `时段 ${i + 1} 存在缺口`,
+          rowIndex: i,
+        })
+        warningCount++
+      }
+
+      // Zero forecast warning
+      if (forecast === 0) {
+        issues.push({
+          kind: "zero_forecast",
+          severity: "warning",
+          message: `时段 ${i + 1} 预测为 0`,
+          rowIndex: i,
+          field: "forecast_agents",
+        })
+        warningCount++
+        zeroForecastRows++
+      }
+
+      // Zero scheduled warning
+      if (scheduled === 0) {
+        issues.push({
+          kind: "zero_scheduled",
+          severity: "warning",
+          message: `时段 ${i + 1} 已排为 0`,
+          rowIndex: i,
+          field: "scheduled_agents",
+        })
+        warningCount++
+        zeroScheduledRows++
+      }
+    }
+
+    // Check for overlapping intervals
+    for (let i = 0; i < sortedRows.length - 1; i++) {
+      const current = sortedRows[i]
+      const next = sortedRows[i + 1]
+      const currentEnd = parseHHmmToMinutes(current.row.interval_end)!
+      const nextStart = parseHHmmToMinutes(next.row.interval_start)!
+
+      if (currentEnd > nextStart) {
+        issues.push({
+          kind: "interval_overlap",
+          severity: "error",
+          message: `时段 ${current.index + 1} 与 ${next.index + 1} 重叠`,
+          rowIndex: current.index,
+        })
+        errorCount++
+      }
+    }
+
+    // Check for breaks between intervals
+    for (let i = 0; i < sortedRows.length - 1; i++) {
+      const current = sortedRows[i]
+      const next = sortedRows[i + 1]
+      const currentEnd = parseHHmmToMinutes(current.row.interval_end)!
+      const nextStart = parseHHmmToMinutes(next.row.interval_start)!
+
+      if (currentEnd < nextStart) {
+        issues.push({
+          kind: "interval_break",
+          severity: "warning",
+          message: `时段 ${current.index + 1} 与 ${next.index + 1} 之间存在断档`,
+          rowIndex: current.index,
+        })
+        warningCount++
+      }
+    }
+  }
+
+  return {
+    issues,
+    errorCount,
+    warningCount,
+    canSubmit: errorCount === 0,
+    totalGap,
+    zeroForecastRows,
+    zeroScheduledRows,
+  }
+}
+
 export function schedulePlanStatusLabel(status: SchedulePlanStatus) {
   const labels: Record<SchedulePlanStatus, string> = {
     draft: "草稿",

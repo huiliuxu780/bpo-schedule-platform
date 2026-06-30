@@ -6131,3 +6131,19 @@
 - 新增时段按钮继承上一行结束时间并默认推进 30 分钟；删除按钮至少保留一行，最后一行禁用删除。
 - `SchedulePlanDraftSummary` 嵌入表单并基于当前 rows state 实时汇总时段数量、总预测、总已排、总缺口和覆盖率；新建页和编辑页删除页面外部重复摘要。
 - Focused draft tests、typecheck、lint、diff check 均通过；浏览器验收确认 `/schedule-plans/new` 的实时缺口、实时摘要、新增行、删除保护和单摘要边界。
+
+### 2026-06-30 - IM275 排班计划草稿提交前校验与复核面板
+
+#### 审计计划
+
+- 承接 IM274 草稿时段编辑器，把本轮限定为一个中等产品能力：保存前校验与复核面板。
+- Qoder 串行执行 Packet A/B；Codex 负责实际 diff review、校验边界纠偏、focused verification、浏览器验收、Harness 状态和最终门禁。
+- 不新增后端/API/数据库/依赖，不触碰 dashboard/sidebar，不扩展到权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- `lib/schedule-plans.ts` 新增 `validateSchedulePlanDraft` 校验模型，覆盖计划必填字段、HH:mm 格式与范围、结束晚于开始、时段重叠硬错误、时段断档提醒、0 值提醒和总缺口统计。
+- Codex 复核时修正 Qoder 初版遗漏：`24:30`、`99:99` 等超出范围的 HH:mm 值现在会被视为格式硬错误，不再只检查正则形态。
+- `SchedulePlanDraftValidationPanel` 在共享草稿表单中展示可保存状态、错误数、提醒数、总缺口、错误列表和提醒列表。
+- `SchedulePlanDraftForm` 将计划基础字段改为受控状态，实时驱动校验；硬错误禁用提交按钮，提醒类问题不阻止保存。
+- Focused draft tests、typecheck、lint、diff check 均通过；浏览器验收确认 `/schedule-plans/new` 的必填错误、时间范围错误、提交禁用恢复和非阻塞缺口提醒。

@@ -5994,7 +5994,7 @@
 - qoder_mode: `planned; Qoder may execute Packet A then Packet B serially using docs/prompts/im275-qoder-task-packets.md. Codex remains owner of current state, diff review, browser verification, final check, commit, and push.`
 - allowed_files_check: schedule-plan draft form/summary/validation panel, schedule-plan frontend helpers, focused draft tests, prompt packet, current Harness context, audit/task/branch logs only.
 - scope_diff_check: expected frontend draft validation UI/model/test changes only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, external integration, dashboard, or sidebar changes.
-- check_result: `pending implementation`
+- check_result: Focused draft validation run passed with 93 tests. `npm run typecheck`, `npm run lint`, and `git diff --check` passed. Codex review corrected HH:mm validation so out-of-range values such as `24:30` are hard errors. Browser acceptance on `http://127.0.0.1:3000/schedule-plans/new` confirmed the default draft shows `可保存` with non-blocking gap reminders, clearing required project shows `缺少项目` and disables submit, an invalid time range shows `结束时间必须晚于开始时间` and disables submit, and fixing the range restores the submit affordance while warnings remain visible.
 - local_commit_sha: `pending`
 - integration_status: `not_started`
 - integration_method: `N/A`

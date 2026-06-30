@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/card"
 import Link from "next/link"
 import { SchedulePlanDraftSummary } from "@/components/schedule-plan-draft-summary"
+import { SchedulePlanDraftValidationPanel } from "@/components/schedule-plan-draft-validation-panel"
+import { validateSchedulePlanDraft } from "@/lib/schedule-plans"
 
 type DraftMode = "create" | "edit"
 
@@ -67,6 +69,9 @@ export function SchedulePlanDraftForm({
   const [nextId, setNextId] = useState(
     intervals.length > 0 ? intervals.length : 1
   )
+  const [planFieldState, setPlanFieldState] = useState<PlanFields>(planFields)
+
+  const validationSummary = validateSchedulePlanDraft(planFieldState, rows)
 
   const description =
     mode === "create"
@@ -128,6 +133,10 @@ export function SchedulePlanDraftForm({
     updateField(index, field, value)
   }
 
+  function updatePlanField(field: keyof PlanFields, value: string) {
+    setPlanFieldState((prev) => ({ ...prev, [field]: value }))
+  }
+
   return (
     <>
       {mode === "edit" && planId && (
@@ -150,23 +159,33 @@ export function SchedulePlanDraftForm({
             <Input
               name="plan_date"
               type="date"
-              defaultValue={planFields.plan_date}
+              value={planFieldState.plan_date}
+              onChange={(e) => updatePlanField("plan_date", e.target.value)}
             />
           </label>
           <label className="flex flex-col gap-1 text-sm">
             <span className="font-medium">项目</span>
             <Input
               name="project_name"
-              defaultValue={planFields.project_name}
+              value={planFieldState.project_name}
+              onChange={(e) => updatePlanField("project_name", e.target.value)}
             />
           </label>
           <label className="flex flex-col gap-1 text-sm">
             <span className="font-medium">职场</span>
-            <Input name="site_name" defaultValue={planFields.site_name} />
+            <Input
+              name="site_name"
+              value={planFieldState.site_name}
+              onChange={(e) => updatePlanField("site_name", e.target.value)}
+            />
           </label>
           <label className="flex flex-col gap-1 text-sm">
             <span className="font-medium">版本</span>
-            <Input name="version" defaultValue={planFields.version} />
+            <Input
+              name="version"
+              value={planFieldState.version}
+              onChange={(e) => updatePlanField("version", e.target.value)}
+            />
           </label>
         </CardContent>
       </Card>
@@ -288,11 +307,15 @@ export function SchedulePlanDraftForm({
         }))}
       />
 
+      <SchedulePlanDraftValidationPanel summary={validationSummary} />
+
       <div className="flex justify-end gap-2">
         <Button asChild variant="outline">
           <Link href={cancelHref}>取消</Link>
         </Button>
-        <Button type="submit">{submitLabel}</Button>
+        <Button type="submit" disabled={!validationSummary.canSubmit}>
+          {submitLabel}
+        </Button>
       </div>
     </>
   )
