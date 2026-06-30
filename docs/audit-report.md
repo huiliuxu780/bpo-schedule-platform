@@ -6147,3 +6147,19 @@
 - `SchedulePlanDraftValidationPanel` 在共享草稿表单中展示可保存状态、错误数、提醒数、总缺口、错误列表和提醒列表。
 - `SchedulePlanDraftForm` 将计划基础字段改为受控状态，实时驱动校验；硬错误禁用提交按钮，提醒类问题不阻止保存。
 - Focused draft tests、typecheck、lint、diff check 均通过；浏览器验收确认 `/schedule-plans/new` 的必填错误、时间范围错误、提交禁用恢复和非阻塞缺口提醒。
+
+### 2026-06-30 - IM276 班组长排班板标准人力草稿闭环
+
+#### 审计计划
+
+- 承接已确认的 WFM 产品契约，把本轮限定为一个完整中等切片：小组级预测需求 -> 人员级排班草稿 -> 标准人力覆盖计算 -> 草稿缺口预警。
+- 不把四段拆成独立微任务；验收以班组长在 `/schedule-plans/new` 看到完整样例闭环为准。
+- 不新增后端、数据库、依赖、package/lockfile、权限、审批、导出、批量操作、自动排班、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- 新增 `lib/wfm-coverage.ts`，定义 `DemandRequirement`、`EmployeeSkillCapacity`、`ShiftAssignment`、`CoverageResult`，并实现按班次时间覆盖和员工技能能力折算的标准人力覆盖计算。
+- 新增 `components/wfm-team-scheduling-board.tsx`，展示上海职场 / A 项目 / A 组 / 投诉 / 10:00-10:30 的 3.0 标准人力需求、king 1.0、james 1.0、tay 0.2 的人员级排班草稿、已排标准人力 2.2、缺口 0.8、覆盖人数 3、低能力补位和草稿缺口预警。
+- 技能错配校验展示 alex 无投诉技能时贡献为 0，明确不能用人数自动填补缺口。
+- `/schedule-plans/new` 接入班组长排班板 v0.1，同时保留既有草稿表单、保存前摘要和提交前校验链路。
+- Focused tests 覆盖 IM276 标准人力样例、无目标技能、时间覆盖和页面结构；浏览器 smoke 确认页面真实渲染关键验收文案。

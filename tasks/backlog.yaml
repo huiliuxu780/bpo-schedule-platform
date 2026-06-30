@@ -14382,3 +14382,59 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已完成：使用 `BPO_DATABASE_URL` 指向 `.local/im243-review-case-form-click-smoke.db` 并加载 `seed_review_case_stage_matrix()`；backend `127.0.0.1:8000` 与 frontend `127.0.0.1:3002` 启动后，浏览器手工验证 `CASE-SEED-ME-001` 补证据、`CASE-SEED-MC-001` 补结论、`CASE-QUERY-001` 关闭案例三条表单链路均触发 Next server action、写入后端、跳转 success URL 并显示成功反馈；`CASE-SEED-CL-001` 显示已关闭 blocker，面包屑可返回列表。本轮未新增自动化 E2E，未修改业务代码、后端、脚本、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+  - id: IM276
+    title: "班组长排班板标准人力草稿闭环 v0.1"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM275"]
+    story_ids: ["US867"]
+    requirement_ids: ["R947"]
+    allowed_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "app/schedule-plans/**"
+      - "components/**schedule*"
+      - "components/**wfm*"
+      - "lib/wfm-coverage.ts"
+      - "lib/schedule-plans.ts"
+      - "scripts/tests/*wfm*"
+      - "scripts/tests/*schedule-plan-draft*"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+      - "backend/migrations/**"
+      - "project-progress/**"
+      - "node_modules/**"
+    acceptance:
+      - "排班草稿工作台展示小组级预测需求：上海职场 / A 项目 / A 组 / 投诉 / 10:00-10:30 = 3.0 标准人力。"
+      - "人员级排班草稿展示 king 1.0、james 1.0、tay 0.2 的贡献明细。"
+      - "覆盖结果展示覆盖人数 3、已排标准人力 2.2、缺口 0.8，并判定不满足。"
+      - "低能力人员参与覆盖时显示低能力补位原因。"
+      - "无目标技能人员贡献为 0，并显示技能错配原因。"
+      - "草稿有缺口仍允许保存，但展示缺口和草稿预警。"
+      - "不暴露 Codex、Gate、Harness、mock、API、schema 等内部词。"
+      - "`bash scripts/check-state.sh --strict`、focused tests、`npm run typecheck`、`npm run lint`、`git diff --check`、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 和浏览器 smoke 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增或修改后端、数据库 schema、migration 或生产持久化配置"
+      - "需要真实外部系统集成"
+      - "需要自动排班、审批、权限、导出、批量操作、生产公式、结算或收费因子"
+      - "范围扩展到完整履约风险闭环、员工自助全量页面或真实登录/状态日志计算"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：基于 PM 确认的完整中等切片，新增 `lib/wfm-coverage.ts` 覆盖计算模型、`components/wfm-team-scheduling-board.tsx` 班组长排班板 v0.1，并接入 `/schedule-plans/new`。页面展示上海职场 / A 项目 / A 组 / 投诉 / 10:00-10:30 需求 3.0 标准人力，人员级排班草稿展示 king 1.0、james 1.0、tay 0.2，覆盖人数为 3 但已排标准人力 2.2、缺口 0.8，并显示低能力补位；技能错配校验展示 alex 对投诉贡献为 0。草稿可保存但不能视为已满足。未新增后端、数据库、依赖、package/lockfile、权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子。"

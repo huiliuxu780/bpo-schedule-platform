@@ -6002,3 +6002,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending after implementation and local commit`
 - blocked_reason: `N/A`
+
+### IM276 Team Capacity Draft Loop
+
+- branch_name: `codex/im276-team-capacity-draft-loop`
+- base_main_commit: `stacked on local codex/im275-schedule-draft-validation-review at 59e8b43`
+- stacked_on: `codex/im275-schedule-draft-validation-review`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium frontend-scaffold product capability for the team-lead WFM draft loop: team-level demand, person-level draft assignments, standard-capacity coverage calculation, low-capacity substitution, skill mismatch, and draft gap warning on `/schedule-plans/new`.
+- qoder_mode: `false; PM asked Codex to proceed with the full slice directly.`
+- allowed_files_check: current Harness state, raw requirement, user story, backlog, trace index, task/audit/branch logs, `/schedule-plans/new`, WFM team scheduling component, WFM coverage model, and focused tests only.
+- scope_diff_check: expected frontend UI/model/test/traceability changes only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, external integration, dashboard, or sidebar changes.
+- check_result: Focused draft and IM276 regression run passed with 99 tests. Browser smoke on `http://127.0.0.1:3000/schedule-plans/new` confirmed `班组长排班板 v0.1`, `3.0 标准人力`, `当前已排 2.2`, `缺口 0.8`, `覆盖人数`, `低能力补位`, `技能错配`, and `草稿可保存`. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 841 Node assertions, `npm run lint`, `npm run typecheck`, Next build, 241 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after implementation and local commit`
+- blocked_reason: `N/A`

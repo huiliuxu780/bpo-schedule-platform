@@ -4,6 +4,7 @@ import { createDraftAction } from "@/app/schedule-plans/new/actions"
 import { AppShell } from "@/components/app-shell"
 import { SchedulePlanDraftForm } from "@/components/schedule-plan-draft-form"
 import { Button } from "@/components/ui/button"
+import { WfmTeamSchedulingBoard } from "@/components/wfm-team-scheduling-board"
 import {
   Card,
   CardDescription,
@@ -73,6 +74,8 @@ export default async function NewSchedulePlanPage({ searchParams }: PageProps) {
             <Link href="/schedule-plans">返回列表</Link>
           </Button>
         </div>
+
+        <WfmTeamSchedulingBoard />
 
         <form action={createDraftAction} className="flex flex-col gap-4">
           <SchedulePlanDraftForm

@@ -1004,6 +1004,9 @@ requirements:
   R944: {file: "docs/raw-requirements.md", story_ids: ["US864"], task_ids: ["IM245"]}
   R945: {file: "docs/current/STORY_QUEUE.yaml", story_ids: ["US865"], task_ids: ["IM246"]}
   R946: {file: "docs/current/STORY_QUEUE.yaml", story_ids: ["US866"], task_ids: ["IM247"]}
+  US867: {file: "docs/user-stories.md", requirement_ids: ["R947"], task_ids: ["IM276"], archive_refs: []}
+  IM276: {file: "tasks/backlog.yaml", story_ids: ["US867"], gate: "frontend-scaffold"}
+  R947: {file: "docs/raw-requirements.md", story_ids: ["US867"], task_ids: ["IM276"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

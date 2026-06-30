@@ -15,6 +15,19 @@
 notes: "补充说明"
 ```
 
+### R947 - 班组长排班板标准人力草稿闭环
+
+```yaml
+id: R947
+module: "BPO WFM 三条主线"
+description: "基于已确认的 WFM 产品契约，班组长需要在排班草稿工作台中直接使用小组级预测需求，安排具体员工班次，并实时看到按员工技能能力折算后的标准人力覆盖、缺口和原因。核心验收样例是 A 组投诉时段需求 3.0 标准人力，king 1.0、james 1.0、tay 0.2 三人覆盖后仍只有 2.2 标准人力，缺口 0.8，不能按 3 人判定满足。"
+source: "PM confirmed IM276 on 2026-06-30; docs/design/wfm-product-contract-and-acceptance-scenarios.md section 13."
+submitted_at: "2026-06-30"
+version: "1.0"
+status: "done"
+notes: "IM276 已完成：`/schedule-plans/new` 新增班组长排班板 v0.1，展示小组级预测需求、人员级排班草稿、标准人力覆盖、低能力补位、技能错配和草稿缺口预警；浏览器 smoke 命中 3.0 标准人力、已排 2.2、缺口 0.8。未新增自动排班、审批、权限、导出、批量操作、外部系统集成、数据库 schema/migration、生产公式、结算或收费因子。"
+```
+
 ### R944 - Review-case acceptance PR 合并规划
 
 ```yaml

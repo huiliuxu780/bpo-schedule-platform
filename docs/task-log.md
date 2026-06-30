@@ -3099,3 +3099,12 @@
   action: 排班计划草稿提交前校验与复核面板。
   status: `done`
   notes: Codex 基于 `codex/im274-schedule-plan-draft-editor-workbench` 创建 `codex/im275-schedule-draft-validation-review` 并先定义详细 Qoder Packet A/B。Qoder 实现后，Codex 复核实际 diff 并修正 HH:mm 校验边界，使 `24:30`、`99:99` 等超范围值成为硬错误。共享草稿表单现在实时校验计划必填字段、时段格式、结束晚于开始、重叠、断档、0 值和总缺口；`SchedulePlanDraftValidationPanel` 展示可保存状态、错误数、提醒数和缺口，硬错误禁用提交，提醒不阻塞保存。Focused tests、typecheck、lint、diff check 和浏览器验收通过；未新增后端、依赖、package/lockfile、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM276`
+  source_ids:
+    - `R947`
+  story_ids:
+    - `US867`
+  action: 班组长排班板标准人力草稿闭环 v0.1。
+  status: `done`
+  notes: Codex 基于 `codex/im275-schedule-draft-validation-review` 创建 `codex/im276-team-capacity-draft-loop` 并直接实现完整中等切片。新增 `lib/wfm-coverage.ts` 计算模型，覆盖小组级预测需求、人员级排班草稿、标准人力贡献、缺口、低能力补位和技能错配；新增 `components/wfm-team-scheduling-board.tsx` 并接入 `/schedule-plans/new`。浏览器 smoke 确认页面渲染 `班组长排班板 v0.1`、`3.0 标准人力`、`当前已排 2.2`、`缺口 0.8`、`低能力补位`、`技能错配` 和 `草稿可保存`。未新增后端、数据库、依赖、package/lockfile、权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
