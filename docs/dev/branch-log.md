@@ -5983,3 +5983,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending after implementation and local commit`
 - blocked_reason: `N/A`
+
+### IM275 Schedule Draft Validation Review
+
+- branch_name: `codex/im275-schedule-draft-validation-review`
+- base_main_commit: `stacked on pushed codex/im274-schedule-plan-draft-editor-workbench at f9e2aa7`
+- stacked_on: `codex/im274-schedule-plan-draft-editor-workbench`
+- remote_status: `not_pushed; definition and Qoder task packets prepared locally.`
+- scope: Medium frontend-scaffold product capability for schedule-plan draft validation before save: required plan fields, 0.5h interval validity, time order, overlap, break warnings, zero-value warnings, total gap review, and submit blocking for hard errors.
+- qoder_mode: `planned; Qoder may execute Packet A then Packet B serially using docs/prompts/im275-qoder-task-packets.md. Codex remains owner of current state, diff review, browser verification, final check, commit, and push.`
+- allowed_files_check: schedule-plan draft form/summary/validation panel, schedule-plan frontend helpers, focused draft tests, prompt packet, current Harness context, audit/task/branch logs only.
+- scope_diff_check: expected frontend draft validation UI/model/test changes only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, automatic scheduling, production formula, settlement, charge-factor, external integration, dashboard, or sidebar changes.
+- check_result: `pending implementation`
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after implementation and local commit`
+- blocked_reason: `N/A`

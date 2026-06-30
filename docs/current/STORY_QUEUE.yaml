@@ -5,4 +5,19 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US-IM275
+    title: "排班草稿提交前校验与复核面板"
+    status: ready
+    priority: high
+    requirement_id: REQ-IM275
+    module: "schedule-plan-draft"
+    summary: "在 IM274 草稿时段编辑工作台基础上增加提交前校验与复核面板，让操作员在保存草稿前看到基础字段、0.5h 时段、时间顺序、重叠/断裂、缺口与 0 值风险，阻止明显无效的草稿提交。"
+    acceptance:
+      - "新建和编辑草稿共用同一套校验模型与复核面板，不复制两套逻辑。"
+      - "校验覆盖计划基础字段、时段开始/结束、结束晚于开始、时段重叠、明显断裂、预测/已排 0 值和总缺口。"
+      - "严重错误必须阻止提交；提醒类问题只提示，不阻止保存。"
+      - "复核面板必须展示错误数量、提醒数量、总缺口和可保存状态，且跟随用户编辑实时更新。"
+      - "不做自动排班、自动修复、自动补齐、审批、导出或批量操作。"
+      - "必须包含 focused model/source tests、typecheck/lint/diff check 和浏览器交互验收。"
+    required_workflow: frontend-scaffold
