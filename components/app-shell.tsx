@@ -26,15 +26,16 @@ export function AppShell({
   return (
     <TooltipProvider>
       <SidebarProvider
-        defaultOpen
+        defaultOpen={false}
         style={
           {
-            "--sidebar-width": "calc(var(--spacing) * 72)",
-            "--header-height": "calc(var(--spacing) * 12)",
+            "--sidebar-width": "240px",
+            "--sidebar-width-icon": "64px",
+            "--header-height": "48px",
           } as React.CSSProperties
         }
       >
-        <AppSidebar variant="inset" />
+        <AppSidebar />
         <SidebarInset className="overflow-hidden">
           <SiteHeader
             title={title}

@@ -4,6 +4,24 @@
 
 ## Current Audit
 
+### 2026-07-01 - IM287 全站导航瘦身与 icon rail 对齐
+
+#### 审计结论
+
+- 全站 AppShell 默认收起为 64px icon rail，展开后为 240px，header 高度为 48px。
+- 收起态隐藏分组标题，所有可见导航入口保持 32px 命中区并在 rail 中居中对齐。
+- 展开/收起通过点击固定切换，不做 hover 展开；站内页面切换保持用户手动状态，并用 localStorage/cookie/in-memory 兜底保存 UI 偏好。
+- 保留现有 shadcn sidebar/header primitives、品牌入口、快速新建、待处理风险、业务导航和本地用户主题菜单。
+- 本轮不修改排班工作台业务内容，不新增页面、依赖、API、数据库、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 验证
+
+- `node --test scripts/tests/product-structure-global-shell.test.mjs scripts/tests/dashboard-shadcn-baseline-alignment.test.mjs`: 通过，12 个测试。
+- `npm run typecheck`: 通过。
+- `npm run lint`: 通过。
+- `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build`: 通过。
+- 浏览器 smoke: 通过。`http://localhost:3003/dashboard` 首次进入为 64px rail，首个按钮 32px 且 x=16；点击 header trigger 后展开为 240px；站内点击进入 `/roster-drafts` 后保持展开；再次收起后点击进入 `/schedule-plans` 保持 64px rail。
+
 ### 2026-07-01 - IM286 月班表草稿排班工作台重构
 
 #### 审计结论

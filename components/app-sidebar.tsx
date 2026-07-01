@@ -200,7 +200,7 @@ function BrandMark() {
 }
 
 export function AppSidebar({
-  variant = "inset",
+  variant = "sidebar",
 }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   const { resolvedTheme, setTheme } = useTheme()
@@ -208,7 +208,7 @@ export function AppSidebar({
 
   return (
     <Sidebar collapsible="icon" variant={variant}>
-      <SidebarHeader>
+      <SidebarHeader className="gap-1 px-4 py-3">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild size="lg">
@@ -246,12 +246,18 @@ export function AppSidebar({
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
+      <SidebarContent className="px-4 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-4">
+        <SidebarGroup className="p-0">
           <SidebarGroupContent>
             {nav.map((group) => (
-              <div key={group.title} className="mb-3 last:mb-0">
-                <div className="px-2 pb-1 text-xs font-medium text-muted-foreground group-data-[collapsible=icon]:hidden">
+              <div
+                key={group.title}
+                className="mb-3 last:mb-0 group-data-[collapsible=icon]:mb-2"
+              >
+                <div
+                  data-slot="sidebar-group-title"
+                  className="px-2 pb-1 text-xs font-medium text-muted-foreground group-data-[collapsible=icon]:hidden"
+                >
                   {group.title}
                 </div>
                 <NavList groupIcon={group.icon} items={group.items} />
@@ -260,7 +266,7 @@ export function AppSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="px-4 py-3">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>

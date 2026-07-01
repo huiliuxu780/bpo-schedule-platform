@@ -141,6 +141,29 @@ status: "draft"
 notes: "IM286 frontend IA redesign over existing IM285 local generator."
 ```
 
+### US875 - 全站导航瘦身与 icon rail 对齐
+
+```yaml
+id: US875
+requirement_ids:
+  - R955
+module: "BPO WFM 全站框架"
+role: "排班师 / 运营后台用户"
+story: "作为需要长时间处理网格和表格的后台用户，我希望全站导航默认是稳定窄 rail，并且展开/收起对齐、可记忆，以便核心工作区不再被宽导航挤压。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "全站 AppShell 默认进入 64px icon rail，展开后为 240px。"
+  - "展开/收起由点击固定切换，不使用 hover 改变布局。"
+  - "收起态隐藏分组标题和文案，只保留居中 icon；所有可见导航入口使用 32px 命中区并对齐在同一栅格。"
+  - "展开态显示品牌、分组标题、导航文案和本地用户菜单。"
+  - "用户手动展开/收起状态在站内页面切换时保持，并使用 localStorage/cookie/in-memory 兜底保存 UI 偏好。"
+  - "全站 header 高度压到 48px，不新增搜索、通知、审批、权限、导出或批量能力。"
+  - "浏览器验收覆盖 /dashboard、/roster-drafts 和 /schedule-plans。"
+status: "draft"
+notes: "IM287 global shell/navigation infrastructure before the roster workbench full-screen redesign."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

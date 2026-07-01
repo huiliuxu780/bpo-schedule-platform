@@ -7,6 +7,7 @@ const componentsRootPath = new URL("../../components/", import.meta.url);
 const appSidebarPath = new URL("../../components/app-sidebar.tsx", import.meta.url);
 const appShellPath = new URL("../../components/app-shell.tsx", import.meta.url);
 const siteHeaderPath = new URL("../../components/site-header.tsx", import.meta.url);
+const uiSidebarPath = new URL("../../components/ui/sidebar.tsx", import.meta.url);
 const uiAlertPath = new URL("../../components/ui/alert.tsx", import.meta.url);
 const uiAvatarPath = new URL("../../components/ui/avatar.tsx", import.meta.url);
 const uiBreadcrumbPath = new URL("../../components/ui/breadcrumb.tsx", import.meta.url);
@@ -66,14 +67,12 @@ test("global shell uses shadcn sidebar and header breadcrumb primitives", async 
 
   assert.equal(shellSource.includes("SidebarProvider"), true);
   assert.equal(shellSource.includes("SidebarInset"), true);
-  assert.equal(shellSource.includes("sidebarCollapsed"), false);
   assert.equal(sidebarSource.includes("@/components/ui/sidebar"), true);
   assert.equal(sidebarSource.includes("<Sidebar"), true);
   assert.equal(sidebarSource.includes("CollapsibleTrigger"), false);
   assert.equal(sidebarSource.includes("CollapsibleContent"), false);
   assert.equal(sidebarSource.includes("SidebarMenuSub"), false);
   assert.equal(sidebarSource.includes("<aside"), false);
-  assert.equal(sidebarSource.includes("collapsed"), false);
   assert.equal(sidebarSource.includes("SidebarGroupLabel asChild"), false);
   assert.equal(sidebarSource.includes('className="pl-7"'), false);
   assert.equal(headerSource.includes("SidebarTrigger"), true);
@@ -96,6 +95,42 @@ test("global shell uses shadcn sidebar and header breadcrumb primitives", async 
   assert.equal(sidebarSource.includes("DropdownMenu"), true);
   assert.equal(sidebarSource.includes("切换为"), true);
   assert.equal(sidebarSource.includes("退出登录"), false);
+});
+
+test("global navigation defaults to a compact remembered icon rail", async () => {
+  const shellSource = await readFile(appShellPath, "utf8");
+  const sidebarSource = await readFile(appSidebarPath, "utf8");
+  const uiSidebarSource = await readFile(uiSidebarPath, "utf8");
+
+  assert.equal(shellSource.includes("defaultOpen={false}"), true);
+  assert.equal(shellSource.includes('"--sidebar-width": "240px"'), true);
+  assert.equal(shellSource.includes('"--sidebar-width-icon": "64px"'), true);
+  assert.equal(shellSource.includes('"--header-height": "48px"'), true);
+
+  assert.match(uiSidebarSource, /SIDEBAR_STORAGE_KEY\s*=\s*"bpo-sidebar-open"/);
+  assert.match(uiSidebarSource, /window\.localStorage\.getItem\(SIDEBAR_STORAGE_KEY\)/);
+  assert.match(uiSidebarSource, /window\.localStorage\.setItem\(SIDEBAR_STORAGE_KEY,\s*String\(openState\)\)/);
+  assert.match(uiSidebarSource, /group-data-\[collapsible=icon\]:w-\(--sidebar-width-icon\)/);
+
+  assert.match(sidebarSource, /data-slot="sidebar-group-title"/);
+  assert.match(sidebarSource, /group-data-\[collapsible=icon\]:hidden/);
+  assert.match(sidebarSource, /group-data-\[collapsible=icon\]:items-center/);
+  assert.match(sidebarSource, /group-data-\[collapsible=icon\]:px-4/);
+});
+
+test("sidebar icon rail keeps every visible entry on the same 32px grid", async () => {
+  const sidebarSource = await readFile(appSidebarPath, "utf8");
+  const uiSidebarSource = await readFile(uiSidebarPath, "utf8");
+
+  assert.match(uiSidebarSource, /group-data-\[collapsible=icon\]:size-8!/);
+  assert.match(uiSidebarSource, /group-data-\[collapsible=icon\]:justify-center/);
+  assert.match(uiSidebarSource, /group-data-\[collapsible=icon\]:gap-0/);
+  assert.match(uiSidebarSource, /group-data-\[collapsible=icon\]:\[\&_svg\]:size-4/);
+
+  assert.match(sidebarSource, /<SidebarHeader className="gap-1 px-4 py-3"/);
+  assert.match(sidebarSource, /<SidebarContent className="[^"]*px-4/);
+  assert.match(sidebarSource, /<SidebarFooter className="px-4 py-3"/);
+  assert.doesNotMatch(sidebarSource, /group-data-\[collapsible=icon\]:-mt-/);
 });
 
 test("global header shell does not retain the removed search placeholder API", async () => {

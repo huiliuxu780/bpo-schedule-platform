@@ -96,3 +96,13 @@ tasks:
     requirement_ids:
       - R954
     notes: "Redesign /roster-drafts from a report-style result page into a scheduler workbench: toolbar, compressed employee-by-date month scan, employee-by-week handling grid, read-only selected-cell inspector, and right-side queues that locate into the grid. Keep local fixture and TypeScript generator. No API, database, Excel upload/import, save/publish, approval, permissions, forecasting model, standard-capacity model, auto-fill scheduling, external integration, export, batch, settlement, or charge-factor work."
+
+  - id: IM287
+    title: "全站导航瘦身与 icon rail 对齐"
+    status: done
+    required_workflow: frontend-scaffold
+    story_ids:
+      - US875
+    requirement_ids:
+      - R955
+    notes: "Global shell/navigation infrastructure: default 64px icon rail, 240px click-expanded sidebar, centered 32px icon grid, hidden collapsed group labels, 48px header, and remembered expanded/collapsed UI preference. Does not modify roster workbench business content, add pages, dependencies, backend/API/database/auth/approval/export/batch capabilities, or production formulas."

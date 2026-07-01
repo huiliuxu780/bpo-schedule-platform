@@ -15,7 +15,7 @@ The active execution source is `docs/current/**`. This file is a compact compati
 
 ## Durable Product Anchor
 
-The latest product anchor is IM286 / R954 / US874: scheduler-workbench redesign for the visible monthly roster draft surface.
+The latest product anchor is IM287 / R955 / US875: global navigation rail slimming before the next roster-workbench full-screen redesign.
 
 Confirmed bottom-layer direction:
 
@@ -33,6 +33,7 @@ Confirmed bottom-layer direction:
 - IM284 已确认人员级月班表草稿先做后端纯领域模型：同日多记录、shift-only 覆盖、多 shift 重叠校验、引用快照校验、独立待排人员和 draft-only 可编辑。
 - IM285 已完成可见演示闭环：`/roster-drafts` 选择目标月份，用上一周同星期稳定班种生成月班表草稿，并展示月视图、周视图、待排人员、只读异常清单和已过滤非班务标注。
 - IM286 已完成排班工作台重构：`/roster-drafts` 保留本地生成器，但改为 toolbar、月度扫盘、周度处理、格子详情和右侧队列定位，不再是结果报表页。
+- IM287 已完成全站导航底座瘦身：默认 64px icon rail，点击展开 240px，收起态隐藏分组标题，icon 使用 32px 居中栅格，header 压到 48px，并保持站内展开/收起偏好。
 - 标准人力、自动排班、审批、权限、通知、导出、批量、外部集成、生产公式、结算和收费因子延后。
 
 ## History Policy

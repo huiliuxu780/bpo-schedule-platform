@@ -80,3 +80,12 @@ decisions:
       - "components/roster-draft-workbench.tsx"
       - "docs/raw-requirements.md"
       - "tasks/backlog.yaml"
+  D-2026-07-01-global-navigation-rail:
+    title: "Global navigation defaults to a compact remembered icon rail"
+    file: "docs/user-stories.md"
+    related_files:
+      - "components/app-shell.tsx"
+      - "components/app-sidebar.tsx"
+      - "components/ui/sidebar.tsx"
+      - "docs/raw-requirements.md"
+      - "tasks/backlog.yaml"

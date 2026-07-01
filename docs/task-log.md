@@ -47,6 +47,15 @@
 - status: `done`
 - notes: 基于 Homebase 主参考、Deputy / When I Work 交叉校验，将 `/roster-drafts` 从结果报表页改为排班师工作台；保留 IM285 本地生成器，不进入 API、数据库、Excel 导入、保存发布、审批、权限、预测、标准人力或自动排班。浏览器 smoke 已确认月度扫盘、周度处理、格子详情和队列定位。
 
+- task_id: `IM287`
+- source_ids:
+  - `R955`
+- story_ids:
+  - `US875`
+- action: 全站导航瘦身与 icon rail 对齐。
+- status: `done`
+- notes: 将全站导航底座改为默认 64px icon rail、点击展开 240px、收起态隐藏分组标题、32px icon 栅格居中、48px header 和站内展开/收起偏好保持；浏览器验收覆盖 `/dashboard`、`/roster-drafts`、`/schedule-plans`。不修改排班业务内容，不新增 API、数据库、权限、审批、导出或批量能力。
+
 - task_id: `IM283`
 - source_ids:
   - `R951`

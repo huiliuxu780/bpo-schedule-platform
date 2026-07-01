@@ -82,6 +82,19 @@ status: "draft"
 notes: "Frontend information-architecture redesign only; keep IM285 generation model and local fixture."
 ```
 
+### R955 - 全站导航瘦身与 icon rail 对齐
+
+```yaml
+id: R955
+module: "BPO WFM 全站框架"
+description: "After reviewing the roster workbench UI, PM confirmed the global navigation itself is a major blocker: the expanded sidebar is too wide, the collapsed icon rail is visually misaligned, and grid-heavy workbench pages need more horizontal room. Redesign the global shell so the sidebar defaults to a 64px icon rail, expands to 240px by explicit click, hides group titles when collapsed, keeps icons on a 32px centered grid, preserves the user's manual expanded/collapsed preference, and keeps a thin 48px header. This slice is global navigation infrastructure only and must not modify roster workbench business content, create new pages, add dependencies, or add backend/API/database/auth/approval/export/batch capabilities."
+source: "PM-confirmed navigation drill on 2026-07-01 after IM286 UI review"
+submitted_at: "2026-07-01"
+version: "1.0"
+status: "draft"
+notes: "Frontend shell/navigation refactor before the next roster workbench full-screen redesign."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

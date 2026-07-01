@@ -18,10 +18,11 @@ const dataTableSrc = readProject("components/data-table.tsx")
 const readinessBannerSrc = readProject("components/readiness-banner.tsx")
 const sidebarSrc = readProject("components/ui/sidebar.tsx")
 
-test("app shell uses the dashboard-01 inset sidebar frame", () => {
-  assert.match(appShellSrc, /--sidebar-width/)
-  assert.match(appShellSrc, /--header-height/)
-  assert.match(appShellSrc, /variant="inset"/)
+test("app shell uses the compact global navigation rail frame", () => {
+  assert.match(appShellSrc, /"--sidebar-width": "240px"/)
+  assert.match(appShellSrc, /"--sidebar-width-icon": "64px"/)
+  assert.match(appShellSrc, /"--header-height": "48px"/)
+  assert.match(appShellSrc, /defaultOpen=\{false\}/)
   assert.match(siteHeaderSrc, /h-\(--header-height\)/)
 })
 
