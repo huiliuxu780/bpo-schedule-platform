@@ -19,6 +19,13 @@ stories:
     task_ids:
       - "IM279"
     archive_refs: []
+  US870:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R950"
+    task_ids:
+      - "IM282"
+    archive_refs: []
 tasks:
   F001:
     file: "tasks/backlog.yaml"
@@ -37,6 +44,11 @@ tasks:
     file: "tasks/backlog.yaml"
     story_ids: []
     gate: "state-hygiene"
+  IM282:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US870"
+    gate: "harness"
 requirements:
   R949:
     file: "docs/raw-requirements.md"
@@ -44,8 +56,15 @@ requirements:
       - "US869"
     task_ids:
       - "IM279"
+  R950:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US870"
+    task_ids:
+      - "IM282"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
   - "D-2026-07-01-trace-spine-slimming"
+  - "D-2026-07-01-roster-generation-foundation"
 archive_refs: []

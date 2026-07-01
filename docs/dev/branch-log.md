@@ -37,6 +37,25 @@
 - allowed_files_check: `tasks/backlog.yaml`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/audit-report.md`, `docs/task-log.md`, `docs/dev/branch-log.md`, `docs/PROJECT_STATE.md`, and `docs/registry/TRACE_INDEX.yaml` only.
 - scope_diff_check: expected documentation/state-hygiene changes only; no app, component, lib, backend, dependency, package/lockfile, database schema/migration, external integration, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, or charge-factor changes.
 - check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 845 Node assertions, `npm run lint`, `npm run typecheck`, Next build, 241 backend tests, and project Harness check.
+- local_commit_sha: `569d20f`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
+### IM282 Roster Generation Product Contract
+
+- branch_name: `codex/im282-roster-generation-contract`
+- base_main_commit: `stacked on local codex/im281-trace-spine-slimming at 569d20f`
+- stacked_on: `codex/im281-trace-spine-slimming`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Documentation and product-contract task for ShiftType work-segment expansion, personnel-level monthly roster draft generation, stable-shift copy rules, pending roster employees, draft-to-published version flow, and Primary/Actual boundary.
+- qoder_mode: `false; PM confirmed decisions interactively in this thread.`
+- allowed_files_check: `docs/design/scheduler-shift-type-monthly-roster-generation-contract.md`, traceability docs, and current/registry state docs only.
+- scope_diff_check: expected documentation/traceability changes only; no app, component, lib, backend, dependency, package/lockfile, database schema/migration, external integration, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, or charge-factor changes.
+- check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 845 Node assertions, `npm run lint`, `npm run typecheck`, Next build, 241 backend tests, and project Harness check.
 - local_commit_sha: `pending`
 - integration_status: `not_started`
 - integration_method: `N/A`

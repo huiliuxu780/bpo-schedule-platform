@@ -17,6 +17,19 @@ status: "draft"
 notes: "Current source requirement for scheduler monthly roster modeling. Supersedes older WFM draft documents that framed first-pass scheduling around standard capacity."
 ```
 
+### R950 - 班种定义与月班表生成底座产品契约
+
+```yaml
+id: R950
+module: "BPO WFM 三条主线"
+description: "PM confirmed the first roster-generation foundation: the system generates personnel-level daily roster assignments (employee + date + shift/annotation), while daily shift counts, half-hour coverage, and Forecast vs Arranged/Actual headcount gaps are derived views. Shift types first calculate only work-segment coverage; meal/break, lactation, special incentive, and applicability notes are recorded but not calculated. Copying previous month/week inherits only stable shifts, not one-off leave, training, meeting, support, or termination annotations. New, transferred, and missing-source employees enter a pending roster queue without shift recommendation. Version flow is draft -> published without approval. Primary Duty is planned roster; Actual Duty is actual/adjusted roster."
+source: "PM clarification on 2026-07-01 after decisions for roster generation foundation"
+submitted_at: "2026-07-01"
+version: "1.0"
+status: "draft"
+notes: "Product contract source for docs/design/scheduler-shift-type-monthly-roster-generation-contract.md. Does not authorize forecasting model, standard-capacity model, auto-scheduling, approval, permissions, external integrations, database schema/migration, export, batch operations, settlement, or charge-factor work."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

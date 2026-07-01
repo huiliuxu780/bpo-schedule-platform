@@ -27,6 +27,29 @@ status: "draft"
 notes: "IM279 文档/建模任务；目标产物为 docs/design/scheduler-monthly-roster-field-mapping-and-model.md。"
 ```
 
+### US870 - 班种定义与月班表生成底座产品契约
+
+```yaml
+id: US870
+requirement_ids:
+  - R950
+module: "BPO WFM 三条主线"
+role: "产品经理"
+story: "作为产品经理，我希望把班种定义、月班表草稿生成、复制上一月/上一周、待排队列、版本发布和 Primary/Actual 分层沉淀成产品契约，以便后续开发先修正确底座，不把预测模型、标准人力或自动排班混入第一版。"
+task_type: "harness"
+priority: "P0"
+acceptance:
+  - "契约明确第一版生成人员级日班种草稿，而不是只生成班种人数或半小时覆盖。"
+  - "契约明确班种定义第一版只用工作时段参与半小时覆盖展开。"
+  - "契约明确复制上一月/上一周时只继承稳定班种，不继承一次性标注。"
+  - "契约明确新人、转组、来源缺失人员进入待排队列，不做推荐班种。"
+  - "契约明确状态流转为 draft -> published，不做审批。"
+  - "契约明确 Primary Duty 是计划班表，Actual Duty 是实际/调整后履约版本。"
+  - "契约明确预测模型、标准人力、自动排班、审批、权限、通知、导出、批量、外部集成和生产规则均延后。"
+status: "draft"
+notes: "IM282 文档/产品契约任务；目标产物为 docs/design/scheduler-shift-type-monthly-roster-generation-contract.md。"
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

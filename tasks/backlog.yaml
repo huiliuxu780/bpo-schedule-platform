@@ -46,3 +46,13 @@ tasks:
     story_ids: []
     requirement_ids: []
     notes: "Completed in this branch: legacy traceability files were compressed into compact current stubs; historical details remain available through Git history."
+
+  - id: IM282
+    title: "班种定义与月班表生成底座产品契约"
+    status: done
+    required_workflow: harness
+    story_ids:
+      - US870
+    requirement_ids:
+      - R950
+    notes: "Defines the first roster-generation foundation: personnel-level daily assignments, ShiftType work-segment expansion, stable-shift copy rules, pending roster queue, draft-to-published version flow, and Primary/Actual boundary. No implementation, forecasting model, standard-capacity model, auto-scheduling, approval, permissions, external integration, database schema/migration, export, batch, settlement, or charge-factor work."

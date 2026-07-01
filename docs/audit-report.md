@@ -4,6 +4,23 @@
 
 ## Current Audit
 
+### 2026-07-01 - IM282 班种定义与月班表生成底座产品契约
+
+#### 审计结论
+
+- 新增 `docs/design/scheduler-shift-type-monthly-roster-generation-contract.md`。
+- 契约明确第一版生成人员级日班种草稿，派生每天班种人数、半小时覆盖和 Forecast vs Arranged/Actual 人头差异。
+- 契约明确班种定义第一版只计算工作时段覆盖；用餐/休息、哺乳假、特殊激励和适用说明只记录不计算。
+- 契约明确复制上一月/上一周时只继承稳定班种，不继承一次性标注。
+- 契约明确待排队列不提供推荐班种，状态流转为 `draft -> published`，并区分 Primary 计划班表与 Actual 实际班表。
+- 本轮只做文档契约和轻量追踪更新，不修改业务代码、前端、后端、数据库、脚本逻辑、依赖、package/lockfile、外部集成、自动排班、审批、权限、通知、导出、批量、预测模型、标准人力、生产公式、结算或收费因子。
+
+#### 验证
+
+- `git diff --check`: 通过。
+- `bash scripts/check-state.sh --strict`: 通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`: 通过，包含 strict state check、845 Node assertions、lint、typecheck、Next build、241 backend tests 和 project Harness check。
+
 ### 2026-07-01 - IM281 主追踪链瘦身
 
 #### 审计结论

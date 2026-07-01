@@ -28,3 +28,12 @@
 - action: 主追踪链瘦身。
 - status: `done`
 - notes: 将历史堆积追踪文件压缩为 compact current stubs；历史细节通过 Git history 查询。压缩范围包括 backlog、raw requirements、user stories、audit report、task log、branch log、project state 和 trace index。
+
+- task_id: `IM282`
+- source_ids:
+  - `R950`
+- story_ids:
+  - `US870`
+- action: 班种定义与月班表生成底座产品契约。
+- status: `done`
+- notes: 沉淀人员级日班种草稿、班种工作时段展开、稳定班种复制、待排队列、draft -> published 状态流转和 Primary/Actual 分层；不进入预测模型、标准人力、自动排班、审批、权限、外部集成或数据库实现。
