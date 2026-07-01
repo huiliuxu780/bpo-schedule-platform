@@ -57,7 +57,7 @@
 - scope_diff_check: expected frontend IA redesign, local model view fields if needed, tests, and traceability changes only; no backend API route, database, migration, dependency, package/lockfile, external integration, Excel upload/import, save/publish workflow, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, standard-capacity model, forecasting model, or charge-factor changes.
 - focused_check_result: `node --test scripts/tests/roster-draft-generation-model.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` passed with 12 tests; `npm run typecheck` passed; `npm run lint` passed; `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build` passed. Browser smoke passed on `http://localhost:3003/roster-drafts?month=2026-08`, including workbench toolbar, week grid, month scan grid, cell inspector, queue list, and queue-to-cell location.
 - check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 857 Node tests, shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 249 backend tests, and project Harness check.
-- local_commit_sha: `pending`
+- local_commit_sha: `b4233f9`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
