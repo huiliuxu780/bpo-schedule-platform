@@ -61,6 +61,21 @@ export type DraftAdjustmentScenario = {
   coverage: CoverageResult
 }
 
+export type GapQueueItem = {
+  id: string
+  intervalLabel: string
+  demand: DemandRequirement
+  coverage: CoverageResult
+  statusLabel: "优先补位" | "待关注" | "已满足"
+}
+
+export type GapQueueScenario = {
+  demands: DemandRequirement[]
+  employees: EmployeeSkillCapacity[]
+  assignments: ShiftAssignment[]
+  queueItems: GapQueueItem[]
+}
+
 export function calculateCoverageResult(
   demand: DemandRequirement,
   assignments: ShiftAssignment[],
@@ -286,6 +301,95 @@ export function buildIm277AdjustmentScenarios() {
   return scenarios
 }
 
+export function buildIm278GapQueueScenario(): GapQueueScenario {
+  const { demand: baseDemand, employees } = buildIm276AcceptanceScenario()
+  const demands: DemandRequirement[] = [
+    baseDemand,
+    {
+      ...baseDemand,
+      intervalStart: "10:30",
+      intervalEnd: "11:00",
+    },
+    {
+      ...baseDemand,
+      intervalStart: "11:00",
+      intervalEnd: "11:30",
+    },
+  ]
+  const assignments: ShiftAssignment[] = [
+    {
+      assignmentId: "assignment-king",
+      employeeId: "king",
+      shiftTypeName: "大白班",
+      startTime: "09:00",
+      endTime: "18:00",
+      plannedSkillName: "投诉",
+    },
+    {
+      assignmentId: "assignment-james",
+      employeeId: "james",
+      shiftTypeName: "小白班",
+      startTime: "10:00",
+      endTime: "19:00",
+      plannedSkillName: "投诉",
+    },
+    {
+      assignmentId: "assignment-tay",
+      employeeId: "tay",
+      shiftTypeName: "临时班",
+      startTime: "10:00",
+      endTime: "10:30",
+      plannedSkillName: "投诉",
+    },
+    {
+      assignmentId: "assignment-alex",
+      employeeId: "alex",
+      shiftTypeName: "临时班",
+      startTime: "10:30",
+      endTime: "11:00",
+      plannedSkillName: "投诉",
+    },
+    {
+      assignmentId: "assignment-lily",
+      employeeId: "lily",
+      shiftTypeName: "临时班",
+      startTime: "11:00",
+      endTime: "11:30",
+      plannedSkillName: "投诉",
+    },
+  ]
+  const queueItems = demands
+    .map((demand) => {
+      const coverage = calculateCoverageResult(demand, assignments, employees)
+      const intervalLabel = `${demand.intervalStart}-${demand.intervalEnd}`
+
+      return {
+        id: `interval-${demand.intervalStart.replace(":", "")}`,
+        intervalLabel,
+        demand,
+        coverage,
+        statusLabel: getGapQueueStatusLabel(coverage),
+      }
+    })
+    .sort((left, right) => {
+      const gapDifference =
+        right.coverage.gapStandardCapacity - left.coverage.gapStandardCapacity
+
+      if (gapDifference !== 0) {
+        return gapDifference
+      }
+
+      return left.demand.intervalStart.localeCompare(right.demand.intervalStart)
+    })
+
+  return {
+    demands,
+    employees,
+    assignments,
+    queueItems,
+  }
+}
+
 function buildDraftAdjustmentScenario(
   id: string,
   label: string,
@@ -301,6 +405,19 @@ function buildDraftAdjustmentScenario(
     assignments,
     coverage: calculateCoverageResult(demand, assignments, employees),
   }
+}
+
+function getGapQueueStatusLabel(
+  coverage: CoverageResult
+): GapQueueItem["statusLabel"] {
+  if (coverage.gapStandardCapacity >= 1) {
+    return "优先补位"
+  }
+  if (coverage.gapStandardCapacity > 0) {
+    return "待关注"
+  }
+
+  return "已满足"
 }
 
 function assignmentCoversDemandInterval(

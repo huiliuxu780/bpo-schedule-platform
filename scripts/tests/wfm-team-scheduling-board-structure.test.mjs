@@ -47,6 +47,23 @@ test("team scheduling board exposes manual draft adjustment controls", () => {
   }
 })
 
+test("team scheduling board exposes the multi-interval gap queue", () => {
+  const source = read("components/wfm-team-scheduling-board.tsx")
+
+  for (const expectedText of [
+    "缺口队列",
+    "10:30-11:00",
+    "11:00-11:30",
+    "优先补位",
+    "已满足",
+    "setSelectedIntervalId",
+    "selectedInterval",
+    "buildIm278GapQueueScenario",
+  ]) {
+    assert.ok(source.includes(expectedText), `missing IM278 gap queue contract: ${expectedText}`)
+  }
+})
+
 test("new schedule plan page exposes the team scheduling board v0.1", () => {
   const pageSource = read("app/schedule-plans/new/page.tsx")
 

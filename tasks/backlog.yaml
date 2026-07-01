@@ -14491,3 +14491,56 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已完成：`components/wfm-team-scheduling-board.tsx` 改为本地交互排班板，提供初始草稿、移出 tay、加入 alex、加入 lily 四个手动调整场景；`lib/wfm-coverage.ts` 新增 IM277 调整场景构造，复用同一标准人力计算模型。页面保留 IM276 的 3 人 / 2.2 标准人力 / 缺口 0.8 基准样例；点击移出 tay 后变为已排 2.0、缺口 1.0；点击加入 alex 后覆盖人数增加但 alex 对投诉贡献 0 并显示技能错配；点击加入 lily 后已排 3.0、缺口 0.0，并显示满足。本轮未新增后端、数据库、依赖、package/lockfile、权限、审批、导出、批量、拖拽库、自动排班、生产公式、结算或收费因子。"
+  - id: IM278
+    title: "班组长多时段标准人力缺口队列"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM277"]
+    story_ids: ["US869"]
+    requirement_ids: ["R949"]
+    allowed_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "components/wfm-team-scheduling-board.tsx"
+      - "lib/wfm-coverage.ts"
+      - "scripts/tests/wfm-coverage-model.test.mjs"
+      - "scripts/tests/wfm-team-scheduling-board-structure.test.mjs"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+      - "backend/migrations/**"
+      - "project-progress/**"
+      - "docs/design/**"
+      - "node_modules/**"
+    acceptance:
+      - "保留 IM276 的 10:00-10:30 3 人覆盖但 2.2 标准人力仍不满足、缺口 0.8 样例。"
+      - "新增至少 3 个半小时时段的缺口队列，并按标准人力缺口从高到低排序。"
+      - "10:30-11:00 显示已排 2.0、缺口 1.0，并作为优先补位项。"
+      - "11:00-11:30 显示已排 3.0、缺口 0.0，并标记为已满足。"
+      - "点击缺口队列中的时段后，主明细同步显示该时段的需求、人员贡献、缺口和原因。"
+      - "不新增自动排班、真实保存、审批、权限、导出、批量操作、外部系统集成、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、focused WFM tests、`npm run typecheck`、`npm run lint`、browser smoke、`git diff --check`、`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增或修改后端、数据库 schema、migration 或生产持久化配置"
+      - "需要真实外部系统集成"
+      - "需要自动排班、拖拽库、审批、权限、导出、批量操作、生产公式、结算或收费因子"
+      - "范围扩展到完整发布门槛、履约风险闭环、员工自助页面或真实登录/状态日志计算"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：`lib/wfm-coverage.ts` 新增 IM278 多时段缺口队列场景，生成 10:00-10:30、10:30-11:00、11:00-11:30 三个半小时时段并按标准人力缺口排序；`components/wfm-team-scheduling-board.tsx` 新增缺口队列，点击队列项后主明细同步显示该时段需求、人员贡献、缺口和原因。页面保留 IM276 的三人覆盖但 2.2 标准人力仍不满足样例；10:30-11:00 显示已排 2.0、缺口 1.0、优先补位和技能错配；11:00-11:30 显示已排 3.0、缺口 0.0、已满足。本轮未新增后端、数据库、依赖、package/lockfile、权限、审批、导出、批量、拖拽库、自动排班、生产公式、结算或收费因子。"

@@ -28,8 +28,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import {
-  buildIm276AcceptanceScenario,
   buildIm277AdjustmentScenarios,
+  buildIm278GapQueueScenario,
   calculateCoverageResult,
 } from "@/lib/wfm-coverage"
 
@@ -48,13 +48,24 @@ const draftScenarioLabels = {
 } as const
 
 export function WfmTeamSchedulingBoard() {
-  const { demand } = buildIm276AcceptanceScenario()
   const scenarios = buildIm277AdjustmentScenarios()
+  const gapQueueScenario = buildIm278GapQueueScenario()
   const [draftScenario, setDraftScenario] = useState("initial")
+  const [selectedIntervalId, setSelectedIntervalId] =
+    useState("interval-1000")
   const scenarioOptions = Object.values(scenarios)
   const currentScenario = scenarios[draftScenario] ?? scenarios.initial
-  const coverage = currentScenario.coverage
-  const assignments = currentScenario.assignments
+  const selectedInterval =
+    gapQueueScenario.queueItems.find((item) => item.id === selectedIntervalId) ??
+    gapQueueScenario.queueItems[0]
+  const isBaseInterval = selectedInterval.intervalLabel === "10:00-10:30"
+  const demand = selectedInterval.demand
+  const coverage = isBaseInterval
+    ? currentScenario.coverage
+    : selectedInterval.coverage
+  const assignments = isBaseInterval
+    ? currentScenario.assignments
+    : gapQueueScenario.assignments
 
   return (
     <section className="grid gap-4">
@@ -68,7 +79,7 @@ export function WfmTeamSchedulingBoard() {
           </p>
           <p className="text-sm font-medium">上海职场 / A 项目 / A 组</p>
           <p className="text-sm text-muted-foreground">
-            投诉 10:00-10:30 需求 3.0 标准人力，当前已排{" "}
+            投诉 {selectedInterval.intervalLabel} 需求 3.0 标准人力，当前已排{" "}
             {formatCapacity(coverage.scheduledStandardCapacity)}，缺口{" "}
             {formatCapacity(coverage.gapStandardCapacity)}。
           </p>
@@ -184,6 +195,49 @@ export function WfmTeamSchedulingBoard() {
 
         <CapacityGapPanel coverage={coverage} />
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">缺口队列</CardTitle>
+          <CardDescription>
+            按标准人力缺口排序；10:30-11:00 优先补位，11:00-11:30 已满足。
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-2">
+          {gapQueueScenario.queueItems.map((item) => (
+            <Button
+              key={item.id}
+              type="button"
+              variant={selectedInterval.id === item.id ? "default" : "outline"}
+              className="h-auto justify-between gap-3 px-3 py-2 text-left"
+              onClick={() => setSelectedIntervalId(item.id)}
+            >
+              <span className="grid gap-1">
+                <span className="font-medium">{item.intervalLabel}</span>
+                <span className="text-xs text-muted-foreground">
+                  {item.demand.skillName} / 需求{" "}
+                  {formatCapacity(item.coverage.requiredStandardCapacity)} / 已排{" "}
+                  {formatCapacity(item.coverage.scheduledStandardCapacity)}
+                </span>
+              </span>
+              <span className="flex flex-wrap items-center justify-end gap-2">
+                <Badge
+                  variant={
+                    item.coverage.gapStandardCapacity > 0
+                      ? "destructive"
+                      : "outline"
+                  }
+                >
+                  {item.statusLabel}
+                </Badge>
+                <span className="text-sm font-semibold">
+                  缺口 {formatCapacity(item.coverage.gapStandardCapacity)}
+                </span>
+              </span>
+            </Button>
+          ))}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

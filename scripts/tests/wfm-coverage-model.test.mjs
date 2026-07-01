@@ -4,6 +4,7 @@ import test from "node:test"
 import {
   buildIm276AcceptanceScenario,
   buildIm277AdjustmentScenarios,
+  buildIm278GapQueueScenario,
   calculateCoverageResult,
 } from "../../lib/wfm-coverage.ts"
 
@@ -111,4 +112,37 @@ test("IM277 draft adjustments recalculate capacity gap without changing demand",
   assert.equal(scenarios.lilyAdded.coverage.scheduledStandardCapacity, 3)
   assert.equal(scenarios.lilyAdded.coverage.gapStandardCapacity, 0)
   assert.equal(scenarios.lilyAdded.coverage.resultStatus, "satisfied")
+})
+
+test("IM278 gap queue sorts half-hour intervals by standard capacity gap", () => {
+  const scenario = buildIm278GapQueueScenario()
+
+  assert.equal(scenario.demands.length, 3)
+  assert.deepEqual(
+    scenario.queueItems.map((item) => item.intervalLabel),
+    ["10:30-11:00", "10:00-10:30", "11:00-11:30"]
+  )
+
+  const topGap = scenario.queueItems[0]
+  assert.equal(topGap.intervalLabel, "10:30-11:00")
+  assert.equal(topGap.coverage.scheduledStandardCapacity, 2)
+  assert.equal(topGap.coverage.gapStandardCapacity, 1)
+  assert.equal(topGap.statusLabel, "优先补位")
+  assert.ok(topGap.coverage.reasons.includes("standard_capacity_gap"))
+  assert.ok(topGap.coverage.reasons.includes("skill_mismatch"))
+
+  const baseContract = scenario.queueItems.find(
+    (item) => item.intervalLabel === "10:00-10:30"
+  )
+  assert.equal(baseContract.coverage.coveredEmployeeCount, 3)
+  assert.equal(baseContract.coverage.scheduledStandardCapacity, 2.2)
+  assert.equal(baseContract.coverage.gapStandardCapacity, 0.8)
+
+  const satisfied = scenario.queueItems.find(
+    (item) => item.intervalLabel === "11:00-11:30"
+  )
+  assert.equal(satisfied.coverage.scheduledStandardCapacity, 3)
+  assert.equal(satisfied.coverage.gapStandardCapacity, 0)
+  assert.equal(satisfied.coverage.resultStatus, "satisfied")
+  assert.equal(satisfied.statusLabel, "已满足")
 })

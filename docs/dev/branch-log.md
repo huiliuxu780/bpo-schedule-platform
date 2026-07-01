@@ -6040,3 +6040,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending after implementation and local commit`
 - blocked_reason: `N/A`
+
+### IM278 Team Gap Queue
+
+- branch_name: `codex/im278-team-gap-queue`
+- base_main_commit: `origin/main@66193b1; stacked on local codex/im277-team-draft-edit-recalc at b847c85`
+- stacked_on: `codex/im277-team-draft-edit-recalc`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium frontend-scaffold product capability for team-lead WFM draft review: multi-interval standard-capacity gap queue and selected interval detail sync on `/schedule-plans/new`.
+- qoder_mode: `false; PM confirmed IM278 and said 同意.`
+- allowed_files_check: current Harness state, raw requirement, user story, backlog, trace index, task/audit/branch logs, WFM team scheduling component, WFM coverage model, and focused WFM tests only.
+- scope_diff_check: expected frontend UI/model/test/traceability changes only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, drag-and-drop library, automatic scheduling, production formula, settlement, charge-factor, external integration, dashboard, or sidebar changes.
+- check_result: Focused WFM tests passed with 10 tests. `npm run typecheck` and `npm run lint` passed. Browser smoke on `http://127.0.0.1:3000/schedule-plans/new` confirmed initial gap queue visibility, `10:30-11:00` click -> 2.0 / gap 1.0 with alex skill mismatch, and `11:00-11:30` click -> 3.0 / gap 0.0 with satisfied state. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 845 Node assertions, `npm run lint`, `npm run typecheck`, Next build, 241 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after implementation and local commit`
+- blocked_reason: `N/A`

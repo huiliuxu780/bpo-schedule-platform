@@ -6178,3 +6178,18 @@
 - `components/wfm-team-scheduling-board.tsx` 改为 client component，新增“调整草稿”按钮组；当前场景变化时，顶部摘要、人员贡献表、右侧缺口面板和技能错配校验都从当前 coverage 结果读取。
 - 浏览器 smoke 验证 `/schedule-plans/new`：初始场景显示 2.2 / 缺口 0.8；移出 tay 后显示 2.0 / 缺口 1.0；加入 alex 后显示技能错配且 alex 贡献 0.0；加入 lily 后显示 3.0 / 缺口 0.0 / 满足。
 - Focused tests 覆盖 IM277 调整场景模型和排班板结构；`npm run typecheck`、`npm run lint` 和浏览器 smoke 已通过，最终 Harness 门禁待运行。
+
+### 2026-07-01 - IM278 班组长多时段标准人力缺口队列
+
+#### 审计计划
+
+- 承接 IM277 手动调整与即时重算，把本轮限定为一个中等前端本地交互切片：班组长在同一排班板看到多半小时标准人力缺口队列，并切换复核具体时段。
+- 保留 IM276 的 10:00-10:30 三人覆盖但 2.2 标准人力仍不满足样例；新增 10:30-11:00 缺口 1.0 和 11:00-11:30 已满足样例。
+- 不新增后端、数据库、依赖、package/lockfile、权限、审批、导出、批量、拖拽库、自动排班、真实保存、发布门槛、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- `lib/wfm-coverage.ts` 新增 `GapQueueItem`、`GapQueueScenario` 和 `buildIm278GapQueueScenario()`，复用标准人力计算模型生成 10:00-10:30、10:30-11:00、11:00-11:30 三个半小时时段，并按标准人力缺口从高到低排序。
+- `components/wfm-team-scheduling-board.tsx` 新增“缺口队列”，展示时段、需求、已排标准人力、缺口和优先状态；点击队列项后，顶部摘要、小组需求、人员贡献、缺口预警和技能错配明细同步到所选时段。
+- 保留 IM276 的 10:00-10:30 三人覆盖但 2.2 标准人力仍不满足、缺口 0.8 样例；新增 10:30-11:00 已排 2.0、缺口 1.0、优先补位和 alex 技能错配；新增 11:00-11:30 已排 3.0、缺口 0.0、已满足。
+- Focused WFM tests、`npm run typecheck`、`npm run lint`、Chrome browser smoke 和最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 已通过；最终门禁包含 strict state check、845 Node assertions、Next build、241 backend tests 和 project Harness check。

@@ -3117,3 +3117,12 @@
   action: 班组长草稿手动调整与即时重算。
   status: `done`
   notes: Codex 基于 `codex/im276-team-capacity-draft-loop` 创建 `codex/im277-team-draft-edit-recalc` 并直接实现下一段完整切片。`components/wfm-team-scheduling-board.tsx` 改为本地交互排班板，提供初始草稿、移出 tay、加入 alex、加入 lily 四个手动调整场景；`lib/wfm-coverage.ts` 新增 IM277 调整场景构造并复用同一标准人力计算模型。浏览器 smoke 确认 `/schedule-plans/new` 点击移出 tay 后变为已排 2.0、缺口 1.0；点击加入 alex 后保持已排 2.2、缺口 0.8 且显示技能错配；点击加入 lily 后变为已排 3.0、缺口 0.0 并显示满足。未新增后端、数据库、依赖、package/lockfile、权限、审批、导出、批量、拖拽库、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM278`
+  source_ids:
+    - `R949`
+  story_ids:
+    - `US869`
+  action: 班组长多时段标准人力缺口队列。
+  status: `done`
+  notes: Codex 基于 `codex/im277-team-draft-edit-recalc` 创建 `codex/im278-team-gap-queue` 并直接实现下一段完整切片。`lib/wfm-coverage.ts` 新增 IM278 多时段缺口队列场景，`components/wfm-team-scheduling-board.tsx` 新增按缺口排序的缺口队列和点击切换主明细。浏览器 smoke 确认 `/schedule-plans/new` 初始保留 10:00-10:30 三人 / 2.2 / 缺口 0.8 样例；点击 10:30-11:00 后显示已排 2.0、缺口 1.0、alex 和技能错配；点击 11:00-11:30 后显示已排 3.0、缺口 0.0、lily 和已满足。未新增后端、数据库、依赖、package/lockfile、权限、审批、导出、批量、拖拽库、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
