@@ -46,3 +46,12 @@
 - action: ShiftType 班种解析与半小时覆盖展开。
 - status: `done`
 - notes: 新增后端纯领域服务解析可配置班种工作时段并展开半小时覆盖，覆盖 Z1、A5、T1、T4、N、A12 和坏班种异常清单；不新增 API、数据库、migration、Excel 上传、UI、预测模型、标准人力或自动排班。
+
+- task_id: `IM284`
+- source_ids:
+  - `R952`
+- story_ids:
+  - `US872`
+- action: 人员级月班表草稿纯领域模型。
+- status: `done`
+- notes: 新增后端纯领域模型表达 RosterVersion、RosterAssignment、PendingRosterEmployee、多记录同日、shift-only 覆盖、shift 重叠校验、引用快照校验和 draft-only 可编辑；不新增 API、数据库、migration、复制生成、Excel 上传、UI、预测模型、标准人力或自动排班。

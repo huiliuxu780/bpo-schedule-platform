@@ -43,6 +43,19 @@ status: "draft"
 notes: "Backend pure domain implementation only; tests use representative shift types from 202607班表.xlsx."
 ```
 
+### R952 - 人员级月班表草稿纯领域模型
+
+```yaml
+id: R952
+module: "BPO WFM 三条主线"
+description: "Implement the backend pure domain model for personnel-level monthly roster drafts. The model supports RosterVersion with draft/published/archived states, RosterAssignment with multiple same-employee same-day records, medium-grain assignment kinds, shift-only coverage participation, non-overlapping multi-shift validation, reference-snapshot validation for employee/project/team consistency, and separate month-level PendingRosterEmployee records. This slice must not add API routes, database schema/migration, Excel upload/import, UI, copy generation, forecasting model, standard-capacity model, auto-scheduling, approval, permissions, export, batch operations, settlement, or charge-factor work."
+source: "PM-confirmed development drill on 2026-07-01"
+submitted_at: "2026-07-01"
+version: "1.0"
+status: "draft"
+notes: "Backend pure domain implementation only; preserves complex same-day roster events without counting non-shift events as coverage."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

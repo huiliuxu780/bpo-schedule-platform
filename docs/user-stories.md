@@ -71,6 +71,29 @@ status: "draft"
 notes: "IM283 backend pure domain service and focused unittest."
 ```
 
+### US872 - 人员级月班表草稿纯领域模型
+
+```yaml
+id: US872
+requirement_ids:
+  - R952
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望系统底层能表达同一员工同一天的多个班表记录、只把正式班种计入覆盖、并校验多班种不重叠和人员归属，以便后续生成月班表草稿时不压扁真实业务。"
+task_type: "backend-mvp"
+priority: "P0"
+acceptance:
+  - "后端纯领域模型定义 RosterVersion、RosterAssignment、PendingRosterEmployee 和引用校验上下文，不新增 API、数据库、migration 或 UI。"
+  - "同一员工同一天允许多条记录，只有 assignment_kind=shift 参与覆盖。"
+  - "assignment_kind 支持 shift、leave、rest、training、meeting、support、work_from_home、annotation、unassigned。"
+  - "同一员工同一天允许多条 shift，但时间重叠必须返回校验错误。"
+  - "员工有效性和项目/小组归属通过调用方传入快照校验，不查数据库。"
+  - "待排人员使用独立 PendingRosterEmployee，保持人月维度。"
+  - "RosterVersion 只支持 draft、published、archived，且只有 draft 可编辑。"
+status: "draft"
+notes: "IM284 backend pure domain model and focused unittest."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

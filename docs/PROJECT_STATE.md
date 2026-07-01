@@ -15,7 +15,7 @@ The active execution source is `docs/current/**`. This file is a compact compati
 
 ## Durable Product Anchor
 
-The latest product anchor is IM283 / R951 / US871: backend pure domain ShiftType work-time parsing and half-hour coverage expansion, building on IM282's roster generation contract.
+The latest product anchor is IM284 / R952 / US872: backend pure domain model for personnel-level monthly roster drafts, building on IM283's ShiftType coverage expansion.
 
 Confirmed bottom-layer direction:
 
@@ -30,6 +30,7 @@ Confirmed bottom-layer direction:
 - Primary Duty 是计划班表；Actual Duty 是实际班表或调整后履约版本。
 - 半小时差异校验沿用 Forecast agents vs Arranged/Actual agents 人头口径，是派生视图。
 - IM283 已确认第一刀开发落在后端纯领域服务，不新增 API、数据库、migration、Excel 上传、UI、预测模型、标准人力或自动排班。
+- IM284 已确认人员级月班表草稿先做后端纯领域模型：同日多记录、shift-only 覆盖、多 shift 重叠校验、引用快照校验、独立待排人员和 draft-only 可编辑。
 - 标准人力、自动排班、审批、权限、通知、导出、批量、外部集成、生产公式、结算和收费因子延后。
 
 ## History Policy

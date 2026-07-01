@@ -4,6 +4,22 @@
 
 ## Current Audit
 
+### 2026-07-01 - IM284 人员级月班表草稿纯领域模型
+
+#### 审计结论
+
+- 新增 `backend/app/roster_drafts.py` 后端纯领域模型。
+- 新增 `backend/tests/test_roster_drafts.py`，覆盖复杂日多记录、shift-only 覆盖、多 shift 不重叠、重叠校验错误、员工/项目/小组引用快照校验、非 draft 不可编辑、独立待排人员对象和 `unassigned` 不允许作为日维度班表行。
+- 同一员工同一天允许多条记录，只有 `assignment_kind=shift` 参与覆盖。
+- 第一版不压扁真实业务，但不引入 API、数据库、migration、Excel 上传/导入、UI、复制生成、预测模型、标准人力、自动排班、审批、权限、通知、导出、批量、生产公式、结算或收费因子。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_roster_drafts`: 通过，6 个测试。
+- `git diff --check`: 通过。
+- `bash scripts/check-state.sh --strict`: 通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`: 通过，包含 strict state check、845 Node assertions、lint、typecheck、Next build、249 backend tests 和 project Harness check。
+
 ### 2026-07-01 - IM283 ShiftType 班种解析与半小时覆盖展开
 
 #### 审计结论

@@ -33,6 +33,13 @@ stories:
     task_ids:
       - "IM283"
     archive_refs: []
+  US872:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R952"
+    task_ids:
+      - "IM284"
+    archive_refs: []
 tasks:
   F001:
     file: "tasks/backlog.yaml"
@@ -61,6 +68,11 @@ tasks:
     story_ids:
       - "US871"
     gate: "backend-mvp"
+  IM284:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US872"
+    gate: "backend-mvp"
 requirements:
   R949:
     file: "docs/raw-requirements.md"
@@ -80,10 +92,17 @@ requirements:
       - "US871"
     task_ids:
       - "IM283"
+  R952:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US872"
+    task_ids:
+      - "IM284"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
   - "D-2026-07-01-trace-spine-slimming"
   - "D-2026-07-01-roster-generation-foundation"
   - "D-2026-07-01-shift-type-coverage-backend"
+  - "D-2026-07-01-roster-draft-domain-model"
 archive_refs: []

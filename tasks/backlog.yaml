@@ -66,3 +66,13 @@ tasks:
     requirement_ids:
       - R951
     notes: "Backend pure domain service for configurable ShiftType work-time parsing and half-hour coverage expansion. Covers representative real roster shift types Z1, A5, T1, T4, N, and A12 plus non-blocking exception handling. No API, database, migration, Excel upload/import, UI, forecasting model, standard-capacity model, auto-scheduling, approval, permissions, export, batch, settlement, or charge-factor work."
+
+  - id: IM284
+    title: "人员级月班表草稿纯领域模型"
+    status: done
+    required_workflow: backend-mvp
+    story_ids:
+      - US872
+    requirement_ids:
+      - R952
+    notes: "Backend pure domain model for RosterVersion, RosterAssignment, PendingRosterEmployee, same-day multi-record support, shift-only coverage participation, multi-shift overlap validation, reference snapshot validation, and draft-only editability. No API, database, migration, Excel upload/import, UI, copy generation, forecasting model, standard-capacity model, auto-scheduling, approval, permissions, export, batch, settlement, or charge-factor work."
