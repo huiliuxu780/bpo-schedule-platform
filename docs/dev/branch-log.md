@@ -6078,3 +6078,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending after local commit`
 - blocked_reason: `N/A`
+
+### IM280 Documentation History Cleanup Pass 1
+
+- branch_name: `codex/im280-doc-history-cleanup`
+- base_main_commit: `stacked on local codex/im279-roster-requirements-trace at 3e2ef93`
+- stacked_on: `codex/im279-roster-requirements-trace`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Documentation-history cleanup pass 1 after PM selected medium cleanup: remove untracked WFM draft artifacts, local Feishu tracker output, tracked `.DS_Store`, and no-reference historical design/plan documents that are no longer current execution sources.
+- qoder_mode: `false; PM asked Codex to do the cleanup directly.`
+- allowed_files_check: deletion-only cleanup for obsolete docs/artifacts plus `docs/dev/branch-log.md`.
+- scope_diff_check: expected documentation cleanup only; no app, component, lib, backend, dependency, package/lockfile, database schema/migration, external integration, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, or charge-factor changes.
+- check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 845 Node assertions, `npm run lint`, `npm run typecheck`, Next build, 241 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after local commit`
+- blocked_reason: `N/A`
