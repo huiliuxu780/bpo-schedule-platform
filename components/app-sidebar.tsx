@@ -5,9 +5,12 @@ import Link from "next/link"
 import { useTheme } from "next-themes"
 import { usePathname } from "next/navigation"
 import {
-  CalendarDays,
+  CalendarClock,
+  CalendarCog,
+  CalendarRange,
   CircleHelp,
   Database,
+  Gauge,
   Handshake,
   Inbox,
   LayoutDashboard,
@@ -16,7 +19,6 @@ import {
   MoreHorizontal,
   Network,
   PanelTop,
-  PlusCircle,
   Settings,
   Sun,
   type LucideIcon,
@@ -66,13 +68,14 @@ const nav: NavGroup[] = [
       {
         title: "经营总览",
         href: "/dashboard",
+        icon: Gauge,
         activeMatch: "exact",
       },
     ],
   },
   {
     title: "计划与排班",
-    icon: CalendarDays,
+    icon: CalendarClock,
     items: [
       {
         title: "需求计划",
@@ -83,13 +86,13 @@ const nav: NavGroup[] = [
       {
         title: "排班计划",
         href: "/schedule-plans",
-        icon: CalendarDays,
+        icon: CalendarClock,
         activeMatch: "prefix",
       },
       {
         title: "月班表草稿",
         href: "/roster-drafts",
-        icon: CalendarDays,
+        icon: CalendarRange,
         activeMatch: "prefix",
       },
       {
@@ -194,7 +197,7 @@ function NavList({
 function BrandMark() {
   return (
     <div className="flex size-6 items-center justify-center rounded-md border bg-background text-foreground">
-      <LayoutDashboard />
+      <CalendarCog />
     </div>
   )
 }
@@ -202,7 +205,6 @@ function BrandMark() {
 export function AppSidebar({
   variant = "sidebar",
 }: React.ComponentProps<typeof Sidebar>) {
-  const pathname = usePathname()
   const { resolvedTheme, setTheme } = useTheme()
   const isDark = resolvedTheme === "dark"
 
@@ -214,33 +216,15 @@ export function AppSidebar({
             <SidebarMenuButton asChild size="lg">
               <Link href="/dashboard">
                 <BrandMark />
-                <div className="grid flex-1 text-left text-sm leading-tight">
+                <div
+                  data-slot="brand-copy"
+                  className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden"
+                >
                   <span className="truncate font-medium">BPO WFM</span>
                   <span className="truncate text-xs text-muted-foreground">
                     人力计划与履约管理
                   </span>
                 </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              isActive={pathname === "/schedule-plans/new"}
-            >
-              <Link href="/schedule-plans/new">
-                <PlusCircle />
-                <span>快速新建</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href="/schedule-risks?status=open">
-                <Inbox />
-                <span>待处理风险</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

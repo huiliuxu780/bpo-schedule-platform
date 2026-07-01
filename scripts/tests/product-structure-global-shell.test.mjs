@@ -41,14 +41,12 @@ test("sidebar follows dashboard baseline with flat workbench navigation", async 
 
   assert.match(
     source,
-    /title: "运营工作台"[\s\S]+?title: "经营总览",\s+href: "\/dashboard",\s+activeMatch: "exact"/,
+    /title: "运营工作台"[\s\S]+?title: "经营总览",\s+href: "\/dashboard",[\s\S]+?activeMatch: "exact"/,
     "dashboard should stay the first primary workbench entry",
   );
-  assert.match(
-    source,
-    /href="\/schedule-plans\/new"/,
-    "sidebar should expose a dashboard-01 style quick-create entry",
-  );
+  assert.doesNotMatch(source, /href="\/schedule-plans\/new"/);
+  assert.doesNotMatch(source, /快速新建/);
+  assert.doesNotMatch(source, /待处理风险/);
   assert.equal(source.includes("CollapsibleTrigger"), false);
   assert.equal(source.includes("CollapsibleContent"), false);
   assert.equal(source.includes("SidebarMenuSub"), false);
@@ -130,6 +128,16 @@ test("sidebar icon rail keeps every visible entry on the same 32px grid", async 
   assert.match(sidebarSource, /<SidebarHeader className="gap-1 px-4 py-3"/);
   assert.match(sidebarSource, /<SidebarContent className="[^"]*px-4/);
   assert.match(sidebarSource, /<SidebarFooter className="px-4 py-3"/);
+  assert.match(
+    sidebarSource,
+    /data-slot="brand-copy"[\s\S]+?group-data-\[collapsible=icon\]:hidden/,
+  );
+  assert.match(sidebarSource, /function BrandMark\(\)[\s\S]+?<CalendarCog/);
+  assert.match(sidebarSource, /title: "经营总览"[\s\S]+?icon: Gauge/);
+  assert.match(sidebarSource, /title: "排班计划"[\s\S]+?icon: CalendarClock/);
+  assert.match(sidebarSource, /title: "月班表草稿"[\s\S]+?icon: CalendarRange/);
+  assert.doesNotMatch(sidebarSource, /title: "排班计划"[\s\S]+?icon: CalendarDays/);
+  assert.doesNotMatch(sidebarSource, /title: "月班表草稿"[\s\S]+?icon: CalendarDays/);
   assert.doesNotMatch(sidebarSource, /group-data-\[collapsible=icon\]:-mt-/);
 });
 

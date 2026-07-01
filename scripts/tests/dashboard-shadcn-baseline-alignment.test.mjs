@@ -27,9 +27,10 @@ test("app shell uses the compact global navigation rail frame", () => {
 })
 
 test("sidebar uses flat workbench navigation rather than expanded directory groups", () => {
-  assert.match(appSidebarSrc, /快速新建/)
-  assert.match(appSidebarSrc, /待处理风险/)
   assert.match(appSidebarSrc, /运营工作台/)
+  assert.doesNotMatch(appSidebarSrc, /快速新建/)
+  assert.doesNotMatch(appSidebarSrc, /待处理风险/)
+  assert.doesNotMatch(appSidebarSrc, /href="\/schedule-plans\/new"/)
   assert.doesNotMatch(appSidebarSrc, /运营数据/)
   assert.doesNotMatch(appSidebarSrc, /CollapsibleTrigger/)
   assert.doesNotMatch(appSidebarSrc, /SidebarMenuSub/)
@@ -41,8 +42,7 @@ test("sidebar active interaction uses the dashboard-01 primary pill treatment", 
   assert.match(sidebarSrc, /data-\[active=true\]:hover:bg-primary/)
   assert.match(sidebarSrc, /data-active=\{isActive \? "true" : undefined\}/)
   assert.doesNotMatch(sidebarSrc, /data-active=\{isActive\}/)
-  assert.match(appSidebarSrc, /isActive=\{pathname === "\/schedule-plans\/new"\}/)
-  assert.match(appSidebarSrc, /快速新建/)
+  assert.doesNotMatch(appSidebarSrc, /isActive=\{pathname === "\/schedule-plans\/new"\}/)
   assert.doesNotMatch(appSidebarSrc, /className="bg-primary text-primary-foreground/)
 })
 
