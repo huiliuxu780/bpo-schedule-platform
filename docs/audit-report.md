@@ -6163,3 +6163,18 @@
 - 技能错配校验展示 alex 无投诉技能时贡献为 0，明确不能用人数自动填补缺口。
 - `/schedule-plans/new` 接入班组长排班板 v0.1，同时保留既有草稿表单、保存前摘要和提交前校验链路。
 - Focused tests 覆盖 IM276 标准人力样例、无目标技能、时间覆盖和页面结构；浏览器 smoke 确认页面真实渲染关键验收文案。
+
+### 2026-07-01 - IM277 班组长草稿手动调整与即时重算
+
+#### 审计计划
+
+- 承接 IM276 标准人力草稿闭环，把本轮限定为一个中等前端本地交互切片：班组长手动调整草稿场景后即时重算标准人力。
+- 保留 IM276 的产品契约基准样例，并新增 tay 移出、alex 技能错配、lily 补足三条验收路径。
+- 不新增后端、数据库、依赖、package/lockfile、权限、审批、导出、批量、拖拽库、自动排班、真实保存、发布门槛、生产公式、结算、收费因子或外部集成。
+
+#### 执行结果
+
+- `lib/wfm-coverage.ts` 新增 `DraftAdjustmentScenario` 和 `buildIm277AdjustmentScenarios()`，把初始草稿、移出 tay、加入 alex、加入 lily 四个场景统一交给 `calculateCoverageResult()` 计算。
+- `components/wfm-team-scheduling-board.tsx` 改为 client component，新增“调整草稿”按钮组；当前场景变化时，顶部摘要、人员贡献表、右侧缺口面板和技能错配校验都从当前 coverage 结果读取。
+- 浏览器 smoke 验证 `/schedule-plans/new`：初始场景显示 2.2 / 缺口 0.8；移出 tay 后显示 2.0 / 缺口 1.0；加入 alex 后显示技能错配且 alex 贡献 0.0；加入 lily 后显示 3.0 / 缺口 0.0 / 满足。
+- Focused tests 覆盖 IM277 调整场景模型和排班板结构；`npm run typecheck`、`npm run lint` 和浏览器 smoke 已通过，最终 Harness 门禁待运行。

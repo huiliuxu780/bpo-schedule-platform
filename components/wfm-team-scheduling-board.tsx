@@ -1,3 +1,6 @@
+"use client"
+
+import { useState } from "react"
 import {
   AlertTriangle,
   CheckCircle2,
@@ -6,6 +9,7 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -25,6 +29,7 @@ import {
 } from "@/components/ui/table"
 import {
   buildIm276AcceptanceScenario,
+  buildIm277AdjustmentScenarios,
   calculateCoverageResult,
 } from "@/lib/wfm-coverage"
 
@@ -35,15 +40,21 @@ const reasonLabels = {
   overstaffed: "超排",
 } as const
 
+const draftScenarioLabels = {
+  initial: "初始草稿",
+  tayMovedOut: "移出 tay",
+  alexAdded: "加入 alex",
+  lilyAdded: "加入 lily",
+} as const
+
 export function WfmTeamSchedulingBoard() {
-  const { demand, assignments, employees } = buildIm276AcceptanceScenario()
-  const coverage = calculateCoverageResult(demand, assignments, employees)
-  const skillMismatchAssignments = assignmentsWithAlex(assignments)
-  const skillMismatchCoverage = calculateCoverageResult(
-    demand,
-    skillMismatchAssignments,
-    employees
-  )
+  const { demand } = buildIm276AcceptanceScenario()
+  const scenarios = buildIm277AdjustmentScenarios()
+  const [draftScenario, setDraftScenario] = useState("initial")
+  const scenarioOptions = Object.values(scenarios)
+  const currentScenario = scenarios[draftScenario] ?? scenarios.initial
+  const coverage = currentScenario.coverage
+  const assignments = currentScenario.assignments
 
   return (
     <section className="grid gap-4">
@@ -57,11 +68,40 @@ export function WfmTeamSchedulingBoard() {
           </p>
           <p className="text-sm font-medium">上海职场 / A 项目 / A 组</p>
           <p className="text-sm text-muted-foreground">
-            投诉 10:00-10:30 需求 3.0 标准人力，当前已排 2.2，缺口 0.8。
+            投诉 10:00-10:30 需求 3.0 标准人力，当前已排{" "}
+            {formatCapacity(coverage.scheduledStandardCapacity)}，缺口{" "}
+            {formatCapacity(coverage.gapStandardCapacity)}。
+          </p>
+          <p className="text-sm text-muted-foreground">
+            基准样例：覆盖人数 3，已排 2.2，缺口 0.8。
           </p>
         </div>
         <Badge variant="outline">草稿可保存</Badge>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">调整草稿</CardTitle>
+          <CardDescription>
+            当前场景：{currentScenario.label}。{currentScenario.summary}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-2">
+          {scenarioOptions.map((scenario) => (
+            <Button
+              key={scenario.id}
+              type="button"
+              variant={draftScenario === scenario.id ? "default" : "outline"}
+              size="sm"
+              onClick={() => setDraftScenario(scenario.id)}
+            >
+              {draftScenarioLabels[
+                scenario.id as keyof typeof draftScenarioLabels
+              ] ?? scenario.label}
+            </Button>
+          ))}
+        </CardContent>
+      </Card>
 
       <div className="grid gap-4 xl:grid-cols-[1fr_1.2fr_1fr]">
         <Card>
@@ -78,7 +118,9 @@ export function WfmTeamSchedulingBoard() {
             </div>
             <div className="rounded-md border p-4">
               <div className="text-sm text-muted-foreground">需求</div>
-              <div className="mt-1 text-3xl font-semibold">3.0 标准人力</div>
+              <div className="mt-1 text-3xl font-semibold">
+                {formatCapacity(coverage.requiredStandardCapacity)} 标准人力
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -127,7 +169,16 @@ export function WfmTeamSchedulingBoard() {
             </Table>
           </CardContent>
           <CardFooter className="text-sm text-muted-foreground">
-            贡献人员：king 1.0、james 1.0、tay 0.2。
+            贡献人员：
+            {coverage.contributors
+              .map(
+                (contributor) =>
+                  `${contributor.employeeName} ${formatCapacity(
+                    contributor.standardCapacityContribution
+                  )}`
+              )
+              .join("、")}
+            。
           </CardFooter>
         </Card>
 
@@ -142,7 +193,7 @@ export function WfmTeamSchedulingBoard() {
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-3 md:grid-cols-4">
-          {skillMismatchCoverage.contributors.map((contributor) => (
+          {coverage.contributors.map((contributor) => (
             <div key={contributor.employeeId} className="rounded-md border p-3">
               <div className="font-medium">{contributor.employeeName}</div>
               <div className="mt-1 text-sm text-muted-foreground">
@@ -158,7 +209,9 @@ export function WfmTeamSchedulingBoard() {
         </CardContent>
         <CardFooter className="flex flex-wrap gap-2 text-sm text-muted-foreground">
           <Badge variant="destructive">技能错配</Badge>
-          <span>alex 对投诉贡献为 0，不能用人数自动填补缺口。</span>
+          <span>
+            alex 对投诉贡献为 0；当前草稿不能用覆盖人数自动填补标准人力缺口。
+          </span>
         </CardFooter>
       </Card>
     </section>
@@ -166,20 +219,31 @@ export function WfmTeamSchedulingBoard() {
 }
 
 function CapacityGapPanel({ coverage }: { coverage: ReturnType<typeof calculateCoverageResult> }) {
+  const isSatisfied = coverage.resultStatus === "satisfied"
+
   return (
     <Card className="border-2">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
-          <CircleAlert className="size-4 text-destructive" />
+          {isSatisfied ? (
+            <CheckCircle2 className="size-4 text-muted-foreground" />
+          ) : (
+            <CircleAlert className="size-4 text-destructive" />
+          )}
           草稿缺口预警
         </CardTitle>
         <CardDescription>
-          覆盖人数为 3，但标准人力仍不满足当前需求。
+          {isSatisfied
+            ? "当前时段已达到预测需求，保存草稿仍不代表正式履约承诺。"
+            : `覆盖人数为 ${coverage.coveredEmployeeCount}，但标准人力仍不满足当前需求。`}
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         <div className="grid grid-cols-2 gap-3">
-          <Metric label="需求" value="3.0" />
+          <Metric
+            label="需求"
+            value={formatCapacity(coverage.requiredStandardCapacity)}
+          />
           <Metric
             label="已排标准人力"
             value={formatCapacity(coverage.scheduledStandardCapacity)}
@@ -192,16 +256,23 @@ function CapacityGapPanel({ coverage }: { coverage: ReturnType<typeof calculateC
         </div>
         <Separator />
         <div className="grid gap-2">
-          {coverage.reasons.map((reason) => (
-            <div key={reason} className="flex items-center gap-2 text-sm">
-              {reason === "standard_capacity_gap" ? (
-                <AlertTriangle className="size-4 text-destructive" />
-              ) : (
-                <Users className="size-4 text-muted-foreground" />
-              )}
-              <span>{reasonLabels[reason]}</span>
+          {coverage.reasons.length > 0 ? (
+            coverage.reasons.map((reason) => (
+              <div key={reason} className="flex items-center gap-2 text-sm">
+                {reason === "standard_capacity_gap" ? (
+                  <AlertTriangle className="size-4 text-destructive" />
+                ) : (
+                  <Users className="size-4 text-muted-foreground" />
+                )}
+                <span>{reasonLabels[reason]}</span>
+              </div>
+            ))
+          ) : (
+            <div className="flex items-center gap-2 text-sm">
+              <CheckCircle2 className="size-4 text-muted-foreground" />
+              <span>满足</span>
             </div>
-          ))}
+          )}
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <CheckCircle2 className="size-4" />
             <span>草稿可保存，但不能视为已满足。</span>
@@ -219,20 +290,6 @@ function Metric({ label, value }: { label: string; value: string }) {
       <div className="mt-1 font-semibold">{value}</div>
     </div>
   )
-}
-
-function assignmentsWithAlex(assignments: ReturnType<typeof buildIm276AcceptanceScenario>["assignments"]) {
-  return [
-    ...assignments.slice(0, 2),
-    {
-      assignmentId: "assignment-alex",
-      employeeId: "alex",
-      shiftTypeName: "大白班",
-      startTime: "09:00",
-      endTime: "18:00",
-      plannedSkillName: "投诉",
-    },
-  ]
 }
 
 function formatCapacity(value: number) {

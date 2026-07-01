@@ -6021,3 +6021,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending after implementation and local commit`
 - blocked_reason: `N/A`
+
+### IM277 Team Draft Edit Recalc
+
+- branch_name: `codex/im277-team-draft-edit-recalc`
+- base_main_commit: `origin/main@66193b1; stacked on local codex/im276-team-capacity-draft-loop at 7337945`
+- stacked_on: `codex/im276-team-capacity-draft-loop`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Medium frontend-scaffold product capability for team-lead WFM draft interaction: manual draft scenario controls and instant standard-capacity recalculation on `/schedule-plans/new`.
+- qoder_mode: `false; PM said 直接开始 and Codex implemented directly.`
+- allowed_files_check: current Harness state, raw requirement, user story, backlog, trace index, task/audit/branch logs, WFM team scheduling component, WFM coverage model, and focused WFM tests only.
+- scope_diff_check: expected frontend UI/model/test/traceability changes only; no backend API, dependency, package/lockfile, schema, migration, auth, permission, approval, export, batch-operation, drag-and-drop library, automatic scheduling, production formula, settlement, charge-factor, external integration, dashboard, or sidebar changes.
+- check_result: Focused draft and IM277 regression run passed with 101 tests. `npm run typecheck` and `npm run lint` passed. Browser smoke on `http://127.0.0.1:3000/schedule-plans/new` confirmed `移出 tay` -> 2.0 / gap 1.0, `加入 alex` -> 2.2 / gap 0.8 with skill mismatch, and `加入 lily` -> 3.0 / gap 0.0 with satisfied state. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 843 Node assertions, `npm run lint`, `npm run typecheck`, Next build, 241 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after implementation and local commit`
+- blocked_reason: `N/A`

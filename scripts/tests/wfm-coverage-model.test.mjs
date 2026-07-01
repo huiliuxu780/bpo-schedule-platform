@@ -3,6 +3,7 @@ import test from "node:test"
 
 import {
   buildIm276AcceptanceScenario,
+  buildIm277AdjustmentScenarios,
   calculateCoverageResult,
 } from "../../lib/wfm-coverage.ts"
 
@@ -81,4 +82,33 @@ test("shift time coverage controls whether an employee contributes to the interv
   assert.equal(result.scheduledStandardCapacity, 1)
   assert.equal(result.gapStandardCapacity, 2)
   assert.deepEqual(result.contributors.map((item) => item.employeeName), ["james"])
+})
+
+test("IM277 draft adjustments recalculate capacity gap without changing demand", () => {
+  const scenarios = buildIm277AdjustmentScenarios()
+
+  assert.equal(scenarios.initial.coverage.scheduledStandardCapacity, 2.2)
+  assert.equal(scenarios.initial.coverage.gapStandardCapacity, 0.8)
+  assert.equal(scenarios.initial.coverage.coveredEmployeeCount, 3)
+
+  assert.equal(scenarios.tayMovedOut.coverage.scheduledStandardCapacity, 2)
+  assert.equal(scenarios.tayMovedOut.coverage.gapStandardCapacity, 1)
+  assert.deepEqual(
+    scenarios.tayMovedOut.coverage.contributors.map((item) => item.employeeName),
+    ["king", "james"]
+  )
+
+  assert.equal(scenarios.alexAdded.coverage.coveredEmployeeCount, 4)
+  assert.equal(scenarios.alexAdded.coverage.scheduledStandardCapacity, 2.2)
+  assert.equal(scenarios.alexAdded.coverage.gapStandardCapacity, 0.8)
+  assert.equal(
+    scenarios.alexAdded.coverage.contributors.find((item) => item.employeeName === "alex")
+      ?.standardCapacityContribution,
+    0
+  )
+  assert.ok(scenarios.alexAdded.coverage.reasons.includes("skill_mismatch"))
+
+  assert.equal(scenarios.lilyAdded.coverage.scheduledStandardCapacity, 3)
+  assert.equal(scenarios.lilyAdded.coverage.gapStandardCapacity, 0)
+  assert.equal(scenarios.lilyAdded.coverage.resultStatus, "satisfied")
 })

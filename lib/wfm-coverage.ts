@@ -53,6 +53,14 @@ export type CoverageResult = {
   contributors: CoverageContributor[]
 }
 
+export type DraftAdjustmentScenario = {
+  id: string
+  label: string
+  summary: string
+  assignments: ShiftAssignment[]
+  coverage: CoverageResult
+}
+
 export function calculateCoverageResult(
   demand: DemandRequirement,
   assignments: ShiftAssignment[],
@@ -175,6 +183,12 @@ export function buildIm276AcceptanceScenario() {
       employeeType: "正式",
       skillCapacities: { 售后: 1 },
     },
+    {
+      employeeId: "lily",
+      employeeName: "lily",
+      employeeType: "正式",
+      skillCapacities: { 投诉: 1, 工单: 0.8 },
+    },
   ]
   const assignments: ShiftAssignment[] = [
     {
@@ -204,6 +218,89 @@ export function buildIm276AcceptanceScenario() {
   ]
 
   return { demand, employees, assignments }
+}
+
+export function buildIm277AdjustmentScenarios() {
+  const { demand, employees, assignments } = buildIm276AcceptanceScenario()
+  const tayMovedOutAssignments = assignments.filter(
+    (assignment) => assignment.employeeId !== "tay"
+  )
+  const alexAddedAssignments: ShiftAssignment[] = [
+    ...assignments,
+    {
+      assignmentId: "assignment-alex",
+      employeeId: "alex",
+      shiftTypeName: "临时班",
+      startTime: "10:00",
+      endTime: "12:00",
+      plannedSkillName: "投诉",
+    },
+  ]
+  const lilyAddedAssignments: ShiftAssignment[] = [
+    ...tayMovedOutAssignments,
+    {
+      assignmentId: "assignment-lily",
+      employeeId: "lily",
+      shiftTypeName: "临时班",
+      startTime: "10:00",
+      endTime: "12:00",
+      plannedSkillName: "投诉",
+    },
+  ]
+
+  const scenarios: Record<string, DraftAdjustmentScenario> = {
+    initial: buildDraftAdjustmentScenario(
+      "initial",
+      "初始草稿",
+      "king、james、tay 覆盖目标时段，仍缺 0.8 标准人力。",
+      demand,
+      assignments,
+      employees
+    ),
+    tayMovedOut: buildDraftAdjustmentScenario(
+      "tayMovedOut",
+      "移出 tay",
+      "tay 不再覆盖 10:00-10:30，缺口扩大到 1.0 标准人力。",
+      demand,
+      tayMovedOutAssignments,
+      employees
+    ),
+    alexAdded: buildDraftAdjustmentScenario(
+      "alexAdded",
+      "加入 alex",
+      "alex 覆盖目标时段但无投诉技能，贡献为 0。",
+      demand,
+      alexAddedAssignments,
+      employees
+    ),
+    lilyAdded: buildDraftAdjustmentScenario(
+      "lilyAdded",
+      "加入 lily",
+      "lily 贡献 1.0 标准人力，当前时段达到需求。",
+      demand,
+      lilyAddedAssignments,
+      employees
+    ),
+  }
+
+  return scenarios
+}
+
+function buildDraftAdjustmentScenario(
+  id: string,
+  label: string,
+  summary: string,
+  demand: DemandRequirement,
+  assignments: ShiftAssignment[],
+  employees: EmployeeSkillCapacity[]
+): DraftAdjustmentScenario {
+  return {
+    id,
+    label,
+    summary,
+    assignments,
+    coverage: calculateCoverageResult(demand, assignments, employees),
+  }
 }
 
 function assignmentCoversDemandInterval(

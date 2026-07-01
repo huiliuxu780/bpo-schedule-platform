@@ -29,6 +29,24 @@ test("team scheduling board renders the standard capacity acceptance example", (
   }
 })
 
+test("team scheduling board exposes manual draft adjustment controls", () => {
+  const source = read("components/wfm-team-scheduling-board.tsx")
+
+  for (const expectedText of [
+    "\"use client\"",
+    "调整草稿",
+    "移出 tay",
+    "加入 alex",
+    "加入 lily",
+    "已排标准人力",
+    "当前场景",
+    "setDraftScenario",
+    "buildIm277AdjustmentScenarios",
+  ]) {
+    assert.ok(source.includes(expectedText), `missing IM277 adjustment contract: ${expectedText}`)
+  }
+})
+
 test("new schedule plan page exposes the team scheduling board v0.1", () => {
   const pageSource = read("app/schedule-plans/new/page.tsx")
 
