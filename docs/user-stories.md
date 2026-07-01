@@ -94,6 +94,30 @@ status: "draft"
 notes: "IM284 backend pure domain model and focused unittest."
 ```
 
+### US873 - 月班表草稿生成演示闭环
+
+```yaml
+id: US873
+requirement_ids:
+  - R953
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望在系统页面中选择目标月份并生成月班表草稿，看到整月人员 x 日期总览、单周明细、待排人员和异常清单，以便确认系统已经能基于配置和历史稳定班种生成下月班表草稿。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增 /roster-drafts 页面，支持目标月份选择和生成草稿入口。"
+  - "本地 fixture 覆盖单项目、多小组、稳定班种、新员工、换组人员、缺少来源、无效班种和非 shift 标注。"
+  - "生成策略第一版为 previous_week_same_weekday，只复制稳定 shift 班种。"
+  - "月视图展示整月人员 x 日期表格，首列员工固定，单元格显示班种代码和状态标记。"
+  - "周视图展示选中周的时间段、来源日期、状态和原因。"
+  - "状态标记包含复制生成、待确认、异常、非班务标注已过滤。"
+  - "待排人员、异常清单和已过滤标注均只读，不保存、不审批、不发布。"
+  - "不新增 API、数据库、Excel 上传/导入、预测模型、标准人力、自动补班、权限、导出或批量能力。"
+status: "draft"
+notes: "IM285 visible frontend demo loop using TypeScript local generator and fixture."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

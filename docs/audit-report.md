@@ -4,6 +4,25 @@
 
 ## Current Audit
 
+### 2026-07-01 - IM285 月班表草稿生成演示闭环
+
+#### 审计结论
+
+- 新增 `app/roster-drafts/page.tsx` 作为排班师月班表草稿演示入口。
+- 新增 `components/roster-draft-workbench.tsx`，展示目标月份选择、生成入口、月视图、周视图、状态标记、待排人员、只读异常清单和已过滤非班务标注。
+- 新增 `lib/roster-drafts.ts` 和 `lib/roster-draft-fixtures.ts`，用本地可配置数据和 TypeScript 生成服务实现上一周同星期稳定班种复制。
+- 新增 `scripts/tests/roster-draft-generation-model.test.mjs` 和 `scripts/tests/roster-draft-workbench-structure.test.mjs`，覆盖生成策略、待排/异常/过滤标注、月/周视图结构和禁用能力文案。
+- 本轮不新增 API、数据库、Excel 上传/导入、保存发布、审批、权限、预测模型、标准人力、自动补班、外部集成、导出、批量、生产公式、结算或收费因子。
+
+#### 验证
+
+- `node --test scripts/tests/roster-draft-generation-model.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs`: 通过，10 个测试。
+- `npm run typecheck`: 通过。
+- `git diff --check`: 通过。
+- `bash scripts/check-state.sh --strict`: 通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`: 通过，包含 strict state check、855 Node tests、shadcn convention check、lint、typecheck、Next build、249 backend tests 和 project Harness check。
+- 浏览器 smoke: 通过。`http://localhost:3003/roster-drafts?month=2026-08` 确认页面导航、生成入口、月视图、周视图切换、待排人员、异常清单和已过滤标注可见。
+
 ### 2026-07-01 - IM284 人员级月班表草稿纯领域模型
 
 #### 审计结论

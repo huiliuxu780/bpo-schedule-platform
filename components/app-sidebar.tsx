@@ -87,6 +87,12 @@ const nav: NavGroup[] = [
         activeMatch: "prefix",
       },
       {
+        title: "月班表草稿",
+        href: "/roster-drafts",
+        icon: CalendarDays,
+        activeMatch: "prefix",
+      },
+      {
         title: "履约风险",
         href: "/schedule-risks",
         icon: CircleHelp,

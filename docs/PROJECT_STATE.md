@@ -15,7 +15,7 @@ The active execution source is `docs/current/**`. This file is a compact compati
 
 ## Durable Product Anchor
 
-The latest product anchor is IM284 / R952 / US872: backend pure domain model for personnel-level monthly roster drafts, building on IM283's ShiftType coverage expansion.
+The latest product anchor is IM285 / R953 / US873: visible frontend demo loop for generating personnel-level monthly roster drafts from local configurable data.
 
 Confirmed bottom-layer direction:
 
@@ -31,6 +31,7 @@ Confirmed bottom-layer direction:
 - 半小时差异校验沿用 Forecast agents vs Arranged/Actual agents 人头口径，是派生视图。
 - IM283 已确认第一刀开发落在后端纯领域服务，不新增 API、数据库、migration、Excel 上传、UI、预测模型、标准人力或自动排班。
 - IM284 已确认人员级月班表草稿先做后端纯领域模型：同日多记录、shift-only 覆盖、多 shift 重叠校验、引用快照校验、独立待排人员和 draft-only 可编辑。
+- IM285 已完成可见演示闭环：`/roster-drafts` 选择目标月份，用上一周同星期稳定班种生成月班表草稿，并展示月视图、周视图、待排人员、只读异常清单和已过滤非班务标注。
 - 标准人力、自动排班、审批、权限、通知、导出、批量、外部集成、生产公式、结算和收费因子延后。
 
 ## History Policy

@@ -103,3 +103,23 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
+
+### IM285 Roster Draft Demo Loop
+
+- branch_name: `codex/im285-roster-draft-demo-loop`
+- base_main_commit: `stacked on local codex/im284-roster-draft-domain-model at f1d93a1`
+- stacked_on: `codex/im284-roster-draft-domain-model`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Visible frontend demo loop for generating personnel-level monthly roster drafts from local configurable fixture data.
+- qoder_mode: `false; PM asked Codex to start the larger visible feature slice directly.`
+- allowed_files_check: `app/roster-drafts/page.tsx`, `components/roster-draft-workbench.tsx`, `components/app-sidebar.tsx`, `lib/roster-drafts.ts`, `lib/roster-draft-fixtures.ts`, `scripts/tests/roster-draft-generation-model.test.mjs`, `scripts/tests/roster-draft-workbench-structure.test.mjs`, `docs/superpowers/plans/2026-07-01-roster-draft-demo-loop.md`, traceability docs, and current/registry state docs only.
+- scope_diff_check: expected frontend-local demo, TypeScript generator, local fixture, test, and traceability changes only; no backend API route, database, migration, dependency, package/lockfile, external integration, Excel upload/import, save/publish workflow, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, standard-capacity model, forecasting model, or charge-factor changes.
+- focused_check_result: `node --test scripts/tests/roster-draft-generation-model.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` passed with 10 tests; `npm run typecheck` passed.
+- check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 855 Node tests, shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 249 backend tests, and project Harness check. Browser smoke passed on `http://localhost:3003/roster-drafts?month=2026-08`, including month view, week view, pending employees, exception list, and filtered annotations.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`

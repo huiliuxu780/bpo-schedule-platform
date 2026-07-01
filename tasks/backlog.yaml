@@ -76,3 +76,13 @@ tasks:
     requirement_ids:
       - R952
     notes: "Backend pure domain model for RosterVersion, RosterAssignment, PendingRosterEmployee, same-day multi-record support, shift-only coverage participation, multi-shift overlap validation, reference snapshot validation, and draft-only editability. No API, database, migration, Excel upload/import, UI, copy generation, forecasting model, standard-capacity model, auto-scheduling, approval, permissions, export, batch, settlement, or charge-factor work."
+
+  - id: IM285
+    title: "月班表草稿生成演示闭环"
+    status: done
+    required_workflow: frontend-scaffold
+    story_ids:
+      - US873
+    requirement_ids:
+      - R953
+    notes: "Visible /roster-drafts frontend demo loop using local configurable fixture and TypeScript generator. Supports target month selection, previous-week same-weekday stable-shift copy, month view, week view, pending employees, read-only exceptions, filtered annotations, and summary. No API, database, Excel upload/import, save/publish, approval, permissions, forecasting model, standard-capacity model, auto-fill scheduling, external integration, export, batch, settlement, or charge-factor work."

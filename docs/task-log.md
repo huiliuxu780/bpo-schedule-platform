@@ -55,3 +55,12 @@
 - action: 人员级月班表草稿纯领域模型。
 - status: `done`
 - notes: 新增后端纯领域模型表达 RosterVersion、RosterAssignment、PendingRosterEmployee、多记录同日、shift-only 覆盖、shift 重叠校验、引用快照校验和 draft-only 可编辑；不新增 API、数据库、migration、复制生成、Excel 上传、UI、预测模型、标准人力或自动排班。
+
+- task_id: `IM285`
+- source_ids:
+  - `R953`
+- story_ids:
+  - `US873`
+- action: 月班表草稿生成演示闭环。
+- status: `done`
+- notes: 新增 `/roster-drafts` 前端演示闭环、本地可配置 fixture 和 TypeScript 生成服务，支持目标月份选择、上一周同星期稳定班种复制、月视图、周视图、待排人员、只读异常清单、已过滤非班务标注和摘要；不新增 API、数据库、Excel 上传/导入、保存发布、预测模型、标准人力或自动补班。

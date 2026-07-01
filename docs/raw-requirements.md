@@ -56,6 +56,19 @@ status: "draft"
 notes: "Backend pure domain implementation only; preserves complex same-day roster events without counting non-shift events as coverage."
 ```
 
+### R953 - 月班表草稿生成演示闭环
+
+```yaml
+id: R953
+module: "BPO WFM 三条主线"
+description: "Build a visible roster-draft demo loop for the scheduler role: use local configurable fixture data for one project and multiple teams, choose a target month, generate a personnel-level monthly roster draft from previous-week same-weekday stable shifts, and show month view, week view, pending employees, read-only exceptions, filtered non-shift annotations, and coverage summary. The first version keeps the future same_date/same_weekday configurability as a design direction but implements only previous_week_same_weekday. This slice must not add API routes, database persistence, Excel upload/import, save/publish, approval, permissions, forecasting model, standard-capacity model, auto-fill scheduling, external integrations, export, batch operations, settlement, or charge-factor work."
+source: "PM-confirmed IM285 drill on 2026-07-01"
+submitted_at: "2026-07-01"
+version: "1.0"
+status: "draft"
+notes: "Frontend TypeScript demo loop and local fixture only; intended to restore visible product momentum after backend foundation slices."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.
