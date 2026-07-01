@@ -6059,3 +6059,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending after implementation and local commit`
 - blocked_reason: `N/A`
+
+### IM279 Scheduler Monthly Roster Requirements Trace
+
+- branch_name: `codex/im279-roster-requirements-trace`
+- base_main_commit: `stacked on local codex/im278-team-gap-queue at a5c442b`
+- stacked_on: `codex/im278-team-gap-queue`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Documentation and product-modeling task for the scheduler monthly roster bottom layer after PM provided the real `202607班表.xlsx`: Excel fact mapping, confirmed product decisions, scheduler-first role boundary, system-generated monthly roster scope, source-data object model, deferred role workflows, and no-go items.
+- qoder_mode: `false; PM asked Codex to proceed directly.`
+- allowed_files_check: `docs/design/scheduler-monthly-roster-field-mapping-and-model.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, and `docs/dev/branch-log.md` only.
+- scope_diff_check: expected documentation and traceability changes only; no app, component, lib, backend, dependency, package/lockfile, database schema/migration, Excel upload/parser implementation, real external integration, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, or charge-factor changes.
+- check_result: `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 845 Node assertions, `npm run lint`, `npm run typecheck`, Next build, 241 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after local commit`
+- blocked_reason: `N/A`
