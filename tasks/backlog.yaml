@@ -56,3 +56,13 @@ tasks:
     requirement_ids:
       - R950
     notes: "Defines the first roster-generation foundation: personnel-level daily assignments, ShiftType work-segment expansion, stable-shift copy rules, pending roster queue, draft-to-published version flow, and Primary/Actual boundary. No implementation, forecasting model, standard-capacity model, auto-scheduling, approval, permissions, external integration, database schema/migration, export, batch, settlement, or charge-factor work."
+
+  - id: IM283
+    title: "ShiftType 班种解析与半小时覆盖展开"
+    status: done
+    required_workflow: backend-mvp
+    story_ids:
+      - US871
+    requirement_ids:
+      - R951
+    notes: "Backend pure domain service for configurable ShiftType work-time parsing and half-hour coverage expansion. Covers representative real roster shift types Z1, A5, T1, T4, N, and A12 plus non-blocking exception handling. No API, database, migration, Excel upload/import, UI, forecasting model, standard-capacity model, auto-scheduling, approval, permissions, export, batch, settlement, or charge-factor work."

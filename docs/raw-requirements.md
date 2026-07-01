@@ -30,6 +30,19 @@ status: "draft"
 notes: "Product contract source for docs/design/scheduler-shift-type-monthly-roster-generation-contract.md. Does not authorize forecasting model, standard-capacity model, auto-scheduling, approval, permissions, external integrations, database schema/migration, export, batch operations, settlement, or charge-factor work."
 ```
 
+### R951 - ShiftType 班种解析与半小时覆盖展开
+
+```yaml
+id: R951
+module: "BPO WFM 三条主线"
+description: "First development slice for the roster-generation foundation: implement a backend pure domain service that parses configurable ShiftType work time expressions and expands them to half-hour coverage intervals. It must support representative real Excel shift types Z1, A5, T1, T4, N, and A12, keep cross-day shifts under the roster business date while coverage timestamps extend to the next calendar day, and return non-blocking exceptions for invalid shift definitions. This slice must not add API routes, database schema/migration, Excel upload/import, UI, forecasting model, standard-capacity model, auto-scheduling, approval, permissions, export, batch operations, settlement, or charge-factor work."
+source: "PM-confirmed development drill on 2026-07-01"
+submitted_at: "2026-07-01"
+version: "1.0"
+status: "draft"
+notes: "Backend pure domain implementation only; tests use representative shift types from 202607班表.xlsx."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

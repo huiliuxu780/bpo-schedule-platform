@@ -37,3 +37,12 @@
 - action: 班种定义与月班表生成底座产品契约。
 - status: `done`
 - notes: 沉淀人员级日班种草稿、班种工作时段展开、稳定班种复制、待排队列、draft -> published 状态流转和 Primary/Actual 分层；不进入预测模型、标准人力、自动排班、审批、权限、外部集成或数据库实现。
+
+- task_id: `IM283`
+- source_ids:
+  - `R951`
+- story_ids:
+  - `US871`
+- action: ShiftType 班种解析与半小时覆盖展开。
+- status: `done`
+- notes: 新增后端纯领域服务解析可配置班种工作时段并展开半小时覆盖，覆盖 Z1、A5、T1、T4、N、A12 和坏班种异常清单；不新增 API、数据库、migration、Excel 上传、UI、预测模型、标准人力或自动排班。

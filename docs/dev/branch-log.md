@@ -56,6 +56,26 @@
 - allowed_files_check: `docs/design/scheduler-shift-type-monthly-roster-generation-contract.md`, traceability docs, and current/registry state docs only.
 - scope_diff_check: expected documentation/traceability changes only; no app, component, lib, backend, dependency, package/lockfile, database schema/migration, external integration, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, or charge-factor changes.
 - check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 845 Node assertions, `npm run lint`, `npm run typecheck`, Next build, 241 backend tests, and project Harness check.
+- local_commit_sha: `71d1f23`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pushed to origin/codex/im282-roster-generation-contract`
+- blocked_reason: `N/A`
+
+### IM283 ShiftType Coverage Backend Domain Service
+
+- branch_name: `codex/im283-shift-type-coverage`
+- base_main_commit: `stacked on local codex/im282-roster-generation-contract at 71d1f23`
+- stacked_on: `codex/im282-roster-generation-contract`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Backend pure domain service for configurable ShiftType work-time parsing and half-hour coverage expansion with non-blocking exception list.
+- qoder_mode: `false; PM confirmed the development drill decisions interactively.`
+- allowed_files_check: `backend/app/shift_types.py`, `backend/tests/test_shift_types.py`, traceability docs, and current/registry state docs only.
+- scope_diff_check: expected backend pure-domain and traceability changes only; no API route, frontend UI, dependency, package/lockfile, database schema/migration, external integration, Excel upload/import, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, standard-capacity model, forecasting model, or charge-factor changes.
+- focused_check_result: `.venv/bin/python -m unittest backend.tests.test_shift_types` passed.
+- check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 845 Node assertions, `npm run lint`, `npm run typecheck`, Next build, 243 backend tests, and project Harness check.
 - local_commit_sha: `pending`
 - integration_status: `not_started`
 - integration_method: `N/A`

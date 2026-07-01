@@ -50,6 +50,27 @@ status: "draft"
 notes: "IM282 文档/产品契约任务；目标产物为 docs/design/scheduler-shift-type-monthly-roster-generation-contract.md。"
 ```
 
+### US871 - ShiftType 班种解析与半小时覆盖展开
+
+```yaml
+id: US871
+requirement_ids:
+  - R951
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望系统能够基于可配置班种的工作时段生成半小时覆盖，以便后续月班表草稿、覆盖人数和缺口校验建立在稳定班种底座上。"
+task_type: "backend-mvp"
+priority: "P0"
+acceptance:
+  - "后端纯领域服务支持 ShiftType 工作时段解析，不新增 API、数据库、migration 或 UI。"
+  - "支持单段、两段、半点和跨天班种，验收样例包括 Z1、A5、T1、T4、N、A12。"
+  - "跨天班归属排班业务日，但覆盖时间戳可延伸到次日。"
+  - "无法解析班种进入异常清单，不阻断其他可解析班种的覆盖展开。"
+  - "用餐/休息、哺乳假、特殊激励、适用人头备注只记录在班种配置上，不参与第一版覆盖计算。"
+status: "draft"
+notes: "IM283 backend pure domain service and focused unittest."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.
