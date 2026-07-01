@@ -17,7 +17,7 @@
 - focused_check_result: `node --test scripts/tests/product-structure-global-shell.test.mjs scripts/tests/dashboard-shadcn-baseline-alignment.test.mjs` passed with 12 tests; `npm run typecheck` passed; `npm run lint` passed; `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build` passed. Browser smoke passed on `http://localhost:3003/dashboard`, `/roster-drafts`, and `/schedule-plans`, including 64px collapsed rail, 240px expanded rail, hidden collapsed group labels, 32px centered icon buttons, and station navigation state retention.
 - pm_acceptance_fix: After PM screenshot review, removed the global `快速新建` and `待处理风险` sidebar shortcuts, hid brand copy in collapsed rail, and assigned distinct visible icons for brand, dashboard, schedule plan, and roster draft entries. Focused regression `node --test scripts/tests/product-structure-global-shell.test.mjs scripts/tests/dashboard-shadcn-baseline-alignment.test.mjs` passed with 12 tests; `npm run lint` and `npm run typecheck` passed. Browser smoke on `http://localhost:3003/dashboard` confirmed 64px CSS rail variable, hidden brand copy, no quick-create/pending-risk shortcut hrefs, no visible collapsed labels, and 13 unique visible icons.
 - check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 861 Node tests, shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 249 backend tests, and project Harness check.
-- local_commit_sha: `8a3533c`
+- local_commit_sha: `8a3533c`, `e25e5d2`, `f04b203`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
