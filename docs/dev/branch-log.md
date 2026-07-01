@@ -116,7 +116,7 @@
 - scope_diff_check: expected frontend-local demo, TypeScript generator, local fixture, test, and traceability changes only; no backend API route, database, migration, dependency, package/lockfile, external integration, Excel upload/import, save/publish workflow, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, standard-capacity model, forecasting model, or charge-factor changes.
 - focused_check_result: `node --test scripts/tests/roster-draft-generation-model.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` passed with 10 tests; `npm run typecheck` passed.
 - check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 855 Node tests, shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 249 backend tests, and project Harness check. Browser smoke passed on `http://localhost:3003/roster-drafts?month=2026-08`, including month view, week view, pending employees, exception list, and filtered annotations.
-- local_commit_sha: `pending`
+- local_commit_sha: `449226c`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
