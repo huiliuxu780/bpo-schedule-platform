@@ -118,6 +118,29 @@ status: "draft"
 notes: "IM285 visible frontend demo loop using TypeScript local generator and fixture."
 ```
 
+### US874 - 月班表草稿排班工作台重构
+
+```yaml
+id: US874
+requirement_ids:
+  - R954
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望月班表草稿页面像成熟排班工作台一样支持月度扫盘、周度处理和右侧异常队列定位，以便我能快速找到需要人工确认的员工和日期，而不是阅读分散的报表卡片。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "页面采用 Homebase 主参考、Deputy / When I Work 交叉校验后的排班工作台结构，但视觉保持现有 shadcn B2B 控制台风格。"
+  - "顶部 toolbar 呈现项目/职场、小组范围、目标月份、当前周、生成策略、视图切换和状态摘要。"
+  - "月视图是员工 x 日期压缩月网格，用于扫整月班种节奏和异常密度。"
+  - "周视图是员工 x 7 天展开网格，用班次块展示班种、时间段、来源和状态，不再使用明细报表表格。"
+  - "右侧面板展示选中格子的只读详情，并提供异常、待排、过滤标注统一队列。"
+  - "队列项可定位到对应员工/日期格子并更新右侧详情。"
+  - "首版不提供编辑、保存、发布、审批、权限、Excel 导入、预测模型、标准人力、自动排班、导出或批量能力。"
+status: "draft"
+notes: "IM286 frontend IA redesign over existing IM285 local generator."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

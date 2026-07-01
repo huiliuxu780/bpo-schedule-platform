@@ -69,6 +69,19 @@ status: "draft"
 notes: "Frontend TypeScript demo loop and local fixture only; intended to restore visible product momentum after backend foundation slices."
 ```
 
+### R954 - 月班表草稿排班工作台重构
+
+```yaml
+id: R954
+module: "BPO WFM 三条主线"
+description: "Redesign the visible /roster-drafts surface from a report-style result page into a scheduler workbench inspired by mature scheduling products such as Homebase, Deputy, and When I Work. The workbench keeps the existing local fixture and TypeScript generation logic, but reorganizes the UI around a toolbar, compressed employee-by-date month scan grid, expanded employee-by-week handling grid, read-only selected-cell inspector, and right-side queues for exceptions, pending employees, and filtered annotations that locate into the grid. This slice must not add API routes, database persistence, Excel upload/import, save/publish, approval, permissions, forecasting model, standard-capacity model, auto-fill scheduling, external integrations, export, batch operations, settlement, or charge-factor work."
+source: "PM-confirmed IM286 redesign drill on 2026-07-01"
+submitted_at: "2026-07-01"
+version: "1.0"
+status: "draft"
+notes: "Frontend information-architecture redesign only; keep IM285 generation model and local fixture."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

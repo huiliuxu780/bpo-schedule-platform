@@ -85,6 +85,11 @@ tasks:
     story_ids:
       - "US873"
     gate: "frontend-scaffold"
+  IM286:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US874"
+    gate: "frontend-scaffold"
 requirements:
   R949:
     file: "docs/raw-requirements.md"
@@ -116,6 +121,12 @@ requirements:
       - "US873"
     task_ids:
       - "IM285"
+  R954:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US874"
+    task_ids:
+      - "IM286"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
@@ -124,4 +135,5 @@ decisions:
   - "D-2026-07-01-shift-type-coverage-backend"
   - "D-2026-07-01-roster-draft-domain-model"
   - "D-2026-07-01-roster-draft-demo-loop"
+  - "D-2026-07-01-roster-workbench-redesign"
 archive_refs: []

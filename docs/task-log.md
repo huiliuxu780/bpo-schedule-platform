@@ -38,6 +38,15 @@
 - status: `done`
 - notes: 沉淀人员级日班种草稿、班种工作时段展开、稳定班种复制、待排队列、draft -> published 状态流转和 Primary/Actual 分层；不进入预测模型、标准人力、自动排班、审批、权限、外部集成或数据库实现。
 
+- task_id: `IM286`
+- source_ids:
+  - `R954`
+- story_ids:
+  - `US874`
+- action: 月班表草稿排班工作台重构。
+- status: `done`
+- notes: 基于 Homebase 主参考、Deputy / When I Work 交叉校验，将 `/roster-drafts` 从结果报表页改为排班师工作台；保留 IM285 本地生成器，不进入 API、数据库、Excel 导入、保存发布、审批、权限、预测、标准人力或自动排班。浏览器 smoke 已确认月度扫盘、周度处理、格子详情和队列定位。
+
 - task_id: `IM283`
 - source_ids:
   - `R951`

@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-07-01 - IM286 月班表草稿排班工作台重构
+
+#### 审计结论
+
+- 将 `/roster-drafts` 从报表式结果页重构为排班师工作台。
+- 保留 IM285 本地 fixture 和 TypeScript 生成器，不改生成算法。
+- 新版页面包含排班工作台 toolbar、月视图 / 月度扫盘、周视图 / 周度处理、员工 x 日期网格、只读格子详情、异常/待排/过滤标注统一处理队列。
+- 队列项可定位到对应员工/日期格子，并更新右侧只读详情。
+- 本轮不新增 API、数据库、Excel 上传/导入、保存发布、审批、权限、预测模型、标准人力、自动补班、外部集成、导出、批量、生产公式、结算或收费因子。
+
+#### 验证
+
+- `node --test scripts/tests/roster-draft-generation-model.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs`: 通过，12 个测试。
+- `npm run typecheck`: 通过。
+- `npm run lint`: 通过。
+- `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build`: 通过，`/roster-drafts` 构建成功。
+- `git diff --check`: 通过。
+- `bash scripts/check-state.sh --strict`: 通过。
+- 浏览器 smoke: 通过。`http://localhost:3003/roster-drafts?month=2026-08` 确认排班工作台、周度网格、月度扫盘、格子详情、处理队列和队列定位可见可用。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`: 通过，包含 strict state check、857 Node tests、shadcn convention check、lint、typecheck、Next build、249 backend tests 和 project Harness check。
+
 ### 2026-07-01 - IM285 月班表草稿生成演示闭环
 
 #### 审计结论

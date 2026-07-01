@@ -46,6 +46,35 @@ test("roster draft workbench includes read-only pending exception and annotation
   assert.ok(!content.includes("忽略异常"))
 })
 
+test("roster draft workbench is organized as a scheduler workbench, not a report page", () => {
+  const content = readProjectFile("components/roster-draft-workbench.tsx")
+
+  assert.ok(content.includes("RosterWorkbenchToolbar"))
+  assert.ok(content.includes("MonthScanGrid"))
+  assert.ok(content.includes("WeekScheduleGrid"))
+  assert.ok(content.includes("CellInspector"))
+  assert.ok(content.includes("WorkbenchQueue"))
+  assert.ok(content.includes("data-roster-cell-key"))
+  assert.ok(content.includes("定位到格子"))
+  assert.ok(content.includes("月度扫盘"))
+  assert.ok(content.includes("周度处理"))
+  assert.ok(!content.includes('<TableHead>日期</TableHead>'))
+  assert.ok(!content.includes('<TableHead>员工</TableHead>'))
+  assert.ok(!content.includes("展开单周明细"))
+})
+
+test("roster draft workbench keeps mature-scheduling references structural and non-production", () => {
+  const content = readProjectFile("components/roster-draft-workbench.tsx")
+
+  assert.ok(content.includes("Homebase"))
+  assert.ok(content.includes("Deputy"))
+  assert.ok(content.includes("When I Work"))
+  assert.ok(content.includes("借鉴结构，不复制视觉"))
+  assert.ok(!content.includes("Publish"))
+  assert.ok(!content.includes("Save & Publish"))
+  assert.ok(!content.includes("Auto-Schedule"))
+})
+
 test("roster draft navigation is available in the planning sidebar group", () => {
   const content = readProjectFile("components/app-sidebar.tsx")
 

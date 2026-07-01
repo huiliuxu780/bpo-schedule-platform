@@ -30,7 +30,7 @@ export default async function RosterDraftsPage({ searchParams }: PageProps) {
       breadcrumbItems={[{ label: "月班表草稿" }]}
     >
       <main className="@container/main flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-4 md:gap-6 lg:p-6">
-        <WorkbenchPageHeader description="按目标月份生成下月人员级班表草稿，查看月视图、周视图、待排人员和异常清单。" />
+        <WorkbenchPageHeader description="按目标月份生成下月人员级班表草稿，在月度扫盘和周度处理之间定位异常与待确认格子。" />
         <RosterDraftWorkbench
           key={targetMonth}
           model={model}

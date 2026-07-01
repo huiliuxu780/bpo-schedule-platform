@@ -72,3 +72,11 @@ decisions:
       - "docs/quality/STATE_MANAGEMENT.md"
       - "docs/current/STORY_QUEUE.yaml"
       - "docs/current/ACTIVE_TASKS.yaml"
+  D-2026-07-01-roster-workbench-redesign:
+    title: "Roster draft page should be a scheduler workbench, not a report page"
+    file: "docs/user-stories.md"
+    related_files:
+      - "app/roster-drafts/page.tsx"
+      - "components/roster-draft-workbench.tsx"
+      - "docs/raw-requirements.md"
+      - "tasks/backlog.yaml"
