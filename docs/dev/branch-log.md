@@ -16,7 +16,7 @@
 - scope_diff_check: expected backend pure-domain model and tests plus traceability changes only; no DB table/schema/migration/ORM/repository, backend API route, frontend publish action, dependency, package/lockfile, external integration, auth, permission, approval, notification, export, batch, automatic scheduling, forecasting model, standard-capacity model, Excel upload/import, production formula, settlement, or charge-factor changes.
 - focused_check_result: red `.venv/bin/python -m unittest backend.tests.test_roster_drafts` failed before implementation on missing `EditLockDecision`; green `.venv/bin/python -m unittest backend.tests.test_roster_drafts` passed with 12 tests; `.venv/bin/python -m unittest discover backend/tests` passed with 255 tests; `git diff --check` passed.
 - check_result: `bash scripts/check-state.sh --strict` passed. `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 867 Node tests passing / 1 skipped, shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 255 backend tests, and project Harness check.
-- local_commit_sha: `pending`
+- local_commit_sha: `bd1d268`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
