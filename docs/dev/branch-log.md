@@ -16,7 +16,7 @@
 - scope_diff_check: expected local draft edit state, drawer edit controls, edited markers/counts, focused tests, browser smoke evidence, and traceability changes only; no new dependency, package/lockfile, backend API route, database, migration, external integration, draft publish, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, standard-capacity model, forecasting model, Excel upload/import, or charge-factor changes.
 - focused_check_result: red `node --test scripts/tests/roster-draft-workbench-structure.test.mjs` failed before implementation on missing controlled-editing structure; green run passed with 10 tests; `npm run typecheck` passed; `npm run lint` passed; shadcn review passed for `radix-nova` with no hardcoded color or `space-*` hits; `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build` passed; browser smoke passed for copied-cell edit, edited marker/count, restore-generated-value, and exception read-only boundary.
 - check_result: `git diff --check && bash scripts/check-state.sh --strict && BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed; Node tests 863 pass / 1 skip, Python tests 249 OK, shadcn/ui convention check, lint, typecheck, and build passed.
-- local_commit_sha: `pending`
+- local_commit_sha: `8ef345b`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
