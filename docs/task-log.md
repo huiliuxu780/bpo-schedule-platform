@@ -6,6 +6,15 @@
 
 ### 2026-07-02
 
+- task_id: `IM291`
+- source_ids:
+  - `R959`
+- story_ids:
+  - `US879`
+- action: 月班表 Forecast vs Arranged/Actual 缺口工作台。
+- status: `done`
+- notes: 在 `/roster-drafts` 增加本地 Forecast/Actual interval 样例，基于 edited effective cells 派生 Arranged，并在右侧抽屉提供缺口队列；缺口行展示 Forecast、Arranged、Actual 和差异，可定位回周视图格子；不进入真实预测模型、标准人力、API、数据库、Excel 导入、审批、权限、自动排班、导出或批量。
+
 - task_id: `IM290`
 - source_ids:
   - `R958`

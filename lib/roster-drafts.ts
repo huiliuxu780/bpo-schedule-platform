@@ -49,12 +49,30 @@ export type SourceRosterAssignment = {
   note?: string
 }
 
+export type RosterForecastInterval = {
+  id: string
+  businessDate: string
+  slotLabel: string
+  requiredAgents: number
+  reason: string
+}
+
+export type RosterActualInterval = {
+  id: string
+  businessDate: string
+  slotLabel: string
+  actualAgents: number
+  sourceLabel: string
+}
+
 export type RosterDraftFixture = {
   project: RosterDraftProject
   targetMonths: string[]
   shiftTypes: RosterDraftShiftType[]
   employees: RosterDraftEmployee[]
   sourceAssignments: SourceRosterAssignment[]
+  forecastIntervals: RosterForecastInterval[]
+  actualIntervals: RosterActualInterval[]
 }
 
 export type RosterMonthDay = {
@@ -167,6 +185,8 @@ export type RosterDraftViewModel = {
   weeks: RosterWeek[]
   weekDetails: RosterWeekDetail[]
   assignments: RosterDraftAssignment[]
+  forecastIntervals: RosterForecastInterval[]
+  actualIntervals: RosterActualInterval[]
   pendingEmployees: PendingRosterEmployeeView[]
   exceptions: RosterDraftException[]
   filteredAnnotations: FilteredRosterAnnotation[]
@@ -309,6 +329,12 @@ export function generateRosterDraftViewModel({
     weeks,
     weekDetails,
     assignments,
+    forecastIntervals: fixture.forecastIntervals.filter((item) =>
+      item.businessDate.startsWith(targetMonth)
+    ),
+    actualIntervals: fixture.actualIntervals.filter((item) =>
+      item.businessDate.startsWith(targetMonth)
+    ),
     pendingEmployees,
     exceptions,
     filteredAnnotations,

@@ -133,6 +133,25 @@ test("roster draft workbench derives publish preview shift counts and half-hour 
   assert.ok(!content.includes("提交审批"))
 })
 
+test("roster draft workbench derives forecast arranged actual gaps from edited draft cells", () => {
+  const content = readProjectFile("components/roster-draft-workbench.tsx")
+
+  assert.ok(content.includes("type RosterGapPreviewRow"))
+  assert.ok(content.includes("buildRosterGapPreview"))
+  assert.ok(content.includes("RosterGapWorkbenchPanel"))
+  assert.ok(content.includes("gapRows"))
+  assert.ok(content.includes("forecastGap"))
+  assert.ok(content.includes("actualGap"))
+  assert.ok(content.includes("relatedEmployeeIds"))
+  assert.ok(content.includes("cellEdits"))
+  assert.ok(content.includes("缺口队列"))
+  assert.ok(content.includes("Forecast"))
+  assert.ok(content.includes("Arranged"))
+  assert.ok(content.includes("Actual"))
+  assert.ok(content.includes("定位缺口"))
+  assert.ok(content.includes('onLocateCell(primaryEmployeeId, row.businessDate, "week")'))
+})
+
 test("roster draft workbench keeps mature-scheduling references structural and non-production", () => {
   const content = readProjectFile("components/roster-draft-workbench.tsx")
 

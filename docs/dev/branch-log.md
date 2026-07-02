@@ -4,6 +4,26 @@
 
 ## Current Branch Entries
 
+### IM291 Roster Gap Workbench
+
+- branch_name: `codex/im291-roster-gap-workbench`
+- base_main_commit: `stacked on local codex/im290-roster-publish-coverage at b914841`
+- stacked_on: `codex/im290-roster-publish-coverage`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Add frontend local Forecast vs Arranged/Actual gap workbench for edited `/roster-drafts` preview.
+- qoder_mode: `false; PM asked to continue with a larger slice.`
+- allowed_files_check: `lib/roster-drafts.ts`, `lib/roster-draft-fixtures.ts`, `components/roster-draft-workbench.tsx`, roster draft model/structure tests, traceability docs, and current/registry state docs only.
+- scope_diff_check: expected local Forecast/Actual fixture rows, Arranged-from-edited-cells gap derivation, drawer gap queue, gap-to-grid location, focused tests, browser smoke evidence, and traceability changes only; no new dependency, package/lockfile, backend API route, database, migration, external integration, real forecasting model, standard-capacity model, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, Excel upload/import, or charge-factor changes.
+- focused_check_result: red `node --experimental-strip-types scripts/tests/roster-draft-generation-model.test.mjs && node scripts/tests/roster-draft-workbench-structure.test.mjs` failed before implementation on missing `forecastIntervals`; green run passed with 18 tests; `npm run typecheck` passed; `npm run lint` passed; shadcn review passed for `radix-nova` with no hardcoded color or `space-*` hits; `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build` passed; browser smoke passed for gap queue, Forecast/Arranged/Actual rows, gap-to-week-grid location, and edit-triggered gap recalculation.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed; Node tests 866 pass / 1 skip, Python tests 249 OK, shadcn/ui convention check, lint, typecheck, build, and project Harness check passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM290 Roster Release Preview Coverage
 
 - branch_name: `codex/im290-roster-publish-coverage`

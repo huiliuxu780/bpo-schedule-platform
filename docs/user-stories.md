@@ -231,6 +231,28 @@ status: "draft"
 notes: "IM290 frontend local release-preview and derived coverage layer on top of IM289."
 ```
 
+### US879 - 月班表 Forecast vs Arranged/Actual 缺口工作台
+
+```yaml
+id: US879
+requirement_ids:
+  - R959
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望在调整月班表草稿后直接看到 Forecast、Arranged 和 Actual 的半小时人头缺口，并能从缺口行定位回具体周度排班格子，以便先在系统生成草稿内处理覆盖问题，而不提前进入预测模型或发布持久化。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "本地 fixture 提供 Forecast interval 和 Actual interval 样例，generator 在 view model 中暴露给前端。"
+  - "缺口工作台的 Arranged 从 edited effective cells 派生，不只看原始生成结果。"
+  - "右侧抽屉提供缺口队列，按日期 + 半小时点展示 Forecast、Arranged、Actual、Forecast-Arranged 和 Arranged-Actual 差异。"
+  - "缺口行保留 related employee ids，并提供定位缺口动作回到周视图对应日期/员工格子。"
+  - "编辑生成格子的班种后，缺口队列即时重算。"
+  - "本轮不新增真实预测模型、标准人力、API、数据库、Excel 上传/导入、审批、权限、自动排班、导出或批量能力。"
+status: "draft"
+notes: "IM291 frontend local gap-preview layer on top of IM290."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

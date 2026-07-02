@@ -134,6 +134,19 @@ status: "draft"
 notes: "Frontend local release-preview and derived coverage layer only; no production save or persistence."
 ```
 
+### R959 - 月班表 Forecast vs Arranged/Actual 缺口工作台
+
+```yaml
+id: R959
+module: "BPO WFM 三条主线"
+description: "Continue from the local roster release-preview slice and add a frontend-only Forecast vs Arranged/Actual gap workbench for the edited roster draft preview. Scheduler users can inspect local demand/actual interval examples, derive Arranged from edited effective roster cells, see date + half-hour gap rows, compare Forecast, Arranged, and Actual headcounts, and locate a gap row back to the relevant weekly roster grid cell. This slice must not add a real forecasting model, standard-capacity model, API routes, database persistence, Excel upload/import, approval, permissions, automatic scheduling, export, batch operations, production formulas, settlement, or charge-factor work."
+source: "PM-confirmed continuation on 2026-07-02"
+submitted_at: "2026-07-02"
+version: "1.0"
+status: "draft"
+notes: "Frontend local gap-preview layer only; demand/actual rows are local examples and Arranged is derived from edited draft cells."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

@@ -85,6 +85,66 @@ export const rosterDraftDemoFixture: RosterDraftFixture = {
       hireMonth: "2026-08",
     },
   ],
+  forecastIntervals: [
+    {
+      id: "FC-2026-08-03-09:00",
+      businessDate: "2026-08-03",
+      slotLabel: "09:00",
+      requiredAgents: 4,
+      reason: "本地需求样例，来自当前口径，不代表预测模型",
+    },
+    {
+      id: "FC-2026-08-03-14:30",
+      businessDate: "2026-08-03",
+      slotLabel: "14:30",
+      requiredAgents: 3,
+      reason: "本地需求样例，观察午后衔接缺口",
+    },
+    {
+      id: "FC-2026-08-04-09:00",
+      businessDate: "2026-08-04",
+      slotLabel: "09:00",
+      requiredAgents: 4,
+      reason: "本地需求样例，复用周二白班高峰",
+    },
+    {
+      id: "FC-2026-08-06-14:30",
+      businessDate: "2026-08-06",
+      slotLabel: "14:30",
+      requiredAgents: 2,
+      reason: "本地需求样例，验证编辑后班种覆盖变化",
+    },
+  ],
+  actualIntervals: [
+    {
+      id: "AC-2026-08-03-09:00",
+      businessDate: "2026-08-03",
+      slotLabel: "09:00",
+      actualAgents: 2,
+      sourceLabel: "本地实际到岗样例",
+    },
+    {
+      id: "AC-2026-08-03-14:30",
+      businessDate: "2026-08-03",
+      slotLabel: "14:30",
+      actualAgents: 2,
+      sourceLabel: "本地实际到岗样例",
+    },
+    {
+      id: "AC-2026-08-04-09:00",
+      businessDate: "2026-08-04",
+      slotLabel: "09:00",
+      actualAgents: 3,
+      sourceLabel: "本地实际到岗样例",
+    },
+    {
+      id: "AC-2026-08-06-14:30",
+      businessDate: "2026-08-06",
+      slotLabel: "14:30",
+      actualAgents: 1,
+      sourceLabel: "本地实际到岗样例",
+    },
+  ],
   sourceAssignments: [
     {
       assignmentId: "SRC-001-0727",

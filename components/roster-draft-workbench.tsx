@@ -61,6 +61,23 @@ type RosterDerivedCoverage = {
   coveredSlotCount: number
 }
 
+type RosterGapStatus = "shortage" | "balanced" | "surplus"
+
+type RosterGapPreviewRow = {
+  id: string
+  businessDate: string
+  slotLabel: string
+  forecastAgents: number
+  arrangedAgents: number
+  actualAgents: number
+  forecastGap: number
+  actualGap: number
+  status: RosterGapStatus
+  reason: string
+  sourceLabel: string
+  relatedEmployeeIds: string[]
+}
+
 type SelectedCell = {
   employeeId: string
   employeeName: string
@@ -109,6 +126,12 @@ const queueLabels: Record<QueueKind, string> = {
   annotation: "已过滤标注",
 }
 
+const gapStatusLabels: Record<RosterGapStatus, string> = {
+  shortage: "缺口",
+  balanced: "平衡",
+  surplus: "富余",
+}
+
 const matureSchedulingReference =
   "Homebase / Deputy / When I Work：借鉴结构，不复制视觉"
 
@@ -143,6 +166,10 @@ export function RosterDraftWorkbench({
   const editedCellCount = Object.keys(cellEdits).length
   const derivedCoverage = React.useMemo(
     () => buildRosterDerivedCoverage(model, cellEdits),
+    [model, cellEdits]
+  )
+  const gapRows = React.useMemo(
+    () => buildRosterGapPreview(model, cellEdits),
     [model, cellEdits]
   )
 
@@ -223,6 +250,7 @@ export function RosterDraftWorkbench({
           editedCellCount={editedCellCount}
           rosterLifecycleState={rosterLifecycleState}
           derivedCoverage={derivedCoverage}
+          gapRows={gapRows}
           onToggleReleasePreview={toggleReleasePreview}
           onOpenInspector={() => setInspectorOpen(true)}
         />
@@ -282,6 +310,7 @@ export function RosterDraftWorkbench({
           editedCellCount={editedCellCount}
           rosterLifecycleState={rosterLifecycleState}
           derivedCoverage={derivedCoverage}
+          gapRows={gapRows}
           onOpenInspector={() => setInspectorOpen(true)}
         />
       </div>
@@ -292,6 +321,7 @@ export function RosterDraftWorkbench({
         shiftCodeOptions={shiftCodeOptions}
         rosterLifecycleState={rosterLifecycleState}
         derivedCoverage={derivedCoverage}
+        gapRows={gapRows}
         editedCellCount={editedCellCount}
         onUpdateCellDraftEdit={updateCellDraftEdit}
         onResetCellDraftEdit={resetCellDraftEdit}
@@ -314,6 +344,7 @@ function RosterWorkbenchToolbar({
   editedCellCount,
   rosterLifecycleState,
   derivedCoverage,
+  gapRows,
   onToggleReleasePreview,
   onOpenInspector,
 }: {
@@ -329,9 +360,12 @@ function RosterWorkbenchToolbar({
   editedCellCount: number
   rosterLifecycleState: RosterLifecycleState
   derivedCoverage: RosterDerivedCoverage
+  gapRows: RosterGapPreviewRow[]
   onToggleReleasePreview: () => void
   onOpenInspector: () => void
 }) {
+  const shortageCount = gapRows.filter((row) => row.status === "shortage").length
+
   return (
     <div
       data-slot="roster-board-toolbar"
@@ -378,6 +412,9 @@ function RosterWorkbenchToolbar({
         </Badge>
         <Badge variant="outline">班次数 {derivedCoverage.totalShiftCount}</Badge>
         <Badge variant="outline">半小时覆盖 {derivedCoverage.coveredSlotCount}</Badge>
+        <Badge variant={shortageCount > 0 ? "default" : "outline"}>
+          缺口 {shortageCount}
+        </Badge>
         {editedCellCount > 0 && (
           <Badge variant="outline">已调整 {editedCellCount}</Badge>
         )}
@@ -613,6 +650,7 @@ function RosterBoardStatusbar({
   editedCellCount,
   rosterLifecycleState,
   derivedCoverage,
+  gapRows,
   onOpenInspector,
 }: {
   model: RosterDraftViewModel
@@ -621,8 +659,11 @@ function RosterBoardStatusbar({
   editedCellCount: number
   rosterLifecycleState: RosterLifecycleState
   derivedCoverage: RosterDerivedCoverage
+  gapRows: RosterGapPreviewRow[]
   onOpenInspector: () => void
 }) {
+  const shortageCount = gapRows.filter((row) => row.status === "shortage").length
+
   return (
     <div
       data-slot="roster-board-statusbar"
@@ -635,6 +676,7 @@ function RosterBoardStatusbar({
         <span>{rosterLifecycleState === "draft" ? "草稿" : "发布预览"}</span>
         <span>{derivedCoverage.totalShiftCount} 班次</span>
         <span>{derivedCoverage.coveredSlotCount} 个半小时覆盖点</span>
+        <span>{shortageCount} 个缺口</span>
         <span>{model.summary.exceptionCount} 异常</span>
         <span>{model.summary.pendingEmployeeCount} 待排</span>
       </div>
@@ -654,6 +696,7 @@ function RosterInspectorDrawer({
   shiftCodeOptions,
   rosterLifecycleState,
   derivedCoverage,
+  gapRows,
   editedCellCount,
   onUpdateCellDraftEdit,
   onResetCellDraftEdit,
@@ -664,6 +707,7 @@ function RosterInspectorDrawer({
   shiftCodeOptions: ShiftCodeOption[]
   rosterLifecycleState: RosterLifecycleState
   derivedCoverage: RosterDerivedCoverage
+  gapRows: RosterGapPreviewRow[]
   editedCellCount: number
   onUpdateCellDraftEdit: (key: string, edit: RosterCellDraftEdit) => void
   onResetCellDraftEdit: (key: string) => void
@@ -682,9 +726,10 @@ function RosterInspectorDrawer({
       </DrawerHeader>
       <div className="min-h-0 flex-1 overflow-y-auto p-4">
         <Tabs defaultValue="detail" className="flex min-h-0 flex-col gap-4">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="detail">格子详情</TabsTrigger>
             <TabsTrigger value="preview">发布预览</TabsTrigger>
+            <TabsTrigger value="gaps">缺口</TabsTrigger>
             <TabsTrigger value="queue">处理队列</TabsTrigger>
           </TabsList>
           <TabsContent value="detail" className="m-0">
@@ -703,6 +748,13 @@ function RosterInspectorDrawer({
               rosterLifecycleState={rosterLifecycleState}
               derivedCoverage={derivedCoverage}
               editedCellCount={editedCellCount}
+            />
+          </TabsContent>
+          <TabsContent value="gaps" className="m-0">
+            <RosterGapWorkbenchPanel
+              rows={gapRows}
+              fallbackEmployeeId={selectedCell?.employeeId}
+              onLocateCell={onLocateCell}
             />
           </TabsContent>
           <TabsContent value="queue" className="m-0">
@@ -795,6 +847,88 @@ function RosterReleasePreviewPanel({
             ))}
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+function RosterGapWorkbenchPanel({
+  rows,
+  fallbackEmployeeId,
+  onLocateCell,
+}: {
+  rows: RosterGapPreviewRow[]
+  fallbackEmployeeId?: string
+  onLocateCell: (employeeId: string, date: string, view?: WorkbenchView) => void
+}) {
+  return (
+    <div data-slot="roster-gap-workbench-panel" className="rounded-lg border bg-card p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="text-sm font-medium">缺口队列</div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            Forecast / Arranged / Actual
+          </div>
+        </div>
+        <Badge variant="outline">{rows.length}</Badge>
+      </div>
+
+      <div className="mt-4 flex flex-col gap-3">
+        {rows.map((row) => {
+          const primaryEmployeeId = row.relatedEmployeeIds[0] ?? fallbackEmployeeId
+
+          return (
+            <div key={row.id} className="rounded-md border p-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    {row.businessDate} / {row.slotLabel}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {row.reason}
+                  </div>
+                </div>
+                <Badge variant={row.status === "shortage" ? "default" : "outline"}>
+                  {gapStatusLabels[row.status]}
+                </Badge>
+              </div>
+
+              <div className="mt-3 grid grid-cols-3 gap-2 text-center text-sm">
+                <div className="rounded-md border p-2">
+                  <div className="text-xs text-muted-foreground">Forecast</div>
+                  <div className="mt-1 font-semibold">{row.forecastAgents}</div>
+                </div>
+                <div className="rounded-md border p-2">
+                  <div className="text-xs text-muted-foreground">Arranged</div>
+                  <div className="mt-1 font-semibold">{row.arrangedAgents}</div>
+                </div>
+                <div className="rounded-md border p-2">
+                  <div className="text-xs text-muted-foreground">Actual</div>
+                  <div className="mt-1 font-semibold">{row.actualAgents}</div>
+                </div>
+              </div>
+
+              <div className="mt-3 flex items-center justify-between gap-3 text-xs text-muted-foreground">
+                <span>
+                  F-A {row.forecastGap} / A-Actual {row.actualGap}
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={!primaryEmployeeId}
+                  onClick={() => {
+                    if (primaryEmployeeId) {
+                      onLocateCell(primaryEmployeeId, row.businessDate, "week")
+                    }
+                  }}
+                >
+                  定位缺口
+                </Button>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )
@@ -1150,6 +1284,84 @@ function buildRosterDerivedCoverage(
   }
 }
 
+function buildRosterGapPreview(
+  model: RosterDraftViewModel,
+  cellEdits: Record<string, RosterCellDraftEdit>
+): RosterGapPreviewRow[] {
+  const intervalByShiftCode = buildShiftIntervalMap(model)
+  const arrangedBySlot = new Map<string, number>()
+  const employeesBySlot = new Map<string, string[]>()
+  const actualBySlot = new Map(
+    model.actualIntervals.map((item) => [
+      dateSlotKey(item.businessDate, item.slotLabel),
+      item,
+    ])
+  )
+
+  for (const row of model.monthRows) {
+    for (const cell of row.cells) {
+      const key = cellKey(row.employeeId, cell.date)
+      const effectiveCell = getEffectiveCell(cell, key, cellEdits)
+      if (effectiveCell.status !== "copied" || !effectiveCell.shiftCode) {
+        continue
+      }
+
+      const intervalLabel = intervalByShiftCode.get(effectiveCell.shiftCode)
+      if (!intervalLabel) {
+        continue
+      }
+
+      for (const slotLabel of parseHalfHourSlots(intervalLabel)) {
+        const slotKey = dateSlotKey(cell.date, slotLabel)
+        arrangedBySlot.set(slotKey, (arrangedBySlot.get(slotKey) ?? 0) + 1)
+        employeesBySlot.set(slotKey, [
+          ...(employeesBySlot.get(slotKey) ?? []),
+          row.employeeId,
+        ])
+      }
+    }
+  }
+
+  return model.forecastIntervals
+    .map((forecast) => {
+      const slotKey = dateSlotKey(forecast.businessDate, forecast.slotLabel)
+      const actual = actualBySlot.get(slotKey)
+      const arrangedAgents = arrangedBySlot.get(slotKey) ?? 0
+      const actualAgents = actual?.actualAgents ?? 0
+      const forecastGap = forecast.requiredAgents - arrangedAgents
+      const actualGap = arrangedAgents - actualAgents
+
+      return {
+        id: forecast.id,
+        businessDate: forecast.businessDate,
+        slotLabel: forecast.slotLabel,
+        forecastAgents: forecast.requiredAgents,
+        arrangedAgents,
+        actualAgents,
+        forecastGap,
+        actualGap,
+        status: gapStatusFromForecastGap(forecastGap),
+        reason: forecast.reason,
+        sourceLabel: actual?.sourceLabel ?? "本地实际到岗样例",
+        relatedEmployeeIds: employeesBySlot.get(slotKey) ?? [],
+      }
+    })
+    .sort((left, right) => {
+      const leftPriority = left.status === "shortage" ? 0 : left.status === "surplus" ? 1 : 2
+      const rightPriority = right.status === "shortage" ? 0 : right.status === "surplus" ? 1 : 2
+      if (leftPriority !== rightPriority) {
+        return leftPriority - rightPriority
+      }
+
+      const dateCompare = left.businessDate.localeCompare(right.businessDate)
+      if (dateCompare !== 0) {
+        return dateCompare
+      }
+
+      return slotStartMinutes(left.slotLabel) - slotStartMinutes(right.slotLabel)
+    })
+}
+
 function buildShiftIntervalMap(model: RosterDraftViewModel): Map<string, string> {
   const intervalByShiftCode = new Map<string, string>()
 
@@ -1163,6 +1375,20 @@ function buildShiftIntervalMap(model: RosterDraftViewModel): Map<string, string>
   }
 
   return intervalByShiftCode
+}
+
+function gapStatusFromForecastGap(forecastGap: number): RosterGapStatus {
+  if (forecastGap > 0) {
+    return "shortage"
+  }
+  if (forecastGap < 0) {
+    return "surplus"
+  }
+  return "balanced"
+}
+
+function dateSlotKey(businessDate: string, slotLabel: string): string {
+  return `${businessDate}|${slotLabel}`
 }
 
 function parseHalfHourSlots(intervalLabel: string): string[] {

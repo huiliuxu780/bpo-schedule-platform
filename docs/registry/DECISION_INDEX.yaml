@@ -114,3 +114,14 @@ decisions:
       - "scripts/tests/roster-draft-workbench-structure.test.mjs"
       - "docs/raw-requirements.md"
       - "tasks/backlog.yaml"
+  D-2026-07-02-roster-gap-workbench:
+    title: "Roster gap preview compares local Forecast Arranged and Actual from edited draft cells"
+    file: "docs/user-stories.md"
+    related_files:
+      - "lib/roster-drafts.ts"
+      - "lib/roster-draft-fixtures.ts"
+      - "components/roster-draft-workbench.tsx"
+      - "scripts/tests/roster-draft-generation-model.test.mjs"
+      - "scripts/tests/roster-draft-workbench-structure.test.mjs"
+      - "docs/raw-requirements.md"
+      - "tasks/backlog.yaml"

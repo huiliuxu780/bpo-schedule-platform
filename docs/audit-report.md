@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-07-02 - IM291 月班表 Forecast vs Arranged/Actual 缺口工作台
+
+#### 审计结论
+
+- `/roster-drafts` 在 IM290 发布预览与覆盖派生基础上增加本地缺口工作台。
+- `lib/roster-drafts.ts` 的 view model 暴露本地 Forecast interval 和 Actual interval 样例；`lib/roster-draft-fixtures.ts` 提供 2026-08 半小时需求/实际到岗样例。
+- 前端 `buildRosterGapPreview` 从 edited effective cells 派生 Arranged，而不是只看原始生成结果。
+- 右侧抽屉新增缺口队列页，按日期 + 半小时点展示 Forecast、Arranged、Actual、Forecast-Arranged 和 Arranged-Actual 差异。
+- 缺口行保留 related employee ids，点击定位缺口可回到周视图对应员工/日期格子。
+- 编辑生成格子的班种后，缺口队列即时重算；不新增真实预测模型、标准人力、API、数据库、Excel 上传/导入、审批、权限、自动排班、导出、批量、生产公式、结算或收费因子。
+
+#### 验证
+
+- red: `node --experimental-strip-types scripts/tests/roster-draft-generation-model.test.mjs && node scripts/tests/roster-draft-workbench-structure.test.mjs` 先失败在缺少 `forecastIntervals`。
+- focused: `node --experimental-strip-types scripts/tests/roster-draft-generation-model.test.mjs && node scripts/tests/roster-draft-workbench-structure.test.mjs` 通过，18 个测试。
+- `npm run typecheck`: 通过。
+- `npm run lint`: 通过。
+- shadcn review: `npx shadcn@latest info --json` 确认 `radix-nova`；硬编码色阶和 `space-*` 扫描无命中。
+- `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build`: 通过。
+- 浏览器 smoke: 通过。`http://localhost:3003/roster-drafts?month=2026-08` 中缺口指标、右侧抽屉缺口队列、Forecast/Arranged/Actual 行和定位缺口可见；点击第一条缺口定位到周视图 `EMP-001|2026-08-03`；将该格从 A5 调为 A10 后，09:00 缺口行从 Arranged 2 / F-A 2 重算为 Arranged 1 / F-A 3，14:30 缺口行从 Arranged 0 重算为 Arranged 1。
+- final: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过；Node 测试 866 pass / 1 skip，Python 测试 249 tests OK，shadcn/ui convention check、lint、typecheck、build 和 project Harness check 通过。
+
 ### 2026-07-02 - IM290 月班表草稿发布预览与覆盖派生
 
 #### 审计结论

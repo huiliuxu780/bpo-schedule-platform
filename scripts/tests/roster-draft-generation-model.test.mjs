@@ -118,3 +118,27 @@ test("roster draft generator exposes coverage summary and available target month
     ["copied", "needs_confirmation", "exception", "filtered_annotation"]
   )
 })
+
+test("roster draft generator exposes local forecast and actual interval inputs for gap preview", () => {
+  const result = generateRosterDraftViewModel({
+    fixture: rosterDraftDemoFixture,
+    targetMonth: "2026-08",
+  })
+
+  assert.ok(result.forecastIntervals.length >= 3)
+  assert.ok(result.actualIntervals.length >= 2)
+  assert.deepEqual(result.forecastIntervals[0], {
+    id: "FC-2026-08-03-09:00",
+    businessDate: "2026-08-03",
+    slotLabel: "09:00",
+    requiredAgents: 4,
+    reason: "本地需求样例，来自当前口径，不代表预测模型",
+  })
+  assert.deepEqual(result.actualIntervals[0], {
+    id: "AC-2026-08-03-09:00",
+    businessDate: "2026-08-03",
+    slotLabel: "09:00",
+    actualAgents: 2,
+    sourceLabel: "本地实际到岗样例",
+  })
+})
