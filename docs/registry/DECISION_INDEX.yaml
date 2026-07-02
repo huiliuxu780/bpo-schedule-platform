@@ -140,3 +140,14 @@ decisions:
       - "docs/raw-requirements.md"
       - "docs/user-stories.md"
       - "tasks/backlog.yaml"
+  D-2026-07-02-roster-domain-publish-rules:
+    title: "Roster publish rules should first be implemented as a backend pure-domain slice"
+    file: "docs/user-stories.md"
+    related_files:
+      - "docs/design/roster-draft-publish-persistence-contract.md"
+      - "backend/app/roster_drafts.py"
+      - "backend/tests/test_roster_drafts.py"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "tasks/backlog.yaml"

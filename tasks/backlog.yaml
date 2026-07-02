@@ -166,3 +166,13 @@ tasks:
     requirement_ids:
       - R961
     notes: "Documentation-only contract for roster draft/published persistence: version state machine, future effectiveAt, scheduled activation, withdrawal, revision lineage, stable roster cell IDs, edit lock, hard errors, soft risks, published snapshots, and lifecycle audit events. No DB tables, ORM, migrations, API routes, frontend publish actions, permissions, approval, notifications, export, batch, Excel import, forecasting model, standard-capacity model, automatic scheduling, production formulas, settlement, or charge-factor work."
+
+  - id: IM294
+    title: "月班表 Draft/Published 纯领域状态机与发布校验"
+    status: done
+    required_workflow: backend-mvp
+    story_ids:
+      - US882
+    requirement_ids:
+      - R962
+    notes: "Backend pure-domain implementation for roster version lifecycle, complete hard-error publish blockers, soft-risk output, lineage, publish diff summary, Arranged half-hour coverage derivation, and edit-lock rules. No DB tables, ORM, migrations, repositories, API routes, frontend publish actions, permissions, approval, notifications, export, batch, Excel import, forecasting model, standard-capacity model, automatic scheduling, production formulas, settlement, or charge-factor work."

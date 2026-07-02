@@ -6,6 +6,15 @@
 
 ### 2026-07-02
 
+- task_id: `IM294`
+- source_ids:
+  - `R962`
+- story_ids:
+  - `US882`
+- action: 月班表 Draft/Published 纯领域状态机与发布校验。
+- status: `done`
+- notes: 在后端纯领域模块中实现并测试 RosterVersion 发布生命周期、future effectiveAt 校验、activation failure/retry/withdraw/revision lineage、完整 hard-error 发布阻断、soft-risk 输出、Arranged 半小时覆盖派生、publish coverage diff 和纯编辑锁规则；本轮不新增 DB 表、ORM、migration、repository、API、前端发布动作、权限、审批、通知、导出、批量、Excel 导入、预测模型、标准人力、自动排班、生产公式、结算或收费因子。
+
 - task_id: `IM293`
 - source_ids:
   - `R961`

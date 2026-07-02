@@ -173,6 +173,19 @@ status: "draft"
 notes: "Documentation/product-contract task only; prepares future DB/API design without implementing persistence."
 ```
 
+### R962 - 月班表 Draft/Published 纯领域状态机与发布校验
+
+```yaml
+id: R962
+module: "BPO WFM 三条主线"
+description: "将 IM293 的 Draft/Published 持久化产品契约落成后端纯领域层能力。第一实现切片必须覆盖版本状态机、future effectiveAt 校验、scheduled activation、withdraw、retry、revision lineage、完整 hard-error 发布阻断、soft-risk 发布记录、publish diff summary、Arranged 半小时覆盖派生，以及纯领域编辑锁。输入使用纯领域 fixture 与 reference snapshot，不接真实 DB、repository、API 或前端。Forecast/Actual 数据源、预测模型、标准人力模型、Excel 导入、权限、审批、导出、批量、自动排班、生产公式、结算和计费规则都不在本轮。"
+source: "PM-confirmed IM294 drill on 2026-07-02"
+submitted_at: "2026-07-02"
+version: "1.0"
+status: "draft"
+notes: "Backend pure domain implementation only; follow IM293 product contract before any persistence/API slice."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

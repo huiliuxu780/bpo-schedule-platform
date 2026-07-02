@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-07-02 - IM294 月班表 Draft/Published 纯领域状态机与发布校验
+
+#### 审计结论
+
+- `backend/app/roster_drafts.py` 扩展为 Draft/Published 纯领域底座，保留既有 IM284 草稿校验兼容性。
+- 新增状态机动作：排定发布、自动生效、生效失败、重试生效、撤回、创建修订草稿。
+- 状态覆盖 `draft`、`scheduled_published`、`published`、`superseded`、`voided`、`activation_failed`，并校验 `effectiveAt` 不能早于当前时间或晚于班表月份结束。
+- 发布校验完整覆盖 hard errors：无效班种、员工缺失、冻结、离职、不在项目/职场/团队快照、同员工同日班次重叠、必排日期/人员缺失、未确认再生成冲突、基准快照过期未确认。
+- soft risks 可输出但不阻断发布，已覆盖待确认员工、人工调整格子、无覆盖半小时。
+- 从人员级 shift cells 派生 Arranged 半小时覆盖，并基于 baseline/candidate 生成 publish coverage delta。
+- 新增纯领域编辑锁规则：单编辑者、30 分钟过期、续期、自释放、管理员强制释放、非持有者只读。
+- 本轮不新增 DB 表、ORM、migration、repository、API、前端发布动作、权限、审批、通知、导出、批量、Excel 导入、预测模型、标准人力、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- red: `.venv/bin/python -m unittest backend.tests.test_roster_drafts` 先失败在缺少 `EditLockDecision` 等 IM294 新领域 API。
+- focused: `.venv/bin/python -m unittest backend.tests.test_roster_drafts` 通过，12 tests OK。
+- focused backend: `.venv/bin/python -m unittest discover backend/tests` 通过，255 tests OK。
+- `git diff --check`: 通过。
+- final: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过；Node 测试 867 pass / 1 skip，Python 测试 255 tests OK，shadcn/ui convention check、lint、typecheck、build 和 project Harness check 通过。
+
 ### 2026-07-02 - IM293 月班表 Draft/Published 持久化产品契约
 
 #### 审计结论

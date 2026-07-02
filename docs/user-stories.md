@@ -298,6 +298,28 @@ status: "draft"
 notes: "IM293 docs-only persistence product contract after IM292 local roster gap-resolution loop."
 ```
 
+### US882 - 月班表 Draft/Published 纯领域状态机与发布校验
+
+```yaml
+id: US882
+requirement_ids:
+  - R962
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望系统在真正持久化发布前先有可测试的月班表版本状态机、发布阻断、覆盖派生和编辑锁规则，以便后续保存、发布、生效、撤回和下游读取不会出现状态错乱或错误发布。"
+task_type: "backend-mvp"
+priority: "P0"
+acceptance:
+  - "纯领域模型支持 draft、scheduled_published、published、superseded、voided、activation_failed 的合法流转、future effectiveAt、activation、withdraw、retry 和 revision lineage。"
+  - "完整覆盖 hard errors：无效班种、员工缺失/冻结/离职、不在项目/职场/团队快照、同员工同日班次重叠、必排日期/人员缺失、未确认再生成冲突、基准快照过期未确认。"
+  - "soft risks 可随发布结果记录但不阻断发布。"
+  - "从 roster cells 派生 Arranged 半小时覆盖和 publish diff coverage delta，不接 Forecast/Actual 数据源、预测模型或标准人力模型。"
+  - "编辑锁规则以纯领域方式覆盖单编辑者、30 分钟过期、续期、自释放、管理员强制释放和非持有者只读。"
+  - "本轮不新增 DB 表、ORM、migration、repository、API、前端发布动作、权限、审批、通知、导出、批量、Excel 导入、自动排班、生产公式、结算或计费规则。"
+status: "draft"
+notes: "IM294 backend pure domain slice after IM293 persistence contract."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.
