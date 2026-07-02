@@ -209,6 +209,28 @@ status: "draft"
 notes: "IM289 frontend local controlled-editing layer on top of IM288."
 ```
 
+### US878 - 月班表草稿发布预览与覆盖派生
+
+```yaml
+id: US878
+requirement_ids:
+  - R958
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望在调整草稿后看到草稿/发布预览状态、班种次数和半小时覆盖派生结果，以便在真正发布或接入缺口校验前先确认当前草稿的人员级安排口径。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "toolbar/statusbar 展示当前为草稿或发布预览状态，并展示班次数、半小时覆盖摘要。"
+  - "用户可在本地切换生成发布预览和回到草稿，该动作不写入生产数据、不新增 API 或持久化。"
+  - "派生班次数和半小时覆盖基于 edited effective cells，而不是只看原始生成结果。"
+  - "右侧抽屉提供发布预览页，展示班种分布和半小时覆盖高峰。"
+  - "编辑格子后状态回到草稿，重新生成发布预览前可继续修正。"
+  - "本轮不新增真实发布、API、数据库、Excel 上传/导入、审批、权限、预测模型、标准人力、自动排班、导出或批量能力。"
+status: "draft"
+notes: "IM290 frontend local release-preview and derived coverage layer on top of IM289."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

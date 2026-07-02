@@ -121,6 +121,19 @@ status: "draft"
 notes: "Frontend local state editing layer only; no production save or persistence."
 ```
 
+### R958 - 月班表草稿发布预览与覆盖派生
+
+```yaml
+id: R958
+module: "BPO WFM 三条主线"
+description: "Continue from the controlled roster draft editing slice and add frontend-only draft -> published state expression as a local release preview. Scheduler users can see current draft vs release-preview state, derive shift-code counts and half-hour coverage from the edited effective draft cells, and inspect the derived distribution in the drawer before the future persistence/publish slice. This slice must not add real publish persistence, API routes, database work, Excel upload/import, approval, permissions, forecasting model, standard-capacity model, automatic scheduling, external integrations, export, batch operations, production formulas, settlement, or charge-factor work."
+source: "PM-confirmed continuation on 2026-07-02"
+submitted_at: "2026-07-02"
+version: "1.0"
+status: "draft"
+notes: "Frontend local release-preview and derived coverage layer only; no production save or persistence."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

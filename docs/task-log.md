@@ -6,6 +6,15 @@
 
 ### 2026-07-02
 
+- task_id: `IM290`
+- source_ids:
+  - `R958`
+- story_ids:
+  - `US878`
+- action: 月班表草稿发布预览与覆盖派生。
+- status: `done`
+- notes: 在 `/roster-drafts` 增加本地草稿/发布预览状态表达，并从 edited effective cells 派生班种次数和半小时覆盖；抽屉提供发布预览页查看班种分布和覆盖高峰；不进入真实发布持久化、API、数据库、Excel 导入、审批、权限、预测、标准人力、自动排班、导出或批量。
+
 - task_id: `IM289`
 - source_ids:
   - `R957`

@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-07-02 - IM290 月班表草稿发布预览与覆盖派生
+
+#### 审计结论
+
+- `/roster-drafts` 在 IM289 受控编辑层基础上增加本地草稿/发布预览状态表达。
+- toolbar/statusbar 展示当前状态、班次数和半小时覆盖摘要。
+- 右侧抽屉新增发布预览页，展示基于 effective cells 的班种分布和半小时覆盖高峰。
+- 编辑格子会让状态回到草稿，重新生成发布预览前可继续修正。
+- 派生结果基于本地已编辑草稿预览；不新增真实发布持久化、API、数据库、Excel 上传/导入、审批、权限、预测模型、标准人力、自动排班、导出、批量、生产公式、结算或收费因子。
+
+#### 验证
+
+- red: `node --test scripts/tests/roster-draft-workbench-structure.test.mjs` 先失败在缺少发布预览与覆盖派生结构。
+- focused: `node --test scripts/tests/roster-draft-workbench-structure.test.mjs` 通过，11 个测试。
+- `npm run typecheck`: 通过。
+- `npm run lint`: 通过。
+- shadcn review: `npx shadcn@latest info --json` 确认 `radix-nova`；硬编码色阶和 `space-*` 扫描无命中。
+- `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build`: 通过。
+- 浏览器 smoke: 通过。`http://localhost:3003/roster-drafts?month=2026-08` 中发布预览切换、抽屉发布预览页、班种分布、覆盖高峰、编辑后回到草稿和 A10 派生分布均可见。
+- final: `git diff --check && bash scripts/check-state.sh --strict && BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过；Node 测试 864 pass / 1 skip，Python 测试 249 tests OK，shadcn/ui convention check、lint、typecheck、build 通过。
+
 ### 2026-07-02 - IM289 月班表草稿格子受控编辑能力
 
 #### 审计结论

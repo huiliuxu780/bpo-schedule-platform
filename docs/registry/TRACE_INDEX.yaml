@@ -75,6 +75,13 @@ stories:
     task_ids:
       - "IM289"
     archive_refs: []
+  US878:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R958"
+    task_ids:
+      - "IM290"
+    archive_refs: []
 tasks:
   F001:
     file: "tasks/backlog.yaml"
@@ -133,6 +140,11 @@ tasks:
     story_ids:
       - "US877"
     gate: "frontend-scaffold"
+  IM290:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US878"
+    gate: "frontend-scaffold"
 requirements:
   R949:
     file: "docs/raw-requirements.md"
@@ -188,6 +200,12 @@ requirements:
       - "US877"
     task_ids:
       - "IM289"
+  R958:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US878"
+    task_ids:
+      - "IM290"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
@@ -200,4 +218,5 @@ decisions:
   - "D-2026-07-01-global-navigation-rail"
   - "D-2026-07-01-roster-fullscreen-workbench"
   - "D-2026-07-02-roster-cell-controlled-editing"
+  - "D-2026-07-02-roster-release-preview-coverage"
 archive_refs: []

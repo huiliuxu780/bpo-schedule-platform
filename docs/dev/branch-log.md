@@ -4,6 +4,26 @@
 
 ## Current Branch Entries
 
+### IM290 Roster Release Preview Coverage
+
+- branch_name: `codex/im290-roster-publish-coverage`
+- base_main_commit: `stacked on local codex/im289-roster-cell-controlled-editing at 717bc58`
+- stacked_on: `codex/im289-roster-cell-controlled-editing`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Add frontend local draft/release-preview state expression and derived shift-count/half-hour coverage for `/roster-drafts`.
+- qoder_mode: `false; PM confirmed to start the next roster slice directly.`
+- allowed_files_check: `components/roster-draft-workbench.tsx`, `scripts/tests/roster-draft-workbench-structure.test.mjs`, traceability docs, and current/registry state docs only.
+- scope_diff_check: expected local release-preview state, derived shift counts, derived half-hour coverage, drawer preview panel, focused tests, browser smoke evidence, and traceability changes only; no new dependency, package/lockfile, backend API route, database, migration, external integration, real publish persistence, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, standard-capacity model, forecasting model, Excel upload/import, or charge-factor changes.
+- focused_check_result: red `node --test scripts/tests/roster-draft-workbench-structure.test.mjs` failed before implementation on missing release-preview/derived-coverage structure; green run passed with 11 tests; `npm run typecheck` passed; `npm run lint` passed; shadcn review passed for `radix-nova` with no hardcoded color or `space-*` hits; `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build` passed; browser smoke passed for release-preview toggle, drawer derived panel, edited draft reset, and A10 derived distribution.
+- check_result: `git diff --check && bash scripts/check-state.sh --strict && BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed; Node tests 864 pass / 1 skip, Python tests 249 OK, shadcn/ui convention check, lint, typecheck, and build passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM289 Roster Cell Controlled Editing
 
 - branch_name: `codex/im289-roster-cell-controlled-editing`

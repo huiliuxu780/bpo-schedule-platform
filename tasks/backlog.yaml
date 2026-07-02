@@ -5,7 +5,7 @@
 # Use Git history when a legacy task must be audited.
 
 version: 2
-updated_at: "2026-07-01"
+updated_at: "2026-07-02"
 source_of_truth: "current_files_first"
 notes:
   - "Keep this file compact. Do not append completed task history here."
@@ -126,3 +126,13 @@ tasks:
     requirement_ids:
       - R957
     notes: "Add frontend local controlled editing for copied/generated roster draft cells: shift-code selection, adjustment note, edited markers/counts, and restore-generated-value. Exception/pending/filtered cells remain read-only. No draft publishing, API, database, Excel upload/import, approval, permissions, forecasting model, standard-capacity model, automatic scheduling, external integrations, export, batch, production formulas, settlement, or charge-factor work."
+
+  - id: IM290
+    title: "月班表草稿发布预览与覆盖派生"
+    status: done
+    required_workflow: frontend-scaffold
+    story_ids:
+      - US878
+    requirement_ids:
+      - R958
+    notes: "Add frontend-only draft/release-preview state expression plus derived shift-code counts and half-hour coverage from edited effective roster draft cells. No real publish persistence, API, database, Excel upload/import, approval, permissions, forecasting model, standard-capacity model, automatic scheduling, external integrations, export, batch, production formulas, settlement, or charge-factor work."

@@ -113,6 +113,26 @@ test("roster draft copied cells support controlled local editing without product
   assert.ok(!content.includes("提交审批"))
 })
 
+test("roster draft workbench derives publish preview shift counts and half-hour coverage", () => {
+  const content = readProjectFile("components/roster-draft-workbench.tsx")
+
+  assert.ok(content.includes('type RosterLifecycleState = "draft" | "published_preview"'))
+  assert.ok(content.includes("const [rosterLifecycleState, setRosterLifecycleState]"))
+  assert.ok(content.includes("buildRosterDerivedCoverage"))
+  assert.ok(content.includes("RosterReleasePreviewPanel"))
+  assert.ok(content.includes("shiftCounts"))
+  assert.ok(content.includes("halfHourCoverage"))
+  assert.ok(content.includes("生成发布预览"))
+  assert.ok(content.includes("回到草稿"))
+  assert.ok(content.includes("发布预览"))
+  assert.ok(content.includes("班次数"))
+  assert.ok(content.includes("半小时覆盖"))
+  assert.ok(content.includes("coveredSlotCount"))
+  assert.ok(content.includes("parseHalfHourSlots"))
+  assert.ok(!content.includes("保存并发布"))
+  assert.ok(!content.includes("提交审批"))
+})
+
 test("roster draft workbench keeps mature-scheduling references structural and non-production", () => {
   const content = readProjectFile("components/roster-draft-workbench.tsx")
 

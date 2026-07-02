@@ -36,10 +36,29 @@ import { cn } from "@/lib/utils"
 
 type WorkbenchView = "month" | "week"
 type QueueKind = "exception" | "pending" | "annotation"
+type RosterLifecycleState = "draft" | "published_preview"
 
 type RosterCellDraftEdit = {
   shiftCode: string
   note: string
+}
+
+type ShiftCountSummary = {
+  shiftCode: string
+  count: number
+  intervalLabel: string
+}
+
+type HalfHourCoverageSummary = {
+  slotLabel: string
+  arrangedCount: number
+}
+
+type RosterDerivedCoverage = {
+  shiftCounts: ShiftCountSummary[]
+  halfHourCoverage: HalfHourCoverageSummary[]
+  totalShiftCount: number
+  coveredSlotCount: number
 }
 
 type SelectedCell = {
@@ -110,6 +129,8 @@ export function RosterDraftWorkbench({
   )
   const [inspectorOpen, setInspectorOpen] = React.useState(false)
   const [cellEdits, setCellEdits] = React.useState<Record<string, RosterCellDraftEdit>>({})
+  const [rosterLifecycleState, setRosterLifecycleState] =
+    React.useState<RosterLifecycleState>("draft")
 
   const selectedWeek =
     model.weeks.find((week) => week.weekId === selectedWeekId) ?? model.weeks[0]
@@ -120,6 +141,10 @@ export function RosterDraftWorkbench({
   const teamNames = Array.from(new Set(model.monthRows.map((row) => row.teamName)))
   const shiftCodeOptions = buildShiftCodeOptions(model, selectedCell)
   const editedCellCount = Object.keys(cellEdits).length
+  const derivedCoverage = React.useMemo(
+    () => buildRosterDerivedCoverage(model, cellEdits),
+    [model, cellEdits]
+  )
 
   function locateCell(employeeId: string, date: string, nextView: WorkbenchView = "week") {
     setSelectedCellKey(cellKey(employeeId, date))
@@ -139,6 +164,7 @@ export function RosterDraftWorkbench({
       return
     }
 
+    setRosterLifecycleState("draft")
     setCellEdits((current) => {
       const generatedShiftCode = selected.originalCell.shiftCode ?? ""
       const normalizedNote = nextEdit.note.trim()
@@ -159,11 +185,18 @@ export function RosterDraftWorkbench({
   }
 
   function resetCellDraftEdit(key: string) {
+    setRosterLifecycleState("draft")
     setCellEdits((current) => {
       const rest = { ...current }
       delete rest[key]
       return rest
     })
+  }
+
+  function toggleReleasePreview() {
+    setRosterLifecycleState((current) =>
+      current === "draft" ? "published_preview" : "draft"
+    )
   }
 
   return (
@@ -188,6 +221,9 @@ export function RosterDraftWorkbench({
           teamNames={teamNames}
           queueCount={queueItems.length}
           editedCellCount={editedCellCount}
+          rosterLifecycleState={rosterLifecycleState}
+          derivedCoverage={derivedCoverage}
+          onToggleReleasePreview={toggleReleasePreview}
           onOpenInspector={() => setInspectorOpen(true)}
         />
 
@@ -244,6 +280,8 @@ export function RosterDraftWorkbench({
           selectedCell={selectedCell}
           queueCount={queueItems.length}
           editedCellCount={editedCellCount}
+          rosterLifecycleState={rosterLifecycleState}
+          derivedCoverage={derivedCoverage}
           onOpenInspector={() => setInspectorOpen(true)}
         />
       </div>
@@ -252,6 +290,9 @@ export function RosterDraftWorkbench({
         selectedCell={selectedCell}
         items={queueItems}
         shiftCodeOptions={shiftCodeOptions}
+        rosterLifecycleState={rosterLifecycleState}
+        derivedCoverage={derivedCoverage}
+        editedCellCount={editedCellCount}
         onUpdateCellDraftEdit={updateCellDraftEdit}
         onResetCellDraftEdit={resetCellDraftEdit}
         onLocateCell={locateCell}
@@ -271,6 +312,9 @@ function RosterWorkbenchToolbar({
   teamNames,
   queueCount,
   editedCellCount,
+  rosterLifecycleState,
+  derivedCoverage,
+  onToggleReleasePreview,
   onOpenInspector,
 }: {
   model: RosterDraftViewModel
@@ -283,6 +327,9 @@ function RosterWorkbenchToolbar({
   teamNames: string[]
   queueCount: number
   editedCellCount: number
+  rosterLifecycleState: RosterLifecycleState
+  derivedCoverage: RosterDerivedCoverage
+  onToggleReleasePreview: () => void
   onOpenInspector: () => void
 }) {
   return (
@@ -326,12 +373,20 @@ function RosterWorkbenchToolbar({
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
+        <Badge variant={rosterLifecycleState === "draft" ? "outline" : "default"}>
+          {rosterLifecycleState === "draft" ? "草稿" : "发布预览"}
+        </Badge>
+        <Badge variant="outline">班次数 {derivedCoverage.totalShiftCount}</Badge>
+        <Badge variant="outline">半小时覆盖 {derivedCoverage.coveredSlotCount}</Badge>
         {editedCellCount > 0 && (
           <Badge variant="outline">已调整 {editedCellCount}</Badge>
         )}
         <Button variant="outline" onClick={onOpenInspector}>
           详情与队列
           <Badge variant="secondary">{queueCount}</Badge>
+        </Button>
+        <Button type="button" variant="outline" onClick={onToggleReleasePreview}>
+          {rosterLifecycleState === "draft" ? "生成发布预览" : "回到草稿"}
         </Button>
         <Button asChild>
           <Link href={`/roster-drafts?month=${selectedMonth}`}>生成草稿</Link>
@@ -556,12 +611,16 @@ function RosterBoardStatusbar({
   selectedCell,
   queueCount,
   editedCellCount,
+  rosterLifecycleState,
+  derivedCoverage,
   onOpenInspector,
 }: {
   model: RosterDraftViewModel
   selectedCell?: SelectedCell
   queueCount: number
   editedCellCount: number
+  rosterLifecycleState: RosterLifecycleState
+  derivedCoverage: RosterDerivedCoverage
   onOpenInspector: () => void
 }) {
   return (
@@ -573,6 +632,9 @@ function RosterBoardStatusbar({
         <span>{model.summary.employeeCount} 人</span>
         <span>{model.summary.generatedShiftCount} 格已生成</span>
         <span>{editedCellCount} 格已调整</span>
+        <span>{rosterLifecycleState === "draft" ? "草稿" : "发布预览"}</span>
+        <span>{derivedCoverage.totalShiftCount} 班次</span>
+        <span>{derivedCoverage.coveredSlotCount} 个半小时覆盖点</span>
         <span>{model.summary.exceptionCount} 异常</span>
         <span>{model.summary.pendingEmployeeCount} 待排</span>
       </div>
@@ -590,6 +652,9 @@ function RosterInspectorDrawer({
   selectedCell,
   items,
   shiftCodeOptions,
+  rosterLifecycleState,
+  derivedCoverage,
+  editedCellCount,
   onUpdateCellDraftEdit,
   onResetCellDraftEdit,
   onLocateCell,
@@ -597,6 +662,9 @@ function RosterInspectorDrawer({
   selectedCell?: SelectedCell
   items: QueueItem[]
   shiftCodeOptions: ShiftCodeOption[]
+  rosterLifecycleState: RosterLifecycleState
+  derivedCoverage: RosterDerivedCoverage
+  editedCellCount: number
   onUpdateCellDraftEdit: (key: string, edit: RosterCellDraftEdit) => void
   onResetCellDraftEdit: (key: string) => void
   onLocateCell: (employeeId: string, date: string, view?: WorkbenchView) => void
@@ -614,8 +682,9 @@ function RosterInspectorDrawer({
       </DrawerHeader>
       <div className="min-h-0 flex-1 overflow-y-auto p-4">
         <Tabs defaultValue="detail" className="flex min-h-0 flex-col gap-4">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="detail">格子详情</TabsTrigger>
+            <TabsTrigger value="preview">发布预览</TabsTrigger>
             <TabsTrigger value="queue">处理队列</TabsTrigger>
           </TabsList>
           <TabsContent value="detail" className="m-0">
@@ -629,6 +698,13 @@ function RosterInspectorDrawer({
               />
             </div>
           </TabsContent>
+          <TabsContent value="preview" className="m-0">
+            <RosterReleasePreviewPanel
+              rosterLifecycleState={rosterLifecycleState}
+              derivedCoverage={derivedCoverage}
+              editedCellCount={editedCellCount}
+            />
+          </TabsContent>
           <TabsContent value="queue" className="m-0">
             <WorkbenchQueuePanel items={items} onLocateCell={onLocateCell} />
           </TabsContent>
@@ -640,6 +716,87 @@ function RosterInspectorDrawer({
         </DrawerClose>
       </DrawerFooter>
     </DrawerContent>
+  )
+}
+
+function RosterReleasePreviewPanel({
+  rosterLifecycleState,
+  derivedCoverage,
+  editedCellCount,
+}: {
+  rosterLifecycleState: RosterLifecycleState
+  derivedCoverage: RosterDerivedCoverage
+  editedCellCount: number
+}) {
+  return (
+    <div
+      data-slot="roster-publish-preview-panel"
+      className="rounded-lg border bg-card p-4"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="text-sm font-medium">发布预览</div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            本地预览 / {editedCellCount} 格已调整
+          </div>
+        </div>
+        <Badge variant={rosterLifecycleState === "draft" ? "outline" : "default"}>
+          {rosterLifecycleState === "draft" ? "草稿" : "发布预览"}
+        </Badge>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
+        <div className="rounded-md border p-3">
+          <div className="text-xs text-muted-foreground">班次数</div>
+          <div className="mt-1 text-lg font-semibold">
+            {derivedCoverage.totalShiftCount}
+          </div>
+        </div>
+        <div className="rounded-md border p-3">
+          <div className="text-xs text-muted-foreground">半小时覆盖</div>
+          <div className="mt-1 text-lg font-semibold">
+            {derivedCoverage.coveredSlotCount}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-3">
+        <div>
+          <div className="text-xs font-medium text-muted-foreground">班种分布</div>
+          <div className="mt-2 grid gap-2">
+            {derivedCoverage.shiftCounts.map((item) => (
+              <div
+                key={item.shiftCode}
+                className="flex items-center justify-between gap-3 rounded-md border px-3 py-2 text-sm"
+              >
+                <div className="min-w-0">
+                  <div className="font-medium">{item.shiftCode}</div>
+                  <div className="truncate text-xs text-muted-foreground">
+                    {item.intervalLabel}
+                  </div>
+                </div>
+                <Badge variant="secondary">{item.count}</Badge>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="text-xs font-medium text-muted-foreground">覆盖高峰</div>
+          <div className="mt-2 grid gap-2">
+            {derivedCoverage.halfHourCoverage.slice(0, 8).map((item) => (
+              <div
+                key={item.slotLabel}
+                className="flex items-center justify-between gap-3 rounded-md border px-3 py-2 text-sm"
+              >
+                <span>{item.slotLabel}</span>
+                <span className="font-medium">{item.arrangedCount} 人</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -941,6 +1098,107 @@ function buildShiftCodeOptions(
   }
 
   return Array.from(options, ([shiftCode, label]) => ({ shiftCode, label }))
+}
+
+function buildRosterDerivedCoverage(
+  model: RosterDraftViewModel,
+  cellEdits: Record<string, RosterCellDraftEdit>
+): RosterDerivedCoverage {
+  const intervalByShiftCode = buildShiftIntervalMap(model)
+  const shiftCounts = new Map<string, ShiftCountSummary>()
+  const halfHourCoverage = new Map<string, number>()
+
+  for (const row of model.monthRows) {
+    for (const cell of row.cells) {
+      const key = cellKey(row.employeeId, cell.date)
+      const effectiveCell = getEffectiveCell(cell, key, cellEdits)
+      if (effectiveCell.status !== "copied" || !effectiveCell.shiftCode) {
+        continue
+      }
+
+      const intervalLabel =
+        intervalByShiftCode.get(effectiveCell.shiftCode) ?? "未配置时间段"
+      const currentShift = shiftCounts.get(effectiveCell.shiftCode)
+      shiftCounts.set(effectiveCell.shiftCode, {
+        shiftCode: effectiveCell.shiftCode,
+        intervalLabel,
+        count: (currentShift?.count ?? 0) + 1,
+      })
+
+      for (const slotLabel of parseHalfHourSlots(intervalLabel)) {
+        halfHourCoverage.set(
+          slotLabel,
+          (halfHourCoverage.get(slotLabel) ?? 0) + 1
+        )
+      }
+    }
+  }
+
+  const sortedShiftCounts = Array.from(shiftCounts.values()).sort((left, right) =>
+    left.shiftCode.localeCompare(right.shiftCode)
+  )
+  const sortedHalfHourCoverage = Array.from(
+    halfHourCoverage,
+    ([slotLabel, arrangedCount]) => ({ slotLabel, arrangedCount })
+  ).sort((left, right) => slotStartMinutes(left.slotLabel) - slotStartMinutes(right.slotLabel))
+
+  return {
+    shiftCounts: sortedShiftCounts,
+    halfHourCoverage: sortedHalfHourCoverage,
+    totalShiftCount: sortedShiftCounts.reduce((sum, item) => sum + item.count, 0),
+    coveredSlotCount: sortedHalfHourCoverage.length,
+  }
+}
+
+function buildShiftIntervalMap(model: RosterDraftViewModel): Map<string, string> {
+  const intervalByShiftCode = new Map<string, string>()
+
+  for (const assignment of model.assignments) {
+    intervalByShiftCode.set(assignment.shiftCode, assignment.intervalLabel)
+  }
+  for (const detail of model.weekDetails) {
+    if (detail.shiftCode && detail.intervalLabel) {
+      intervalByShiftCode.set(detail.shiftCode, detail.intervalLabel)
+    }
+  }
+
+  return intervalByShiftCode
+}
+
+function parseHalfHourSlots(intervalLabel: string): string[] {
+  const match = intervalLabel.match(/^(\d{2}:\d{2})-(\d{2}:\d{2})$/)
+  if (!match) {
+    return []
+  }
+
+  const start = timeToMinutes(match[1])
+  let end = timeToMinutes(match[2])
+  if (end <= start) {
+    end += 24 * 60
+  }
+
+  const slots: string[] = []
+  for (let minute = start; minute < end; minute += 30) {
+    slots.push(minutesToTime(minute))
+  }
+
+  return slots
+}
+
+function timeToMinutes(value: string): number {
+  const [hour, minute] = value.split(":").map(Number)
+  return hour * 60 + minute
+}
+
+function minutesToTime(value: number): string {
+  const normalized = value % (24 * 60)
+  const hour = Math.floor(normalized / 60)
+  const minute = normalized % 60
+  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
+}
+
+function slotStartMinutes(slotLabel: string): number {
+  return timeToMinutes(slotLabel)
 }
 
 function firstActionableCellKey(model: RosterDraftViewModel): string {

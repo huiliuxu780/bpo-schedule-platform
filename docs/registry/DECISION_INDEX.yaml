@@ -106,3 +106,11 @@ decisions:
       - "scripts/tests/roster-draft-workbench-structure.test.mjs"
       - "docs/raw-requirements.md"
       - "tasks/backlog.yaml"
+  D-2026-07-02-roster-release-preview-coverage:
+    title: "Roster draft release preview derives shift counts and half-hour coverage locally"
+    file: "docs/user-stories.md"
+    related_files:
+      - "components/roster-draft-workbench.tsx"
+      - "scripts/tests/roster-draft-workbench-structure.test.mjs"
+      - "docs/raw-requirements.md"
+      - "tasks/backlog.yaml"
