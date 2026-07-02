@@ -16,7 +16,7 @@
 - scope_diff_check: expected product contract, state machine, domain-object field draft, acceptance cases, and traceability changes only; no business code, frontend publish actions, backend API route, database table/schema/migration/ORM/repository, dependency, package/lockfile, external integration, auth, permission, approval, notification, export, batch, automatic scheduling, forecasting model, standard-capacity model, Excel upload/import, production formula, settlement, or charge-factor changes.
 - focused_check_result: `git diff --cached --check` passed. `bash scripts/check-state.sh --strict` passed. Contract self-review found no TODO/TBD placeholders and no implementation files in scope.
 - check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 867 Node tests passing / 1 skipped, shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 249 backend tests, and project Harness check.
-- local_commit_sha: `pending`
+- local_commit_sha: `e8888af`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
