@@ -94,6 +94,25 @@ test("roster draft detail and queue are exposed through a right drawer, not a fi
   assert.ok(!content.includes("<WorkbenchQueue items={queueItems} onLocateCell={locateCell} />"))
 })
 
+test("roster draft copied cells support controlled local editing without production save or publish", () => {
+  const content = readProjectFile("components/roster-draft-workbench.tsx")
+
+  assert.ok(content.includes("@/components/ui/input"))
+  assert.ok(content.includes("type RosterCellDraftEdit"))
+  assert.ok(content.includes("const [cellEdits, setCellEdits]"))
+  assert.ok(content.includes("getEffectiveCell"))
+  assert.ok(content.includes("updateCellDraftEdit"))
+  assert.ok(content.includes("resetCellDraftEdit"))
+  assert.ok(content.includes("RosterCellEditPanel"))
+  assert.ok(content.includes('aria-label="班种"'))
+  assert.ok(content.includes("恢复生成值"))
+  assert.ok(content.includes("仅当前草稿预览"))
+  assert.ok(content.includes('selectedCell.originalCell.status === "copied"'))
+  assert.ok(content.includes("异常和待确认格子不在本轮编辑"))
+  assert.ok(!content.includes("保存并发布"))
+  assert.ok(!content.includes("提交审批"))
+})
+
 test("roster draft workbench keeps mature-scheduling references structural and non-production", () => {
   const content = readProjectFile("components/roster-draft-workbench.tsx")
 

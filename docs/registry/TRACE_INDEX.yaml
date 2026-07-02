@@ -1,5 +1,5 @@
 version: 2
-updated_at: "2026-07-01"
+updated_at: "2026-07-02"
 rules:
   - "This registry stores current IDs, paths, and relationships only."
   - "Historical trace entries before IM279 were intentionally removed from this compact registry on 2026-07-01."
@@ -68,6 +68,13 @@ stories:
     task_ids:
       - "IM288"
     archive_refs: []
+  US877:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R957"
+    task_ids:
+      - "IM289"
+    archive_refs: []
 tasks:
   F001:
     file: "tasks/backlog.yaml"
@@ -121,6 +128,11 @@ tasks:
     story_ids:
       - "US876"
     gate: "frontend-scaffold"
+  IM289:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US877"
+    gate: "frontend-scaffold"
 requirements:
   R949:
     file: "docs/raw-requirements.md"
@@ -170,6 +182,12 @@ requirements:
       - "US876"
     task_ids:
       - "IM288"
+  R957:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US877"
+    task_ids:
+      - "IM289"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
@@ -181,4 +199,5 @@ decisions:
   - "D-2026-07-01-roster-workbench-redesign"
   - "D-2026-07-01-global-navigation-rail"
   - "D-2026-07-01-roster-fullscreen-workbench"
+  - "D-2026-07-02-roster-cell-controlled-editing"
 archive_refs: []

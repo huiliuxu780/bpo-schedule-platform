@@ -98,3 +98,11 @@ decisions:
       - "scripts/tests/roster-draft-workbench-structure.test.mjs"
       - "docs/raw-requirements.md"
       - "tasks/backlog.yaml"
+  D-2026-07-02-roster-cell-controlled-editing:
+    title: "Roster copied cells can be locally adjusted before publish work"
+    file: "docs/user-stories.md"
+    related_files:
+      - "components/roster-draft-workbench.tsx"
+      - "scripts/tests/roster-draft-workbench-structure.test.mjs"
+      - "docs/raw-requirements.md"
+      - "tasks/backlog.yaml"

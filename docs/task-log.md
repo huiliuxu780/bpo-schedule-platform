@@ -4,6 +4,17 @@
 
 ## Current Log
 
+### 2026-07-02
+
+- task_id: `IM289`
+- source_ids:
+  - `R957`
+- story_ids:
+  - `US877`
+- action: 月班表草稿格子受控编辑能力。
+- status: `done`
+- notes: 在 `/roster-drafts` 的 copied 生成格子上增加本地草稿编辑层，支持班种调整、调整备注、已调整标记/计数和恢复生成值；异常、待确认和已过滤标注仍只读；不进入发布、API、数据库、Excel 导入、审批、权限、预测、标准人力、自动排班、导出或批量。
+
 ### 2026-07-01
 
 - task_id: `IM279`

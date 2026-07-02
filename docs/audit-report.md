@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-07-02 - IM289 月班表草稿格子受控编辑能力
+
+#### 审计结论
+
+- `/roster-drafts` 在 IM288 全屏工作台基础上增加 copied 生成格子的本地受控编辑层。
+- 右侧抽屉详情页新增格子调整面板，支持班种选择、调整备注和恢复生成值。
+- 月视图和周视图格子使用本地 effective cell 显示调整后的班种，并展示 `改` / `已调整` 标记。
+- toolbar/statusbar 展示已调整格子数量；恢复生成值后本地调整和计数清零。
+- 异常、待确认和已过滤标注格子仍保持只读，不在本轮编辑。
+- 保留 IM285/IM286/IM288 本地 fixture 和 TypeScript 生成器；不新增 draft 发布、API、数据库、Excel 上传/导入、审批、权限、预测模型、标准人力、自动排班、导出、批量、生产公式、结算或收费因子。
+
+#### 验证
+
+- red: `node --test scripts/tests/roster-draft-workbench-structure.test.mjs` 先失败在缺少 controlled local editing 结构。
+- focused: `node --test scripts/tests/roster-draft-workbench-structure.test.mjs` 通过，10 个测试。
+- `npm run typecheck`: 通过。
+- `npm run lint`: 通过。
+- shadcn review: `npx shadcn@latest info --json` 确认 `radix-nova`、Tailwind v4、input/drawer/select/tabs/button/badge 已安装；硬编码色阶和 `space-*` 扫描无命中。
+- `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build`: 通过。
+- 浏览器 smoke: 通过。`http://localhost:3003/roster-drafts?month=2026-08` 中 `EMP-001 / 2026-08-03` copied 格子打开受控编辑面板，班种从 A5 调整为 A10 后网格显示 `A10改` 且已调整计数为 1；点击恢复生成值后格子回到 A5 且计数清零；`EMP-001 / 2026-08-01` 异常格子仍显示只读边界且无班种选择器。
+- `git diff --check`: 通过。
+- `bash scripts/check-state.sh --strict`: 通过。
+- final: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过；Node 测试 863 pass / 1 skip，Python 测试 249 tests OK，shadcn/ui convention check、lint、typecheck、build 通过。
+
 ### 2026-07-01 - IM288 月班表草稿全屏排班工作台体验
 
 #### 审计结论

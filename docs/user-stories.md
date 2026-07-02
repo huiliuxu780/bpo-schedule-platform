@@ -187,6 +187,28 @@ status: "draft"
 notes: "IM288 full-screen roster scheduler workbench refinement over IM286 and IM287."
 ```
 
+### US877 - 月班表草稿格子受控编辑能力
+
+```yaml
+id: US877
+requirement_ids:
+  - R957
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望在月班表草稿工作台中对已生成格子做受控调整，并能清楚看到哪些格子被改过、为什么改、以及如何恢复生成值，以便先完成草稿级人工修正，而不提前进入发布或生产保存。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "只有复制生成 copied 格子提供本地草稿编辑入口，异常、待确认和已过滤标注仍保持只读并走处理队列。"
+  - "右侧抽屉详情页展示格子调整面板，支持班种选择、调整备注和恢复生成值。"
+  - "编辑后月视图/周视图格子显示调整后的班种和已调整标记，toolbar/statusbar 展示已调整格子数量。"
+  - "恢复生成值后移除本地调整标记和已调整计数。"
+  - "页面明确该编辑仅为当前草稿预览，不写入生产数据。"
+  - "本轮不新增发布、API、数据库、Excel 上传/导入、审批、权限、预测模型、标准人力、自动排班、导出或批量能力。"
+status: "draft"
+notes: "IM289 frontend local controlled-editing layer on top of IM288."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

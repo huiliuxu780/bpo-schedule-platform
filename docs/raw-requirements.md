@@ -108,6 +108,19 @@ status: "draft"
 notes: "Frontend workbench experience refinement only; keep IM285/IM286 generation model and local fixture."
 ```
 
+### R957 - 月班表草稿格子受控编辑能力
+
+```yaml
+id: R957
+module: "BPO WFM 三条主线"
+description: "Continue from the IM288 full-screen roster workbench and add the first controlled editing capability for generated roster draft cells. Scheduler users can select a copied/generated cell, adjust its shift code within the current local draft preview, add an adjustment note, see edited markers and counts in the grid/workbench, and restore the generated value. Exception, pending, and filtered-annotation cells remain read-only in this slice and continue through the queue. This slice must not add draft publishing, API routes, database persistence, Excel upload/import, approval, permissions, forecasting model, standard-capacity model, automatic scheduling, external integrations, export, batch operations, production formulas, settlement, or charge-factor work."
+source: "PM-confirmed continuation on 2026-07-02"
+submitted_at: "2026-07-02"
+version: "1.0"
+status: "draft"
+notes: "Frontend local state editing layer only; no production save or persistence."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

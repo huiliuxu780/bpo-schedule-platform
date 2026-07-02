@@ -14,6 +14,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
@@ -36,12 +37,19 @@ import { cn } from "@/lib/utils"
 type WorkbenchView = "month" | "week"
 type QueueKind = "exception" | "pending" | "annotation"
 
+type RosterCellDraftEdit = {
+  shiftCode: string
+  note: string
+}
+
 type SelectedCell = {
   employeeId: string
   employeeName: string
   teamName: string
   date: string
   cell: RosterMonthCell
+  originalCell: RosterMonthCell
+  draftEdit?: RosterCellDraftEdit
   detail?: RosterWeekDetail
 }
 
@@ -55,6 +63,11 @@ type QueueItem = {
   label: string
   description: string
   meta: string
+}
+
+type ShiftCodeOption = {
+  shiftCode: string
+  label: string
 }
 
 const statusLabels: Record<RosterCellStatus, string> = {
@@ -96,13 +109,17 @@ export function RosterDraftWorkbench({
     firstActionableCellKey(model)
   )
   const [inspectorOpen, setInspectorOpen] = React.useState(false)
+  const [cellEdits, setCellEdits] = React.useState<Record<string, RosterCellDraftEdit>>({})
 
   const selectedWeek =
     model.weeks.find((week) => week.weekId === selectedWeekId) ?? model.weeks[0]
   const queueItems = buildQueueItems(model, selectedWeek)
   const selectedCell =
-    getSelectedCell(model, selectedCellKey) ?? getSelectedCell(model, firstCellKey(model))
+    getSelectedCell(model, selectedCellKey, cellEdits) ??
+    getSelectedCell(model, firstCellKey(model), cellEdits)
   const teamNames = Array.from(new Set(model.monthRows.map((row) => row.teamName)))
+  const shiftCodeOptions = buildShiftCodeOptions(model, selectedCell)
+  const editedCellCount = Object.keys(cellEdits).length
 
   function locateCell(employeeId: string, date: string, nextView: WorkbenchView = "week") {
     setSelectedCellKey(cellKey(employeeId, date))
@@ -114,6 +131,39 @@ export function RosterDraftWorkbench({
     }
     setView(nextView)
     setInspectorOpen(true)
+  }
+
+  function updateCellDraftEdit(key: string, nextEdit: RosterCellDraftEdit) {
+    const selected = getSelectedCell(model, key, cellEdits)
+    if (!selected || selected.originalCell.status !== "copied") {
+      return
+    }
+
+    setCellEdits((current) => {
+      const generatedShiftCode = selected.originalCell.shiftCode ?? ""
+      const normalizedNote = nextEdit.note.trim()
+      if (nextEdit.shiftCode === generatedShiftCode && !normalizedNote) {
+        const rest = { ...current }
+        delete rest[key]
+        return rest
+      }
+
+      return {
+        ...current,
+        [key]: {
+          shiftCode: nextEdit.shiftCode,
+          note: normalizedNote,
+        },
+      }
+    })
+  }
+
+  function resetCellDraftEdit(key: string) {
+    setCellEdits((current) => {
+      const rest = { ...current }
+      delete rest[key]
+      return rest
+    })
   }
 
   return (
@@ -137,6 +187,7 @@ export function RosterDraftWorkbench({
           selectedWeek={selectedWeek}
           teamNames={teamNames}
           queueCount={queueItems.length}
+          editedCellCount={editedCellCount}
           onOpenInspector={() => setInspectorOpen(true)}
         />
 
@@ -171,6 +222,7 @@ export function RosterDraftWorkbench({
             <TabsContent value="month" className="m-0 size-full">
               <MonthScanGrid
                 model={model}
+                cellEdits={cellEdits}
                 selectedCellKey={selectedCellKey}
                 onLocateCell={(employeeId, date) => locateCell(employeeId, date, "month")}
               />
@@ -179,6 +231,7 @@ export function RosterDraftWorkbench({
               <WeekScheduleGrid
                 model={model}
                 week={selectedWeek}
+                cellEdits={cellEdits}
                 selectedCellKey={selectedCellKey}
                 onLocateCell={(employeeId, date) => locateCell(employeeId, date, "week")}
               />
@@ -190,6 +243,7 @@ export function RosterDraftWorkbench({
           model={model}
           selectedCell={selectedCell}
           queueCount={queueItems.length}
+          editedCellCount={editedCellCount}
           onOpenInspector={() => setInspectorOpen(true)}
         />
       </div>
@@ -197,6 +251,9 @@ export function RosterDraftWorkbench({
       <RosterInspectorDrawer
         selectedCell={selectedCell}
         items={queueItems}
+        shiftCodeOptions={shiftCodeOptions}
+        onUpdateCellDraftEdit={updateCellDraftEdit}
+        onResetCellDraftEdit={resetCellDraftEdit}
         onLocateCell={locateCell}
       />
     </Drawer>
@@ -213,6 +270,7 @@ function RosterWorkbenchToolbar({
   selectedWeek,
   teamNames,
   queueCount,
+  editedCellCount,
   onOpenInspector,
 }: {
   model: RosterDraftViewModel
@@ -224,6 +282,7 @@ function RosterWorkbenchToolbar({
   selectedWeek?: RosterWeek
   teamNames: string[]
   queueCount: number
+  editedCellCount: number
   onOpenInspector: () => void
 }) {
   return (
@@ -267,6 +326,9 @@ function RosterWorkbenchToolbar({
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
+        {editedCellCount > 0 && (
+          <Badge variant="outline">已调整 {editedCellCount}</Badge>
+        )}
         <Button variant="outline" onClick={onOpenInspector}>
           详情与队列
           <Badge variant="secondary">{queueCount}</Badge>
@@ -281,10 +343,12 @@ function RosterWorkbenchToolbar({
 
 function MonthScanGrid({
   model,
+  cellEdits,
   selectedCellKey,
   onLocateCell,
 }: {
   model: RosterDraftViewModel
+  cellEdits: Record<string, RosterCellDraftEdit>
   selectedCellKey: string
   onLocateCell: (employeeId: string, date: string) => void
 }) {
@@ -311,28 +375,39 @@ function MonthScanGrid({
           {model.monthRows.map((row) => (
             <React.Fragment key={row.employeeId}>
               <EmployeeCell row={row} dense />
-              {row.cells.map((cell) => (
-                <button
-                  key={cell.date}
-                  data-roster-cell-key={cellKey(row.employeeId, cell.date)}
-                  type="button"
-                  onClick={() => onLocateCell(row.employeeId, cell.date)}
-                  className={cn(
-                    "min-h-11 border-r border-b px-1 text-xs transition hover:bg-muted",
-                    selectedCellKey === cellKey(row.employeeId, cell.date) && "ring-2 ring-ring ring-inset"
-                  )}
-                  title={`${row.employeeName} ${cell.date} ${cell.shiftCode ?? statusLabels[cell.status]}`}
-                >
-                  <span
+              {row.cells.map((cell) => {
+                const key = cellKey(row.employeeId, cell.date)
+                const effectiveCell = getEffectiveCell(cell, key, cellEdits)
+                const hasDraftEdit = Boolean(cellEdits[key])
+
+                return (
+                  <button
+                    key={cell.date}
+                    data-roster-cell-key={key}
+                    type="button"
+                    onClick={() => onLocateCell(row.employeeId, cell.date)}
                     className={cn(
-                      "mx-auto flex size-8 items-center justify-center rounded-md border text-[11px] font-medium",
-                      statusClasses[cell.status]
+                      "min-h-11 border-r border-b px-1 text-xs transition hover:bg-muted",
+                      selectedCellKey === key && "ring-2 ring-ring ring-inset"
                     )}
+                    title={`${row.employeeName} ${cell.date} ${effectiveCell.shiftCode ?? statusLabels[effectiveCell.status]}`}
                   >
-                    {cell.shiftCode ?? (cell.status === "exception" ? "!" : "待")}
-                  </span>
-                </button>
-              ))}
+                    <span
+                      className={cn(
+                        "relative mx-auto flex size-8 items-center justify-center rounded-md border text-[11px] font-medium",
+                        statusClasses[effectiveCell.status]
+                      )}
+                    >
+                      {effectiveCell.shiftCode ?? (effectiveCell.status === "exception" ? "!" : "待")}
+                      {hasDraftEdit ? (
+                        <span className="absolute -right-1 -top-1 rounded-sm bg-primary px-0.5 text-[9px] leading-3 text-primary-foreground">
+                          改
+                        </span>
+                      ) : null}
+                    </span>
+                  </button>
+                )
+              })}
             </React.Fragment>
           ))}
         </div>
@@ -344,11 +419,13 @@ function MonthScanGrid({
 function WeekScheduleGrid({
   model,
   week,
+  cellEdits,
   selectedCellKey,
   onLocateCell,
 }: {
   model: RosterDraftViewModel
   week?: RosterWeek
+  cellEdits: Record<string, RosterCellDraftEdit>
   selectedCellKey: string
   onLocateCell: (employeeId: string, date: string) => void
 }) {
@@ -379,6 +456,8 @@ function WeekScheduleGrid({
               <EmployeeCell row={row} />
               {weekDays.map((day) => {
                 const cell = row.cells.find((item) => item.date === day.date)
+                const key = cellKey(row.employeeId, day.date)
+                const effectiveCell = cell ? getEffectiveCell(cell, key, cellEdits) : undefined
                 const detail = model.weekDetails.find(
                   (item) =>
                     item.employeeId === row.employeeId && item.businessDate === day.date
@@ -387,15 +466,19 @@ function WeekScheduleGrid({
                 return (
                   <button
                     key={day.date}
-                    data-roster-cell-key={cellKey(row.employeeId, day.date)}
+                    data-roster-cell-key={key}
                     type="button"
                     onClick={() => onLocateCell(row.employeeId, day.date)}
                     className={cn(
                       "min-h-24 border-r border-b p-2 text-left transition hover:bg-muted/70",
-                      selectedCellKey === cellKey(row.employeeId, day.date) && "ring-2 ring-ring ring-inset"
+                      selectedCellKey === key && "ring-2 ring-ring ring-inset"
                     )}
                   >
-                    <ShiftBlock cell={cell} detail={detail} />
+                    <ShiftBlock
+                      cell={effectiveCell}
+                      detail={detail}
+                      draftEdit={cellEdits[key]}
+                    />
                   </button>
                 )
               })}
@@ -434,9 +517,11 @@ function EmployeeCell({ row, dense = false }: { row: RosterMonthRow; dense?: boo
 function ShiftBlock({
   cell,
   detail,
+  draftEdit,
 }: {
   cell?: RosterMonthCell
   detail?: RosterWeekDetail
+  draftEdit?: RosterCellDraftEdit
 }) {
   if (!cell) {
     return <span className="text-xs text-muted-foreground">无日期</span>
@@ -450,12 +535,17 @@ function ShiftBlock({
         </span>
         <span className="size-2 rounded-full bg-current" />
       </div>
+      {draftEdit ? (
+        <Badge variant="secondary" className="mt-2">
+          已调整
+        </Badge>
+      ) : null}
       <div className="mt-1 text-xs">{detail?.intervalLabel ?? "-"}</div>
       <div className="mt-2 text-[11px] opacity-80">
         来源 {detail?.sourceDate ?? cell.sourceDate ?? "-"}
       </div>
       <div className="mt-1 line-clamp-2 text-[11px] opacity-80">
-        {detail?.reason ?? cell.reason ?? statusLabels[cell.status]}
+        {draftEdit?.note || detail?.reason || cell.reason || statusLabels[cell.status]}
       </div>
     </div>
   )
@@ -465,11 +555,13 @@ function RosterBoardStatusbar({
   model,
   selectedCell,
   queueCount,
+  editedCellCount,
   onOpenInspector,
 }: {
   model: RosterDraftViewModel
   selectedCell?: SelectedCell
   queueCount: number
+  editedCellCount: number
   onOpenInspector: () => void
 }) {
   return (
@@ -480,6 +572,7 @@ function RosterBoardStatusbar({
       <div className="flex min-w-0 flex-wrap items-center gap-3">
         <span>{model.summary.employeeCount} 人</span>
         <span>{model.summary.generatedShiftCount} 格已生成</span>
+        <span>{editedCellCount} 格已调整</span>
         <span>{model.summary.exceptionCount} 异常</span>
         <span>{model.summary.pendingEmployeeCount} 待排</span>
       </div>
@@ -496,10 +589,16 @@ function RosterBoardStatusbar({
 function RosterInspectorDrawer({
   selectedCell,
   items,
+  shiftCodeOptions,
+  onUpdateCellDraftEdit,
+  onResetCellDraftEdit,
   onLocateCell,
 }: {
   selectedCell?: SelectedCell
   items: QueueItem[]
+  shiftCodeOptions: ShiftCodeOption[]
+  onUpdateCellDraftEdit: (key: string, edit: RosterCellDraftEdit) => void
+  onResetCellDraftEdit: (key: string) => void
   onLocateCell: (employeeId: string, date: string, view?: WorkbenchView) => void
 }) {
   return (
@@ -510,7 +609,7 @@ function RosterInspectorDrawer({
       <DrawerHeader className="border-b">
         <DrawerTitle>详情与队列</DrawerTitle>
         <DrawerDescription>
-          只读查看格子详情，并从队列定位到对应员工和日期。
+          查看格子详情，生成格子可做当前草稿内的受控调整。
         </DrawerDescription>
       </DrawerHeader>
       <div className="min-h-0 flex-1 overflow-y-auto p-4">
@@ -520,7 +619,15 @@ function RosterInspectorDrawer({
             <TabsTrigger value="queue">处理队列</TabsTrigger>
           </TabsList>
           <TabsContent value="detail" className="m-0">
-            <CellInspectorPanel selectedCell={selectedCell} />
+            <div className="flex flex-col gap-4">
+              <CellInspectorPanel selectedCell={selectedCell} />
+              <RosterCellEditPanel
+                selectedCell={selectedCell}
+                shiftCodeOptions={shiftCodeOptions}
+                onUpdateCellDraftEdit={onUpdateCellDraftEdit}
+                onResetCellDraftEdit={onResetCellDraftEdit}
+              />
+            </div>
           </TabsContent>
           <TabsContent value="queue" className="m-0">
             <WorkbenchQueuePanel items={items} onLocateCell={onLocateCell} />
@@ -572,6 +679,110 @@ function CellInspectorPanel({ selectedCell }: { selectedCell?: SelectedCell }) {
       ) : (
         <div className="text-sm text-muted-foreground">选择一个排班格子查看详情。</div>
       )}
+    </div>
+  )
+}
+
+function RosterCellEditPanel({
+  selectedCell,
+  shiftCodeOptions,
+  onUpdateCellDraftEdit,
+  onResetCellDraftEdit,
+}: {
+  selectedCell?: SelectedCell
+  shiftCodeOptions: ShiftCodeOption[]
+  onUpdateCellDraftEdit: (key: string, edit: RosterCellDraftEdit) => void
+  onResetCellDraftEdit: (key: string) => void
+}) {
+  if (!selectedCell) {
+    return null
+  }
+
+  const key = cellKey(selectedCell.employeeId, selectedCell.date)
+  const canEdit = selectedCell.originalCell.status === "copied"
+  const currentShiftCode =
+    selectedCell.draftEdit?.shiftCode ?? selectedCell.originalCell.shiftCode ?? ""
+  const currentNote = selectedCell.draftEdit?.note ?? ""
+
+  if (!canEdit) {
+    return (
+      <div
+        data-slot="roster-cell-edit-panel"
+        className="rounded-lg border bg-muted/40 p-4 text-sm"
+      >
+        <div className="font-medium">格子调整</div>
+        <div className="mt-2 text-muted-foreground">
+          异常和待确认格子不在本轮编辑，本轮保持只读，请从处理队列定位后继续补齐原因或来源。
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div data-slot="roster-cell-edit-panel" className="rounded-lg border bg-card p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="text-sm font-medium">格子调整</div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            仅当前草稿预览，不写入生产数据。
+          </div>
+        </div>
+        {selectedCell.draftEdit ? <Badge variant="secondary">已调整</Badge> : null}
+      </div>
+
+      <div className="mt-4 grid gap-3">
+        <label className="grid gap-1.5 text-sm">
+          <span className="text-muted-foreground">班种</span>
+          <Select
+            value={currentShiftCode}
+            onValueChange={(shiftCode) =>
+              onUpdateCellDraftEdit(key, {
+                shiftCode,
+                note: currentNote,
+              })
+            }
+          >
+            <SelectTrigger aria-label="班种">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent align="start">
+              {shiftCodeOptions.map((option) => (
+                <SelectItem key={option.shiftCode} value={option.shiftCode}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </label>
+
+        <label className="grid gap-1.5 text-sm">
+          <span className="text-muted-foreground">调整备注</span>
+          <Input
+            value={currentNote}
+            onChange={(event) =>
+              onUpdateCellDraftEdit(key, {
+                shiftCode: currentShiftCode,
+                note: event.target.value,
+              })
+            }
+            placeholder="例如：排班师根据一线反馈调整"
+          />
+        </label>
+
+        <div className="flex items-center justify-between gap-2">
+          <div className="text-xs text-muted-foreground">
+            生成值：{selectedCell.originalCell.shiftCode ?? "-"}
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => onResetCellDraftEdit(key)}
+          >
+            恢复生成值
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }
@@ -659,7 +870,11 @@ function buildQueueItems(
   return [...exceptionItems, ...pendingItems, ...annotationItems]
 }
 
-function getSelectedCell(model: RosterDraftViewModel, key: string): SelectedCell | undefined {
+function getSelectedCell(
+  model: RosterDraftViewModel,
+  key: string,
+  cellEdits: Record<string, RosterCellDraftEdit>
+): SelectedCell | undefined {
   const [employeeId, date] = key.split("|")
   const row = model.monthRows.find((item) => item.employeeId === employeeId)
   const cell = row?.cells.find((item) => item.date === date)
@@ -672,11 +887,60 @@ function getSelectedCell(model: RosterDraftViewModel, key: string): SelectedCell
     employeeName: row.employeeName,
     teamName: row.teamName,
     date,
-    cell,
+    cell: getEffectiveCell(cell, key, cellEdits),
+    originalCell: cell,
+    draftEdit: cellEdits[key],
     detail: model.weekDetails.find(
       (item) => item.employeeId === row.employeeId && item.businessDate === date
     ),
   }
+}
+
+function getEffectiveCell(
+  cell: RosterMonthCell,
+  key: string,
+  cellEdits: Record<string, RosterCellDraftEdit>
+): RosterMonthCell {
+  const edit = cellEdits[key]
+  if (!edit || cell.status !== "copied") {
+    return cell
+  }
+
+  return {
+    ...cell,
+    shiftCode: edit.shiftCode,
+    reason: edit.note || "本地草稿调整",
+  }
+}
+
+function buildShiftCodeOptions(
+  model: RosterDraftViewModel,
+  selectedCell?: SelectedCell
+): ShiftCodeOption[] {
+  const options = new Map<string, string>()
+
+  for (const assignment of model.assignments) {
+    options.set(
+      assignment.shiftCode,
+      `${assignment.shiftCode} / ${assignment.intervalLabel}`
+    )
+  }
+  for (const detail of model.weekDetails) {
+    if (detail.shiftCode) {
+      options.set(
+        detail.shiftCode,
+        `${detail.shiftCode} / ${detail.intervalLabel ?? "班种"}`
+      )
+    }
+  }
+
+  const selectedShiftCode =
+    selectedCell?.draftEdit?.shiftCode ?? selectedCell?.originalCell.shiftCode
+  if (selectedShiftCode && !options.has(selectedShiftCode)) {
+    options.set(selectedShiftCode, `${selectedShiftCode} / 当前班种`)
+  }
+
+  return Array.from(options, ([shiftCode, label]) => ({ shiftCode, label }))
 }
 
 function firstActionableCellKey(model: RosterDraftViewModel): string {
