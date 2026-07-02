@@ -89,6 +89,13 @@ stories:
     task_ids:
       - "IM294"
     archive_refs: []
+  US883:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R963"
+    task_ids:
+      - "IM295"
+    archive_refs: []
 tasks:
   F001:
     file: "tasks/backlog.yaml"
@@ -172,6 +179,11 @@ tasks:
     story_ids:
       - "US882"
     gate: "backend-mvp"
+  IM295:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US883"
+    gate: "database-persistence"
 requirements:
   R949:
     file: "docs/raw-requirements.md"
@@ -257,6 +269,12 @@ requirements:
       - "US882"
     task_ids:
       - "IM294"
+  R963:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US883"
+    task_ids:
+      - "IM295"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
@@ -274,4 +292,5 @@ decisions:
   - "D-2026-07-02-roster-gap-resolution-loop"
   - "D-2026-07-02-roster-draft-publish-persistence-contract"
   - "D-2026-07-02-roster-domain-publish-rules"
+  - "D-2026-07-02-roster-local-persistence-loop"
 archive_refs: []

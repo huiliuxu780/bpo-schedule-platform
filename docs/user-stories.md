@@ -320,6 +320,30 @@ status: "draft"
 notes: "IM294 backend pure domain slice after IM293 persistence contract."
 ```
 
+### US883 - 月班表 Draft/Published 本地持久化闭环
+
+```yaml
+id: US883
+requirement_ids:
+  - R963
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望系统能把月班表草稿、排定发布、正式发布、撤回、修订、发布快照和编辑锁稳定保存到本地数据库，并按 active draft/current/upcoming 口径读回，以便后续 API 和前端发布动作接入时不会丢状态、丢审计或读错版本。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "Alembic migration 创建 RosterVersion、RosterCell、RosterVersionEvent、RosterCellChangeLog、PublishedSnapshot、EditLock 所需本地表。"
+  - "Repository/service 支持 draft 保存读回、发布校验、排定发布、到点生效、撤回、修订草稿、active draft/current/upcoming 读取。"
+  - "PublishedSnapshot 在发布时固化班次数、半小时覆盖和发布摘要引用，不依赖未来规则实时重算历史结果。"
+  - "service 层和 DB 层共同保证同 scope/month 只有一个 active draft、current published、scheduled published。"
+  - "EditLock 真实落库并保护 saveDraft，覆盖 acquire、renew、release、forceRelease 和非持有者只读。"
+  - "RosterCell 支持同员工同日多 sequence 记录，shift/leave/training/meeting/annotation 都能保存，coverage 只统计 shift。"
+  - "后端测试覆盖核心闭环和关键失败路径：唯一性、snapshot 固化、activation、withdraw、revision、edit lock、hard error、soft risk、migration head。"
+  - "本轮不新增 API route、前端发布动作、权限、审批、通知、导出、批量、Excel 导入、Forecast/Actual 数据源、预测模型、标准人力、自动排班、生产公式、结算或计费规则。"
+status: "draft"
+notes: "IM295 database-persistence slice after IM294 pure domain rules."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

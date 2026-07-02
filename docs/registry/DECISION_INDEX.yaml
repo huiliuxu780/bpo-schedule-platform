@@ -151,3 +151,18 @@ decisions:
       - "docs/current/ACTIVE_TASKS.yaml"
       - "docs/raw-requirements.md"
       - "tasks/backlog.yaml"
+  D-2026-07-02-roster-local-persistence-loop:
+    title: "Roster persistence should close DB and service behavior before API or UI"
+    file: "docs/user-stories.md"
+    related_files:
+      - "docs/design/roster-draft-publish-persistence-contract.md"
+      - "backend/app/roster_drafts.py"
+      - "backend/app/roster_persistence.py"
+      - "backend/app/roster_service.py"
+      - "backend/alembic/versions"
+      - "backend/tests/test_roster_persistence.py"
+      - "backend/tests/test_roster_service.py"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/raw-requirements.md"
+      - "tasks/backlog.yaml"

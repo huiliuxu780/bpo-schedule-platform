@@ -186,6 +186,19 @@ status: "draft"
 notes: "Backend pure domain implementation only; follow IM293 product contract before any persistence/API slice."
 ```
 
+### R963 - 月班表 Draft/Published 本地持久化闭环
+
+```yaml
+id: R963
+module: "BPO WFM 三条主线"
+description: "将 IM294 的月班表 Draft/Published 纯领域规则接入本地 DB persistence 和 application service，形成后端持久化闭环。范围包含 RosterVersion、RosterCell、RosterVersionEvent、RosterCellChangeLog、PublishedSnapshot、EditLock 的 Alembic migration、repository 和 service；service 支持 saveDraft、validatePublish、schedulePublish、activateDuePublished、withdraw、createRevision、getActiveDraft、getCurrentPublished、getUpcomingPublished；PublishedSnapshot 在发布时固化班次数、半小时覆盖、hard/soft/diff 摘要引用；service 层和 DB 层共同保证 active draft/current published/scheduled published 唯一性；activateDuePublished 只作为 service 方法，不新增 job/cron/worker；EditLock 真实落库并保护草稿保存；RosterCell 支持同员工同日多 sequence 记录，coverage 只统计 shift。"
+source: "PM-confirmed IM295 drill on 2026-07-02"
+submitted_at: "2026-07-02"
+version: "1.0"
+status: "draft"
+notes: "Database-persistence slice only; no API route, frontend publish action, permission, approval, notification, export, batch, Excel import, Forecast/Actual source, forecasting model, standard-capacity model, automatic scheduling, production formula, settlement, or charge-factor work."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.
