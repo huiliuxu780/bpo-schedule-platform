@@ -6,12 +6,14 @@ import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer"
 import {
   Select,
   SelectContent,
@@ -89,10 +91,11 @@ export function RosterDraftWorkbench({
   const [selectedWeekId, setSelectedWeekId] = React.useState(
     model.weeks[0]?.weekId ?? "W1"
   )
-  const [view, setView] = React.useState<WorkbenchView>("week")
+  const [view, setView] = React.useState<WorkbenchView>("month")
   const [selectedCellKey, setSelectedCellKey] = React.useState(() =>
     firstActionableCellKey(model)
   )
+  const [inspectorOpen, setInspectorOpen] = React.useState(false)
 
   const selectedWeek =
     model.weeks.find((week) => week.weekId === selectedWeekId) ?? model.weeks[0]
@@ -110,11 +113,20 @@ export function RosterDraftWorkbench({
       setSelectedWeekId(week.weekId)
     }
     setView(nextView)
+    setInspectorOpen(true)
   }
 
   return (
-    <div className="grid min-h-0 gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-      <section className="flex min-w-0 flex-col gap-4">
+    <Drawer
+      direction="right"
+      open={inspectorOpen}
+      onOpenChange={setInspectorOpen}
+    >
+      <div
+        data-slot="roster-workbench-shell"
+        className="flex min-h-0 flex-1 flex-col"
+        title={matureSchedulingReference}
+      >
         <RosterWorkbenchToolbar
           model={model}
           targetMonths={targetMonths}
@@ -124,19 +136,24 @@ export function RosterDraftWorkbench({
           onSelectedWeekIdChange={setSelectedWeekId}
           selectedWeek={selectedWeek}
           teamNames={teamNames}
+          queueCount={queueItems.length}
+          onOpenInspector={() => setInspectorOpen(true)}
         />
 
         <Tabs
           value={view}
           onValueChange={(value) => setView(value as WorkbenchView)}
-          className="flex min-w-0 flex-col gap-4"
+          className="flex min-h-0 min-w-0 flex-1 flex-col"
         >
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div
+            data-slot="roster-view-switcher"
+            className="flex shrink-0 items-center justify-between gap-3 border-b bg-background px-4 py-2"
+          >
             <TabsList>
-              <TabsTrigger value="month">月视图 / 月度扫盘</TabsTrigger>
-              <TabsTrigger value="week">周视图 / 周度处理</TabsTrigger>
+              <TabsTrigger value="month">月视图</TabsTrigger>
+              <TabsTrigger value="week">周视图</TabsTrigger>
             </TabsList>
-            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
               {model.statusLegend.map((item) => (
                 <Badge
                   key={item.status}
@@ -150,29 +167,39 @@ export function RosterDraftWorkbench({
             </div>
           </div>
 
-          <TabsContent value="month" className="m-0">
-            <MonthScanGrid
-              model={model}
-              selectedCellKey={selectedCellKey}
-              onLocateCell={(employeeId, date) => locateCell(employeeId, date, "month")}
-            />
-          </TabsContent>
-          <TabsContent value="week" className="m-0">
-            <WeekScheduleGrid
-              model={model}
-              week={selectedWeek}
-              selectedCellKey={selectedCellKey}
-              onLocateCell={(employeeId, date) => locateCell(employeeId, date, "week")}
-            />
-          </TabsContent>
+          <div data-slot="roster-grid-canvas" className="min-h-0 flex-1 overflow-hidden">
+            <TabsContent value="month" className="m-0 size-full">
+              <MonthScanGrid
+                model={model}
+                selectedCellKey={selectedCellKey}
+                onLocateCell={(employeeId, date) => locateCell(employeeId, date, "month")}
+              />
+            </TabsContent>
+            <TabsContent value="week" className="m-0 size-full">
+              <WeekScheduleGrid
+                model={model}
+                week={selectedWeek}
+                selectedCellKey={selectedCellKey}
+                onLocateCell={(employeeId, date) => locateCell(employeeId, date, "week")}
+              />
+            </TabsContent>
+          </div>
         </Tabs>
-      </section>
 
-      <aside className="flex min-w-0 flex-col gap-4 xl:sticky xl:top-4 xl:self-start">
-        <CellInspector selectedCell={selectedCell} />
-        <WorkbenchQueue items={queueItems} onLocateCell={locateCell} />
-      </aside>
-    </div>
+        <RosterBoardStatusbar
+          model={model}
+          selectedCell={selectedCell}
+          queueCount={queueItems.length}
+          onOpenInspector={() => setInspectorOpen(true)}
+        />
+      </div>
+
+      <RosterInspectorDrawer
+        selectedCell={selectedCell}
+        items={queueItems}
+        onLocateCell={locateCell}
+      />
+    </Drawer>
   )
 }
 
@@ -185,6 +212,8 @@ function RosterWorkbenchToolbar({
   onSelectedWeekIdChange,
   selectedWeek,
   teamNames,
+  queueCount,
+  onOpenInspector,
 }: {
   model: RosterDraftViewModel
   targetMonths: string[]
@@ -194,67 +223,58 @@ function RosterWorkbenchToolbar({
   onSelectedWeekIdChange: (weekId: string) => void
   selectedWeek?: RosterWeek
   teamNames: string[]
+  queueCount: number
+  onOpenInspector: () => void
 }) {
   return (
-    <Card title={matureSchedulingReference}>
-      <CardHeader className="gap-4">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="min-w-0">
-            <CardTitle>排班工作台</CardTitle>
-            <CardDescription>
-              {model.project.projectName} / {model.project.workplaceName}，按月生成草稿后先扫盘再处理。
-            </CardDescription>
+    <div
+      data-slot="roster-board-toolbar"
+      className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b bg-background px-4 py-3"
+    >
+      <div className="flex min-w-0 flex-wrap items-center gap-2">
+        <div className="min-w-0 pr-2">
+          <div className="truncate text-sm font-medium">
+            {model.project.projectName} / {model.project.workplaceName}
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Select value={selectedMonth} onValueChange={onSelectedMonthChange}>
-              <SelectTrigger className="w-36" aria-label="目标月份">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent align="end">
-                {targetMonths.map((month) => (
-                  <SelectItem key={month} value={month}>
-                    {month}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={selectedWeekId} onValueChange={onSelectedWeekIdChange}>
-              <SelectTrigger className="w-44" aria-label="当前周">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent align="end">
-                {model.weeks.map((week) => (
-                  <SelectItem key={week.weekId} value={week.weekId}>
-                    {week.weekId} / {week.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button asChild>
-              <Link href={`/roster-drafts?month=${selectedMonth}`}>生成草稿</Link>
-            </Button>
+          <div className="truncate text-xs text-muted-foreground">
+            {teamNames.join(" / ")} · {selectedWeek?.label ?? "-"}
           </div>
         </div>
+        <Select value={selectedMonth} onValueChange={onSelectedMonthChange}>
+          <SelectTrigger className="w-36" aria-label="目标月份">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent align="end">
+            {targetMonths.map((month) => (
+              <SelectItem key={month} value={month}>
+                {month}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={selectedWeekId} onValueChange={onSelectedWeekIdChange}>
+          <SelectTrigger className="w-44" aria-label="当前周">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent align="end">
+            {model.weeks.map((week) => (
+              <SelectItem key={week.weekId} value={week.weekId}>
+                {week.weekId} / {week.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          <SummaryPill label="小组范围" value={teamNames.join(" / ")} />
-          <SummaryPill label="当前周" value={selectedWeek?.label ?? "-"} />
-          <SummaryPill label="复制策略" value="上一周同星期稳定班种" />
-          <SummaryPill
-            label="待处理"
-            value={`${model.summary.pendingEmployeeCount + model.summary.exceptionCount} 项`}
-          />
-        </div>
-      </CardHeader>
-    </Card>
-  )
-}
-
-function SummaryPill({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border bg-muted/40 px-3 py-2">
-      <div className="text-xs text-muted-foreground">{label}</div>
-      <div className="mt-1 truncate text-sm font-medium">{value}</div>
+      <div className="flex shrink-0 items-center gap-2">
+        <Button variant="outline" onClick={onOpenInspector}>
+          详情与队列
+          <Badge variant="secondary">{queueCount}</Badge>
+        </Button>
+        <Button asChild>
+          <Link href={`/roster-drafts?month=${selectedMonth}`}>生成草稿</Link>
+        </Button>
+      </div>
     </div>
   )
 }
@@ -269,56 +289,55 @@ function MonthScanGrid({
   onLocateCell: (employeeId: string, date: string) => void
 }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{model.targetMonth} 月度扫盘</CardTitle>
-        <CardDescription>
-          员工 x 日期压缩网格，用来扫整月班种节奏、空白和异常密度。
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto rounded-lg border bg-card">
-          <div className="grid min-w-max grid-cols-[180px_repeat(var(--day-count),44px)]" style={{ "--day-count": model.monthDays.length } as React.CSSProperties}>
-            <div className="sticky left-0 z-20 border-b border-r bg-card px-3 py-2 text-xs font-medium">
-              员工
-            </div>
-            {model.monthDays.map((day) => (
-              <div key={day.date} className="border-b border-r px-1 py-2 text-center text-xs">
-                <div className="font-medium">{day.dayOfMonth}</div>
-                <div className="text-muted-foreground">周{day.weekdayLabel}</div>
-              </div>
-            ))}
-            {model.monthRows.map((row) => (
-              <React.Fragment key={row.employeeId}>
-                <EmployeeCell row={row} dense />
-                {row.cells.map((cell) => (
-                  <button
-                    key={cell.date}
-                    data-roster-cell-key={cellKey(row.employeeId, cell.date)}
-                    type="button"
-                    onClick={() => onLocateCell(row.employeeId, cell.date)}
-                    className={cn(
-                      "min-h-11 border-r border-b px-1 text-xs transition hover:bg-muted",
-                      selectedCellKey === cellKey(row.employeeId, cell.date) && "ring-2 ring-ring ring-inset"
-                    )}
-                    title={`${row.employeeName} ${cell.date} ${cell.shiftCode ?? statusLabels[cell.status]}`}
-                  >
-                    <span
-                      className={cn(
-                        "mx-auto flex size-8 items-center justify-center rounded-md border text-[11px] font-medium",
-                        statusClasses[cell.status]
-                      )}
-                    >
-                      {cell.shiftCode ?? (cell.status === "exception" ? "!" : "待")}
-                    </span>
-                  </button>
-                ))}
-              </React.Fragment>
-            ))}
-          </div>
+    <div className="flex size-full min-h-0 flex-col bg-card">
+      <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
+        <div>
+          <div className="text-sm font-medium">{model.targetMonth} 月度扫盘</div>
+          <div className="text-xs text-muted-foreground">员工 x 日期</div>
         </div>
-      </CardContent>
-    </Card>
+        <Badge variant="outline">{model.monthDays.length} 天</Badge>
+      </div>
+      <div className="min-h-0 flex-1 overflow-auto">
+        <div className="grid min-w-max grid-cols-[180px_repeat(var(--day-count),44px)]" style={{ "--day-count": model.monthDays.length } as React.CSSProperties}>
+          <div className="sticky left-0 top-0 z-30 border-b border-r bg-card px-3 py-2 text-xs font-medium">
+            员工
+          </div>
+          {model.monthDays.map((day) => (
+            <div key={day.date} className="sticky top-0 z-20 border-b border-r bg-card px-1 py-2 text-center text-xs">
+              <div className="font-medium">{day.dayOfMonth}</div>
+              <div className="text-muted-foreground">周{day.weekdayLabel}</div>
+            </div>
+          ))}
+          {model.monthRows.map((row) => (
+            <React.Fragment key={row.employeeId}>
+              <EmployeeCell row={row} dense />
+              {row.cells.map((cell) => (
+                <button
+                  key={cell.date}
+                  data-roster-cell-key={cellKey(row.employeeId, cell.date)}
+                  type="button"
+                  onClick={() => onLocateCell(row.employeeId, cell.date)}
+                  className={cn(
+                    "min-h-11 border-r border-b px-1 text-xs transition hover:bg-muted",
+                    selectedCellKey === cellKey(row.employeeId, cell.date) && "ring-2 ring-ring ring-inset"
+                  )}
+                  title={`${row.employeeName} ${cell.date} ${cell.shiftCode ?? statusLabels[cell.status]}`}
+                >
+                  <span
+                    className={cn(
+                      "mx-auto flex size-8 items-center justify-center rounded-md border text-[11px] font-medium",
+                      statusClasses[cell.status]
+                    )}
+                  >
+                    {cell.shiftCode ?? (cell.status === "exception" ? "!" : "待")}
+                  </span>
+                </button>
+              ))}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -336,56 +355,55 @@ function WeekScheduleGrid({
   const weekDays = week?.days ?? []
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>周度处理</CardTitle>
-        <CardDescription>
-          员工 x 7 天排班网格，班次块直接显示时间段、来源和状态。
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto rounded-lg border bg-card">
-          <div className="grid min-w-[1040px] grid-cols-[220px_repeat(7,minmax(116px,1fr))]">
-            <div className="sticky left-0 z-20 border-b border-r bg-card px-3 py-3 text-xs font-medium">
-              员工
-            </div>
-            {weekDays.map((day) => (
-              <div key={day.date} className="border-b border-r px-3 py-3 text-sm">
-                <div className="font-medium">{day.date}</div>
-                <div className="text-xs text-muted-foreground">周{day.weekdayLabel}</div>
-              </div>
-            ))}
-            {model.monthRows.map((row) => (
-              <React.Fragment key={row.employeeId}>
-                <EmployeeCell row={row} />
-                {weekDays.map((day) => {
-                  const cell = row.cells.find((item) => item.date === day.date)
-                  const detail = model.weekDetails.find(
-                    (item) =>
-                      item.employeeId === row.employeeId && item.businessDate === day.date
-                  )
-
-                  return (
-                    <button
-                      key={day.date}
-                      data-roster-cell-key={cellKey(row.employeeId, day.date)}
-                      type="button"
-                      onClick={() => onLocateCell(row.employeeId, day.date)}
-                      className={cn(
-                        "min-h-24 border-r border-b p-2 text-left transition hover:bg-muted/70",
-                        selectedCellKey === cellKey(row.employeeId, day.date) && "ring-2 ring-ring ring-inset"
-                      )}
-                    >
-                      <ShiftBlock cell={cell} detail={detail} />
-                    </button>
-                  )
-                })}
-              </React.Fragment>
-            ))}
-          </div>
+    <div className="flex size-full min-h-0 flex-col bg-card">
+      <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
+        <div>
+          <div className="text-sm font-medium">周度处理</div>
+          <div className="text-xs text-muted-foreground">{week?.label ?? "-"}</div>
         </div>
-      </CardContent>
-    </Card>
+        <Badge variant="outline">{weekDays.length} 天</Badge>
+      </div>
+      <div className="min-h-0 flex-1 overflow-auto">
+        <div className="grid min-w-[1040px] grid-cols-[220px_repeat(7,minmax(116px,1fr))]">
+          <div className="sticky left-0 top-0 z-30 border-b border-r bg-card px-3 py-3 text-xs font-medium">
+            员工
+          </div>
+          {weekDays.map((day) => (
+            <div key={day.date} className="sticky top-0 z-20 border-b border-r bg-card px-3 py-3 text-sm">
+              <div className="font-medium">{day.date}</div>
+              <div className="text-xs text-muted-foreground">周{day.weekdayLabel}</div>
+            </div>
+          ))}
+          {model.monthRows.map((row) => (
+            <React.Fragment key={row.employeeId}>
+              <EmployeeCell row={row} />
+              {weekDays.map((day) => {
+                const cell = row.cells.find((item) => item.date === day.date)
+                const detail = model.weekDetails.find(
+                  (item) =>
+                    item.employeeId === row.employeeId && item.businessDate === day.date
+                )
+
+                return (
+                  <button
+                    key={day.date}
+                    data-roster-cell-key={cellKey(row.employeeId, day.date)}
+                    type="button"
+                    onClick={() => onLocateCell(row.employeeId, day.date)}
+                    className={cn(
+                      "min-h-24 border-r border-b p-2 text-left transition hover:bg-muted/70",
+                      selectedCellKey === cellKey(row.employeeId, day.date) && "ring-2 ring-ring ring-inset"
+                    )}
+                  >
+                    <ShiftBlock cell={cell} detail={detail} />
+                  </button>
+                )
+              })}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -443,49 +461,118 @@ function ShiftBlock({
   )
 }
 
-function CellInspector({ selectedCell }: { selectedCell?: SelectedCell }) {
+function RosterBoardStatusbar({
+  model,
+  selectedCell,
+  queueCount,
+  onOpenInspector,
+}: {
+  model: RosterDraftViewModel
+  selectedCell?: SelectedCell
+  queueCount: number
+  onOpenInspector: () => void
+}) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>格子详情</CardTitle>
-        <CardDescription>只读查看当前员工/日期的班种、来源和原因。</CardDescription>
-      </CardHeader>
-      <CardContent>
-        {selectedCell ? (
-          <div className="flex flex-col gap-4">
-            <div>
-              <div className="text-sm font-medium">{selectedCell.employeeName}</div>
-              <div className="text-xs text-muted-foreground">
-                {selectedCell.teamName} / {selectedCell.date}
-              </div>
-            </div>
-            <Separator />
-            <div className="grid gap-3 text-sm">
-              <InspectorRow label="班种" value={selectedCell.cell.shiftCode ?? "待确认"} />
-              <InspectorRow
-                label="时间段"
-                value={selectedCell.detail?.intervalLabel ?? "-"}
-              />
-              <InspectorRow
-                label="来源日期"
-                value={selectedCell.detail?.sourceDate ?? selectedCell.cell.sourceDate ?? "-"}
-              />
-              <InspectorRow label="状态" value={statusLabels[selectedCell.cell.status]} />
-              <InspectorRow
-                label="原因"
-                value={
-                  selectedCell.detail?.reason ??
-                  selectedCell.cell.reason ??
-                  statusLabels[selectedCell.cell.status]
-                }
-              />
+    <div
+      data-slot="roster-board-statusbar"
+      className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t bg-background px-4 py-2 text-xs text-muted-foreground"
+    >
+      <div className="flex min-w-0 flex-wrap items-center gap-3">
+        <span>{model.summary.employeeCount} 人</span>
+        <span>{model.summary.generatedShiftCount} 格已生成</span>
+        <span>{model.summary.exceptionCount} 异常</span>
+        <span>{model.summary.pendingEmployeeCount} 待排</span>
+      </div>
+      <Button variant="ghost" size="sm" onClick={onOpenInspector}>
+        {selectedCell
+          ? `${selectedCell.employeeName} / ${selectedCell.date}`
+          : "详情与队列"}
+        <Badge variant="secondary">{queueCount}</Badge>
+      </Button>
+    </div>
+  )
+}
+
+function RosterInspectorDrawer({
+  selectedCell,
+  items,
+  onLocateCell,
+}: {
+  selectedCell?: SelectedCell
+  items: QueueItem[]
+  onLocateCell: (employeeId: string, date: string, view?: WorkbenchView) => void
+}) {
+  return (
+    <DrawerContent
+      data-slot="roster-inspector-drawer"
+      className="sm:max-w-md"
+    >
+      <DrawerHeader className="border-b">
+        <DrawerTitle>详情与队列</DrawerTitle>
+        <DrawerDescription>
+          只读查看格子详情，并从队列定位到对应员工和日期。
+        </DrawerDescription>
+      </DrawerHeader>
+      <div className="min-h-0 flex-1 overflow-y-auto p-4">
+        <Tabs defaultValue="detail" className="flex min-h-0 flex-col gap-4">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="detail">格子详情</TabsTrigger>
+            <TabsTrigger value="queue">处理队列</TabsTrigger>
+          </TabsList>
+          <TabsContent value="detail" className="m-0">
+            <CellInspectorPanel selectedCell={selectedCell} />
+          </TabsContent>
+          <TabsContent value="queue" className="m-0">
+            <WorkbenchQueuePanel items={items} onLocateCell={onLocateCell} />
+          </TabsContent>
+        </Tabs>
+      </div>
+      <DrawerFooter className="border-t">
+        <DrawerClose asChild>
+          <Button variant="outline">关闭</Button>
+        </DrawerClose>
+      </DrawerFooter>
+    </DrawerContent>
+  )
+}
+
+function CellInspectorPanel({ selectedCell }: { selectedCell?: SelectedCell }) {
+  return (
+    <div className="rounded-lg border bg-card p-4">
+      {selectedCell ? (
+        <div className="flex flex-col gap-4">
+          <div>
+            <div className="text-sm font-medium">{selectedCell.employeeName}</div>
+            <div className="text-xs text-muted-foreground">
+              {selectedCell.teamName} / {selectedCell.date}
             </div>
           </div>
-        ) : (
-          <div className="text-sm text-muted-foreground">选择一个排班格子查看详情。</div>
-        )}
-      </CardContent>
-    </Card>
+          <Separator />
+          <div className="grid gap-3 text-sm">
+            <InspectorRow label="班种" value={selectedCell.cell.shiftCode ?? "待确认"} />
+            <InspectorRow
+              label="时间段"
+              value={selectedCell.detail?.intervalLabel ?? "-"}
+            />
+            <InspectorRow
+              label="来源日期"
+              value={selectedCell.detail?.sourceDate ?? selectedCell.cell.sourceDate ?? "-"}
+            />
+            <InspectorRow label="状态" value={statusLabels[selectedCell.cell.status]} />
+            <InspectorRow
+              label="原因"
+              value={
+                selectedCell.detail?.reason ??
+                selectedCell.cell.reason ??
+                statusLabels[selectedCell.cell.status]
+              }
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="text-sm text-muted-foreground">选择一个排班格子查看详情。</div>
+      )}
+    </div>
   )
 }
 
@@ -498,7 +585,7 @@ function InspectorRow({ label, value }: { label: string; value: string }) {
   )
 }
 
-function WorkbenchQueue({
+function WorkbenchQueuePanel({
   items,
   onLocateCell,
 }: {
@@ -506,33 +593,27 @@ function WorkbenchQueue({
   onLocateCell: (employeeId: string, date: string, view?: WorkbenchView) => void
 }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>处理队列</CardTitle>
-        <CardDescription>异常、待排和标注过滤统一在这里定位到格子。</CardDescription>
-      </CardHeader>
-      <CardContent className="flex max-h-[520px] flex-col gap-3 overflow-y-auto">
-        {items.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => onLocateCell(item.employeeId, item.date, "week")}
-            className="rounded-lg border p-3 text-left transition hover:bg-muted"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="truncate text-sm font-medium">{item.employeeName}</div>
-                <div className="text-xs text-muted-foreground">{item.teamName}</div>
-              </div>
-              <Badge variant="outline">{queueLabels[item.kind]}</Badge>
+    <div className="flex flex-col gap-3">
+      {items.map((item) => (
+        <button
+          key={item.id}
+          type="button"
+          onClick={() => onLocateCell(item.employeeId, item.date, "week")}
+          className="rounded-lg border bg-card p-3 text-left transition hover:bg-muted"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="truncate text-sm font-medium">{item.employeeName}</div>
+              <div className="text-xs text-muted-foreground">{item.teamName}</div>
             </div>
-            <div className="mt-2 text-sm">{item.label}</div>
-            <div className="mt-1 text-xs text-muted-foreground">{item.description}</div>
-            <div className="mt-2 text-xs font-medium">定位到格子：{item.meta}</div>
-          </button>
-        ))}
-      </CardContent>
-    </Card>
+            <Badge variant="outline">{queueLabels[item.kind]}</Badge>
+          </div>
+          <div className="mt-2 text-sm">{item.label}</div>
+          <div className="mt-1 text-xs text-muted-foreground">{item.description}</div>
+          <div className="mt-2 text-xs font-medium">定位到格子：{item.meta}</div>
+        </button>
+      ))}
+    </div>
   )
 }
 

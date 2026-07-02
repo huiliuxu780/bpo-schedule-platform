@@ -1,6 +1,5 @@
 import { AppShell } from "@/components/app-shell"
 import { RosterDraftWorkbench } from "@/components/roster-draft-workbench"
-import { WorkbenchPageHeader } from "@/components/workbench-page-header"
 import { rosterDraftDemoFixture } from "@/lib/roster-draft-fixtures"
 import {
   generateRosterDraftViewModel,
@@ -29,8 +28,7 @@ export default async function RosterDraftsPage({ searchParams }: PageProps) {
       title="月班表草稿"
       breadcrumbItems={[{ label: "月班表草稿" }]}
     >
-      <main className="@container/main flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-4 md:gap-6 lg:p-6">
-        <WorkbenchPageHeader description="按目标月份生成下月人员级班表草稿，在月度扫盘和周度处理之间定位异常与待确认格子。" />
+      <main className="@container/main flex h-[calc(100svh-var(--header-height))] min-h-0 flex-1 flex-col overflow-hidden bg-muted/40 p-0">
         <RosterDraftWorkbench
           key={targetMonth}
           model={model}

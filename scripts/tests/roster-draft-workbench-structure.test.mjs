@@ -63,6 +63,37 @@ test("roster draft workbench is organized as a scheduler workbench, not a report
   assert.ok(!content.includes("展开单周明细"))
 })
 
+test("roster draft page is a full-screen grid-first scheduler surface", () => {
+  const page = readProjectFile("app/roster-drafts/page.tsx")
+  const content = readProjectFile("components/roster-draft-workbench.tsx")
+
+  assert.ok(!page.includes("WorkbenchPageHeader"))
+  assert.ok(!page.includes("按目标月份生成下月人员级班表草稿"))
+  assert.ok(page.includes("h-[calc(100svh-var(--header-height))]"))
+  assert.ok(page.includes("p-0"))
+  assert.ok(content.includes('data-slot="roster-workbench-shell"'))
+  assert.ok(content.includes('data-slot="roster-board-toolbar"'))
+  assert.ok(content.includes('data-slot="roster-grid-canvas"'))
+  assert.ok(content.includes('data-slot="roster-board-statusbar"'))
+  assert.ok(content.includes('React.useState<WorkbenchView>("month")'))
+  assert.ok(!content.includes('React.useState<WorkbenchView>("week")'))
+})
+
+test("roster draft detail and queue are exposed through a right drawer, not a fixed side card", () => {
+  const content = readProjectFile("components/roster-draft-workbench.tsx")
+
+  assert.ok(content.includes("@/components/ui/drawer"))
+  assert.ok(content.includes("<Drawer"))
+  assert.ok(content.includes('direction="right"'))
+  assert.ok(content.includes("setInspectorOpen(true)"))
+  assert.ok(content.includes("CellInspectorPanel"))
+  assert.ok(content.includes("WorkbenchQueuePanel"))
+  assert.ok(!content.includes("xl:grid-cols-[minmax(0,1fr)_360px]"))
+  assert.ok(!content.includes("<aside"))
+  assert.ok(!content.includes("<CellInspector selectedCell={selectedCell} />"))
+  assert.ok(!content.includes("<WorkbenchQueue items={queueItems} onLocateCell={locateCell} />"))
+})
+
 test("roster draft workbench keeps mature-scheduling references structural and non-production", () => {
   const content = readProjectFile("components/roster-draft-workbench.tsx")
 

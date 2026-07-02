@@ -89,3 +89,12 @@ decisions:
       - "components/ui/sidebar.tsx"
       - "docs/raw-requirements.md"
       - "tasks/backlog.yaml"
+  D-2026-07-01-roster-fullscreen-workbench:
+    title: "Roster draft workbench should be full-screen and grid-first"
+    file: "docs/user-stories.md"
+    related_files:
+      - "app/roster-drafts/page.tsx"
+      - "components/roster-draft-workbench.tsx"
+      - "scripts/tests/roster-draft-workbench-structure.test.mjs"
+      - "docs/raw-requirements.md"
+      - "tasks/backlog.yaml"

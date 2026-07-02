@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-07-01 - IM288 月班表草稿全屏排班工作台体验
+
+#### 审计结论
+
+- `/roster-drafts` 外层改为 header 下方全屏工作区，移除解释性 `WorkbenchPageHeader` 和页面外层滚动。
+- 工作台默认进入月视图，月/周切换保留在工作台内部。
+- 顶部 toolbar 收敛为项目/职场、小组范围、目标月份、当前周、详情与队列、生成草稿。
+- 月视图和周视图网格占据主画布，表头和员工列保留定位能力。
+- 格子详情、异常、待排和已过滤标注统一进入右侧抽屉，不再常驻固定右侧面板。
+- 保留 IM285/IM286 本地 fixture 和 TypeScript 生成器；不新增编辑、保存发布、API、数据库、Excel 上传/导入、审批、权限、预测模型、标准人力、自动排班、导出、批量、生产公式、结算或收费因子。
+
+#### 验证
+
+- focused: `node --test scripts/tests/roster-draft-workbench-structure.test.mjs` 通过，9 个测试。
+- `npm run typecheck`: 通过。
+- `npm run lint`: 通过。
+- `bash scripts/check-state.sh --strict`: 通过。
+- shadcn review: `npx shadcn@latest info --json` 确认 `radix-nova`、Tailwind v4、drawer/select/tabs/button/badge 已安装；硬编码色阶和 `space-*` 扫描无命中。
+- `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build`: 通过。
+- 浏览器 smoke: 通过。`http://localhost:3003/roster-drafts?month=2026-08` 默认选中月视图，旧解释 header 和固定 `aside` 均不存在，workbench shell 为 1376x852，主画布高度 685；点击格子打开右侧 `详情与队列` 抽屉，队列在抽屉内可见，周视图切换仍可用。
+- `git diff --check`: 通过。
+- final: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过；Node 测试 862 pass / 1 skip，Python 测试 249 tests OK，shadcn/ui convention check、lint、typecheck、build 通过。
+
 ### 2026-07-01 - IM287 全站导航瘦身与 icon rail 对齐
 
 #### 审计结论

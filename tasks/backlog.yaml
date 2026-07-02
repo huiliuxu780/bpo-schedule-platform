@@ -106,3 +106,13 @@ tasks:
     requirement_ids:
       - R955
     notes: "Global shell/navigation infrastructure: default 64px icon rail, 240px click-expanded sidebar, centered 32px icon grid, hidden collapsed group labels, 48px header, and remembered expanded/collapsed UI preference. Does not modify roster workbench business content, add pages, dependencies, backend/API/database/auth/approval/export/batch capabilities, or production formulas."
+
+  - id: IM288
+    title: "月班表草稿全屏排班工作台体验"
+    status: done
+    required_workflow: frontend-scaffold
+    story_ids:
+      - US876
+    requirement_ids:
+      - R956
+    notes: "Refine /roster-drafts into a full-screen grid-first scheduler workbench: remove explanatory page header, default to month scan, keep month/week switch in the workbench, move cell detail and exception/pending/annotation queues into an on-demand right drawer, and preserve the existing local fixture/generator. No editing, save/publish, API, database, Excel upload/import, approval, permissions, forecasting model, standard-capacity model, auto-fill scheduling, external integrations, export, batch, settlement, or charge-factor work."

@@ -95,6 +95,19 @@ status: "draft"
 notes: "Frontend shell/navigation refactor before the next roster workbench full-screen redesign."
 ```
 
+### R956 - 月班表草稿全屏排班工作台体验
+
+```yaml
+id: R956
+module: "BPO WFM 三条主线"
+description: "After PM confirmed not to repeat prior drill decisions, continue the /roster-drafts scheduler workbench from the IM287 navigation foundation into a full-screen, grid-first scheduling surface. The page should remove explanatory header copy, default to month scan, keep month/week switching inside the workbench, make the grid the primary canvas, and move selected-cell detail plus exception/pending/annotation queues into an on-demand right drawer instead of a fixed side panel. This slice keeps the existing local fixture and TypeScript generator and must not add editing, save/publish, API routes, database persistence, Excel upload/import, approval, permissions, forecasting model, standard-capacity model, auto-fill scheduling, external integrations, export, batch operations, settlement, or charge-factor work."
+source: "PM-confirmed continuation after IM287 push on 2026-07-01"
+submitted_at: "2026-07-01"
+version: "1.0"
+status: "draft"
+notes: "Frontend workbench experience refinement only; keep IM285/IM286 generation model and local fixture."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

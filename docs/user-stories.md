@@ -164,6 +164,29 @@ status: "draft"
 notes: "IM287 global shell/navigation infrastructure before the roster workbench full-screen redesign."
 ```
 
+### US876 - 月班表草稿全屏排班工作台体验
+
+```yaml
+id: US876
+requirement_ids:
+  - R956
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望月班表草稿页面成为全屏网格优先的排班工作台，默认先扫整月，再按需打开右侧抽屉查看格子详情和处理队列，以便主工作区不再被说明文案和常驻面板挤占。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "页面去掉解释性 WorkbenchPageHeader，主区域使用 header 下方可用高度并隐藏外层滚动。"
+  - "工作台默认进入月视图，月/周切换保留在工作台内部。"
+  - "顶部 toolbar 只保留项目/职场、小组范围、目标月份、当前周、详情与队列入口、生成草稿入口。"
+  - "月视图和周视图网格占据主画布，表头与员工列保持定位能力。"
+  - "格子详情、异常、待排和已过滤标注进入右侧抽屉，不再常驻为固定右侧面板。"
+  - "点击格子或队列项能够打开抽屉并定位到对应员工/日期。"
+  - "首版不提供编辑、保存、发布、审批、权限、Excel 导入、预测模型、标准人力、自动排班、导出或批量能力。"
+status: "draft"
+notes: "IM288 full-screen roster scheduler workbench refinement over IM286 and IM287."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

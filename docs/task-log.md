@@ -56,6 +56,15 @@
 - status: `done`
 - notes: 将全站导航底座改为默认 64px icon rail、点击展开 240px、收起态隐藏分组标题、32px icon 栅格居中、48px header 和站内展开/收起偏好保持；浏览器验收覆盖 `/dashboard`、`/roster-drafts`、`/schedule-plans`。不修改排班业务内容，不新增 API、数据库、权限、审批、导出或批量能力。
 
+- task_id: `IM288`
+- source_ids:
+  - `R956`
+- story_ids:
+  - `US876`
+- action: 月班表草稿全屏排班工作台体验。
+- status: `done`
+- notes: 将 `/roster-drafts` 推进为全屏、网格优先的排班师工作台：移除解释性页面 header，默认月视图扫盘，月/周切换留在工作台内，格子详情和异常/待排/过滤标注队列进入右侧抽屉；不新增编辑、保存发布、API、数据库、Excel 导入、审批、权限、预测、标准人力或自动排班。
+
 - task_id: `IM283`
 - source_ids:
   - `R951`

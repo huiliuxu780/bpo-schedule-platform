@@ -4,6 +4,26 @@
 
 ## Current Branch Entries
 
+### IM288 Roster Full-Screen Workbench
+
+- branch_name: `codex/im288-roster-fullscreen-workbench`
+- base_main_commit: `stacked on pushed codex/im287-global-nav-rail at 7a442e1`
+- stacked_on: `codex/im287-global-nav-rail`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Refine `/roster-drafts` into a full-screen grid-first scheduler workbench using the existing local fixture and TypeScript generator.
+- qoder_mode: `false; PM confirmed to continue with A and avoid repeated drill questions.`
+- allowed_files_check: `app/roster-drafts/page.tsx`, `components/roster-draft-workbench.tsx`, `scripts/tests/roster-draft-workbench-structure.test.mjs`, traceability docs, and current/registry state docs only.
+- scope_diff_check: expected roster workbench layout, focused tests, and traceability changes only; no new dependency, package/lockfile, backend API route, database, migration, external integration, editing, save/publish, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, standard-capacity model, forecasting model, Excel upload/import, or charge-factor changes.
+- focused_check_result: `node --test scripts/tests/roster-draft-workbench-structure.test.mjs` passed with 9 tests; `npm run typecheck` passed; `npm run lint` passed; `bash scripts/check-state.sh --strict` passed; shadcn review passed for `radix-nova` with no hardcoded color or `space-*` hits; `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build` passed; browser smoke passed for default month canvas, removed old header/aside, right drawer detail/queue, and week tab switch.
+- check_result: `git diff --check && bash scripts/check-state.sh --strict && BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed; Node tests 862 pass / 1 skip, Python tests 249 OK, shadcn/ui convention check, lint, typecheck, and build passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM287 Global Navigation Rail
 
 - branch_name: `codex/im287-global-nav-rail`
