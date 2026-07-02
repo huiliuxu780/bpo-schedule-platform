@@ -152,6 +152,26 @@ test("roster draft workbench derives forecast arranged actual gaps from edited d
   assert.ok(content.includes('onLocateCell(primaryEmployeeId, row.businessDate, "week")'))
 })
 
+test("roster draft workbench supports manual gap resolution through related covered cells", () => {
+  const content = readProjectFile("components/roster-draft-workbench.tsx")
+
+  assert.ok(content.includes("type RosterGapRelatedCell"))
+  assert.ok(content.includes("relatedCells"))
+  assert.ok(content.includes("RosterGapRelatedCellList"))
+  assert.ok(content.includes("相关覆盖格子"))
+  assert.ok(content.includes("当前无覆盖人员"))
+  assert.ok(content.includes("定位当天"))
+  assert.ok(content.includes("setInspectorTab"))
+  assert.ok(content.includes('setInspectorTab("detail")'))
+  assert.ok(content.includes("onSelectRelatedCell"))
+  assert.ok(content.includes("isDraftEdited"))
+  assert.ok(content.includes("已调整"))
+  assert.ok(content.includes("复用格子详情"))
+  assert.ok(!content.includes("候选推荐"))
+  assert.ok(!content.includes("已处理"))
+  assert.ok(!content.includes("忽略缺口"))
+})
+
 test("roster draft workbench keeps mature-scheduling references structural and non-production", () => {
   const content = readProjectFile("components/roster-draft-workbench.tsx")
 

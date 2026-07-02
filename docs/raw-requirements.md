@@ -147,6 +147,19 @@ status: "draft"
 notes: "Frontend local gap-preview layer only; demand/actual rows are local examples and Arranged is derived from edited draft cells."
 ```
 
+### R960 - 月班表缺口处理闭环 v1
+
+```yaml
+id: R960
+module: "BPO WFM 三条主线"
+description: "Continue from the local Forecast vs Arranged/Actual gap workbench and add the first manual gap-resolution loop inside the generated roster draft. Scheduler users can open a gap row, see only the related covered draft cells for the same date and half-hour slot, click a related cell to return to the existing cell-detail shift selector, and use the edited effective draft cells to recompute the gap queue. If Arranged is 0, the gap row shows a no-coverage empty state and only supports locating the date in week view. This slice must not add automatic recommendations, automatic scheduling, processing statuses, real publish persistence, API routes, database work, Excel upload/import, approval, permissions, export, batch operations, production formulas, settlement, or charge-factor work."
+source: "PM-confirmed continuation on 2026-07-02"
+submitted_at: "2026-07-02"
+version: "1.0"
+status: "draft"
+notes: "Frontend local manual gap-resolution loop only; reuse existing controlled cell editing and derived gap preview."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

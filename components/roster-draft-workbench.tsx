@@ -63,6 +63,17 @@ type RosterDerivedCoverage = {
 
 type RosterGapStatus = "shortage" | "balanced" | "surplus"
 
+type WorkbenchInspectorTab = "detail" | "preview" | "gaps" | "queue"
+
+type RosterGapRelatedCell = {
+  employeeId: string
+  employeeName: string
+  teamName: string
+  shiftCode: string
+  intervalLabel: string
+  isDraftEdited: boolean
+}
+
 type RosterGapPreviewRow = {
   id: string
   businessDate: string
@@ -76,6 +87,7 @@ type RosterGapPreviewRow = {
   reason: string
   sourceLabel: string
   relatedEmployeeIds: string[]
+  relatedCells: RosterGapRelatedCell[]
 }
 
 type SelectedCell = {
@@ -151,6 +163,8 @@ export function RosterDraftWorkbench({
     firstActionableCellKey(model)
   )
   const [inspectorOpen, setInspectorOpen] = React.useState(false)
+  const [inspectorTab, setInspectorTab] =
+    React.useState<WorkbenchInspectorTab>("detail")
   const [cellEdits, setCellEdits] = React.useState<Record<string, RosterCellDraftEdit>>({})
   const [rosterLifecycleState, setRosterLifecycleState] =
     React.useState<RosterLifecycleState>("draft")
@@ -183,6 +197,11 @@ export function RosterDraftWorkbench({
     }
     setView(nextView)
     setInspectorOpen(true)
+  }
+
+  function selectGapRelatedCell(employeeId: string, date: string) {
+    locateCell(employeeId, date, "week")
+    setInspectorTab("detail")
   }
 
   function updateCellDraftEdit(key: string, nextEdit: RosterCellDraftEdit) {
@@ -323,9 +342,12 @@ export function RosterDraftWorkbench({
         derivedCoverage={derivedCoverage}
         gapRows={gapRows}
         editedCellCount={editedCellCount}
+        activeTab={inspectorTab}
+        onActiveTabChange={setInspectorTab}
         onUpdateCellDraftEdit={updateCellDraftEdit}
         onResetCellDraftEdit={resetCellDraftEdit}
         onLocateCell={locateCell}
+        onSelectRelatedCell={selectGapRelatedCell}
       />
     </Drawer>
   )
@@ -698,9 +720,12 @@ function RosterInspectorDrawer({
   derivedCoverage,
   gapRows,
   editedCellCount,
+  activeTab,
+  onActiveTabChange,
   onUpdateCellDraftEdit,
   onResetCellDraftEdit,
   onLocateCell,
+  onSelectRelatedCell,
 }: {
   selectedCell?: SelectedCell
   items: QueueItem[]
@@ -709,9 +734,12 @@ function RosterInspectorDrawer({
   derivedCoverage: RosterDerivedCoverage
   gapRows: RosterGapPreviewRow[]
   editedCellCount: number
+  activeTab: WorkbenchInspectorTab
+  onActiveTabChange: (tab: WorkbenchInspectorTab) => void
   onUpdateCellDraftEdit: (key: string, edit: RosterCellDraftEdit) => void
   onResetCellDraftEdit: (key: string) => void
   onLocateCell: (employeeId: string, date: string, view?: WorkbenchView) => void
+  onSelectRelatedCell: (employeeId: string, date: string) => void
 }) {
   return (
     <DrawerContent
@@ -725,7 +753,11 @@ function RosterInspectorDrawer({
         </DrawerDescription>
       </DrawerHeader>
       <div className="min-h-0 flex-1 overflow-y-auto p-4">
-        <Tabs defaultValue="detail" className="flex min-h-0 flex-col gap-4">
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => onActiveTabChange(value as WorkbenchInspectorTab)}
+          className="flex min-h-0 flex-col gap-4"
+        >
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="detail">格子详情</TabsTrigger>
             <TabsTrigger value="preview">发布预览</TabsTrigger>
@@ -755,6 +787,7 @@ function RosterInspectorDrawer({
               rows={gapRows}
               fallbackEmployeeId={selectedCell?.employeeId}
               onLocateCell={onLocateCell}
+              onSelectRelatedCell={onSelectRelatedCell}
             />
           </TabsContent>
           <TabsContent value="queue" className="m-0">
@@ -856,10 +889,12 @@ function RosterGapWorkbenchPanel({
   rows,
   fallbackEmployeeId,
   onLocateCell,
+  onSelectRelatedCell,
 }: {
   rows: RosterGapPreviewRow[]
   fallbackEmployeeId?: string
   onLocateCell: (employeeId: string, date: string, view?: WorkbenchView) => void
+  onSelectRelatedCell: (employeeId: string, date: string) => void
 }) {
   return (
     <div data-slot="roster-gap-workbench-panel" className="rounded-lg border bg-card p-4">
@@ -875,7 +910,7 @@ function RosterGapWorkbenchPanel({
 
       <div className="mt-4 flex flex-col gap-3">
         {rows.map((row) => {
-          const primaryEmployeeId = row.relatedEmployeeIds[0] ?? fallbackEmployeeId
+          const primaryEmployeeId = row.relatedEmployeeIds[0]
 
           return (
             <div key={row.id} className="rounded-md border p-3">
@@ -912,23 +947,103 @@ function RosterGapWorkbenchPanel({
                 <span>
                   F-A {row.forecastGap} / A-Actual {row.actualGap}
                 </span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled={!primaryEmployeeId}
-                  onClick={() => {
-                    if (primaryEmployeeId) {
+                {primaryEmployeeId ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
                       onLocateCell(primaryEmployeeId, row.businessDate, "week")
                     }
-                  }}
-                >
-                  定位缺口
-                </Button>
+                  >
+                    定位缺口
+                  </Button>
+                ) : null}
               </div>
+
+              <RosterGapRelatedCellList
+                row={row}
+                fallbackEmployeeId={fallbackEmployeeId}
+                onLocateCell={onLocateCell}
+                onSelectRelatedCell={onSelectRelatedCell}
+              />
             </div>
           )
         })}
+      </div>
+    </div>
+  )
+}
+
+function RosterGapRelatedCellList({
+  row,
+  fallbackEmployeeId,
+  onLocateCell,
+  onSelectRelatedCell,
+}: {
+  row: RosterGapPreviewRow
+  fallbackEmployeeId?: string
+  onLocateCell: (employeeId: string, date: string, view?: WorkbenchView) => void
+  onSelectRelatedCell: (employeeId: string, date: string) => void
+}) {
+  if (row.relatedCells.length === 0) {
+    return (
+      <div className="mt-3 rounded-md border bg-muted/40 p-3 text-sm">
+        <div className="font-medium">当前无覆盖人员</div>
+        <div className="mt-1 text-xs text-muted-foreground">
+          该半小时没有已覆盖格子，本轮不提供可调格子。
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="mt-3"
+          disabled={!fallbackEmployeeId}
+          onClick={() => {
+            if (fallbackEmployeeId) {
+              onLocateCell(fallbackEmployeeId, row.businessDate, "week")
+            }
+          }}
+        >
+          定位当天
+        </Button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-3">
+      <div className="text-xs font-medium text-muted-foreground">
+        相关覆盖格子 / 复用格子详情
+      </div>
+      <div className="mt-2 flex flex-col gap-2">
+        {row.relatedCells.map((cell) => (
+          <Button
+            key={`${row.id}-${cell.employeeId}`}
+            type="button"
+            variant="outline"
+            onClick={() => onSelectRelatedCell(cell.employeeId, row.businessDate)}
+            className="h-auto w-full justify-start p-2 text-left font-normal"
+          >
+            <div className="w-full">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="truncate font-medium">{cell.employeeName}</div>
+                  <div className="truncate text-xs text-muted-foreground">
+                    {cell.teamName}
+                  </div>
+                </div>
+                {cell.isDraftEdited ? (
+                  <Badge variant="secondary">已调整</Badge>
+                ) : null}
+              </div>
+              <div className="mt-2 flex items-center justify-between gap-2 text-xs text-muted-foreground">
+                <span>{cell.shiftCode}</span>
+                <span>{cell.intervalLabel}</span>
+              </div>
+            </div>
+          </Button>
+        ))}
       </div>
     </div>
   )
@@ -1291,6 +1406,7 @@ function buildRosterGapPreview(
   const intervalByShiftCode = buildShiftIntervalMap(model)
   const arrangedBySlot = new Map<string, number>()
   const employeesBySlot = new Map<string, string[]>()
+  const relatedCellsBySlot = new Map<string, RosterGapRelatedCell[]>()
   const actualBySlot = new Map(
     model.actualIntervals.map((item) => [
       dateSlotKey(item.businessDate, item.slotLabel),
@@ -1318,6 +1434,17 @@ function buildRosterGapPreview(
           ...(employeesBySlot.get(slotKey) ?? []),
           row.employeeId,
         ])
+        relatedCellsBySlot.set(slotKey, [
+          ...(relatedCellsBySlot.get(slotKey) ?? []),
+          {
+            employeeId: row.employeeId,
+            employeeName: row.employeeName,
+            teamName: row.teamName,
+            shiftCode: effectiveCell.shiftCode,
+            intervalLabel,
+            isDraftEdited: Boolean(cellEdits[key]),
+          },
+        ])
       }
     }
   }
@@ -1344,6 +1471,7 @@ function buildRosterGapPreview(
         reason: forecast.reason,
         sourceLabel: actual?.sourceLabel ?? "本地实际到岗样例",
         relatedEmployeeIds: employeesBySlot.get(slotKey) ?? [],
+        relatedCells: relatedCellsBySlot.get(slotKey) ?? [],
       }
     })
     .sort((left, right) => {

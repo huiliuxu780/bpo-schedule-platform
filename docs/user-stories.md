@@ -253,6 +253,28 @@ status: "draft"
 notes: "IM291 frontend local gap-preview layer on top of IM290."
 ```
 
+### US880 - 月班表缺口处理闭环 v1
+
+```yaml
+id: US880
+requirement_ids:
+  - R960
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望在缺口队列里直接看到当前半小时已覆盖的相关草稿格子，并能点击回格子详情调整班种，以便先用人工修正闭合缺口，而不提前进入自动推荐、审批或发布持久化。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "缺口行展示同日期、同半小时 slot 的相关覆盖格子，而不是全月候选人员或自动推荐。"
+  - "点击相关覆盖格子后定位到周视图对应员工/日期，并切回既有格子详情页复用班种选择器。"
+  - "相关覆盖格子显示员工、小组、班种、覆盖时段和已调整标记。"
+  - "Arranged 为 0 的缺口展示当前无覆盖人员空态，只提供定位当天，不展示候选推荐。"
+  - "调整 copied 草稿格子后，缺口队列继续基于 edited effective cells 即时重算。"
+  - "本轮不新增自动推荐、自动排班、处理状态、真实发布持久化、API、数据库、Excel 上传/导入、审批、权限、导出或批量能力。"
+status: "draft"
+notes: "IM292 frontend local manual gap-resolution loop on top of IM291."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

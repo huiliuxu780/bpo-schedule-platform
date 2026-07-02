@@ -125,3 +125,11 @@ decisions:
       - "scripts/tests/roster-draft-workbench-structure.test.mjs"
       - "docs/raw-requirements.md"
       - "tasks/backlog.yaml"
+  D-2026-07-02-roster-gap-resolution-loop:
+    title: "Roster gap rows resolve through related covered draft cells and existing controlled edits"
+    file: "docs/user-stories.md"
+    related_files:
+      - "components/roster-draft-workbench.tsx"
+      - "scripts/tests/roster-draft-workbench-structure.test.mjs"
+      - "docs/raw-requirements.md"
+      - "tasks/backlog.yaml"

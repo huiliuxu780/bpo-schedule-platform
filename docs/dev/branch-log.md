@@ -4,6 +4,26 @@
 
 ## Current Branch Entries
 
+### IM292 Roster Gap Resolution Loop
+
+- branch_name: `codex/im292-roster-gap-resolution-loop`
+- base_main_commit: `stacked on local codex/im291-roster-gap-workbench at d072ff5`
+- stacked_on: `codex/im291-roster-gap-workbench`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Add frontend local manual gap-resolution loop for edited `/roster-drafts` gap rows.
+- qoder_mode: `false; PM confirmed the next roster slice directly.`
+- allowed_files_check: `components/roster-draft-workbench.tsx`, `scripts/tests/roster-draft-workbench-structure.test.mjs`, traceability docs, and current/registry state docs only.
+- scope_diff_check: expected related covered cells for same date/slot, gap-to-cell-detail navigation, no-coverage locate-date empty state, focused tests, browser smoke evidence, and traceability changes only; no new dependency, package/lockfile, backend API route, database, migration, external integration, real publish persistence, real forecasting model, standard-capacity model, automatic recommendation, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, Excel upload/import, or charge-factor changes.
+- focused_check_result: red `node scripts/tests/roster-draft-workbench-structure.test.mjs` failed before implementation on missing `type RosterGapRelatedCell`; green `node --experimental-strip-types scripts/tests/roster-draft-generation-model.test.mjs && node scripts/tests/roster-draft-workbench-structure.test.mjs` passed with 19 tests; `npm run lint` passed; shadcn project info confirmed `radix-nova`; hardcoded color and `space-*` scan had no matches; `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build` passed; `npm run typecheck` passed after build refreshed stale `.next/types`; browser smoke passed for related covered cells, no-coverage empty state, and related-cell-to-detail navigation.
+- check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 867 Node tests passing / 1 skipped, shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 249 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM291 Roster Gap Workbench
 
 - branch_name: `codex/im291-roster-gap-workbench`

@@ -6,6 +6,15 @@
 
 ### 2026-07-02
 
+- task_id: `IM292`
+- source_ids:
+  - `R960`
+- story_ids:
+  - `US880`
+- action: 月班表缺口处理闭环 v1。
+- status: `done`
+- notes: 在 `/roster-drafts` 缺口队列中展示同日期同半小时 slot 的相关覆盖格子，点击后回到周视图格子详情并复用班种选择器；Arranged 为 0 时展示当前无覆盖人员空态和定位当天；缺口继续基于 edited effective cells 重算；不新增自动推荐、自动排班、处理状态、真实发布持久化、API、数据库、Excel 导入、审批、权限、导出或批量。
+
 - task_id: `IM291`
 - source_ids:
   - `R959`

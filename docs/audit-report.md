@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-07-02 - IM292 月班表缺口处理闭环 v1
+
+#### 审计结论
+
+- `/roster-drafts` 在 IM291 缺口工作台基础上增加手动缺口处理闭环。
+- 缺口行展示同日期、同半小时 slot 的相关覆盖格子，包含员工、小组、班种、覆盖时段和已调整标记。
+- 点击相关覆盖格子后切回右侧抽屉的格子详情页，并定位到周视图对应员工/日期，复用既有班种选择器。
+- Arranged 为 0 的缺口展示“当前无覆盖人员”空态，只提供“定位当天”，不展示候选推荐。
+- 缺口相关格子来自 edited effective cells，调整 copied 草稿格子后继续驱动缺口重算。
+- 本轮不新增自动推荐、自动排班、处理状态、真实发布持久化、API、数据库、Excel 上传/导入、审批、权限、导出、批量、生产公式、结算或收费因子。
+
+#### 验证
+
+- red: `node scripts/tests/roster-draft-workbench-structure.test.mjs` 先失败在缺少 `type RosterGapRelatedCell`。
+- focused: `node --experimental-strip-types scripts/tests/roster-draft-generation-model.test.mjs && node scripts/tests/roster-draft-workbench-structure.test.mjs` 通过，19 个测试。
+- `npm run lint`: 通过。
+- `npx shadcn@latest info --json`: 确认项目为 Next.js、Tailwind v4、`radix-nova`，已安装 `button`、`tabs`、`drawer`、`badge`。
+- shadcn review scan: `rg -n "(bg|text|border)-(red|blue|green|yellow|orange|purple|slate|gray|zinc|neutral|stone|emerald|rose|amber)-|space-y-|space-x-" components/roster-draft-workbench.tsx app/roster-drafts/page.tsx` 无命中。
+- `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build`: 通过。
+- `npm run typecheck`: build 前因旧 `.next/types` 缺失文件失败；build 重新生成 `.next/types` 后复跑通过。
+- 浏览器 smoke: 通过。`http://localhost:3003/roster-drafts?month=2026-08` 中缺口抽屉展示相关覆盖格子和无覆盖空态；点击相关覆盖格子后切回 `Alice Chen / 2026-08-03` 周视图格子详情，班种选择器可见。
+- final: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过；Node 测试 867 pass / 1 skip，Python 测试 249 tests OK，shadcn/ui convention check、lint、typecheck、build 和 project Harness check 通过。
+
 ### 2026-07-02 - IM291 月班表 Forecast vs Arranged/Actual 缺口工作台
 
 #### 审计结论
