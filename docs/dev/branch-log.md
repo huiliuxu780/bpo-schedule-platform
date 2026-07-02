@@ -16,7 +16,7 @@
 - scope_diff_check: expected related covered cells for same date/slot, gap-to-cell-detail navigation, no-coverage locate-date empty state, focused tests, browser smoke evidence, and traceability changes only; no new dependency, package/lockfile, backend API route, database, migration, external integration, real publish persistence, real forecasting model, standard-capacity model, automatic recommendation, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, Excel upload/import, or charge-factor changes.
 - focused_check_result: red `node scripts/tests/roster-draft-workbench-structure.test.mjs` failed before implementation on missing `type RosterGapRelatedCell`; green `node --experimental-strip-types scripts/tests/roster-draft-generation-model.test.mjs && node scripts/tests/roster-draft-workbench-structure.test.mjs` passed with 19 tests; `npm run lint` passed; shadcn project info confirmed `radix-nova`; hardcoded color and `space-*` scan had no matches; `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build` passed; `npm run typecheck` passed after build refreshed stale `.next/types`; browser smoke passed for related covered cells, no-coverage empty state, and related-cell-to-detail navigation.
 - check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 867 Node tests passing / 1 skipped, shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 249 backend tests, and project Harness check.
-- local_commit_sha: `pending`
+- local_commit_sha: `04e95f8`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
