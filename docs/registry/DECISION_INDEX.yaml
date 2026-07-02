@@ -133,3 +133,10 @@ decisions:
       - "scripts/tests/roster-draft-workbench-structure.test.mjs"
       - "docs/raw-requirements.md"
       - "tasks/backlog.yaml"
+  D-2026-07-02-roster-draft-publish-persistence-contract:
+    title: "Roster draft and published versions use a scheduled effective lifecycle contract"
+    file: "docs/design/roster-draft-publish-persistence-contract.md"
+    related_files:
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"

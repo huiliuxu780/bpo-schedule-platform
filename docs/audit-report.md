@@ -4,6 +4,25 @@
 
 ## Current Audit
 
+### 2026-07-02 - IM293 月班表 Draft/Published 持久化产品契约
+
+#### 审计结论
+
+- 新增 `docs/design/roster-draft-publish-persistence-contract.md`，定义月班表草稿、排定发布、未来生效、撤回、修订和下游可见的产品契约。
+- 契约明确一个 `RosterVersion` 只属于一个 `project + workplace + team + rosterMonth`，并约束同范围同月份只能有一个 active draft、一个 scheduled_published 和一个 current published。
+- 契约明确状态机：`draft`、`scheduled_published`、`published`、`superseded`、`voided`、`activation_failed`。
+- 契约明确 `effectiveAt` 精确到分钟、不能早于当前时间、默认目标月 1 日 00:00、按职场时区解释，且不得晚于目标月结束。
+- 契约明确 scheduled_published 到点自动生效、失败进入 activation_failed、保留旧 current、排班师可重试或撤回。
+- 契约明确领域对象字段草案：`RosterVersion`、`RosterCell`、`RosterVersionEvent`、`RosterCellChangeLog`、`PublishedRosterSnapshot`。
+- 契约明确硬错误、软风险、发布前差异摘要、编辑锁、作废草稿、版本 lineage 和格子 `sourceCellId`。
+- 本轮只做文档和 Harness 追踪；不新增 DB 表、ORM、migration、API、前端发布动作、权限、审批、通知、导出、批量、Excel 导入、预测模型、标准人力、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- `git diff --cached --check`: 通过。
+- `bash scripts/check-state.sh --strict`: 通过。
+- final: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过；Node 测试 867 pass / 1 skip，Python 测试 249 tests OK，shadcn/ui convention check、lint、typecheck、build 和 project Harness check 通过。
+
 ### 2026-07-02 - IM292 月班表缺口处理闭环 v1
 
 #### 审计结论

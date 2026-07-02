@@ -275,6 +275,29 @@ status: "draft"
 notes: "IM292 frontend local manual gap-resolution loop on top of IM291."
 ```
 
+### US881 - 月班表 Draft/Published 持久化产品契约
+
+```yaml
+id: US881
+requirement_ids:
+  - R961
+module: "BPO WFM 三条主线"
+role: "排班师 / 小组长 / 一线员工"
+story: "作为排班平台的产品负责人，我希望先定义月班表草稿、排定发布、未来生效、撤回、修订和下游可见的持久化产品契约，以便后续 DB/API 开发不会把发布状态、版本 lineage、格子 ID、审计和下游读取口径做错。"
+task_type: "database-planning"
+priority: "P0"
+acceptance:
+  - "契约明确一个 RosterVersion 覆盖一个 project + workplace + team + month，并定义 active draft、scheduled_published、current published 的唯一性。"
+  - "契约明确状态机：draft、scheduled_published、published、superseded、voided、activation_failed。"
+  - "契约明确 future effectiveAt 的合法范围、职场时区、自动生效、失败、重试和撤回规则。"
+  - "契约明确 RosterVersion、RosterCell、VersionEvent、CellChangeLog、PublishedSnapshot 的业务字段草案。"
+  - "契约明确硬错误、软风险、发布前差异摘要、编辑锁、作废草稿、版本 lineage 和格子 sourceCellId。"
+  - "契约只预留请假/换班/异常申请引用关系，不实现审批、权限、通知、导出、Excel 导入、预测模型、标准人力或自动排班。"
+  - "本轮不新增 DB 表、ORM、migration、API、前端发布动作或任何生产持久化实现。"
+status: "draft"
+notes: "IM293 docs-only persistence product contract after IM292 local roster gap-resolution loop."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

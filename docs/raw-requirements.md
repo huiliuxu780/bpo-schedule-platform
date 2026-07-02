@@ -160,6 +160,19 @@ status: "draft"
 notes: "Frontend local manual gap-resolution loop only; reuse existing controlled cell editing and derived gap preview."
 ```
 
+### R961 - 月班表 Draft/Published 持久化产品契约
+
+```yaml
+id: R961
+module: "BPO WFM 三条主线"
+description: "Define the product contract for roster draft/published persistence before any real API or database implementation. The contract must cover RosterVersion state transitions, one active draft/current published/scheduled published per project-workplace-team-month, future effective time by workplace timezone, scheduled activation, activation failure handling, withdrawal, revision draft lineage, stable roster cell IDs, manual save, edit lock, hard-error publish blockers, soft-risk publish records, published derived snapshots, and lifecycle audit events. This task must remain documentation-only and must not add database tables, ORM, migrations, API routes, frontend publish actions, permissions, approval, notifications, export, batch operations, Excel import, forecasting model, standard-capacity model, automatic scheduling, production formulas, settlement, or charge-factor work."
+source: "PM-confirmed persistence contract drill on 2026-07-02"
+submitted_at: "2026-07-02"
+version: "1.0"
+status: "draft"
+notes: "Documentation/product-contract task only; prepares future DB/API design without implementing persistence."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

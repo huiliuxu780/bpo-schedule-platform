@@ -4,6 +4,26 @@
 
 ## Current Branch Entries
 
+### IM293 Roster Publish Persistence Contract
+
+- branch_name: `codex/im293-roster-publish-contract`
+- base_main_commit: `stacked on pushed codex/im292-roster-gap-resolution-loop at edebabe`
+- stacked_on: `codex/im292-roster-gap-resolution-loop`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Add documentation-only product contract for roster draft/published persistence before any DB/API implementation.
+- qoder_mode: `false; PM drilled and approved the product decisions directly.`
+- allowed_files_check: `docs/design/roster-draft-publish-persistence-contract.md`, traceability docs, and current/registry state docs only.
+- scope_diff_check: expected product contract, state machine, domain-object field draft, acceptance cases, and traceability changes only; no business code, frontend publish actions, backend API route, database table/schema/migration/ORM/repository, dependency, package/lockfile, external integration, auth, permission, approval, notification, export, batch, automatic scheduling, forecasting model, standard-capacity model, Excel upload/import, production formula, settlement, or charge-factor changes.
+- focused_check_result: `git diff --cached --check` passed. `bash scripts/check-state.sh --strict` passed. Contract self-review found no TODO/TBD placeholders and no implementation files in scope.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 867 Node tests passing / 1 skipped, shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 249 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM292 Roster Gap Resolution Loop
 
 - branch_name: `codex/im292-roster-gap-resolution-loop`

@@ -155,6 +155,11 @@ tasks:
     story_ids:
       - "US880"
     gate: "frontend-scaffold"
+  IM293:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US881"
+    gate: "database-planning"
 requirements:
   R949:
     file: "docs/raw-requirements.md"
@@ -228,6 +233,12 @@ requirements:
       - "US880"
     task_ids:
       - "IM292"
+  R961:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US881"
+    task_ids:
+      - "IM293"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
@@ -243,4 +254,5 @@ decisions:
   - "D-2026-07-02-roster-release-preview-coverage"
   - "D-2026-07-02-roster-gap-workbench"
   - "D-2026-07-02-roster-gap-resolution-loop"
+  - "D-2026-07-02-roster-draft-publish-persistence-contract"
 archive_refs: []

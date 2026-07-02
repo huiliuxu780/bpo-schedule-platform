@@ -156,3 +156,13 @@ tasks:
     requirement_ids:
       - R960
     notes: "Add frontend-only manual gap-resolution loop: gap rows show related covered draft cells for the same date/slot, related cells return to the existing cell-detail shift selector, no-coverage rows show a locate-date empty state, and gaps continue to recompute from edited effective cells. No automatic recommendation/scheduling, processing status, real publish persistence, API, database, Excel import, approval, permissions, export, batch, production formulas, settlement, or charge-factor work."
+
+  - id: IM293
+    title: "月班表 Draft/Published 持久化产品契约"
+    status: done
+    required_workflow: database-planning
+    story_ids:
+      - US881
+    requirement_ids:
+      - R961
+    notes: "Documentation-only contract for roster draft/published persistence: version state machine, future effectiveAt, scheduled activation, withdrawal, revision lineage, stable roster cell IDs, edit lock, hard errors, soft risks, published snapshots, and lifecycle audit events. No DB tables, ORM, migrations, API routes, frontend publish actions, permissions, approval, notifications, export, batch, Excel import, forecasting model, standard-capacity model, automatic scheduling, production formulas, settlement, or charge-factor work."

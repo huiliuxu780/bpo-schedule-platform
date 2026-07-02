@@ -6,6 +6,15 @@
 
 ### 2026-07-02
 
+- task_id: `IM293`
+- source_ids:
+  - `R961`
+- story_ids:
+  - `US881`
+- action: 月班表 Draft/Published 持久化产品契约。
+- status: `done`
+- notes: 新增契约文档，定义 RosterVersion 状态机、active draft/current published/scheduled_published 唯一性、未来生效、自动生效失败、撤回、修订 lineage、稳定格子 ID、编辑锁、硬错误、软风险、发布快照和生命周期审计事件；本轮不新增 DB 表、ORM、migration、API、前端发布动作、权限、审批、通知、导出、Excel 导入、预测模型、标准人力或自动排班。
+
 - task_id: `IM292`
 - source_ids:
   - `R960`
