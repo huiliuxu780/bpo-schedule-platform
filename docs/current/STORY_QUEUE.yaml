@@ -1,18 +1,8 @@
 version: 1
-updated_at: "2026-07-02"
+updated_at: "2026-07-04"
 source_of_truth: "current_story_queue"
 notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US883
-    title: "月班表 Draft/Published 本地持久化闭环"
-    status: ready
-    requirement_ids:
-      - R963
-    task_ids:
-      - IM295
-    priority: P0
-    role: "排班师"
-    summary: "将 IM294 纯领域规则接入本地 DB persistence 和 application service，覆盖 draft 保存、发布、snapshot、activation、withdraw、revision、edit lock 与 current/upcoming 读取口径，不开放 API/前端。"
+stories: []

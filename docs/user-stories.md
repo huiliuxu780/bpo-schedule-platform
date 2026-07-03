@@ -340,7 +340,7 @@ acceptance:
   - "RosterCell 支持同员工同日多 sequence 记录，shift/leave/training/meeting/annotation 都能保存，coverage 只统计 shift。"
   - "后端测试覆盖核心闭环和关键失败路径：唯一性、snapshot 固化、activation、withdraw、revision、edit lock、hard error、soft risk、migration head。"
   - "本轮不新增 API route、前端发布动作、权限、审批、通知、导出、批量、Excel 导入、Forecast/Actual 数据源、预测模型、标准人力、自动排班、生产公式、结算或计费规则。"
-status: "draft"
+status: "done"
 notes: "IM295 database-persistence slice after IM294 pure domain rules."
 ```
 

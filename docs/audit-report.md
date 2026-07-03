@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-07-04 - IM295 月班表 Draft/Published 本地持久化闭环
+
+#### 审计结论
+
+- 新增 `backend/app/roster_persistence.py`，提供 RosterVersion、RosterCell、RosterVersionEvent、RosterCellChangeLog、PublishedSnapshot、EditLock 的 SQLAlchemy persistence。
+- 新增 `backend/app/roster_service.py`，提供 saveDraft、validatePublish、schedulePublish、activateDuePublished、withdraw、createRevision、getActiveDraft、getCurrentPublished、getUpcomingPublished 对应的 Python service 方法。
+- 新增 `backend/migrations/versions/20260704_0011_roster_persistence.py`，migration head 可创建 roster 持久化表；修正 IM295 Gate 中迁移目录为真实的 `backend/migrations/versions/**`。
+- `RosterAssignment` 增加 `sequence` 字段，RosterCell 以 version + employee + businessDate + sequence 保证同人同日多记录；shift/training/meeting/annotation 等都可存，coverage 和班次数只统计 shift。
+- service 和 DB partial unique index 共同约束同 scope/month 只有一个 active draft、current published、scheduled published。
+- PublishedSnapshot 在 schedule publish 时固化班次数、半小时 Arranged 覆盖、hard/soft/diff 摘要；activateDuePublished 不新增 job/cron/worker，缺失 snapshot 会落到 activation_failed。
+- 本轮未新增 API route、前端发布动作、权限、审批、通知、导出、批量、Excel 导入、Forecast/Actual 数据源、预测模型、标准人力、自动排班、生产公式、结算或计费规则。
+
+#### 验证
+
+- red: `.venv/bin/python -m unittest backend.tests.test_roster_persistence backend.tests.test_roster_service backend.tests.test_database_foundation_closeout -v` 先失败在缺少 `backend.app.roster_persistence`；补 activation_failed 红测时先失败在缺失 snapshot 仍被激活。
+- focused: `.venv/bin/python -m unittest backend.tests.test_roster_persistence backend.tests.test_roster_service backend.tests.test_database_foundation_closeout -v` 通过，8 个测试。
+- focused backend: `.venv/bin/python -m unittest discover -s backend/tests -v` 通过，261 tests OK。
+- `bash scripts/check-state.sh --strict`: 通过。
+- `git diff --check`: 通过。
+- final: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过；Node 测试 867 pass / 1 skip，Python 测试 261 tests OK，shadcn/ui convention check、lint、typecheck、build 和 project Harness check 通过。
+
 ### 2026-07-02 - IM294 月班表 Draft/Published 纯领域状态机与发布校验
 
 #### 审计结论

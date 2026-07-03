@@ -91,6 +91,7 @@ class RosterAssignment:
     assignment_kind: AssignmentKind
     project_id: str
     team_id: str
+    sequence: int = 1
     workplace_id: str | None = None
     shift_code: str | None = None
     annotation_code: str | None = None

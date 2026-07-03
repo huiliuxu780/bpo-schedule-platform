@@ -195,7 +195,7 @@ description: "将 IM294 的月班表 Draft/Published 纯领域规则接入本地
 source: "PM-confirmed IM295 drill on 2026-07-02"
 submitted_at: "2026-07-02"
 version: "1.0"
-status: "draft"
+status: "done"
 notes: "Database-persistence slice only; no API route, frontend publish action, permission, approval, notification, export, batch, Excel import, Forecast/Actual source, forecasting model, standard-capacity model, automatic scheduling, production formula, settlement, or charge-factor work."
 ```
 

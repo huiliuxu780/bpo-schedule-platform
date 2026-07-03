@@ -4,6 +4,17 @@
 
 ## Current Log
 
+### 2026-07-04
+
+- task_id: `IM295`
+- source_ids:
+  - `R963`
+- story_ids:
+  - `US883`
+- action: 月班表 Draft/Published 本地持久化闭环。
+- status: `done`
+- notes: 新增 roster 本地 migration、repository 和 application service，覆盖草稿保存读回、同员工同日多 sequence cell、发布校验、发布快照、班次数、半小时 Arranged 覆盖、scheduled activation、activation_failed、withdraw、revision draft、edit lock、active draft/current/upcoming 读取和唯一性保护；不新增 API、前端发布动作、权限、审批、通知、导出、批量、Excel 导入、Forecast/Actual 数据源、预测模型、标准人力、自动排班、生产公式、结算或计费规则。
+
 ### 2026-07-02
 
 - task_id: `IM294`

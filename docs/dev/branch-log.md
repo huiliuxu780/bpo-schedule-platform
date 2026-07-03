@@ -4,6 +4,26 @@
 
 ## Current Branch Entries
 
+### IM295 Roster Persistence Service Loop
+
+- branch_name: `codex/im295-roster-persistence`
+- base_main_commit: `stacked on codex/im295-roster-persistence-gate at 698180e`
+- stacked_on: `codex/im295-roster-persistence-gate`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Local DB persistence and application service for roster Draft/Published lifecycle after IM294 pure-domain rules.
+- qoder_mode: `false; PM approved direct Codex execution and asked to drill only if needed.`
+- allowed_files_check: `backend/app/roster_drafts.py`, `backend/app/roster_persistence.py`, `backend/app/roster_service.py`, `backend/migrations/versions/20260704_0011_roster_persistence.py`, `backend/tests/test_roster_persistence.py`, `backend/tests/test_roster_service.py`, `backend/tests/test_database_foundation_closeout.py`, traceability docs, and current state docs only.
+- scope_diff_check: expected backend persistence/service, migration, backend tests, and traceability changes only; no API route, frontend UI, dependency, package/lockfile, external integration, Excel import, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, standard-capacity model, forecasting model, or charge-factor changes.
+- focused_check_result: `.venv/bin/python -m unittest backend.tests.test_roster_persistence backend.tests.test_roster_service backend.tests.test_database_foundation_closeout -v` passed with 8 tests.
+- check_result: `bash scripts/check-state.sh --strict` passed. `git diff --check` passed. `.venv/bin/python -m unittest discover -s backend/tests -v` passed with 261 tests. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 867 Node tests passing / 1 skipped, shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 261 backend tests, and project Harness check.
+- local_commit_sha: `pending commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM294 Roster Domain Publish Rules
 
 - branch_name: `codex/im294-roster-domain-model`

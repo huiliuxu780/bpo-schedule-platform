@@ -179,10 +179,10 @@ tasks:
 
   - id: IM295
     title: "月班表 Draft/Published 本地持久化闭环"
-    status: ready
+    status: done
     required_workflow: database-persistence
     story_ids:
       - US883
     requirement_ids:
       - R963
-    notes: "Implement local DB persistence and application service for roster draft/published lifecycle: RosterVersion, RosterCell, VersionEvent, CellChangeLog, PublishedSnapshot, EditLock, saveDraft, validatePublish, schedulePublish, activateDuePublished, withdraw, createRevision, active draft/current/upcoming reads, service + DB uniqueness, snapshot solidification, and backend tests. No API routes, frontend publish actions, permissions, approval, notifications, export, batch, Excel import, Forecast/Actual source, forecasting model, standard-capacity model, automatic scheduling, production formulas, settlement, or charge-factor work."
+    notes: "Implemented local DB persistence and application service for roster draft/published lifecycle: RosterVersion, RosterCell, VersionEvent, CellChangeLog, PublishedSnapshot, EditLock, saveDraft, validatePublish, schedulePublish, activateDuePublished, withdraw, createRevision, active draft/current/upcoming reads, service + DB uniqueness, snapshot solidification, and backend tests. No API routes, frontend publish actions, permissions, approval, notifications, export, batch, Excel import, Forecast/Actual source, forecasting model, standard-capacity model, automatic scheduling, production formulas, settlement, or charge-factor work."
