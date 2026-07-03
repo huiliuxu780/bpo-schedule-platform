@@ -16,7 +16,7 @@
 - scope_diff_check: expected backend persistence/service, migration, backend tests, and traceability changes only; no API route, frontend UI, dependency, package/lockfile, external integration, Excel import, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, standard-capacity model, forecasting model, or charge-factor changes.
 - focused_check_result: `.venv/bin/python -m unittest backend.tests.test_roster_persistence backend.tests.test_roster_service backend.tests.test_database_foundation_closeout -v` passed with 8 tests.
 - check_result: `bash scripts/check-state.sh --strict` passed. `git diff --check` passed. `.venv/bin/python -m unittest discover -s backend/tests -v` passed with 261 tests. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 867 Node tests passing / 1 skipped, shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 261 backend tests, and project Harness check.
-- local_commit_sha: `pending commit`
+- local_commit_sha: `c9837f5`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
