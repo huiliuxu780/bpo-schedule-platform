@@ -348,3 +348,25 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
+
+### 2026-07-06 - IM297 已发布月班表修订草稿闭环 v1 Gate
+
+#### 审计结论
+
+- 新增 R965 / US885 / IM297，当前队列恢复为一个 ready 的排班师可演示闭环。
+- IM297 明确 current published 在修订草稿编辑期间保持生效，修订草稿从 current published 创建并保留 previous-version source。
+- IM297 只允许复用现有格子受控编辑修改班种和备注，不新增/删除人员日格。
+- IM297 重新发布修订草稿时立即替换 current published，同一工作台展示上一版来源和本次修改摘要，不做完整版本历史页。
+- 本 Gate 不修改业务实现代码，不新增依赖、migration、权限、审批、导出、批量、Excel 导入、预测模型、标准人力、自动排班、生产公式、结算或计费规则。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`: 通过。
+- `git diff --check`: 通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`: 通过，包含 strict state check、869 Node tests（868 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、266 backend tests 和 project Harness check。
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`

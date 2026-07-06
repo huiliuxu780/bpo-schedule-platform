@@ -369,6 +369,28 @@ status: "done"
 notes: "IM296 completed local API + frontend scheduler workbench publish loop after IM295 local persistence service."
 ```
 
+### US885 - 已发布月班表修订草稿闭环 v1
+
+```yaml
+id: US885
+requirement_ids:
+  - R965
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望在正式班表发布后还能基于当前正式版创建修订草稿，只调整已有格子的班种和备注，并在确认后重新发布替换当前正式版，以便处理发布后发现的小范围排班问题，同时不影响一线继续查看当前有效班表。"
+task_type: "backend-vertical"
+priority: "P0"
+acceptance:
+  - "创建修订草稿时 current published 保持生效；一线/小组长概念上的当前正式班表不被草稿态覆盖。"
+  - "修订草稿从 current published 创建，保留 parent_version_id / previous-version source。"
+  - "修订草稿只允许复用现有格子受控编辑修改班种和备注，不新增/删除人员日格。"
+  - "重新发布修订草稿时立即替换 current published，上一正式版进入被替换口径。"
+  - "工作台展示当前正式版、上一版来源和本次修改摘要，不新增完整版本历史页。"
+  - "本轮不新增 scheduled publish UI、future effective time、批量修订、审批、权限、通知、导出、批量、Excel 导入、预测模型、标准人力、自动排班、生产公式、结算或计费规则。"
+status: "draft"
+notes: "IM297 revision draft loop after IM296 publish workbench."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

@@ -196,3 +196,13 @@ tasks:
     requirement_ids:
       - R964
     notes: "Implemented one medium local vertical slice after IM295: narrow local API for roster publish/current-published/snapshot/edit-lock, `/roster-drafts?month=2026-08` publish action, current published snapshot readback, hard-blocker/soft-risk display, shift counts, half-hour Arranged coverage, diff summary, and published read-only state. No forecasting model, standard-capacity model, Excel import, permissions, approval, notification, export, batch, automatic scheduling, scheduled publish UI, full revision editing, Forecast vs published persistence gap, production formulas, settlement, or charge-factor work."
+
+  - id: IM297
+    title: "已发布月班表修订草稿闭环 v1"
+    status: ready
+    required_workflow: backend-vertical
+    story_ids:
+      - US885
+    requirement_ids:
+      - R965
+    notes: "Next roster vertical after IM296: current published remains effective while scheduler creates a revision draft, edits existing cells with the current controlled shift-code/note editor, immediately republishes the revision to replace current published, and sees previous-version source plus revision change summary in the workbench. No scheduled publish UI, future effective time, full version history page, add/delete personnel/date cells, forecasting model, standard-capacity model, Excel import, permissions, approval, notification, export, batch, automatic scheduling, production formulas, settlement, or charge-factor work."

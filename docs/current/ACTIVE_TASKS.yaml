@@ -5,4 +5,63 @@ notes:
   - "Only current executable tasks belong here."
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
-tasks: []
+tasks:
+  - id: IM297
+    title: "已发布月班表修订草稿闭环 v1"
+    status: ready
+    required_workflow: backend-vertical
+    story_ids:
+      - US885
+    requirement_ids:
+      - R965
+    branch: "codex/im297-roster-revision-workbench"
+    base_branch: "codex/im296-roster-publish-workbench"
+    product_result: "排班师可在已发布班表上创建修订草稿，修改现有格子的班种/备注，并立即重新发布替换 current published。"
+    scope:
+      do:
+        - "Add narrow local API support for creating a revision draft from current published and reading the active revision draft."
+        - "Wire `/roster-drafts` so published read-only state can enter revision-draft mode."
+        - "Reuse the existing controlled cell editing behavior; allow only shift-code and note edits on existing copied/published cells."
+        - "Republish the revision draft immediately and replace current published, preserving parent/version lineage."
+        - "Show current published state, previous-version source, and this revision's change summary in the same workbench."
+        - "Add focused backend, frontend structure/model, and browser acceptance coverage."
+      do_not:
+        - "Do not add scheduled publish UI, future effective-time selection, full version history page, bulk revision, approval workflow, notification, export, batch, auth, permissions, automatic scheduling, forecasting model, standard-capacity model, Excel import, production formulas, settlement, or charge-factor work."
+        - "Do not add dependencies or modify package/lockfiles."
+        - "Do not create migrations or broaden the IM295 persistence schema unless a blocker is reported and PM confirms a new database task."
+    allowed_files:
+      - "backend/app/main.py"
+      - "backend/app/roster_drafts.py"
+      - "backend/app/roster_service.py"
+      - "backend/app/roster_persistence.py"
+      - "backend/tests/test_roster_revision_api.py"
+      - "backend/tests/test_roster_publish_api.py"
+      - "backend/tests/test_roster_service.py"
+      - "app/roster-drafts/page.tsx"
+      - "components/roster-draft-workbench.tsx"
+      - "lib/roster-drafts.ts"
+      - "lib/roster-draft-fixtures.ts"
+      - "scripts/tests/roster-draft-generation-model.test.mjs"
+      - "scripts/tests/roster-draft-workbench-structure.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/**"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/migrations/**"
+      - "project-progress/**"
+      - "/Users/mac/Documents/Codex/01_Projects/bpo-schedule-platform-lab/**"
+    acceptance:
+      - "`/roster-drafts?month=2026-08` can create a revision draft from current published without changing the currently effective published roster."
+      - "Revision draft editing reuses existing controlled cell editing and does not add/delete personnel/date cells."
+      - "Republishing the revision immediately replaces current published and preserves previous-version source."
+      - "Workbench shows previous-version source and this revision's change summary without a full version-history page."
+      - "Focused backend/frontend tests and manual browser smoke pass; final `bash scripts/check.sh` passes before commit."

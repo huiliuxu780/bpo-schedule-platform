@@ -212,6 +212,19 @@ status: "done"
 notes: "Completed local API + frontend workbench publish loop only; no scheduled publish UI, full revision editing, Forecast vs published persistence gap, forecasting model, standard-capacity model, Excel import, permissions, approval, notification, export, batch, automatic scheduling, production formula, settlement, or charge-factor work."
 ```
 
+### R965 - 已发布月班表修订草稿闭环 v1
+
+```yaml
+id: R965
+module: "BPO WFM 三条主线"
+description: "在 IM296 已发布班表工作台之上，补齐发布后发现问题的修订闭环。排班师在 current published 仍然生效的前提下创建修订草稿，修订草稿从当前正式版复制并保留 parent/version lineage；排班师只复用现有格子受控编辑修改现有人员日期格的班种和备注，不新增/删除人员或日期格；重新发布修订草稿时立即替换 current published，并将上一版作为 previous-version source 展示。本轮只在当前工作台展示当前正式版、上一版来源和本次修改摘要，不做完整版本历史页。"
+source: "PM-confirmed IM297 drill on 2026-07-06"
+submitted_at: "2026-07-06"
+version: "1.0"
+status: "draft"
+notes: "Revision draft loop only; no scheduled publish UI, future effective-time selection, full version history page, bulk revision, approval workflow, notification, export, batch, auth, permissions, automatic scheduling, forecasting model, standard-capacity model, Excel import, production formula, settlement, or charge-factor work."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.
