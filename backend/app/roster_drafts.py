@@ -350,7 +350,9 @@ def build_publish_diff(
     candidate_assignments: list[RosterAssignment],
 ) -> PublishDiffSummary:
     baseline_by_cell = {_cell_id(item): item for item in baseline_assignments}
-    candidate_by_cell = {_cell_id(item): item for item in candidate_assignments}
+    candidate_by_cell = {
+        item.source_cell_id or _cell_id(item): item for item in candidate_assignments
+    }
 
     added_cell_ids = sorted(set(candidate_by_cell) - set(baseline_by_cell))
     deleted_cell_ids = sorted(set(baseline_by_cell) - set(candidate_by_cell))

@@ -159,6 +159,67 @@ class RosterServiceTest(unittest.TestCase):
                     context=_context(),
                 )
 
+    def test_create_revision_keeps_cell_ids_unique_for_same_day_multiple_employees(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            service = _service(directory)
+            draft = _draft_version("ROSTER-202608-DRAFT")
+            service.save_draft(
+                draft,
+                [
+                    _assignment(
+                        "CELL-EMP-001-2026-08-03",
+                        "EMP-001",
+                        sequence=3,
+                        shift_code="A5",
+                    ),
+                    _assignment(
+                        "CELL-EMP-002-2026-08-03",
+                        "EMP-002",
+                        sequence=3,
+                        shift_code="A5",
+                    ),
+                ],
+                actor_id="scheduler-1",
+                occurred_at="2026-07-04T09:00",
+            )
+            service.schedule_publish(
+                draft.roster_version_id,
+                actor_id="scheduler-1",
+                occurred_at="2026-07-04T10:00",
+                effective_at="2026-07-04T10:00",
+                context=_context(),
+            )
+            service.activate_due_published(
+                now="2026-07-04T10:00",
+                actor_id="system",
+            )
+            current = service.get_current_published(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+            )
+
+            service.create_revision(
+                current.version.roster_version_id,
+                new_version_id="ROSTER-202608-REV-1",
+                actor_id="scheduler-1",
+                occurred_at="2026-08-02T09:00",
+            )
+            active_draft = service.get_active_draft(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+            )
+
+            revision_cell_ids = [cell.roster_cell_id for cell in active_draft.cells]
+            self.assertEqual(len(revision_cell_ids), len(set(revision_cell_ids)))
+            self.assertEqual(
+                sorted(cell.source_cell_id for cell in active_draft.cells),
+                ["CELL-EMP-001-2026-08-03", "CELL-EMP-002-2026-08-03"],
+            )
+
     def test_withdraw_scheduled_publish_and_read_upcoming(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             service = _service(directory)

@@ -370,3 +370,28 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
+
+### 2026-07-06 - IM297 已发布月班表修订草稿闭环 v1 Implementation
+
+#### 审计结论
+
+- IM297 已完成一个排班师可演示闭环，不是 API-only/UI-only 切片。
+- `/roster-drafts?month=2026-08` 可在已发布班表上创建修订草稿，current published 在修订期间保持生效。
+- 修订草稿复用既有受控格子编辑，只允许对已有 copied 格子调整班种和备注，不新增/删除人员日格。
+- 重新发布修订草稿会立即替换 current published，并保留 parent/supersedes lineage、source_cell_id、上一版来源和本次修改摘要。
+- 修复真实月表场景下同一天多员工 sequence 重复导致 revision cell_id 冲突的问题，改为基于原 cell_id 生成唯一修订格子 id。
+- 本轮未新增依赖、package/lockfile、migration、权限、审批、通知、导出、批量、Excel 导入、预测模型、标准人力、自动排班、生产公式、结算或计费规则。
+
+#### 验证
+
+- focused backend: `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_revision_api backend.tests.test_roster_publish_api backend.tests.test_roster_drafts backend.tests.test_roster_persistence` 通过，27 tests。
+- focused frontend: `node --test scripts/tests/roster-draft-workbench-structure.test.mjs` 通过，15 tests。
+- typecheck: `npm run typecheck` 通过。
+- browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`；已发布态出现 `创建修订草稿`；创建后出现 `修订草稿`、`重新发布修订`、`上一版来源`、`本次修改摘要`；未出现 `版本历史页` 或 `未来生效`。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、870 Node tests（869 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、271 backend tests 和 project Harness check。
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`

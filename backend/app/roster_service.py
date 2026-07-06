@@ -227,7 +227,12 @@ class RosterService:
         self.repository.save_draft(
             result.version,
             [
-                replace(cell, roster_cell_id=f"{new_version_id}-{cell.sequence}")
+                replace(
+                    cell,
+                    roster_cell_id=f"{new_version_id}-{cell.roster_cell_id}",
+                    source_cell_id=cell.roster_cell_id,
+                    manually_adjusted=False,
+                )
                 for cell in detail.cells
             ],
             actor_id=actor_id,

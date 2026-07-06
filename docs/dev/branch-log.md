@@ -24,6 +24,27 @@
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
 
+### IM297 Roster Revision Workbench
+
+- branch_name: `codex/im297-roster-revision-workbench`
+- base_main_commit: `stacked on local codex/im296-roster-publish-workbench at 92117ea`
+- stacked_on: `codex/im296-roster-publish-workbench`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Local API + `/roster-drafts` workbench loop for creating a revision draft from current published, keeping current published effective, controlled existing-cell shift/note edits, immediate republish, previous-version source, and revision change summary.
+- qoder_mode: `false; PM confirmed the development drill decisions interactively.`
+- allowed_files_check: backend roster API/service/domain tests, roster draft workbench, frontend structure test, and traceability/current state docs only.
+- scope_diff_check: expected roster revision API/workbench/test/traceability changes only; no scheduled publish UI, future effective-time selection, full version history page, add/delete personnel/date cells, dependency, package/lockfile, migration, external integration, Excel import, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, standard-capacity model, forecasting model, or charge-factor changes.
+- focused_check_result: `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_revision_api backend.tests.test_roster_publish_api backend.tests.test_roster_drafts backend.tests.test_roster_persistence` passed with 28 tests; `node --test scripts/tests/roster-draft-workbench-structure.test.mjs` passed with 15 tests; `npm run typecheck` passed.
+- browser_smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`; published state showed `创建修订草稿`; after create, workbench showed `修订草稿`, `重新发布修订`, `上一版来源`, and `本次修改摘要` without `版本历史页` or `未来生效`.
+- check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 870 Node tests (869 pass / 1 skip), shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 271 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM297 Roster Revision Workbench Gate
 
 - branch_name: `codex/im297-roster-revision-workbench`

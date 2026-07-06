@@ -178,3 +178,15 @@
 - action: 已发布月班表修订草稿闭环 v1 Gate。
 - status: `ready`
 - notes: 将下一步开发收束为一个排班师可演示闭环：current published 保持生效，排班师从当前正式版创建修订草稿，复用现有格子受控编辑修改班种/备注，立即重新发布替换 current published，并在同一工作台展示上一版来源和本次修改摘要。明确不进入 scheduled publish UI、future effective time、完整版本历史、预测模型、标准人力、Excel 导入、权限审批、导出批量、自动排班、生产公式、结算或计费规则。
+
+- task_id: `IM297`
+- source_ids:
+  - `R965`
+- story_ids:
+  - `US885`
+- action: 已发布月班表修订草稿闭环 v1 Implementation。
+- status: `done`
+- notes: 完成排班师可演示闭环：`/roster-drafts?month=2026-08` 可从 current published 创建修订草稿，current published 在修订期间保持生效；修订草稿复用现有格子受控编辑能力，仅修改已有 copied 格子的班种/备注；重新发布修订后立即替换 current published，并保留 parent/supersedes lineage、source_cell_id、上一版来源和本次修改摘要。未进入 scheduled publish UI、future effective time、完整版本历史、预测模型、标准人力、Excel 导入、权限审批、导出批量、自动排班、生产公式、结算或计费规则。
+- focused verification: `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_revision_api backend.tests.test_roster_publish_api backend.tests.test_roster_drafts backend.tests.test_roster_persistence` 通过 28 tests；`node --test scripts/tests/roster-draft-workbench-structure.test.mjs` 通过 15 tests；`npm run typecheck` 通过。
+- browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`；已发布态显示 `创建修订草稿`；创建后进入 `修订草稿`，显示 `重新发布修订`、`上一版来源`、`本次修改摘要`，且不出现 `版本历史页` 或 `未来生效`。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、870 Node tests（869 pass / 1 skip）、lint、typecheck、Next build、271 backend tests 和 project Harness check。

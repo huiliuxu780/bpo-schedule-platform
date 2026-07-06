@@ -36,7 +36,7 @@ import { cn } from "@/lib/utils"
 
 type WorkbenchView = "month" | "week"
 type QueueKind = "exception" | "pending" | "annotation"
-type RosterLifecycleState = "draft" | "publishing" | "published"
+type RosterLifecycleState = "draft" | "publishing" | "published" | "revision_draft"
 
 type RosterCellDraftEdit = {
   shiftCode: string
@@ -61,17 +61,50 @@ type RosterDerivedCoverage = {
   coveredSlotCount: number
 }
 
+type RosterVersionSummary = {
+  version_id: string
+  business_month: string
+  status: string
+  project_id?: string
+  workplace_id?: string
+  team_id?: string
+  activated_at?: string
+  parent_version_id?: string | null
+  supersedes_version_id?: string | null
+}
+
+type PublishedRosterCell = {
+  cell_id: string
+  assignment_id: string
+  employee_id: string
+  business_date: string
+  sequence: number
+  assignment_kind: string
+  project_id: string
+  workplace_id?: string | null
+  team_id: string
+  shift_code?: string | null
+  annotation_code?: string | null
+  interval_start_at?: string | null
+  interval_end_at?: string | null
+  source_cell_id?: string | null
+  manually_adjusted: boolean
+}
+
+type RosterRevisionDraft = {
+  status: "draft" | "missing"
+  version: RosterVersionSummary | null
+  cells: PublishedRosterCell[]
+}
+
+type RosterRevisionCellSource = {
+  cellId: string
+  sourceCellId?: string | null
+}
+
 type PublishedRosterSnapshot = {
   status: "published" | "missing"
-  published: {
-    version_id: string
-    business_month: string
-    status: string
-    project_id?: string
-    workplace_id?: string
-    team_id?: string
-    activated_at?: string
-  } | null
+  published: RosterVersionSummary | null
   snapshot: {
     shift_counts: Record<string, number>
     arranged_coverage: {
@@ -233,6 +266,8 @@ export function RosterDraftWorkbench({
     React.useState<RosterLifecycleState>("draft")
   const [publishedSnapshot, setPublishedSnapshot] =
     React.useState<PublishedRosterSnapshot | null>(null)
+  const [revisionDraft, setRevisionDraft] =
+    React.useState<RosterRevisionDraft | null>(null)
   const [lockState, setLockState] = React.useState<RosterLockState | null>(null)
   const [publishMessage, setPublishMessage] = React.useState<string | null>(null)
 
@@ -253,6 +288,10 @@ export function RosterDraftWorkbench({
     () => buildRosterGapPreview(model, cellEdits),
     [model, cellEdits]
   )
+  const revisionCellSourceByKey = React.useMemo(
+    () => buildRevisionCellSourceByKey(revisionDraft),
+    [revisionDraft]
+  )
   const isRosterReadOnly =
     rosterLifecycleState === "published" || Boolean(lockState?.readOnly)
 
@@ -260,8 +299,9 @@ export function RosterDraftWorkbench({
     let cancelled = false
 
     async function initializePublishState() {
-      const [currentSnapshot, currentLock] = await Promise.all([
+      const [currentSnapshot, activeRevisionDraft, currentLock] = await Promise.all([
         fetchCurrentPublishedSnapshot(model),
+        fetchActiveRevisionDraft(model),
         acquireRosterDraftLock(model),
       ])
       if (cancelled) {
@@ -271,6 +311,13 @@ export function RosterDraftWorkbench({
         setPublishedSnapshot(currentSnapshot)
         setRosterLifecycleState("published")
         setInspectorTab("preview")
+      }
+      if (activeRevisionDraft?.status === "draft") {
+        setRevisionDraft(activeRevisionDraft)
+        setRosterLifecycleState("revision_draft")
+        setInspectorTab("preview")
+        setLockState(null)
+        return
       }
       if (currentLock) {
         setLockState(currentLock)
@@ -313,7 +360,7 @@ export function RosterDraftWorkbench({
       return
     }
 
-    setRosterLifecycleState("draft")
+    setRosterLifecycleState(revisionDraft ? "revision_draft" : "draft")
     setCellEdits((current) => {
       const generatedShiftCode = selected.originalCell.shiftCode ?? ""
       const normalizedNote = nextEdit.note.trim()
@@ -337,7 +384,7 @@ export function RosterDraftWorkbench({
     if (isRosterReadOnly) {
       return
     }
-    setRosterLifecycleState("draft")
+    setRosterLifecycleState(revisionDraft ? "revision_draft" : "draft")
     setCellEdits((current) => {
       const rest = { ...current }
       delete rest[key]
@@ -346,6 +393,10 @@ export function RosterDraftWorkbench({
   }
 
   async function publishCurrentRosterDraft() {
+    if (revisionDraft) {
+      await publishRevisionDraft()
+      return
+    }
     if (isRosterReadOnly || rosterLifecycleState === "publishing") {
       return
     }
@@ -385,6 +436,88 @@ export function RosterDraftWorkbench({
     }
   }
 
+  async function createRosterRevisionDraft() {
+    if (!publishedSnapshot?.published || rosterLifecycleState === "publishing") {
+      return
+    }
+    setRosterLifecycleState("publishing")
+    setPublishMessage(null)
+    setInspectorOpen(true)
+    setInspectorTab("preview")
+
+    try {
+      const response = await fetch(
+        buildRosterPublishApiUrl("/api/v1/roster-drafts/revisions/create"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            business_month: model.targetMonth,
+            project_id: model.project.projectId,
+            workplace_id: model.project.workplaceName,
+            actor_id: ROSTER_PUBLISH_ACTOR_ID,
+            occurred_at: currentLocalIsoMinute(),
+            revision_version_id: buildRosterRevisionVersionId(model.targetMonth),
+          }),
+        }
+      )
+      const payload = await response.json()
+      if (!response.ok) {
+        setPublishMessage(
+          payload?.error?.message ?? payload?.detail?.error?.message ?? "修订草稿未创建"
+        )
+        setRosterLifecycleState("published")
+        return
+      }
+
+      setRevisionDraft(normalizeRosterRevisionDraft(payload))
+      setCellEdits({})
+      setLockState(null)
+      setPublishMessage("修订草稿已创建")
+      setRosterLifecycleState("revision_draft")
+    } catch {
+      setPublishMessage("修订草稿服务暂时不可用")
+      setRosterLifecycleState("published")
+    }
+  }
+
+  async function publishRevisionDraft() {
+    if (!revisionDraft?.version || rosterLifecycleState === "publishing") {
+      return
+    }
+    setRosterLifecycleState("publishing")
+    setPublishMessage(null)
+    setInspectorOpen(true)
+    setInspectorTab("preview")
+
+    try {
+      const response = await fetch(buildRosterPublishApiUrl("/api/v1/roster-drafts/publish"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(
+          buildRosterPublishPayload(model, cellEdits, revisionDraft)
+        ),
+      })
+      const payload = await response.json()
+      if (!response.ok) {
+        setPublishMessage(
+          payload?.error?.message ?? payload?.detail?.error?.message ?? "修订发布未完成"
+        )
+        setRosterLifecycleState("revision_draft")
+        return
+      }
+
+      setPublishedSnapshot(normalizePublishedRosterSnapshot(payload))
+      setRevisionDraft(null)
+      setCellEdits({})
+      setPublishMessage("修订已发布为当前正式班表")
+      setRosterLifecycleState("published")
+    } catch {
+      setPublishMessage("修订发布服务暂时不可用")
+      setRosterLifecycleState("revision_draft")
+    }
+  }
+
   async function releaseOwnRosterLock() {
     const released = await releaseRosterDraftLock(model)
     if (released) {
@@ -421,7 +554,10 @@ export function RosterDraftWorkbench({
           publishMessage={publishMessage}
           derivedCoverage={derivedCoverage}
           gapRows={gapRows}
+          revisionDraft={revisionDraft}
           onPublishCurrentRosterDraft={publishCurrentRosterDraft}
+          onCreateRosterRevisionDraft={createRosterRevisionDraft}
+          onPublishRevisionDraft={publishRevisionDraft}
           onReleaseOwnRosterLock={releaseOwnRosterLock}
           onOpenInspector={() => setInspectorOpen(true)}
         />
@@ -494,6 +630,8 @@ export function RosterDraftWorkbench({
         rosterLifecycleState={rosterLifecycleState}
         isRosterReadOnly={isRosterReadOnly}
         publishedSnapshot={publishedSnapshot}
+        revisionDraft={revisionDraft}
+        revisionCellSourceByKey={revisionCellSourceByKey}
         publishMessage={publishMessage}
         derivedCoverage={derivedCoverage}
         gapRows={gapRows}
@@ -526,7 +664,10 @@ function RosterWorkbenchToolbar({
   publishMessage,
   derivedCoverage,
   gapRows,
+  revisionDraft,
   onPublishCurrentRosterDraft,
+  onCreateRosterRevisionDraft,
+  onPublishRevisionDraft,
   onReleaseOwnRosterLock,
   onOpenInspector,
 }: {
@@ -546,7 +687,10 @@ function RosterWorkbenchToolbar({
   publishMessage: string | null
   derivedCoverage: RosterDerivedCoverage
   gapRows: RosterGapPreviewRow[]
+  revisionDraft: RosterRevisionDraft | null
   onPublishCurrentRosterDraft: () => void
+  onCreateRosterRevisionDraft: () => void
+  onPublishRevisionDraft: () => void
   onReleaseOwnRosterLock: () => void
   onOpenInspector: () => void
 }) {
@@ -556,9 +700,18 @@ function RosterWorkbenchToolbar({
       ? "已发布"
       : rosterLifecycleState === "publishing"
         ? "发布中"
+        : rosterLifecycleState === "revision_draft"
+          ? "修订草稿"
         : isRosterReadOnly
           ? "只读"
           : "草稿"
+  const canCreateRevision = rosterLifecycleState === "published"
+  const publishButtonLabel =
+    rosterLifecycleState === "revision_draft" ? "重新发布修订" : "发布当前草稿"
+  const publishButtonAction =
+    rosterLifecycleState === "revision_draft"
+      ? onPublishRevisionDraft
+      : onPublishCurrentRosterDraft
 
   return (
     <div
@@ -621,14 +774,28 @@ function RosterWorkbenchToolbar({
             释放编辑锁
           </Button>
         ) : null}
+        {canCreateRevision ? (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCreateRosterRevisionDraft}
+            title={revisionDraft?.version?.version_id ?? publishMessage ?? undefined}
+          >
+            创建修订草稿
+          </Button>
+        ) : null}
         <Button
           type="button"
           variant="outline"
-          onClick={onPublishCurrentRosterDraft}
-          disabled={isRosterReadOnly || rosterLifecycleState === "publishing"}
+          onClick={publishButtonAction}
+          disabled={
+            rosterLifecycleState === "revision_draft"
+              ? false
+              : isRosterReadOnly || rosterLifecycleState === "publishing"
+          }
           title={publishMessage ?? undefined}
         >
-          发布当前草稿
+          {publishButtonLabel}
         </Button>
         <Button asChild>
           <Link href={`/roster-drafts?month=${selectedMonth}`}>生成草稿</Link>
@@ -912,6 +1079,8 @@ function RosterInspectorDrawer({
   rosterLifecycleState,
   isRosterReadOnly,
   publishedSnapshot,
+  revisionDraft,
+  revisionCellSourceByKey,
   publishMessage,
   derivedCoverage,
   gapRows,
@@ -929,6 +1098,8 @@ function RosterInspectorDrawer({
   rosterLifecycleState: RosterLifecycleState
   isRosterReadOnly: boolean
   publishedSnapshot: PublishedRosterSnapshot | null
+  revisionDraft: RosterRevisionDraft | null
+  revisionCellSourceByKey: Map<string, RosterRevisionCellSource>
   publishMessage: string | null
   derivedCoverage: RosterDerivedCoverage
   gapRows: RosterGapPreviewRow[]
@@ -979,6 +1150,8 @@ function RosterInspectorDrawer({
             <RosterReleasePreviewPanel
               rosterLifecycleState={rosterLifecycleState}
               publishedSnapshot={publishedSnapshot}
+              revisionDraft={revisionDraft}
+              revisionCellSourceByKey={revisionCellSourceByKey}
               publishMessage={publishMessage}
               derivedCoverage={derivedCoverage}
               editedCellCount={editedCellCount}
@@ -1009,12 +1182,16 @@ function RosterInspectorDrawer({
 function RosterReleasePreviewPanel({
   rosterLifecycleState,
   publishedSnapshot,
+  revisionDraft,
+  revisionCellSourceByKey,
   publishMessage,
   derivedCoverage,
   editedCellCount,
 }: {
   rosterLifecycleState: RosterLifecycleState
   publishedSnapshot: PublishedRosterSnapshot | null
+  revisionDraft: RosterRevisionDraft | null
+  revisionCellSourceByKey: Map<string, RosterRevisionCellSource>
   publishMessage: string | null
   derivedCoverage: RosterDerivedCoverage
   editedCellCount: number
@@ -1048,6 +1225,21 @@ function RosterReleasePreviewPanel({
               {publishedSnapshot.snapshot.arranged_coverage.length}
             </div>
           </div>
+        </div>
+
+        <div className="mt-4 grid gap-2 text-sm">
+          <InspectorRow
+            label="上一版来源"
+            value={
+              publishedSnapshot.published?.parent_version_id ??
+              publishedSnapshot.published?.supersedes_version_id ??
+              "-"
+            }
+          />
+          <InspectorRow
+            label="本次修改摘要"
+            value={`${publishedSnapshot.snapshot.diff_summary.changed_cell_ids.length} 格变更`}
+          />
         </div>
 
         {publishedSnapshot.snapshot.soft_risks.length > 0 ? (
@@ -1102,6 +1294,80 @@ function RosterReleasePreviewPanel({
                   </span>
                 </div>
               ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (rosterLifecycleState === "revision_draft" && revisionDraft?.version) {
+    const sourceVersion =
+      revisionDraft.version.parent_version_id ??
+      revisionDraft.version.supersedes_version_id ??
+      publishedSnapshot?.published?.version_id ??
+      "-"
+
+    return (
+      <div
+        data-slot="roster-publish-preview-panel"
+        className="rounded-lg border bg-card p-4"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <div className="text-sm font-medium">发布预览</div>
+            <div className="mt-1 text-xs text-muted-foreground">
+              {revisionDraft.version.version_id}
+            </div>
+          </div>
+          <Badge>修订草稿</Badge>
+        </div>
+
+        <div className="mt-4 grid gap-2 text-sm">
+          <InspectorRow label="上一版来源" value={sourceVersion} />
+          <InspectorRow
+            label="本次修改摘要"
+            value={`${editedCellCount} 格已调整 / ${revisionCellSourceByKey.size} 格继承`}
+          />
+        </div>
+
+        {publishMessage ? (
+          <div className="mt-3 rounded-md border bg-muted/40 px-3 py-2 text-sm">
+            {publishMessage}
+          </div>
+        ) : null}
+
+        <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
+          <div className="rounded-md border p-3">
+            <div className="text-xs text-muted-foreground">班次数</div>
+            <div className="mt-1 text-lg font-semibold">
+              {derivedCoverage.totalShiftCount}
+            </div>
+          </div>
+          <div className="rounded-md border p-3">
+            <div className="text-xs text-muted-foreground">半小时覆盖</div>
+            <div className="mt-1 text-lg font-semibold">
+              {derivedCoverage.coveredSlotCount}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <div className="text-xs font-medium text-muted-foreground">班种分布</div>
+          <div className="mt-2 grid gap-2">
+            {derivedCoverage.shiftCounts.map((item) => (
+              <div
+                key={item.shiftCode}
+                className="flex items-center justify-between gap-3 rounded-md border px-3 py-2 text-sm"
+              >
+                <div className="min-w-0">
+                  <div className="font-medium">{item.shiftCode}</div>
+                  <div className="truncate text-xs text-muted-foreground">
+                    {item.intervalLabel}
+                  </div>
+                </div>
+                <Badge variant="secondary">{item.count}</Badge>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -1574,6 +1840,30 @@ async function fetchCurrentPublishedSnapshot(
   }
 }
 
+async function fetchActiveRevisionDraft(
+  model: RosterDraftViewModel
+): Promise<RosterRevisionDraft | null> {
+  const params = new URLSearchParams({
+    business_month: model.targetMonth,
+    project_id: model.project.projectId,
+    workplace_id: model.project.workplaceName,
+  })
+  try {
+    const response = await fetch(
+      buildRosterPublishApiUrl(
+        `/api/v1/roster-drafts/active-draft?${params.toString()}`
+      ),
+      { cache: "no-store" }
+    )
+    if (!response.ok) {
+      return null
+    }
+    return normalizeRosterRevisionDraft(await response.json())
+  } catch {
+    return null
+  }
+}
+
 async function acquireRosterDraftLock(
   model: RosterDraftViewModel
 ): Promise<RosterLockState | null> {
@@ -1636,9 +1926,11 @@ async function releaseRosterDraftLock(
 
 function buildRosterPublishPayload(
   model: RosterDraftViewModel,
-  cellEdits: Record<string, RosterCellDraftEdit>
+  cellEdits: Record<string, RosterCellDraftEdit>,
+  revisionDraft?: RosterRevisionDraft | null
 ) {
   const intervalByShiftCode = buildShiftIntervalMap(model)
+  const revisionCellSourceByKey = buildRevisionCellSourceByKey(revisionDraft)
   const cells = model.monthRows.flatMap((row) =>
     row.cells.flatMap((cell, index) => {
       const key = cellKey(row.employeeId, cell.date)
@@ -1646,6 +1938,7 @@ function buildRosterPublishPayload(
       if (effectiveCell.status !== "copied" || !effectiveCell.shiftCode) {
         return []
       }
+      const revisionSource = revisionCellSourceByKey.get(key)
       const intervalLabel = intervalByShiftCode.get(effectiveCell.shiftCode)
       const interval = intervalLabel
         ? intervalLabelToIsoBounds(cell.date, intervalLabel)
@@ -1654,7 +1947,7 @@ function buildRosterPublishPayload(
 
       return [
         {
-          cell_id: `CELL-${row.employeeId}-${cell.date}`,
+          cell_id: revisionSource?.cellId ?? `CELL-${row.employeeId}-${cell.date}`,
           assignment_id: `ASSIGN-${row.employeeId}-${cell.date}`,
           employee_id: row.employeeId,
           business_date: cell.date,
@@ -1666,6 +1959,7 @@ function buildRosterPublishPayload(
           shift_code: effectiveCell.shiftCode,
           interval_start_at: interval?.startAt,
           interval_end_at: interval?.endAt,
+          source_cell_id: revisionSource?.sourceCellId ?? undefined,
           manually_adjusted: Boolean(cellEdits[key]),
         },
       ]
@@ -1673,7 +1967,7 @@ function buildRosterPublishPayload(
   )
 
   return {
-    version_id: buildRosterVersionId(model.targetMonth),
+    version_id: revisionDraft?.version?.version_id ?? buildRosterVersionId(model.targetMonth),
     actor_id: ROSTER_PUBLISH_ACTOR_ID,
     occurred_at: currentLocalIsoMinute(),
     business_month: model.targetMonth,
@@ -1703,6 +1997,14 @@ function normalizePublishedRosterSnapshot(payload: Partial<PublishedRosterSnapsh
   }
 }
 
+function normalizeRosterRevisionDraft(payload: Partial<RosterRevisionDraft>): RosterRevisionDraft {
+  return {
+    status: payload.status ?? "missing",
+    version: payload.version ?? null,
+    cells: payload.cells ?? [],
+  }
+}
+
 function normalizeRosterLockState(payload: RosterLockApiPayload): RosterLockState {
   return {
     acquired: Boolean(payload.acquired),
@@ -1727,6 +2029,28 @@ function buildRosterPublishApiUrl(path: string): string {
 
 function buildRosterVersionId(targetMonth: string): string {
   return `ROSTER-${targetMonth}-DRAFT`
+}
+
+function buildRosterRevisionVersionId(targetMonth: string): string {
+  return `ROSTER-${targetMonth}-REV-${currentLocalIsoMinute().replace(/[-:T]/g, "")}`
+}
+
+function buildRevisionCellSourceByKey(
+  revisionDraft?: RosterRevisionDraft | null
+): Map<string, RosterRevisionCellSource> {
+  const revisionCellSourceByKey = new Map<string, RosterRevisionCellSource>()
+  if (!revisionDraft) {
+    return revisionCellSourceByKey
+  }
+
+  for (const cell of revisionDraft.cells) {
+    revisionCellSourceByKey.set(cellKey(cell.employee_id, cell.business_date), {
+      cellId: cell.cell_id,
+      sourceCellId: cell.source_cell_id,
+    })
+  }
+
+  return revisionCellSourceByKey
 }
 
 function currentLocalIsoMinute(): string {

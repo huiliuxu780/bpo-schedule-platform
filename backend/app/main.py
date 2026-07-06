@@ -1,4 +1,5 @@
 import json
+from dataclasses import replace
 from threading import Lock
 from typing import Any
 
@@ -250,14 +251,19 @@ def publish_roster_draft(request: dict[str, Any] = Body(...)) -> dict[str, Any]:
     if lock.read_only:
         raise _roster_lock_exception(lock.message)
 
-    version = RosterVersion(
-        roster_version_id=version_id,
-        business_month=str(request["business_month"]),
-        status=RosterVersionStatus.DRAFT,
-        version_type=str(request.get("version_type") or "primary"),
-        project_id=request.get("project_id"),
-        workplace_id=request.get("workplace_id"),
-        team_id=request.get("team_id"),
+    existing_detail = service.repository.get_version(version_id)
+    version = (
+        replace(existing_detail.version, status=RosterVersionStatus.DRAFT)
+        if existing_detail is not None
+        else RosterVersion(
+            roster_version_id=version_id,
+            business_month=str(request["business_month"]),
+            status=RosterVersionStatus.DRAFT,
+            version_type=str(request.get("version_type") or "primary"),
+            project_id=request.get("project_id"),
+            workplace_id=request.get("workplace_id"),
+            team_id=request.get("team_id"),
+        )
     )
     cells = _roster_assignments_from_request(request)
     context = _roster_validation_context_from_request(request)
@@ -281,6 +287,7 @@ def publish_roster_draft(request: dict[str, Any] = Body(...)) -> dict[str, Any]:
         occurred_at=occurred_at,
         effective_at=occurred_at,
         context=context,
+        baseline_version_id=version.parent_version_id or version.supersedes_version_id,
     )
     service.activate_due_published(now=occurred_at, actor_id="system")
     service.release_edit_lock(version_id, actor_id=actor_id, now=occurred_at)
@@ -301,6 +308,98 @@ def publish_roster_draft(request: dict[str, Any] = Body(...)) -> dict[str, Any]:
             },
         )
     return _roster_detail_response(current)
+
+
+@app.get("/api/v1/roster-drafts/active-draft")
+def get_active_roster_revision_draft(
+    business_month: str,
+    project_id: str | None = None,
+    workplace_id: str | None = None,
+    team_id: str | None = None,
+) -> dict[str, Any]:
+    service = _get_roster_service()
+    detail = service.get_active_draft(
+        business_month=business_month,
+        project_id=project_id,
+        workplace_id=workplace_id,
+        team_id=team_id,
+    )
+    if detail is None:
+        return {
+            "status": "missing",
+            "version": None,
+            "published": None,
+            "snapshot": None,
+            "cells": [],
+        }
+    return _roster_detail_response(detail)
+
+
+@app.post("/api/v1/roster-drafts/revisions/create")
+def create_roster_revision_draft(request: dict[str, Any] = Body(...)) -> dict[str, Any]:
+    service = _get_roster_service()
+    actor_id = str(request.get("actor_id") or "scheduler")
+    occurred_at_value = request.get("occurred_at") or request.get("now")
+    if not occurred_at_value:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "code": "ROSTER_REVISION_TIME_REQUIRED",
+                    "message": "修订创建时间不能为空",
+                }
+            },
+        )
+    occurred_at = str(occurred_at_value)
+    current = service.get_current_published(
+        business_month=str(request["business_month"]),
+        project_id=request.get("project_id"),
+        workplace_id=request.get("workplace_id"),
+        team_id=request.get("team_id"),
+    )
+    if current is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "ROSTER_CURRENT_PUBLISHED_NOT_FOUND",
+                    "message": "当前正式班表不存在，不能创建修订草稿",
+                }
+            },
+        )
+    new_version_id = str(
+        request.get("revision_version_id")
+        or _default_revision_version_id(current.version.roster_version_id, occurred_at)
+    )
+    try:
+        service.create_revision(
+            current.version.roster_version_id,
+            new_version_id=new_version_id,
+            actor_id=actor_id,
+            occurred_at=occurred_at,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": {
+                    "code": "ROSTER_REVISION_CREATE_BLOCKED",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
+    detail = service.repository.get_version(new_version_id)
+    if detail is None:
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "error": {
+                    "code": "ROSTER_REVISION_READBACK_FAILED",
+                    "message": "修订草稿创建后读取失败",
+                }
+            },
+        )
+    return _roster_detail_response(detail)
 
 
 @app.post("/api/v1/roster-drafts/locks/acquire")
@@ -380,17 +479,11 @@ def _roster_validation_context_from_request(
 def _roster_detail_response(detail: RosterVersionDetail) -> dict[str, Any]:
     version = detail.version
     snapshot = detail.published_snapshot
+    version_payload = _roster_version_response(version)
     return {
         "status": version.status.value,
-        "published": {
-            "version_id": version.roster_version_id,
-            "business_month": version.business_month,
-            "status": version.status.value,
-            "project_id": version.project_id,
-            "workplace_id": version.workplace_id,
-            "team_id": version.team_id,
-            "activated_at": version.activated_at,
-        },
+        "version": version_payload,
+        "published": version_payload,
         "snapshot": (
             {
                 "shift_counts": snapshot.shift_counts,
@@ -403,6 +496,41 @@ def _roster_detail_response(detail: RosterVersionDetail) -> dict[str, Any]:
             if snapshot is not None
             else None
         ),
+        "cells": [_roster_cell_response(cell) for cell in detail.cells],
+    }
+
+
+def _roster_version_response(version: RosterVersion) -> dict[str, Any]:
+    return {
+        "version_id": version.roster_version_id,
+        "business_month": version.business_month,
+        "status": version.status.value,
+        "project_id": version.project_id,
+        "workplace_id": version.workplace_id,
+        "team_id": version.team_id,
+        "activated_at": version.activated_at,
+        "parent_version_id": version.parent_version_id,
+        "supersedes_version_id": version.supersedes_version_id,
+    }
+
+
+def _roster_cell_response(cell: RosterAssignment) -> dict[str, Any]:
+    return {
+        "cell_id": cell.roster_cell_id,
+        "assignment_id": cell.assignment_id,
+        "employee_id": cell.employee_id,
+        "business_date": cell.business_date,
+        "sequence": cell.sequence,
+        "assignment_kind": cell.assignment_kind.value,
+        "project_id": cell.project_id,
+        "workplace_id": cell.workplace_id,
+        "team_id": cell.team_id,
+        "shift_code": cell.shift_code,
+        "annotation_code": cell.annotation_code,
+        "interval_start_at": cell.interval_start_at,
+        "interval_end_at": cell.interval_end_at,
+        "source_cell_id": cell.source_cell_id,
+        "manually_adjusted": cell.manually_adjusted,
     }
 
 
@@ -442,6 +570,17 @@ def _roster_lock_exception(message: str) -> HTTPException:
             }
         },
     )
+
+
+def _default_revision_version_id(current_version_id: str, occurred_at: str) -> str:
+    suffix = (
+        occurred_at.replace(":", "")
+        .replace("-", "")
+        .replace("T", "")
+        .replace("+", "")
+        .replace(".", "")
+    )
+    return f"{current_version_id}-REV-{suffix}"
 
 
 @app.post("/api/v1/import-batches/persisted", response_model=ImportBatchPersistenceDetail)

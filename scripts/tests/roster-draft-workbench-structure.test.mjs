@@ -192,6 +192,25 @@ test("roster draft workbench publishes current draft through local API and shows
   assert.ok(!content.includes("批量发布"))
 })
 
+test("roster draft workbench supports published roster revision draft loop", () => {
+  const content = readProjectFile("components/roster-draft-workbench.tsx")
+
+  assert.ok(content.includes('type RosterLifecycleState = "draft" | "publishing" | "published" | "revision_draft"'))
+  assert.ok(content.includes("type RosterRevisionDraft"))
+  assert.ok(content.includes("createRosterRevisionDraft"))
+  assert.ok(content.includes("publishRevisionDraft"))
+  assert.ok(content.includes("/api/v1/roster-drafts/revisions/create"))
+  assert.ok(content.includes("/api/v1/roster-drafts/active-draft"))
+  assert.ok(content.includes("创建修订草稿"))
+  assert.ok(content.includes("重新发布修订"))
+  assert.ok(content.includes("上一版来源"))
+  assert.ok(content.includes("本次修改摘要"))
+  assert.ok(content.includes("revisionDraft"))
+  assert.ok(content.includes("revisionCellSourceByKey"))
+  assert.ok(!content.includes("版本历史页"))
+  assert.ok(!content.includes("未来生效"))
+})
+
 test("roster draft workbench keeps mature-scheduling references structural and non-production", () => {
   const content = readProjectFile("components/roster-draft-workbench.tsx")
 

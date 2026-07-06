@@ -115,11 +115,12 @@ def _isolated_database():
 
 
 def _publish_request(
+    version_id: str = "ROSTER-2026-08-DRAFT",
     actor_id: str = "scheduler-1",
     occurred_at: str = "2026-07-06T09:30",
 ) -> dict:
     return {
-        "version_id": "ROSTER-2026-08-DRAFT",
+        "version_id": version_id,
         "actor_id": actor_id,
         "occurred_at": occurred_at,
         "business_month": "2026-08",
