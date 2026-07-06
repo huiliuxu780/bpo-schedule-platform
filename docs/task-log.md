@@ -158,3 +158,12 @@
 - action: 月班表草稿生成演示闭环。
 - status: `done`
 - notes: 新增 `/roster-drafts` 前端演示闭环、本地可配置 fixture 和 TypeScript 生成服务，支持目标月份选择、上一周同星期稳定班种复制、月视图、周视图、待排人员、只读异常清单、已过滤非班务标注和摘要；不新增 API、数据库、Excel 上传/导入、保存发布、预测模型、标准人力或自动补班。
+
+- task_id: `IM296`
+- source_ids:
+  - `R964`
+- story_ids:
+  - `US884`
+- action: 排班师月班表发布工作台 v1 Gate。
+- status: `ready`
+- notes: 将下一步开发收束为一个可演示闭环：`/roster-drafts?month=2026-08` 通过窄范围本地 API 发布当前系统生成/本地调整草稿，处理 edit lock、hard blockers、soft risks，并在同一工作台读回 current published snapshot。明确不拆 API-only/UI-only/lock-only，不进入预测模型、标准人力、Excel 导入、权限审批、导出批量、自动排班、完整修订编辑或 Forecast vs published persistence gap。

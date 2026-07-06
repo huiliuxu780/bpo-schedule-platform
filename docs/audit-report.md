@@ -310,3 +310,17 @@
 - Do not append full historical audit records here.
 - Record only the current compact audit and last meaningful state-transition anchor.
 - Use Git history for previous audit details.
+
+### 2026-07-06 - IM296 排班师月班表发布工作台 v1 Gate
+
+#### 审计结论
+
+- 新增 R964 / US884 / IM296，当前队列恢复为一个 ready 的排班师可演示闭环。
+- IM296 明确把 API、`/roster-drafts` 工作台发布动作、发布后快照读回、轻量 edit lock、hard blockers、soft risks 和浏览器验收放在同一任务包。
+- 本 Gate 不修改业务实现代码，不新增依赖、migration、权限、审批、导出、批量、Excel 导入、预测模型、标准人力、自动排班、生产公式、结算或计费规则。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`: 通过。
+- `git diff --check`: 通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`: 通过，包含 strict state check、868 Node tests（867 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、261 backend tests 和 project Harness check。

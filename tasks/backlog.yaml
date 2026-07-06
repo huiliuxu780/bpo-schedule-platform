@@ -186,3 +186,13 @@ tasks:
     requirement_ids:
       - R963
     notes: "Implemented local DB persistence and application service for roster draft/published lifecycle: RosterVersion, RosterCell, VersionEvent, CellChangeLog, PublishedSnapshot, EditLock, saveDraft, validatePublish, schedulePublish, activateDuePublished, withdraw, createRevision, active draft/current/upcoming reads, service + DB uniqueness, snapshot solidification, and backend tests. No API routes, frontend publish actions, permissions, approval, notifications, export, batch, Excel import, Forecast/Actual source, forecasting model, standard-capacity model, automatic scheduling, production formulas, settlement, or charge-factor work."
+
+  - id: IM296
+    title: "排班师月班表发布工作台 v1"
+    status: ready
+    required_workflow: backend-vertical
+    story_ids:
+      - US884
+    requirement_ids:
+      - R964
+    notes: "One medium local vertical slice after IM295: expose a narrow local API for roster publish/current-published/snapshot/edit-lock, wire `/roster-drafts?month=2026-08` to publish the current generated/local-edited draft, show hard blockers and soft risks, switch the same workbench to the published snapshot after success, and make the published version read-only. Do not split into API-only/UI-only/lock-only tasks. No forecasting model, standard-capacity model, Excel import, permissions, approval, notification, export, batch, automatic scheduling, scheduled publish UI, full revision editing, Forecast vs published persistence gap, production formulas, settlement, or charge-factor work."

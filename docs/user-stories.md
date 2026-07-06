@@ -344,6 +344,31 @@ status: "done"
 notes: "IM295 database-persistence slice after IM294 pure domain rules."
 ```
 
+### US884 - 排班师月班表发布工作台 v1
+
+```yaml
+id: US884
+requirement_ids:
+  - R964
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望在月班表工作台里把当前系统生成并已人工调整的草稿直接发布为当前正式班表，并在同一界面读回已发布快照，以便我能确认发布结果、软风险、班次数和半小时覆盖，而不是只看到本地预览或后端持久化能力。"
+task_type: "backend-vertical"
+priority: "P0"
+acceptance:
+  - "`/roster-drafts?month=2026-08` 使用当前本地草稿样例作为验收 fixture，排班师可从工作台触发发布当前草稿。"
+  - "页面通过本地 API 访问 IM295 service；前端不得直接调用 service 或绕过 API。"
+  - "发布前先 acquire/check edit lock；被其他 actor 锁定时页面只读且发布被阻断，当前 actor 可释放自己的锁。"
+  - "hard errors 阻断发布并在工作台展示；soft risks 不阻断，但必须进入发布预览和发布后快照。"
+  - "发布成功后同一右侧抽屉或发布预览区域切换为已发布快照，读回 current published 和 snapshot。"
+  - "已发布快照固化并展示班次数、半小时 Arranged 覆盖、soft risk 摘要和 diff 摘要，不依赖前端重新实时推导历史结果。"
+  - "当前草稿发布后不可继续编辑；工作台默认展示已发布快照，并提供未来 create revision draft 的入口占位但不实现完整修订编辑。"
+  - "浏览器验收覆盖发布前草稿、锁定只读、发布阻断/成功、发布后快照和刷新读回。"
+  - "本轮不新增预测模型、标准人力模型、Excel 导入、权限、审批、通知、导出、批量、自动排班、scheduled publish UI、完整 revision editing、Forecast vs published persistence gap、生产公式、结算或计费规则。"
+status: "draft"
+notes: "IM296 local API + frontend scheduler workbench publish loop after IM295 local persistence service."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

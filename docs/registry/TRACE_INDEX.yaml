@@ -1,5 +1,5 @@
 version: 2
-updated_at: "2026-07-02"
+updated_at: "2026-07-06"
 rules:
   - "This registry stores current IDs, paths, and relationships only."
   - "Historical trace entries before IM279 were intentionally removed from this compact registry on 2026-07-01."
@@ -96,6 +96,13 @@ stories:
     task_ids:
       - "IM295"
     archive_refs: []
+  US884:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R964"
+    task_ids:
+      - "IM296"
+    archive_refs: []
 tasks:
   F001:
     file: "tasks/backlog.yaml"
@@ -184,6 +191,11 @@ tasks:
     story_ids:
       - "US883"
     gate: "database-persistence"
+  IM296:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US884"
+    gate: "backend-vertical"
 requirements:
   R949:
     file: "docs/raw-requirements.md"
@@ -275,6 +287,12 @@ requirements:
       - "US883"
     task_ids:
       - "IM295"
+  R964:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US884"
+    task_ids:
+      - "IM296"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
@@ -293,4 +311,5 @@ decisions:
   - "D-2026-07-02-roster-draft-publish-persistence-contract"
   - "D-2026-07-02-roster-domain-publish-rules"
   - "D-2026-07-02-roster-local-persistence-loop"
+  - "D-2026-07-06-roster-publish-workbench-v1"
 archive_refs: []

@@ -199,6 +199,19 @@ status: "done"
 notes: "Database-persistence slice only; no API route, frontend publish action, permission, approval, notification, export, batch, Excel import, Forecast/Actual source, forecasting model, standard-capacity model, automatic scheduling, production formula, settlement, or charge-factor work."
 ```
 
+### R964 - 排班师月班表发布工作台 v1
+
+```yaml
+id: R964
+module: "BPO WFM 三条主线"
+description: "将 IM295 本地持久化 service 接入窄范围本地 API 和 `/roster-drafts` 排班师工作台，形成可演示的草稿发布闭环。排班师在当前 2026-08 本地草稿样例上发布当前草稿，系统先做轻量编辑锁检查，再用 hard errors 阻断、soft risks 记录的口径发布；发布成功后同一工作台切换为已发布快照，读回 current published 和 snapshot 固化的班次数、半小时覆盖、soft risk 和 diff 摘要，并阻止继续编辑当前已发布版本。此任务必须是一个中等闭环包，不能拆成 API-only、UI-only 或 lock-only 小片。"
+source: "PM-confirmed IM296 drill on 2026-07-06"
+submitted_at: "2026-07-06"
+version: "1.0"
+status: "draft"
+notes: "Local API + frontend workbench publish loop only; no scheduled publish UI, full revision editing, Forecast vs published persistence gap, forecasting model, standard-capacity model, Excel import, permissions, approval, notification, export, batch, automatic scheduling, production formula, settlement, or charge-factor work."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

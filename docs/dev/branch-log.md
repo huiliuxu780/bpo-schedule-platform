@@ -124,6 +124,25 @@
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
 
+### IM296 Roster Publish Workbench Gate
+
+- branch_name: `codex/im296-roster-publish-workbench-gate`
+- base_main_commit: `stacked on pushed codex/im295-roster-persistence at 72f2314`
+- stacked_on: `codex/im295-roster-persistence`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Documentation/current-queue Gate for one scheduler-facing local API + `/roster-drafts` publish workbench closed loop.
+- qoder_mode: `false; PM confirmed IM296 decisions interactively and asked not to split too small.`
+- allowed_files_check: `docs/current/**`, `docs/registry/**`, `docs/raw-requirements.md`, `docs/user-stories.md`, `tasks/backlog.yaml`, `docs/task-log.md`, `docs/audit-report.md`, and `docs/dev/branch-log.md` only for this Gate task.
+- scope_diff_check: expected Harness/traceability changes only; no `app/**`, `components/**`, `lib/**`, `backend/**`, dependency, package/lockfile, database migration, external integration, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, standard-capacity model, forecasting model, Excel upload/import, or charge-factor implementation changes.
+- check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 868 Node tests (867 pass / 1 skip), shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 261 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM289 Roster Cell Controlled Editing
 
 - branch_name: `codex/im289-roster-cell-controlled-editing`
