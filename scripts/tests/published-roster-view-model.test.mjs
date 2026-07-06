@@ -129,3 +129,52 @@ test("frontline sees one selected employee and read-only request placeholders", 
     ]
   )
 })
+
+test("team lead month calendar summarizes each day and maps the day back to its week", () => {
+  const view = buildDownstreamPublishedRosterView({
+    model,
+    published: {
+      status: "published",
+      versionId: "VER-PUB-1",
+      cells: publishedCells,
+    },
+    fixedTeamId: "G1",
+    selectedEmployeeId: "EMP-001",
+  })
+
+  const day = view.teamLead.monthCalendarDays.find(
+    (calendarDay) => calendarDay.date === "2026-08-03"
+  )
+
+  assert.ok(day)
+  assert.equal(day.weekId, "W1")
+  assert.equal(day.weekLabel, "1日-7日")
+  assert.equal(day.workCellCount, 1)
+  assert.equal(day.restCellCount, 1)
+  assert.equal(day.manualCellCount, 1)
+  assert.deepEqual(day.shiftCodes, ["A5", "REST"])
+  assert.equal(day.summaryLabel, "1上班 / 1休")
+})
+
+test("frontline month calendar shows only the selected person's formal shift", () => {
+  const view = buildDownstreamPublishedRosterView({
+    model,
+    published: {
+      status: "published",
+      versionId: "VER-PUB-1",
+      cells: publishedCells,
+    },
+    fixedTeamId: "G1",
+    selectedEmployeeId: "EMP-001",
+  })
+
+  const day = view.frontline.monthCalendarDays.find(
+    (calendarDay) => calendarDay.date === "2026-08-03"
+  )
+
+  assert.ok(day)
+  assert.equal(day.workCellCount, 1)
+  assert.equal(day.restCellCount, 0)
+  assert.equal(day.primaryCell?.shiftCode, "A5")
+  assert.equal(day.summaryLabel, "A5")
+})

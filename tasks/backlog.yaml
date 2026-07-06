@@ -226,3 +226,13 @@ tasks:
     requirement_ids:
       - R967
     notes: "Add one downstream read-only formal roster loop after IM298: `/published-roster?month=2026-08` reads only current published, gives team-lead fixed-team month/week views, gives frontline selected-person month/week views, and opens read-only cell details with disabled leave/swap/exception-fix placeholders. No auth, permissions, organization hierarchy, approval, request submission, export, batch, forecasting model, standard-capacity model, Excel import, new persistence, scheduled publish UI, full version history, production formulas, settlement, or charge-factor work."
+
+  - id: IM300
+    title: "正式班表月历概览 + 周明细联动"
+    status: done
+    required_workflow: backend-vertical
+    story_ids:
+      - US888
+    requirement_ids:
+      - R968
+    notes: "Correct the downstream formal roster month view after IM299: replace the employee-by-31-days month grid with a 7-column calendar overview, show team-lead daily work/rest/shift/manual summaries, show frontline selected-person daily shift/time only, and click a day into the existing weekly detail grid. No request submission, approval, auth, permissions, export, batch, forecasting model, standard-capacity model, Excel import, backend API, database, new persistence, production formulas, settlement, or charge-factor work."

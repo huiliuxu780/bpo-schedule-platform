@@ -26,6 +26,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   type DownstreamPublishedRosterCellInput,
   type DownstreamPublishedRosterInput,
+  type DownstreamRosterCalendarDay,
   type DownstreamRosterCell,
   type DownstreamRosterRole,
   type DownstreamRosterRow,
@@ -112,12 +113,21 @@ export function PublishedRosterViewer({
   const selectedWeek =
     activeRoleView.weeks.find((week) => week.weekId === selectedWeekId) ??
     activeRoleView.weeks[0]
-  const visibleRows = mode === "month" ? activeRoleView.monthRows : selectedWeek?.rows ?? []
-  const visibleDays = mode === "month" ? downstreamView.monthDays : selectedWeek?.days ?? []
+  const weekRows = selectedWeek?.rows ?? []
+  const weekDays = selectedWeek?.days ?? []
 
   function openCellDetail(row: DownstreamRosterRow, cell: DownstreamRosterCell) {
     setSelectedCell({ row, cell })
     setDetailOpen(true)
+  }
+
+  function openWeekFromCalendar(day: DownstreamRosterCalendarDay) {
+    if (!day.weekId) {
+      return
+    }
+
+    setSelectedWeekId(day.weekId)
+    setMode("week")
   }
 
   return (
@@ -184,8 +194,8 @@ export function PublishedRosterViewer({
         )}
         <Tabs value={mode} onValueChange={(value) => setMode(value as ViewerMode)}>
           <TabsList>
-            <TabsTrigger value="month">月视图</TabsTrigger>
-            <TabsTrigger value="week">周视图</TabsTrigger>
+            <TabsTrigger value="month">月历概览</TabsTrigger>
+            <TabsTrigger value="week">周明细</TabsTrigger>
           </TabsList>
         </Tabs>
         {mode === "week" ? (
@@ -226,11 +236,20 @@ export function PublishedRosterViewer({
           data-slot="published-roster-grid-canvas"
           className="min-h-0 flex-1 overflow-auto p-4"
         >
-          <RosterGrid
-            days={visibleDays}
-            rows={visibleRows}
-            onOpenCell={openCellDetail}
-          />
+          {mode === "month" ? (
+            <MonthCalendarOverview
+              days={activeRoleView.monthCalendarDays}
+              role={role}
+              selectedWeekId={selectedWeek?.weekId ?? null}
+              onSelectDay={openWeekFromCalendar}
+            />
+          ) : (
+            <RosterGrid
+              days={weekDays}
+              rows={weekRows}
+              onOpenCell={openCellDetail}
+            />
+          )}
         </div>
       )}
 
@@ -239,7 +258,7 @@ export function PublishedRosterViewer({
         className="flex min-h-10 items-center justify-between border-t bg-background px-4 text-xs text-muted-foreground"
       >
         <span>{downstreamView.versionLabel || "正式版待发布"}</span>
-        <span>申请入口待开通</span>
+        <span>{selectedWeek?.label ? `当前周：${selectedWeek.label}` : "申请入口待开通"}</span>
       </div>
 
       <Drawer open={detailOpen} onOpenChange={setDetailOpen} direction="right">
@@ -263,6 +282,95 @@ export function PublishedRosterViewer({
         </DrawerContent>
       </Drawer>
     </section>
+  )
+}
+
+function MonthCalendarOverview({
+  days,
+  role,
+  selectedWeekId,
+  onSelectDay,
+}: {
+  days: DownstreamRosterCalendarDay[]
+  role: DownstreamRosterRole
+  selectedWeekId: string | null
+  onSelectDay: (day: DownstreamRosterCalendarDay) => void
+}) {
+  return (
+    <div
+      data-slot="published-roster-month-calendar"
+      className="overflow-hidden rounded-lg border bg-background shadow-sm"
+    >
+      <div
+        data-slot="published-roster-month-calendar-weekdays"
+        className="grid grid-cols-7 border-b bg-muted/60 text-center text-xs font-medium text-muted-foreground"
+      >
+        {["日", "一", "二", "三", "四", "五", "六"].map((weekday) => (
+          <div
+            key={weekday}
+            data-slot="published-roster-month-calendar-weekday"
+            className="border-r px-2 py-2 last:border-r-0"
+          >
+            周{weekday}
+          </div>
+        ))}
+      </div>
+      <div data-slot="published-roster-month-calendar-grid" className="grid grid-cols-7">
+        {days.map((day) =>
+          day.isPlaceholder ? (
+            <div
+              key={day.key}
+              data-slot="published-roster-month-calendar-placeholder"
+              className="min-h-28 border-r border-b bg-muted/20 last:border-r-0"
+            />
+          ) : (
+            <button
+              key={day.key}
+              type="button"
+              data-slot="published-roster-month-calendar-day"
+              data-roster-calendar-date={day.date}
+              className={cn(
+                "flex min-h-28 flex-col border-r border-b p-2 text-left text-xs transition hover:bg-muted/70 last:border-r-0",
+                day.weekId === selectedWeekId ? "bg-muted/60" : "bg-background"
+              )}
+              onClick={() => onSelectDay(day)}
+            >
+              <div className="flex items-start justify-between gap-2">
+                <span className="text-sm font-semibold tabular-nums">
+                  {day.dayOfMonth}
+                </span>
+                {day.manualCellCount > 0 ? (
+                  <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
+                    调整
+                  </Badge>
+                ) : null}
+              </div>
+              <div className="mt-3 font-medium">{day.summaryLabel}</div>
+              {role === "team_lead" ? (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {day.shiftCodes.slice(0, 3).map((shiftCode) => (
+                    <Badge
+                      key={shiftCode}
+                      variant="secondary"
+                      className="h-5 px-1.5 text-[10px]"
+                    >
+                      {shiftCode}
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <div className="mt-2 text-muted-foreground">
+                  {day.primaryCell?.intervalLabel ?? "点击查看周明细"}
+                </div>
+              )}
+              <div className="mt-auto pt-3 text-[11px] text-muted-foreground">
+                {day.weekLabel}
+              </div>
+            </button>
+          )
+        )}
+      </div>
+    </div>
   )
 }
 

@@ -124,6 +124,13 @@ stories:
     task_ids:
       - "IM299"
     archive_refs: []
+  US888:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R968"
+    task_ids:
+      - "IM300"
+    archive_refs: []
 tasks:
   F001:
     file: "tasks/backlog.yaml"
@@ -231,6 +238,11 @@ tasks:
     file: "tasks/backlog.yaml"
     story_ids:
       - "US887"
+    gate: "backend-vertical"
+  IM300:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US888"
     gate: "backend-vertical"
 requirements:
   R949:
@@ -347,6 +359,12 @@ requirements:
       - "US887"
     task_ids:
       - "IM299"
+  R968:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US888"
+    task_ids:
+      - "IM300"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
@@ -354,6 +372,7 @@ decisions:
   - "D-2026-07-01-roster-generation-foundation"
   - "D-2026-07-01-shift-type-coverage-backend"
   - "D-2026-07-01-roster-draft-domain-model"
+  - "D-2026-07-06-published-roster-calendar-month"
   - "D-2026-07-01-roster-draft-demo-loop"
   - "D-2026-07-01-roster-workbench-redesign"
   - "D-2026-07-01-global-navigation-rail"

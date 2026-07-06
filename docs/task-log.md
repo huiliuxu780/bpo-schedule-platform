@@ -221,3 +221,15 @@
 - notes: 完成下游正式班表消费闭环：新增 `正式班表` 导航和 `/published-roster?month=2026-08`；页面只读取 current published API，不读取 active draft、revision draft 或 upcoming；小组长使用本地固定 G1 团队查看团队月/周正式班表；一线使用本地人员切换器查看个人月/周正式班表；格子详情为只读，展示正式版本、班次、时间和提示；请假、换班、异常修复只作为 disabled 入口占位。未新增认证、权限、组织架构、审批、申请提交、导出、批量、预测模型、标准人力、Excel 导入、新持久化、生产公式、结算或计费规则。
 - focused verification: red `node --test scripts/tests/published-roster-view-model.test.mjs` 失败在缺少 `lib/published-roster-view.ts`；red `node --test scripts/tests/published-roster-viewer-structure.test.mjs` 失败在缺少 `/published-roster` 页面、viewer 和导航；green 后 `node --test scripts/tests/published-roster-view-model.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 通过 24 tests；`npm run typecheck`、`git diff --check`、`bash scripts/check-state.sh --strict` 均通过。
 - browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`；API 已有 2026-08 正式版；`/published-roster?month=2026-08` 展示正式班表入口、G1 小组长团队视图、一线个人视图；一线周视图只显示 `EMP-001` 一行和 7 天；格子详情显示只读详情、A5、正式版号，且请假/换班/异常修复按钮全部 disabled；页面未出现 `current published`、`Published Roster` 或 `revision draft`。
+
+- task_id: `IM300`
+- source_ids:
+  - `R968`
+- story_ids:
+  - `US888`
+- action: 正式班表月历概览 + 周明细联动 Implementation。
+- status: `done`
+- notes: 完成下游正式班表月视图体验修正：`/published-roster?month=2026-08` 的月视图从人员 x 31 天超长横向网格改为 7 列月历概览；小组长日格展示团队上班/休息/主要班种/调整提示；一线日格只展示所选人员自己的班种和时间；点击月历日期切到对应周明细，周明细保留人员 x 7 天正式班表和只读详情抽屉。未新增请假/换班/异常修复提交、审批、认证、权限、导出、批量、预测模型、标准人力、Excel 导入、后端 API、数据库、新持久化、生产公式、结算或计费规则。
+- focused verification: red `node --test scripts/tests/published-roster-view-model.test.mjs` 失败在缺少 `monthCalendarDays`；red `node --test scripts/tests/published-roster-viewer-structure.test.mjs` 失败在缺少月历 slot 和仍使用月表网格；green 后 `node --test scripts/tests/published-roster-view-model.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 通过 27 tests；`npm run typecheck`、`git diff --check` 均通过。
+- browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`；组长月历存在 31 个日期按钮且没有旧人员全月横向网格；点击 `2026-08-03` 切到 `1日-7日` 周明细并显示 G1 两个人和 8 月 3 日格子；一线月历只显示所选人员 `A5` 和一次 `09:00-14:30`，不显示团队汇总；页面未出现 `current published`、`Published Roster` 或 `revision draft`。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、882 Node tests（881 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、272 backend tests 和 project Harness check。

@@ -78,6 +78,13 @@ decisions:
     related_files:
       - "app/roster-drafts/page.tsx"
       - "components/roster-draft-workbench.tsx"
+  D-2026-07-06-published-roster-calendar-month:
+    title: "Published roster month view uses calendar overview; week view carries personnel detail"
+    file: "docs/user-stories.md"
+    related_files:
+      - "components/published-roster-viewer.tsx"
+      - "lib/published-roster-view.ts"
+      - "docs/raw-requirements.md"
       - "docs/raw-requirements.md"
       - "tasks/backlog.yaml"
   D-2026-07-01-global-navigation-rail:

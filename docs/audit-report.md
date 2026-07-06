@@ -419,6 +419,32 @@
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
 
+### 2026-07-06 - IM300 正式班表月历概览 + 周明细联动 Implementation
+
+#### 审计结论
+
+- IM300 是 IM299 下游正式班表入口的体验修正，不是新业务能力扩张。
+- `/published-roster?month=2026-08` 的月视图已从人员 x 31 天超长横向网格改为 7 列月历概览。
+- 小组长月历日格展示团队上班数、休息数、主要班种和调整提示；一线月历日格只展示所选人员自己的班种和时间。
+- 点击月历日期会切到对应周明细；周明细继续保留人员 x 7 天正式班表和只读详情抽屉。
+- 本轮未新增请假/换班/异常修复提交、审批、认证、权限、导出、批量、预测模型、标准人力、Excel 导入、后端 API、数据库、新持久化、生产公式、结算或计费规则。
+
+#### 验证
+
+- red/green view model: `node --test scripts/tests/published-roster-view-model.test.mjs` 先失败在缺少 `monthCalendarDays`，实现后通过。
+- red/green structure: `node --test scripts/tests/published-roster-viewer-structure.test.mjs` 先失败在缺少月历 slot 和仍使用月表网格，之后通过。
+- focused frontend: `node --test scripts/tests/published-roster-view-model.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 通过 27 tests。
+- typecheck: `npm run typecheck` 通过。
+- shadcn review: `npx shadcn@latest info --json` 确认 radix-nova；颜色/spacing 扫描无硬编码色阶、`space-y` 或任意圆角；月历补充语义 `data-slot`。
+- browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`；组长月历存在 31 个日期按钮且没有旧人员全月横向网格；点击 `2026-08-03` 切到 `1日-7日` 周明细并显示 G1 两个人和 8 月 3 日格子；一线月历只显示所选人员 `A5` 和一次 `09:00-14:30`，不显示团队汇总；页面未出现 `current published`、`Published Roster` 或 `revision draft`。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、882 Node tests（881 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、272 backend tests 和 project Harness check。
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### 2026-07-06 - IM297 已发布月班表修订草稿闭环 v1 Gate
 
 #### 审计结论

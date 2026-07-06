@@ -251,6 +251,19 @@ status: "done"
 notes: "Downstream read-only formal roster viewer only; no auth, permissions, organization hierarchy, approval, request submission, export, batch, forecasting model, standard-capacity model, Excel import, new persistence, scheduled publish UI, full version history, production formula, settlement, or charge-factor work."
 ```
 
+### R968 - 正式班表月历概览 + 周明细联动
+
+```yaml
+id: R968
+module: "BPO WFM 三条主线"
+description: "修正 IM299 下游正式班表查看体验：`/published-roster?month=2026-08` 的月视图不再使用人员 x 全月日期的超长横向网格，而是使用 7 列月历概览；小组长月历日格展示团队上班数、休息数、主要班种和调整提示；一线月历日格只展示所选人员自己的班种和时间；点击月历日期定位到对应周明细，周明细继续展示人员 x 7 天正式班表并保留只读格子详情。"
+source: "PM-selected option A after mature scheduling product reference review on 2026-07-06"
+submitted_at: "2026-07-06"
+version: "1.0"
+status: "done"
+notes: "Downstream formal roster display correction only; no leave/swap/exception request submission, approval, auth, permissions, export, batch, forecasting model, standard-capacity model, Excel import, backend API, database, new persistence, production formula, settlement, or charge-factor work."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

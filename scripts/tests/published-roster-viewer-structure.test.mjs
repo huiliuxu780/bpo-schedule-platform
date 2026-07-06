@@ -32,14 +32,24 @@ test("published roster viewer reads only the formal roster and supports downstre
   assert.ok(content.includes("一线"))
   assert.ok(content.includes("本地角色"))
   assert.ok(content.includes("人员"))
-  assert.ok(content.includes("月视图"))
-  assert.ok(content.includes("周视图"))
+  assert.ok(content.includes("月历概览"))
+  assert.ok(content.includes("周明细"))
   assert.ok(content.includes("只读详情"))
   assert.ok(content.includes("暂无正式班表"))
   assert.ok(content.includes("先由排班师发布"))
   assert.ok(!content.includes("/api/v1/roster-drafts/active-draft"))
   assert.ok(!content.includes("revision_draft"))
   assert.ok(!content.includes("upcoming"))
+})
+
+test("published roster month mode renders a calendar overview instead of a 31-day person grid", () => {
+  const content = readProjectFile("components/published-roster-viewer.tsx")
+
+  assert.ok(content.includes('data-slot="published-roster-month-calendar"'))
+  assert.ok(content.includes("MonthCalendarOverview"))
+  assert.ok(content.includes("monthCalendarDays"))
+  assert.ok(!content.includes('mode === "month" ? activeRoleView.monthRows'))
+  assert.ok(!content.includes('mode === "month" ? downstreamView.monthDays'))
 })
 
 test("published roster viewer keeps request actions visible but disabled", () => {

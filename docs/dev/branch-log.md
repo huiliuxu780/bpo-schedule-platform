@@ -37,6 +37,26 @@
 - focused_check_result: red `node --test scripts/tests/roster-draft-workbench-structure.test.mjs` failed on missing `publishedGapRows`; red `.venv/bin/python -m unittest backend.tests.test_roster_publish_api` failed on missing current-published `cells`; green focused checks passed with 16 frontend structure tests and 6 backend API tests; `npm run typecheck` passed.
 - browser_smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003` with `NEXT_PUBLIC_BPO_API_BASE_URL=http://127.0.0.1:8001`; published snapshot, formal gap panel, gap-to-week locate, revision draft creation, revision republish, and post-republish formal gap refresh passed; no visible `current published` internal copy.
 - check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 871 Node tests (870 pass / 1 skip), shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 272 backend tests, and project Harness check.
+- local_commit_sha: `e7a0af89`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
+### IM300 Published Roster Calendar Month
+
+- branch_name: `codex/im300-published-roster-calendar-month`
+- base_main_commit: `stacked on local codex/im299-downstream-published-roster at e7a0af89`
+- stacked_on: `codex/im299-downstream-published-roster`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Correct downstream formal roster month scanning by replacing the employee-by-31-days month grid with a 7-column calendar overview that opens the existing week detail grid.
+- qoder_mode: `false; PM selected option A after product-design reference review.`
+- allowed_files_check: `components/published-roster-viewer.tsx`, `lib/published-roster-view.ts`, `scripts/tests/published-roster-view-model.test.mjs`, `scripts/tests/published-roster-viewer-structure.test.mjs`, `docs/superpowers/plans/2026-07-06-published-roster-calendar-month.md`, traceability docs, and current/registry state docs only.
+- scope_diff_check: expected frontend view/view-model/tests and traceability changes only; no package/lockfile, backend API, database, new persistence, auth, permissions, approval, request submission, notification, export, batch, Excel import, forecasting model, standard-capacity model, automatic scheduling, production formulas, settlement, or charge-factor changes.
+- focused_check_result: red `node --test scripts/tests/published-roster-view-model.test.mjs` failed on missing `monthCalendarDays`; red `node --test scripts/tests/published-roster-viewer-structure.test.mjs` failed on missing calendar overview structure; green `node --test scripts/tests/published-roster-view-model.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` passed with 27 tests; `npm run typecheck` passed; `git diff --check` passed. Browser smoke passed on `http://localhost:3003/published-roster?month=2026-08` with local backend `127.0.0.1:8001`.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 882 Node tests (881 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 272 backend tests, and project Harness check.
 - local_commit_sha: `pending`
 - integration_status: `not_started`
 - integration_method: `N/A`

@@ -69,6 +69,22 @@ export type DownstreamRosterWeekView = {
   rows: DownstreamRosterRow[]
 }
 
+export type DownstreamRosterCalendarDay = {
+  key: string
+  date: string | null
+  dayOfMonth: number | null
+  weekdayLabel: string
+  weekId: string | null
+  weekLabel: string
+  isPlaceholder: boolean
+  workCellCount: number
+  restCellCount: number
+  manualCellCount: number
+  shiftCodes: string[]
+  summaryLabel: string
+  primaryCell: DownstreamRosterCell | null
+}
+
 export type DownstreamRosterSummary = {
   staffCount: number
   workCellCount: number
@@ -96,6 +112,7 @@ export type DownstreamPublishedRosterView = {
     teamId: string
     teamName: string
     monthRows: DownstreamRosterRow[]
+    monthCalendarDays: DownstreamRosterCalendarDay[]
     weeks: DownstreamRosterWeekView[]
     summary: DownstreamRosterSummary
   }
@@ -104,6 +121,7 @@ export type DownstreamPublishedRosterView = {
     selectedEmployeeId: string | null
     employeeOptions: DownstreamRosterEmployeeOption[]
     monthRows: DownstreamRosterRow[]
+    monthCalendarDays: DownstreamRosterCalendarDay[]
     weeks: DownstreamRosterWeekView[]
     summary: DownstreamRosterSummary
   }
@@ -154,6 +172,12 @@ export function buildDownstreamPublishedRosterView({
         teamId: fixedTeamId,
         teamName: fixedTeamName,
         monthRows: [],
+        monthCalendarDays: buildCalendarDays({
+          monthDays: model.monthDays,
+          weeks: model.weeks,
+          rows: [],
+          scope: "team",
+        }),
         weeks: [],
         summary: emptySummary(),
       },
@@ -162,6 +186,12 @@ export function buildDownstreamPublishedRosterView({
         selectedEmployeeId: firstEmployeeId,
         employeeOptions: employees,
         monthRows: [],
+        monthCalendarDays: buildCalendarDays({
+          monthDays: model.monthDays,
+          weeks: model.weeks,
+          rows: [],
+          scope: "person",
+        }),
         weeks: [],
         summary: emptySummary(),
       },
@@ -203,6 +233,12 @@ export function buildDownstreamPublishedRosterView({
       teamId: fixedTeamId,
       teamName: fixedTeamName,
       monthRows: teamRows,
+      monthCalendarDays: buildCalendarDays({
+        monthDays: model.monthDays,
+        weeks: model.weeks,
+        rows: teamRows,
+        scope: "team",
+      }),
       weeks: buildWeekViews(model.weeks, teamRows),
       summary: summarizeRows(teamRows),
     },
@@ -211,6 +247,12 @@ export function buildDownstreamPublishedRosterView({
       selectedEmployeeId: firstEmployeeId,
       employeeOptions: employees,
       monthRows: personalRows,
+      monthCalendarDays: buildCalendarDays({
+        monthDays: model.monthDays,
+        weeks: model.weeks,
+        rows: personalRows,
+        scope: "person",
+      }),
       weeks: buildWeekViews(model.weeks, personalRows),
       summary: summarizeRows(personalRows),
     },
@@ -285,6 +327,123 @@ function buildWeekViews(
   })
 }
 
+function buildCalendarDays({
+  monthDays,
+  weeks,
+  rows,
+  scope,
+}: {
+  monthDays: RosterMonthDay[]
+  weeks: RosterWeek[]
+  rows: DownstreamRosterRow[]
+  scope: "team" | "person"
+}): DownstreamRosterCalendarDay[] {
+  const weekByDate = new Map<string, RosterWeek>()
+  for (const week of weeks) {
+    for (const day of week.days) {
+      weekByDate.set(day.date, week)
+    }
+  }
+
+  const leadingPlaceholderCount = monthDays[0] ? weekdayIndexFromDate(monthDays[0].date) : 0
+  const calendarDays: DownstreamRosterCalendarDay[] = Array.from(
+    { length: leadingPlaceholderCount },
+    (_, index) => emptyCalendarDay(`leading-${index}`, weekdayLabels[index] ?? "")
+  )
+
+  for (const day of monthDays) {
+    const cells = rows
+      .flatMap((row) => row.cells)
+      .filter((cell) => cell.date === day.date && cell.shiftCode)
+    const workCellCount = cells.filter((cell) => !cell.isRest).length
+    const restCellCount = cells.filter((cell) => cell.isRest).length
+    const manualCellCount = cells.filter((cell) => cell.isManual).length
+    const shiftCodes = Array.from(new Set(cells.map((cell) => cell.shiftCode))).filter(Boolean)
+    const week = weekByDate.get(day.date)
+    const primaryCell = cells[0] ?? null
+
+    calendarDays.push({
+      key: day.date,
+      date: day.date,
+      dayOfMonth: day.dayOfMonth,
+      weekdayLabel: day.weekdayLabel,
+      weekId: week?.weekId ?? null,
+      weekLabel: week?.label ?? "",
+      isPlaceholder: false,
+      workCellCount,
+      restCellCount,
+      manualCellCount,
+      shiftCodes,
+      summaryLabel: calendarSummaryLabel({
+        scope,
+        workCellCount,
+        restCellCount,
+        primaryCell,
+      }),
+      primaryCell,
+    })
+  }
+
+  const trailingPlaceholderCount = (7 - (calendarDays.length % 7)) % 7
+  for (let index = 0; index < trailingPlaceholderCount; index += 1) {
+    calendarDays.push(
+      emptyCalendarDay(
+        `trailing-${index}`,
+        weekdayLabels[(calendarDays.length + index) % 7] ?? ""
+      )
+    )
+  }
+
+  return calendarDays
+}
+
+function calendarSummaryLabel({
+  scope,
+  workCellCount,
+  restCellCount,
+  primaryCell,
+}: {
+  scope: "team" | "person"
+  workCellCount: number
+  restCellCount: number
+  primaryCell: DownstreamRosterCell | null
+}): string {
+  if (scope === "person") {
+    if (!primaryCell?.shiftCode) {
+      return "未排班"
+    }
+
+    return primaryCell.shiftCode
+  }
+
+  if (workCellCount === 0 && restCellCount === 0) {
+    return "无班次"
+  }
+
+  return `${workCellCount}上班 / ${restCellCount}休`
+}
+
+function emptyCalendarDay(
+  key: string,
+  weekdayLabel: string
+): DownstreamRosterCalendarDay {
+  return {
+    key,
+    date: null,
+    dayOfMonth: null,
+    weekdayLabel,
+    weekId: null,
+    weekLabel: "",
+    isPlaceholder: true,
+    workCellCount: 0,
+    restCellCount: 0,
+    manualCellCount: 0,
+    shiftCodes: [],
+    summaryLabel: "",
+    primaryCell: null,
+  }
+}
+
 function summarizeRows(rows: DownstreamRosterRow[]): DownstreamRosterSummary {
   const cells = rows.flatMap((row) => row.cells).filter((cell) => cell.shiftCode)
 
@@ -340,4 +499,10 @@ function timeLabelFromIso(value?: string | null): string {
 
 function employeeDateKey(employeeId: string, date: string): string {
   return `${employeeId}::${date}`
+}
+
+const weekdayLabels = ["日", "一", "二", "三", "四", "五", "六"]
+
+function weekdayIndexFromDate(date: string): number {
+  return new Date(`${date}T00:00:00+08:00`).getDay()
 }

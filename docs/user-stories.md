@@ -439,6 +439,28 @@ status: "done"
 notes: "IM299 downstream read-only formal roster viewer after IM298 formal gap loop."
 ```
 
+### US888 - 正式班表月历概览 + 周明细联动
+
+```yaml
+id: US888
+requirement_ids:
+  - R968
+module: "BPO WFM 三条主线"
+role: "小组长 / 一线"
+story: "作为小组长或一线员工，我希望正式班表的月视图像月历一样扫全月，再点日期进入对应周明细，以便我先判断哪几天需要关注，再查看人员级班表，而不是在一个超长横向表里找日期。"
+task_type: "backend-vertical"
+priority: "P0"
+acceptance:
+  - "`/published-roster?month=2026-08` 的月视图显示 7 列月历概览，不再显示人员 x 31 天横向网格。"
+  - "小组长月历日格展示团队上班数、休息数、主要班种和调整提示。"
+  - "一线月历日格只展示所选人员自己的班种和时间，不展示团队汇总。"
+  - "点击月历日期切到对应周明细；周明细继续显示人员 x 7 天格子并可打开只读详情。"
+  - "页面仍只读取当前正式班表，不展示 draft、revision draft 或 upcoming，不暴露 internal published/current 英文口径。"
+  - "本轮不新增请假/换班/异常修复提交、审批、认证、权限、导出、批量、预测模型、标准人力、Excel 导入、后端 API、数据库、新持久化、生产公式、结算或计费规则。"
+status: "done"
+notes: "IM300 downstream formal roster month calendar correction after IM299 viewer."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.
