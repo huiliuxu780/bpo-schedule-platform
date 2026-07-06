@@ -233,3 +233,15 @@
 - focused verification: red `node --test scripts/tests/published-roster-view-model.test.mjs` 失败在缺少 `monthCalendarDays`；red `node --test scripts/tests/published-roster-viewer-structure.test.mjs` 失败在缺少月历 slot 和仍使用月表网格；green 后 `node --test scripts/tests/published-roster-view-model.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 通过 27 tests；`npm run typecheck`、`git diff --check` 均通过。
 - browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`；组长月历存在 31 个日期按钮且没有旧人员全月横向网格；点击 `2026-08-03` 切到 `1日-7日` 周明细并显示 G1 两个人和 8 月 3 日格子；一线月历只显示所选人员 `A5` 和一次 `09:00-14:30`，不显示团队汇总；页面未出现 `current published`、`Published Roster` 或 `revision draft`。
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、882 Node tests（881 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、272 backend tests 和 project Harness check。
+
+- task_id: `IM301`
+- source_ids:
+  - `R969`
+- story_ids:
+  - `US889`
+- action: 正式班表变更申请边界 v1 Implementation。
+- status: `done`
+- notes: 完成下游正式班表申请边界壳：`/published-roster?month=2026-08` 格子详情中的请假、换班、异常修复动作可点击并切换本地边界面板；三类面板分别展示所需信息、后续处理角色和暂不写入系统边界。未新增真实申请提交、审批、认证、权限、后端 API、数据库、新持久化、通知、导出、批量、预测模型、标准人力、Excel 导入、生产公式、结算或计费规则。
+- focused verification: red `node --test scripts/tests/published-roster-view-model.test.mjs` 失败在缺少 `ownerLabel` / `submissionState` / `requiredFields`；red `node --test scripts/tests/published-roster-viewer-structure.test.mjs` 失败在缺少 `RequestBoundaryPanel`；green 后 `node --test scripts/tests/published-roster-view-model.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 通过 28 tests；`npm run typecheck`、`git diff --check` 均通过。
+- browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`；打开 `/published-roster?month=2026-08`，点击 `2026-08-03` 与 `EMP-001` 周明细格子，详情内请假、换班、异常修复分别切换到对应边界面板；面板展示小组长初核/小组长协调/排班师处理与各自所需字段；页面未出现 `提交申请`、`提交审批` 或 `current published`。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、883 Node tests（882 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、272 backend tests 和 project Harness check。

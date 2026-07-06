@@ -236,3 +236,13 @@ tasks:
     requirement_ids:
       - R968
     notes: "Correct the downstream formal roster month view after IM299: replace the employee-by-31-days month grid with a 7-column calendar overview, show team-lead daily work/rest/shift/manual summaries, show frontline selected-person daily shift/time only, and click a day into the existing weekly detail grid. No request submission, approval, auth, permissions, export, batch, forecasting model, standard-capacity model, Excel import, backend API, database, new persistence, production formulas, settlement, or charge-factor work."
+
+  - id: IM301
+    title: "正式班表变更申请边界 v1"
+    status: done
+    required_workflow: backend-vertical
+    story_ids:
+      - US889
+    requirement_ids:
+      - R969
+    notes: "Convert leave/swap/exception-fix detail actions on `/published-roster?month=2026-08` from dead placeholders into local request-boundary shells showing required information, next owner, and no-write boundary. No real request submission, approval, auth, permissions, backend API, database, new persistence, notification, export, batch, forecasting model, standard-capacity model, Excel import, production formulas, settlement, or charge-factor work."

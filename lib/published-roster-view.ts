@@ -29,7 +29,12 @@ export type DownstreamRosterRole = "team_lead" | "frontline"
 export type DownstreamRosterRequestAction = {
   key: "leave" | "swap" | "exception_fix"
   label: string
-  disabled: true
+  disabled: false
+  submissionState: "boundary_only"
+  ownerLabel: string
+  requiredFields: string[]
+  boundaryTitle: string
+  boundaryDescription: string
 }
 
 export type DownstreamRosterCellDetail = {
@@ -128,9 +133,36 @@ export type DownstreamPublishedRosterView = {
 }
 
 const requestActions: DownstreamRosterRequestAction[] = [
-  { key: "leave", label: "请假", disabled: true },
-  { key: "swap", label: "换班", disabled: true },
-  { key: "exception_fix", label: "异常修复", disabled: true },
+  {
+    key: "leave",
+    label: "请假",
+    disabled: false,
+    submissionState: "boundary_only",
+    ownerLabel: "小组长初核",
+    requiredFields: ["请假类型", "开始时间", "结束时间", "原因说明"],
+    boundaryTitle: "请假申请边界",
+    boundaryDescription: "用于说明一线请假需要补齐的信息，当前仅定位路径。",
+  },
+  {
+    key: "swap",
+    label: "换班",
+    disabled: false,
+    submissionState: "boundary_only",
+    ownerLabel: "小组长协调",
+    requiredFields: ["目标人员", "目标日期", "目标班次", "双方确认情况"],
+    boundaryTitle: "换班申请边界",
+    boundaryDescription: "用于说明人员之间调换班次需要补齐的信息，当前仅定位路径。",
+  },
+  {
+    key: "exception_fix",
+    label: "异常修复",
+    disabled: false,
+    submissionState: "boundary_only",
+    ownerLabel: "排班师处理",
+    requiredFields: ["异常类型", "实际发生时间", "修复说明", "证明材料"],
+    boundaryTitle: "异常修复边界",
+    boundaryDescription: "用于说明正式班表与现场情况不一致时需要补齐的信息，当前仅定位路径。",
+  },
 ]
 
 export function buildDownstreamPublishedRosterView({

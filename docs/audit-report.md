@@ -349,6 +349,31 @@
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
 
+### 2026-07-06 - IM301 正式班表变更申请边界 v1 Implementation
+
+#### 审计结论
+
+- IM301 是 IM299/IM300 下游正式班表入口上的申请路径边界壳，不是真实申请流。
+- `/published-roster?month=2026-08` 格子详情里的请假、换班、异常修复动作已从不可点击占位改为可切换的本地边界面板。
+- 三类边界面板分别展示需要补齐的信息、后续处理角色，以及当前暂不写入系统的边界。
+- 页面仍只读取当前正式班表，不提交申请、不进入审批、不写后端或数据库。
+- 本轮未新增依赖、package/lockfile、migration、权限、认证、组织架构、审批、真实申请提交、通知、导出、批量、Excel 导入、真实外部数据源、预测模型、标准人力、自动排班、新持久化、生产公式、结算或计费规则。
+
+#### 验证
+
+- red/green view model: `node --test scripts/tests/published-roster-view-model.test.mjs` 先失败在缺少 `ownerLabel` / `submissionState` / `requiredFields`，实现后通过。
+- red/green structure: `node --test scripts/tests/published-roster-viewer-structure.test.mjs` 先失败在缺少 `RequestBoundaryPanel`，之后通过。
+- focused frontend: `node --test scripts/tests/published-roster-view-model.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 通过 28 tests。
+- typecheck: `npm run typecheck` 通过。
+- browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`；格子详情里请假、换班、异常修复三类边界面板切换通过，且页面未出现 `提交申请`、`提交审批` 或 `current published`。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、883 Node tests（882 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、272 backend tests 和 project Harness check。
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### 2026-07-06 - IM298 Published Forecast vs Arranged/Actual 缺口闭环 v1 Gate
 
 #### 审计结论

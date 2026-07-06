@@ -89,7 +89,7 @@ test("team lead sees only the fixed local team from the formal roster", () => {
   assert.equal(view.teamLead.summary.restCellCount, 1)
 })
 
-test("frontline sees one selected employee and read-only request placeholders", () => {
+test("frontline sees one selected employee and request boundary actions", () => {
   const view = buildDownstreamPublishedRosterView({
     model,
     published: {
@@ -119,15 +119,61 @@ test("frontline sees one selected employee and read-only request placeholders", 
   assert.equal(selected?.detail?.sourceVersionLabel, "正式版 VER-PUB-1")
   assert.deepEqual(
     selected?.detail?.requestActions.map((action) => ({
+      key: action.key,
       label: action.label,
-      disabled: action.disabled,
+      submissionState: action.submissionState,
+      ownerLabel: action.ownerLabel,
     })),
     [
-      { label: "请假", disabled: true },
-      { label: "换班", disabled: true },
-      { label: "异常修复", disabled: true },
+      {
+        key: "leave",
+        label: "请假",
+        submissionState: "boundary_only",
+        ownerLabel: "小组长初核",
+      },
+      {
+        key: "swap",
+        label: "换班",
+        submissionState: "boundary_only",
+        ownerLabel: "小组长协调",
+      },
+      {
+        key: "exception_fix",
+        label: "异常修复",
+        submissionState: "boundary_only",
+        ownerLabel: "排班师处理",
+      },
     ]
   )
+})
+
+test("request boundaries explain required information without enabling submission", () => {
+  const view = buildDownstreamPublishedRosterView({
+    model,
+    published: {
+      status: "published",
+      versionId: "VER-PUB-1",
+      cells: publishedCells,
+    },
+    fixedTeamId: "G1",
+    selectedEmployeeId: "EMP-001",
+  })
+
+  const selected = view.frontline.monthRows[0].cells.find(
+    (cell) => cell.date === "2026-08-03"
+  )
+  const actions = selected?.detail?.requestActions ?? []
+
+  assert.deepEqual(
+    actions.map((action) => [action.key, action.requiredFields]),
+    [
+      ["leave", ["请假类型", "开始时间", "结束时间", "原因说明"]],
+      ["swap", ["目标人员", "目标日期", "目标班次", "双方确认情况"]],
+      ["exception_fix", ["异常类型", "实际发生时间", "修复说明", "证明材料"]],
+    ]
+  )
+  assert.equal(actions.every((action) => action.submissionState === "boundary_only"), true)
+  assert.equal(actions.every((action) => action.disabled === false), true)
 })
 
 test("team lead month calendar summarizes each day and maps the day back to its week", () => {

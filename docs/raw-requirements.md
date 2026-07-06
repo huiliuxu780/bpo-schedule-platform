@@ -264,6 +264,19 @@ status: "done"
 notes: "Downstream formal roster display correction only; no leave/swap/exception request submission, approval, auth, permissions, export, batch, forecasting model, standard-capacity model, Excel import, backend API, database, new persistence, production formula, settlement, or charge-factor work."
 ```
 
+### R969 - 正式班表变更申请边界 v1
+
+```yaml
+id: R969
+module: "BPO WFM 三条主线"
+description: "在 IM299/IM300 下游正式班表查看入口之上，为请假、换班、异常修复补齐本地申请边界说明。小组长/一线在正式班表格子详情中点击对应动作后，看到该动作需要补齐的信息、后续处理角色和当前暂不写入系统的边界；本轮不创建真实申请、不提交、不进入审批、不写后端或数据库。"
+source: "PM-selected option A after IM300 on 2026-07-06"
+submitted_at: "2026-07-06"
+version: "1.0"
+status: "done"
+notes: "Request boundary shell only; no real request submission, approval, auth, permissions, backend API, database, new persistence, notification, export, batch, forecasting model, standard-capacity model, Excel import, production formula, settlement, or charge-factor work."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

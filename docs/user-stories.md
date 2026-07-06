@@ -461,6 +461,28 @@ status: "done"
 notes: "IM300 downstream formal roster month calendar correction after IM299 viewer."
 ```
 
+### US889 - 正式班表变更申请边界 v1
+
+```yaml
+id: US889
+requirement_ids:
+  - R969
+module: "BPO WFM 三条主线"
+role: "小组长 / 一线"
+story: "作为小组长或一线员工，我希望在正式班表格子详情里点击请假、换班或异常修复时，能看到该路径需要准备什么信息以及后续由谁处理，以便我知道看到班表问题后该走哪条路径，而不是只看到不可点击按钮。"
+task_type: "backend-vertical"
+priority: "P0"
+acceptance:
+  - "`/published-roster?month=2026-08` 格子详情中的请假、换班、异常修复动作可点击并切换本地边界面板。"
+  - "请假边界展示请假类型、开始时间、结束时间、原因说明，并标记小组长初核。"
+  - "换班边界展示目标人员、目标日期、目标班次、双方确认情况，并标记小组长协调。"
+  - "异常修复边界展示异常类型、实际发生时间、修复说明、证明材料，并标记排班师处理。"
+  - "边界面板明确暂不写入系统；页面不出现提交申请、提交审批或审批状态。"
+  - "本轮不新增真实申请提交、审批、认证、权限、后端 API、数据库、新持久化、通知、导出、批量、预测模型、标准人力、Excel 导入、生产公式、结算或计费规则。"
+status: "done"
+notes: "IM301 formal-roster request boundary shell after IM300 calendar month correction."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

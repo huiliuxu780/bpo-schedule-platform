@@ -28,6 +28,7 @@ import {
   type DownstreamPublishedRosterInput,
   type DownstreamRosterCalendarDay,
   type DownstreamRosterCell,
+  type DownstreamRosterRequestAction,
   type DownstreamRosterRole,
   type DownstreamRosterRow,
   buildDownstreamPublishedRosterView,
@@ -477,10 +478,16 @@ type DownstreamPublishedRosterCellDay = {
 
 function PublishedRosterDetail({ cell }: { cell: DownstreamRosterCell }) {
   const detail = cell.detail
+  const [selectedActionKey, setSelectedActionKey] =
+    React.useState<DownstreamRosterRequestAction["key"]>("leave")
 
   if (!detail) {
     return null
   }
+
+  const selectedAction =
+    detail.requestActions.find((action) => action.key === selectedActionKey) ??
+    detail.requestActions[0]
 
   return (
     <div className="flex flex-col gap-4 px-4">
@@ -499,18 +506,53 @@ function PublishedRosterDetail({ cell }: { cell: DownstreamRosterCell }) {
           {detail.requestActions.map((action) => (
             <Button
               key={action.key}
-              disabled={action.disabled}
-              variant="outline"
+              variant={selectedAction.key === action.key ? "default" : "outline"}
               className="h-9 px-2 text-xs"
-              title="申请能力待开通"
+              title="查看申请边界"
+              onClick={() => setSelectedActionKey(action.key)}
             >
               {action.label}
             </Button>
           ))}
         </div>
-        <div className="mt-2 text-xs text-muted-foreground">
-          申请能力待开通，当前仅用于确认后续路径位置。
+        <RequestBoundaryPanel action={selectedAction} />
+      </div>
+    </div>
+  )
+}
+
+function RequestBoundaryPanel({
+  action,
+}: {
+  action: DownstreamRosterRequestAction
+}) {
+  return (
+    <div
+      data-slot="published-roster-request-boundary"
+      data-request-action={action.key}
+      className="mt-3 rounded-lg border bg-muted/30 p-3"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="text-sm font-medium">{action.boundaryTitle}</div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            {action.boundaryDescription}
+          </div>
         </div>
+        <Badge variant="secondary" className="shrink-0">
+          {action.ownerLabel}
+        </Badge>
+      </div>
+      <div className="mt-3 text-xs text-muted-foreground">需要信息</div>
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {action.requiredFields.map((field) => (
+          <Badge key={field} variant="outline" className="h-6 px-2 text-[11px]">
+            {field}
+          </Badge>
+        ))}
+      </div>
+      <div className="mt-3 text-xs text-muted-foreground">
+        暂不写入系统；这里只定义一线和小组长看到问题后的路径边界。
       </div>
     </div>
   )

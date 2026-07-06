@@ -131,6 +131,13 @@ stories:
     task_ids:
       - "IM300"
     archive_refs: []
+  US889:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R969"
+    task_ids:
+      - "IM301"
+    archive_refs: []
 tasks:
   F001:
     file: "tasks/backlog.yaml"
@@ -243,6 +250,11 @@ tasks:
     file: "tasks/backlog.yaml"
     story_ids:
       - "US888"
+    gate: "backend-vertical"
+  IM301:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US889"
     gate: "backend-vertical"
 requirements:
   R949:
@@ -365,6 +377,12 @@ requirements:
       - "US888"
     task_ids:
       - "IM300"
+  R969:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US889"
+    task_ids:
+      - "IM301"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
@@ -388,4 +406,5 @@ decisions:
   - "D-2026-07-06-roster-revision-workbench-v1"
   - "D-2026-07-06-published-roster-gap-workbench-v1"
   - "D-2026-07-06-downstream-published-roster-v1"
+  - "D-2026-07-06-formal-roster-request-boundary"
 archive_refs: []

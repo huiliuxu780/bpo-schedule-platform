@@ -52,7 +52,7 @@ test("published roster month mode renders a calendar overview instead of a 31-da
   assert.ok(!content.includes('mode === "month" ? downstreamView.monthDays'))
 })
 
-test("published roster viewer keeps request actions visible but disabled", () => {
+test("published roster viewer exposes request boundary shells without submission or approval", () => {
   const content = [
     readProjectFile("components/published-roster-viewer.tsx"),
     readProjectFile("lib/published-roster-view.ts"),
@@ -61,8 +61,12 @@ test("published roster viewer keeps request actions visible but disabled", () =>
   assert.ok(content.includes("请假"))
   assert.ok(content.includes("换班"))
   assert.ok(content.includes("异常修复"))
-  assert.ok(content.includes("申请能力待开通"))
-  assert.ok(content.includes("disabled"))
+  assert.ok(content.includes("RequestBoundaryPanel"))
+  assert.ok(content.includes('data-slot="published-roster-request-boundary"'))
+  assert.ok(content.includes("boundary_only"))
+  assert.ok(content.includes("暂不写入"))
+  assert.ok(!content.includes("disabled={action.disabled}"))
+  assert.ok(!content.includes("申请能力待开通"))
   assert.ok(!content.includes("提交申请"))
   assert.ok(!content.includes("提交审批"))
 })

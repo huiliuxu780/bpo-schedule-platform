@@ -65,6 +65,26 @@
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
 
+### IM301 Formal Roster Request Boundaries
+
+- branch_name: `codex/im301-formal-roster-request-boundaries`
+- base_main_commit: `stacked on local codex/im300-published-roster-calendar-month at c3947a29`
+- stacked_on: `codex/im300-published-roster-calendar-month`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Convert formal-roster detail leave/swap/exception-fix actions from dead placeholders into local request-boundary shells.
+- qoder_mode: `false; PM selected option A and asked Codex to continue.`
+- allowed_files_check: `components/published-roster-viewer.tsx`, `lib/published-roster-view.ts`, `scripts/tests/published-roster-view-model.test.mjs`, `scripts/tests/published-roster-viewer-structure.test.mjs`, `docs/superpowers/plans/2026-07-06-formal-roster-request-boundaries.md`, traceability docs, and current/registry state docs only.
+- scope_diff_check: expected frontend-local boundary shell, model/view tests, execution plan, and traceability changes only; no backend API route, database, migration, dependency, package/lockfile, external integration, real request submission, approval, auth, permission, notification, export, batch, Excel upload/import, automatic scheduling, forecasting model, standard-capacity model, production formula, settlement, or charge-factor changes.
+- focused_check_result: red `node --test scripts/tests/published-roster-view-model.test.mjs` failed before model fields existed; red `node --test scripts/tests/published-roster-viewer-structure.test.mjs` failed before `RequestBoundaryPanel` existed. Green focused run passed 28 frontend tests; `npm run typecheck` passed; `git diff --check` passed. Browser smoke passed on `http://localhost:3003/published-roster?month=2026-08` with local backend `127.0.0.1:8001`.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 883 Node tests (882 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 272 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM297 Roster Revision Workbench
 
 - branch_name: `codex/im297-roster-revision-workbench`
