@@ -208,8 +208,8 @@ description: "将 IM295 本地持久化 service 接入窄范围本地 API 和 `/
 source: "PM-confirmed IM296 drill on 2026-07-06"
 submitted_at: "2026-07-06"
 version: "1.0"
-status: "draft"
-notes: "Local API + frontend workbench publish loop only; no scheduled publish UI, full revision editing, Forecast vs published persistence gap, forecasting model, standard-capacity model, Excel import, permissions, approval, notification, export, batch, automatic scheduling, production formula, settlement, or charge-factor work."
+status: "done"
+notes: "Completed local API + frontend workbench publish loop only; no scheduled publish UI, full revision editing, Forecast vs published persistence gap, forecasting model, standard-capacity model, Excel import, permissions, approval, notification, export, batch, automatic scheduling, production formula, settlement, or charge-factor work."
 ```
 
 ## History Policy

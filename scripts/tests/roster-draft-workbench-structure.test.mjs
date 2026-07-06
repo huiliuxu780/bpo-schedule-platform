@@ -116,14 +116,14 @@ test("roster draft copied cells support controlled local editing without product
 test("roster draft workbench derives publish preview shift counts and half-hour coverage", () => {
   const content = readProjectFile("components/roster-draft-workbench.tsx")
 
-  assert.ok(content.includes('type RosterLifecycleState = "draft" | "published_preview"'))
+  assert.ok(content.includes('type RosterLifecycleState = "draft" | "publishing" | "published"'))
   assert.ok(content.includes("const [rosterLifecycleState, setRosterLifecycleState]"))
   assert.ok(content.includes("buildRosterDerivedCoverage"))
   assert.ok(content.includes("RosterReleasePreviewPanel"))
   assert.ok(content.includes("shiftCounts"))
   assert.ok(content.includes("halfHourCoverage"))
-  assert.ok(content.includes("生成发布预览"))
-  assert.ok(content.includes("回到草稿"))
+  assert.ok(content.includes("发布当前草稿"))
+  assert.ok(content.includes("已发布快照"))
   assert.ok(content.includes("发布预览"))
   assert.ok(content.includes("班次数"))
   assert.ok(content.includes("半小时覆盖"))
@@ -172,6 +172,26 @@ test("roster draft workbench supports manual gap resolution through related cove
   assert.ok(!content.includes("忽略缺口"))
 })
 
+test("roster draft workbench publishes current draft through local API and shows read-only snapshot", () => {
+  const content = readProjectFile("components/roster-draft-workbench.tsx")
+
+  assert.ok(content.includes('type RosterLifecycleState = "draft" | "publishing" | "published"'))
+  assert.ok(content.includes("type PublishedRosterSnapshot"))
+  assert.ok(content.includes("publishCurrentRosterDraft"))
+  assert.ok(content.includes("/api/v1/roster-drafts/publish"))
+  assert.ok(content.includes("/api/v1/roster-drafts/current-published"))
+  assert.ok(content.includes("/api/v1/roster-drafts/locks/acquire"))
+  assert.ok(content.includes("/api/v1/roster-drafts/locks/release"))
+  assert.ok(content.includes("发布当前草稿"))
+  assert.ok(content.includes("已发布快照"))
+  assert.ok(content.includes("data-slot=\"roster-published-snapshot\""))
+  assert.ok(content.includes("publishedSnapshot"))
+  assert.ok(content.includes("isRosterReadOnly"))
+  assert.ok(content.includes("releaseOwnRosterLock"))
+  assert.ok(!content.includes("提交审批"))
+  assert.ok(!content.includes("批量发布"))
+})
+
 test("roster draft workbench keeps mature-scheduling references structural and non-production", () => {
   const content = readProjectFile("components/roster-draft-workbench.tsx")
 
@@ -179,7 +199,6 @@ test("roster draft workbench keeps mature-scheduling references structural and n
   assert.ok(content.includes("Deputy"))
   assert.ok(content.includes("When I Work"))
   assert.ok(content.includes("借鉴结构，不复制视觉"))
-  assert.ok(!content.includes("Publish"))
   assert.ok(!content.includes("Save & Publish"))
   assert.ok(!content.includes("Auto-Schedule"))
 })

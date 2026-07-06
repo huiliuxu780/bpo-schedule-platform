@@ -365,8 +365,8 @@ acceptance:
   - "当前草稿发布后不可继续编辑；工作台默认展示已发布快照，并提供未来 create revision draft 的入口占位但不实现完整修订编辑。"
   - "浏览器验收覆盖发布前草稿、锁定只读、发布阻断/成功、发布后快照和刷新读回。"
   - "本轮不新增预测模型、标准人力模型、Excel 导入、权限、审批、通知、导出、批量、自动排班、scheduled publish UI、完整 revision editing、Forecast vs published persistence gap、生产公式、结算或计费规则。"
-status: "draft"
-notes: "IM296 local API + frontend scheduler workbench publish loop after IM295 local persistence service."
+status: "done"
+notes: "IM296 completed local API + frontend scheduler workbench publish loop after IM295 local persistence service."
 ```
 
 ## History Policy

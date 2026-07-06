@@ -1,6 +1,9 @@
 import json
+from threading import Lock
+from typing import Any
 
 from fastapi import Body, FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 
 from backend.app.actual_log_import import apply_actual_log_import_batch
 from backend.app.actual_log_persistence import ActualLogPersistenceRepository
@@ -12,6 +15,7 @@ from backend.app.import_application_summary import build_import_application_summ
 from backend.app.import_mapping_persistence import (
     get_import_mapping_persistence_repository,
 )
+from backend.app.import_persistence import database_url_from_env
 from backend.app.import_readiness import build_import_apply_readiness
 from backend.app.import_upload import build_import_batch_from_csv
 from backend.app.import_persistence import get_import_persistence_repository
@@ -31,6 +35,19 @@ from backend.app.review_closure import write_review_closure
 from backend.app.review_conclusion import write_review_conclusion
 from backend.app.review_evidence import write_review_evidence
 from backend.app.review_persistence import ReviewPersistenceRepository
+from backend.app.roster_drafts import (
+    AssignmentKind,
+    EmployeeRosterSnapshot,
+    RosterAssignment,
+    RosterValidationContext,
+    RosterVersion,
+    RosterVersionStatus,
+)
+from backend.app.roster_persistence import (
+    RosterPersistenceRepository,
+    RosterVersionDetail,
+)
+from backend.app.roster_service import RosterService
 from backend.app.models import (
     ActualLogImportApplyResponse,
     ComparisonCalculationRequest,
@@ -113,6 +130,40 @@ app = FastAPI(
     version="0.1.0",
     description="Local API for BPO WFM schedule plans.",
 )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002",
+        "http://localhost:3003",
+        "http://localhost:3004",
+        "http://localhost:3005",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:3001",
+        "http://127.0.0.1:3002",
+        "http://127.0.0.1:3003",
+        "http://127.0.0.1:3004",
+        "http://127.0.0.1:3005",
+    ],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["content-type"],
+)
+
+_roster_service_lock = Lock()
+_roster_services_by_database_url: dict[str, RosterService] = {}
+
+
+def _get_roster_service() -> RosterService:
+    database_url = database_url_from_env()
+    with _roster_service_lock:
+        service = _roster_services_by_database_url.get(database_url)
+        if service is None:
+            repository = RosterPersistenceRepository(database_url)
+            repository.init_schema()
+            service = RosterService(repository)
+            _roster_services_by_database_url[database_url] = service
+        return service
 
 
 @app.get("/api/v1/schedule-plans", response_model=SchedulePlanListResponse)
@@ -152,6 +203,244 @@ def list_unavailability(
 ) -> UnavailabilityListResponse:
     return UnavailabilityListResponse(
         items=list_unavailability_rows(status=status, query=query)
+    )
+
+
+@app.get("/api/v1/roster-drafts/current-published")
+def get_current_roster_published_snapshot(
+    business_month: str,
+    project_id: str | None = None,
+    workplace_id: str | None = None,
+    team_id: str | None = None,
+) -> dict[str, Any]:
+    service = _get_roster_service()
+    detail = service.get_current_published(
+        business_month=business_month,
+        project_id=project_id,
+        workplace_id=workplace_id,
+        team_id=team_id,
+    )
+    if detail is None:
+        return {
+            "status": "missing",
+            "published": None,
+            "snapshot": None,
+        }
+    return _roster_detail_response(detail)
+
+
+@app.post("/api/v1/roster-drafts/publish")
+def publish_roster_draft(request: dict[str, Any] = Body(...)) -> dict[str, Any]:
+    service = _get_roster_service()
+    version_id = str(request["version_id"])
+    actor_id = str(request.get("actor_id") or "scheduler")
+    occurred_at = str(request.get("occurred_at") or request.get("now"))
+    if not occurred_at:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "code": "ROSTER_PUBLISH_TIME_REQUIRED",
+                    "message": "发布时间不能为空",
+                }
+            },
+        )
+
+    lock = service.acquire_edit_lock(version_id, actor_id=actor_id, now=occurred_at)
+    if lock.read_only:
+        raise _roster_lock_exception(lock.message)
+
+    version = RosterVersion(
+        roster_version_id=version_id,
+        business_month=str(request["business_month"]),
+        status=RosterVersionStatus.DRAFT,
+        version_type=str(request.get("version_type") or "primary"),
+        project_id=request.get("project_id"),
+        workplace_id=request.get("workplace_id"),
+        team_id=request.get("team_id"),
+    )
+    cells = _roster_assignments_from_request(request)
+    context = _roster_validation_context_from_request(request)
+    service.save_draft(version, cells, actor_id=actor_id, occurred_at=occurred_at)
+    validation = service.validate_publish(version_id, context)
+    if validation.hard_errors:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": {
+                    "code": "ROSTER_PUBLISH_BLOCKED",
+                    "message": "班表存在硬错误，不能发布",
+                    "hard_errors": [_roster_issue_response(item) for item in validation.hard_errors],
+                }
+            },
+        )
+
+    service.schedule_publish(
+        version_id,
+        actor_id=actor_id,
+        occurred_at=occurred_at,
+        effective_at=occurred_at,
+        context=context,
+    )
+    service.activate_due_published(now=occurred_at, actor_id="system")
+    service.release_edit_lock(version_id, actor_id=actor_id, now=occurred_at)
+    current = service.get_current_published(
+        business_month=version.business_month,
+        project_id=version.project_id,
+        workplace_id=version.workplace_id,
+        team_id=version.team_id,
+    )
+    if current is None:
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "error": {
+                    "code": "ROSTER_PUBLISH_READBACK_FAILED",
+                    "message": "发布后班表快照读取失败",
+                }
+            },
+        )
+    return _roster_detail_response(current)
+
+
+@app.post("/api/v1/roster-drafts/locks/acquire")
+def acquire_roster_draft_lock(request: dict[str, Any] = Body(...)) -> dict[str, Any]:
+    service = _get_roster_service()
+    result = service.acquire_edit_lock(
+        str(request["version_id"]),
+        actor_id=str(request["actor_id"]),
+        now=str(request["now"]),
+    )
+    return _roster_lock_response(result)
+
+
+@app.post("/api/v1/roster-drafts/locks/release")
+def release_roster_draft_lock(request: dict[str, Any] = Body(...)) -> dict[str, Any]:
+    service = _get_roster_service()
+    result = service.release_edit_lock(
+        str(request["version_id"]),
+        actor_id=str(request["actor_id"]),
+        now=str(request["now"]),
+    )
+    if result.read_only:
+        raise _roster_lock_exception(result.message)
+    return _roster_lock_response(result)
+
+
+def _roster_assignments_from_request(request: dict[str, Any]) -> list[RosterAssignment]:
+    cells = request.get("cells") or []
+    assignments: list[RosterAssignment] = []
+    for index, cell in enumerate(cells, start=1):
+        assignment_kind = AssignmentKind(cell.get("assignment_kind") or "shift")
+        assignments.append(
+            RosterAssignment(
+                assignment_id=str(cell.get("assignment_id") or cell.get("cell_id")),
+                roster_cell_id=str(cell.get("cell_id") or cell.get("assignment_id")),
+                employee_id=str(cell["employee_id"]),
+                business_date=str(cell["business_date"]),
+                sequence=int(cell.get("sequence") or index),
+                assignment_kind=assignment_kind,
+                project_id=str(cell.get("project_id") or request.get("project_id") or ""),
+                workplace_id=cell.get("workplace_id") or request.get("workplace_id"),
+                team_id=str(cell.get("team_id") or request.get("team_id") or ""),
+                shift_code=cell.get("shift_code"),
+                annotation_code=cell.get("annotation_code"),
+                interval_start_at=cell.get("interval_start_at"),
+                interval_end_at=cell.get("interval_end_at"),
+                source_cell_id=cell.get("source_cell_id"),
+                manually_adjusted=bool(cell.get("manually_adjusted")),
+            )
+        )
+    return assignments
+
+
+def _roster_validation_context_from_request(
+    request: dict[str, Any],
+) -> RosterValidationContext:
+    employees = {
+        str(employee["employee_id"]): EmployeeRosterSnapshot(
+            employee_id=str(employee["employee_id"]),
+            active=bool(employee.get("active", True)),
+            project_id=str(employee.get("project_id") or request.get("project_id") or ""),
+            workplace_id=employee.get("workplace_id") or request.get("workplace_id"),
+            team_id=str(employee.get("team_id") or request.get("team_id") or ""),
+            status=str(employee.get("status") or "active"),
+        )
+        for employee in request.get("employees", [])
+    }
+    return RosterValidationContext(
+        employees=employees,
+        valid_shift_codes={str(item) for item in request.get("valid_shift_codes", [])},
+        required_coverage_slots={
+            str(item) for item in request.get("required_coverage_slots", [])
+        },
+    )
+
+
+def _roster_detail_response(detail: RosterVersionDetail) -> dict[str, Any]:
+    version = detail.version
+    snapshot = detail.published_snapshot
+    return {
+        "status": version.status.value,
+        "published": {
+            "version_id": version.roster_version_id,
+            "business_month": version.business_month,
+            "status": version.status.value,
+            "project_id": version.project_id,
+            "workplace_id": version.workplace_id,
+            "team_id": version.team_id,
+            "activated_at": version.activated_at,
+        },
+        "snapshot": (
+            {
+                "shift_counts": snapshot.shift_counts,
+                "arranged_coverage": snapshot.arranged_coverage,
+                "hard_errors": snapshot.hard_errors,
+                "soft_risks": snapshot.soft_risks,
+                "diff_summary": snapshot.diff_summary,
+                "created_at": snapshot.created_at,
+            }
+            if snapshot is not None
+            else None
+        ),
+    }
+
+
+def _roster_lock_response(result: Any) -> dict[str, Any]:
+    return {
+        "acquired": result.acquired,
+        "read_only": result.read_only,
+        "message": result.message,
+        "lock": (
+            {
+                "version_id": result.lock.roster_version_id,
+                "actor_id": result.lock.actor_id,
+                "acquired_at": result.lock.acquired_at,
+                "expires_at": result.lock.expires_at,
+            }
+            if result.lock is not None
+            else None
+        ),
+    }
+
+
+def _roster_issue_response(issue: Any) -> dict[str, Any]:
+    return {
+        "code": issue.code.value,
+        "assignment_id": issue.assignment_id,
+        "message": issue.message,
+    }
+
+
+def _roster_lock_exception(message: str) -> HTTPException:
+    return HTTPException(
+        status_code=409,
+        detail={
+            "error": {
+                "code": "ROSTER_DRAFT_LOCKED",
+                "message": message,
+            }
+        },
     )
 
 

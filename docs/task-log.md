@@ -165,5 +165,7 @@
 - story_ids:
   - `US884`
 - action: 排班师月班表发布工作台 v1 Gate。
-- status: `ready`
-- notes: 将下一步开发收束为一个可演示闭环：`/roster-drafts?month=2026-08` 通过窄范围本地 API 发布当前系统生成/本地调整草稿，处理 edit lock、hard blockers、soft risks，并在同一工作台读回 current published snapshot。明确不拆 API-only/UI-only/lock-only，不进入预测模型、标准人力、Excel 导入、权限审批、导出批量、自动排班、完整修订编辑或 Forecast vs published persistence gap。
+- status: `done`
+- notes: 完成排班师月班表发布工作台 v1：`/roster-drafts?month=2026-08` 通过本地 API 发布当前系统生成/本地调整草稿，读回 current published snapshot，展示发布后班次数、半小时 Arranged 覆盖、soft risks、diff summary，并在已发布版本上进入只读态。锁被其他排班师持有时 API 返回阻断，当前 actor 可释放自己的锁。未进入预测模型、标准人力、Excel 导入、权限审批、导出批量、自动排班、完整修订编辑或 Forecast vs published persistence gap。
+- focused verification: `.venv/bin/python -m unittest backend.tests.test_roster_publish_api backend.tests.test_roster_service` 通过 9 tests，含并发 schema 初始化回归；`node --test scripts/tests/roster-draft-workbench-structure.test.mjs scripts/tests/roster-draft-generation-model.test.mjs` 通过 20 tests；`npm run typecheck` 通过。
+- browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3005`；发布前 `发布当前草稿` 可用；点击后出现 `已发布快照`、`当前正式班表`、`班次数`、`半小时覆盖`，发布按钮 disabled；切到格子详情后显示 `当前版本只读` 和修订草稿提示。

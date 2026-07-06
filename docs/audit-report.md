@@ -324,3 +324,27 @@
 - `bash scripts/check-state.sh --strict`: 通过。
 - `git diff --check`: 通过。
 - `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`: 通过，包含 strict state check、868 Node tests（867 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、261 backend tests 和 project Harness check。
+
+### 2026-07-06 - IM296 排班师月班表发布工作台 v1 Implementation
+
+#### 审计结论
+
+- IM296 已完成一个排班师可演示闭环，不是 API-only/UI-only/lock-only 切片。
+- `/roster-drafts?month=2026-08` 可通过本地 API 发布当前系统生成/本地调整草稿，并在同一工作台读回 current published snapshot。
+- 发布后快照展示已固化的班次数、半小时 Arranged 覆盖、soft risks 和 diff summary；当前版本进入只读态。
+- 后端 publish API 覆盖 current-published readback、browser CORS preflight、edit lock 阻断和释放，并修复浏览器并发初始化 current snapshot / lock 时可能触发的 SQLite `table already exists` 竞态。
+- 本轮未新增依赖、package/lockfile、migration、权限、审批、通知、导出、批量、Excel 导入、预测模型、标准人力、自动排班、生产公式、结算或计费规则。
+
+#### 验证
+
+- focused backend: `.venv/bin/python -m unittest backend.tests.test_roster_publish_api backend.tests.test_roster_service` 通过，9 tests，含并发 schema 初始化回归。
+- focused frontend/model: `node --test scripts/tests/roster-draft-workbench-structure.test.mjs scripts/tests/roster-draft-generation-model.test.mjs` 通过，20 tests。
+- typecheck: `npm run typecheck` 通过。
+- browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3005`；发布前按钮可用；发布后显示 `已发布快照`、`当前正式班表`、`班次数`、`半小时覆盖`，发布按钮 disabled；格子详情显示只读和修订草稿提示。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、869 Node tests（868 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、266 backend tests 和 project Harness check。
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`

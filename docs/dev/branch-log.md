@@ -24,6 +24,27 @@
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
 
+### IM296 Roster Publish Workbench Implementation
+
+- branch_name: `codex/im296-roster-publish-workbench`
+- base_main_commit: `stacked on codex/im296-roster-publish-workbench-gate at b1a8f5f`
+- stacked_on: `codex/im296-roster-publish-workbench-gate`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: One scheduler-facing local publish vertical: backend API for publish/current-published/edit-lock plus `/roster-drafts?month=2026-08` publish action, readback snapshot, read-only published state, and focused acceptance coverage.
+- qoder_mode: `false; PM asked Codex to continue and avoid splitting below a closed product loop.`
+- allowed_files_check: `backend/app/main.py`, `backend/tests/test_roster_publish_api.py`, `components/roster-draft-workbench.tsx`, `scripts/tests/roster-draft-workbench-structure.test.mjs`, and traceability docs only.
+- scope_diff_check: expected local API routes, CORS for local browser runtime, publish payload/readback UI, published snapshot panel, read-only cell editing state, focused tests, and Harness closeout only; no dependency, package/lockfile, migration, external integration, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, standard-capacity model, forecasting model, Excel upload/import, or charge-factor changes.
+- focused_check_result: `.venv/bin/python -m unittest backend.tests.test_roster_publish_api backend.tests.test_roster_service` passed 9 tests, including concurrent schema initialization regression. `node --test scripts/tests/roster-draft-workbench-structure.test.mjs scripts/tests/roster-draft-generation-model.test.mjs` passed 20 tests. `npm run typecheck` passed.
+- browser_smoke_result: local backend `127.0.0.1:8001` and frontend `localhost:3005`; before publish the `发布当前草稿` button was enabled; after publish the drawer showed `已发布快照`, `当前正式班表`, `班次数`, and `半小时覆盖`, the publish button was disabled, and the detail tab showed read-only copy plus revision-draft hint.
+- check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 869 Node tests (868 pass / 1 skip), shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 266 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM294 Roster Domain Publish Rules
 
 - branch_name: `codex/im294-roster-domain-model`
