@@ -135,7 +135,7 @@
 - allowed_files_check: `docs/current/**`, `docs/registry/**`, `docs/raw-requirements.md`, `docs/user-stories.md`, `tasks/backlog.yaml`, `docs/task-log.md`, `docs/audit-report.md`, and `docs/dev/branch-log.md` only for this Gate task.
 - scope_diff_check: expected Harness/traceability changes only; no `app/**`, `components/**`, `lib/**`, `backend/**`, dependency, package/lockfile, database migration, external integration, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, standard-capacity model, forecasting model, Excel upload/import, or charge-factor implementation changes.
 - check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 868 Node tests (867 pass / 1 skip), shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 261 backend tests, and project Harness check.
-- local_commit_sha: `pending`
+- local_commit_sha: `17d1d39`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
