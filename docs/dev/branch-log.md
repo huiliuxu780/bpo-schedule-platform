@@ -425,3 +425,23 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
+
+### IM299 Downstream Published Roster Viewer
+
+- branch_name: `codex/im299-downstream-published-roster`
+- base_main_commit: `stacked on origin/codex/im298-published-gap-workbench at f7fefc3f`
+- stacked_on: `codex/im298-published-gap-workbench`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Add downstream read-only formal roster consumption for team lead and frontline roles.
+- qoder_mode: `false; PM confirmed Codex should start after product drill and reflection.`
+- allowed_files_check: `app/published-roster/page.tsx`, `components/published-roster-viewer.tsx`, `components/app-sidebar.tsx`, `lib/published-roster-view.ts`, `scripts/tests/published-roster-view-model.test.mjs`, `scripts/tests/published-roster-viewer-structure.test.mjs`, `docs/superpowers/plans/2026-07-06-downstream-published-roster.md`, traceability docs, and current/registry state docs only.
+- scope_diff_check: expected frontend route/view helper/navigation/tests and traceability changes only; no package/lockfile, backend schema/migration, new persistence, auth, permissions, organization hierarchy, approval, request submission, notification, export, batch, Excel import, forecasting model, standard-capacity model, automatic scheduling, production formulas, settlement, or charge-factor changes.
+- focused_check_result: `node --test scripts/tests/published-roster-view-model.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` passed with 24 tests; `npm run typecheck` passed; `git diff --check` passed; `bash scripts/check-state.sh --strict` passed. Browser smoke passed on `http://localhost:3003/published-roster?month=2026-08` with local backend `127.0.0.1:8001`.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 879 Node tests (878 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 272 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`

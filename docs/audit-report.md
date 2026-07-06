@@ -393,6 +393,32 @@
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
 
+### 2026-07-06 - IM299 下游正式班表查看 v1 Implementation
+
+#### 审计结论
+
+- IM299 已完成一个下游可演示闭环，不是单纯新增报表页。
+- 新增 `/published-roster?month=2026-08` 和左侧 `正式班表` 入口，小组长/一线不需要进入排班师草稿工作台即可消费正式班表。
+- 页面只读取现有 current published API；没有正式版时显示业务空态，不展示草稿、修订草稿或 upcoming。
+- 小组长视角使用本地固定 G1 团队样例查看团队月/周表；一线视角使用本地人员切换器查看个人月/周表。
+- 格子详情为只读，展示人员、日期、班次、时间、来源正式版和提示；请假、换班、异常修复入口可见但 disabled，不提交、不写入、不进入审批。
+- 本轮未新增依赖、package/lockfile、migration、权限、认证、组织架构、审批、申请提交、通知、导出、批量、Excel 导入、真实外部数据源、预测模型、标准人力、自动排班、新持久化、生产公式、结算或计费规则。
+
+#### 验证
+
+- red/green view model: `node --test scripts/tests/published-roster-view-model.test.mjs` 先失败在缺少 `lib/published-roster-view.ts`，实现后通过。
+- red/green structure: `node --test scripts/tests/published-roster-viewer-structure.test.mjs` 先失败在缺少页面、viewer、导航，之后通过。
+- focused frontend: `node --test scripts/tests/published-roster-view-model.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 通过 24 tests。
+- typecheck: `npm run typecheck` 通过。
+- browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`，`/published-roster?month=2026-08` 组长视图、一线视图、周视图、只读详情和 disabled 后续动作占位通过；页面未出现内部英文状态词。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、879 Node tests（878 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、272 backend tests 和 project Harness check。
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### 2026-07-06 - IM297 已发布月班表修订草稿闭环 v1 Gate
 
 #### 审计结论

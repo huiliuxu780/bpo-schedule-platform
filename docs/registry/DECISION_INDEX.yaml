@@ -204,3 +204,18 @@ decisions:
       - "scripts/tests/roster-draft-workbench-structure.test.mjs"
       - "backend/app/main.py"
       - "backend/tests/test_roster_publish_api.py"
+  D-2026-07-06-downstream-published-roster-v1:
+    title: "Downstream users consume only the current formal roster in read-only views"
+    file: "docs/user-stories.md"
+    related_files:
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/raw-requirements.md"
+      - "tasks/backlog.yaml"
+      - "app/published-roster/page.tsx"
+      - "components/published-roster-viewer.tsx"
+      - "components/app-sidebar.tsx"
+      - "lib/published-roster-view.ts"
+      - "scripts/tests/published-roster-view-model.test.mjs"
+      - "scripts/tests/published-roster-viewer-structure.test.mjs"

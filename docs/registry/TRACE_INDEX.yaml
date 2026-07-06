@@ -117,6 +117,13 @@ stories:
     task_ids:
       - "IM298"
     archive_refs: []
+  US887:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R967"
+    task_ids:
+      - "IM299"
+    archive_refs: []
 tasks:
   F001:
     file: "tasks/backlog.yaml"
@@ -219,6 +226,11 @@ tasks:
     file: "tasks/backlog.yaml"
     story_ids:
       - "US886"
+    gate: "backend-vertical"
+  IM299:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US887"
     gate: "backend-vertical"
 requirements:
   R949:
@@ -329,6 +341,12 @@ requirements:
       - "US886"
     task_ids:
       - "IM298"
+  R967:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US887"
+    task_ids:
+      - "IM299"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
@@ -350,4 +368,5 @@ decisions:
   - "D-2026-07-06-roster-publish-workbench-v1"
   - "D-2026-07-06-roster-revision-workbench-v1"
   - "D-2026-07-06-published-roster-gap-workbench-v1"
+  - "D-2026-07-06-downstream-published-roster-v1"
 archive_refs: []

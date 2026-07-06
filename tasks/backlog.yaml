@@ -216,3 +216,13 @@ tasks:
     requirement_ids:
       - R966
     notes: "Build one scheduler-facing loop after IM297: show Forecast vs Arranged/Actual gaps based on current published, locate a gap to related date/person context, expose the existing revision entry from that context, and refresh gaps after revision republish. No real forecasting model, standard-capacity model, Excel import, permissions, approval, export, batch, automatic scheduling, new gap page, full version history page, production formulas, settlement, or charge-factor work."
+
+  - id: IM299
+    title: "下游正式班表查看 v1"
+    status: done
+    required_workflow: backend-vertical
+    story_ids:
+      - US887
+    requirement_ids:
+      - R967
+    notes: "Add one downstream read-only formal roster loop after IM298: `/published-roster?month=2026-08` reads only current published, gives team-lead fixed-team month/week views, gives frontline selected-person month/week views, and opens read-only cell details with disabled leave/swap/exception-fix placeholders. No auth, permissions, organization hierarchy, approval, request submission, export, batch, forecasting model, standard-capacity model, Excel import, new persistence, scheduled publish UI, full version history, production formulas, settlement, or charge-factor work."

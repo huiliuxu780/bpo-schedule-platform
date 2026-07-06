@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useTheme } from "next-themes"
 import { usePathname } from "next/navigation"
 import {
+  CalendarCheck,
   CalendarClock,
   CalendarCog,
   CalendarRange,
@@ -93,6 +94,12 @@ const nav: NavGroup[] = [
         title: "月班表草稿",
         href: "/roster-drafts",
         icon: CalendarRange,
+        activeMatch: "prefix",
+      },
+      {
+        title: "正式班表",
+        href: "/published-roster",
+        icon: CalendarCheck,
         activeMatch: "prefix",
       },
       {

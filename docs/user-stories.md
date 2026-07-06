@@ -415,6 +415,30 @@ status: "done"
 notes: "IM298 published gap closed loop after IM297 revision workbench."
 ```
 
+### US887 - 下游正式班表查看 v1
+
+```yaml
+id: US887
+requirement_ids:
+  - R967
+module: "BPO WFM 三条主线"
+role: "小组长 / 一线"
+story: "作为小组长或一线员工，我希望在排班师发布正式班表后，通过独立入口只读查看当前正式班表的月视图、周视图和格子详情，以便我能确认团队或自己的班次，而不是进入排班师草稿工作台。"
+task_type: "backend-vertical"
+priority: "P0"
+acceptance:
+  - "左侧导航出现独立业务入口 `正式班表`，路由为 `/published-roster`。"
+  - "`/published-roster?month=2026-08` 只读取 current published API；没有正式版时显示先发布正式班表的空态。"
+  - "小组长视角使用本地固定团队样例，展示团队月视图、周视图和只读格子详情。"
+  - "一线视角使用本地人员切换器，展示所选人员自己的月视图、周视图和只读格子详情。"
+  - "格子详情展示人员、日期、班次、时间、来源正式版和轻风险提示。"
+  - "请假、换班、异常修复入口可见但 disabled，不提交、不写数据、不进入审批。"
+  - "页面不展示 draft、revision draft 或 upcoming，不暴露 internal published/current 英文口径。"
+  - "本轮不新增认证、权限、组织架构、审批、申请提交、导出、批量、预测模型、标准人力、Excel 导入、新持久化、生产公式、结算或计费规则。"
+status: "done"
+notes: "IM299 downstream read-only formal roster viewer after IM298 formal gap loop."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

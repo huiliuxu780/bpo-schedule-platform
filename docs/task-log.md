@@ -210,3 +210,14 @@
 - notes: 完成正式班表缺口闭环：`/roster-drafts?month=2026-08` 在 current published 存在后显示“正式班表缺口”，Forecast/Actual 仍为本地样例口径，Arranged 从 current published cells/snapshot 派生；缺口可定位到周视图相关人员/日期；定位上下文保留创建修订草稿、受控编辑和重新发布修订入口；重发布后缺口基于新的当前正式版刷新。未进入真实预测模型、标准人力、Excel 导入、权限审批、导出批量、自动推荐、自动排班、新缺口页、完整版本历史页、生产公式、结算或计费规则。
 - focused verification: red `node --test scripts/tests/roster-draft-workbench-structure.test.mjs` 失败在缺少 `publishedGapRows`；red `.venv/bin/python -m unittest backend.tests.test_roster_publish_api` 失败在 missing current-published response 缺少 `cells`; green 后两项均通过，且 `npm run typecheck` 通过。
 - browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003` with `NEXT_PUBLIC_BPO_API_BASE_URL=http://127.0.0.1:8001`；发布后显示已发布快照和创建修订入口；缺口 tab 显示“正式班表缺口”、Forecast/Arranged/Actual、Arranged 从正式版派生且无 `current published` 文案泄漏；定位缺口切到周度处理相关人员/日期；创建修订草稿后出现上一版来源/本次修改摘要；重新发布后回到已发布态，缺口仍按正式版刷新。
+
+- task_id: `IM299`
+- source_ids:
+  - `R967`
+- story_ids:
+  - `US887`
+- action: 下游正式班表查看 v1 Implementation。
+- status: `done`
+- notes: 完成下游正式班表消费闭环：新增 `正式班表` 导航和 `/published-roster?month=2026-08`；页面只读取 current published API，不读取 active draft、revision draft 或 upcoming；小组长使用本地固定 G1 团队查看团队月/周正式班表；一线使用本地人员切换器查看个人月/周正式班表；格子详情为只读，展示正式版本、班次、时间和提示；请假、换班、异常修复只作为 disabled 入口占位。未新增认证、权限、组织架构、审批、申请提交、导出、批量、预测模型、标准人力、Excel 导入、新持久化、生产公式、结算或计费规则。
+- focused verification: red `node --test scripts/tests/published-roster-view-model.test.mjs` 失败在缺少 `lib/published-roster-view.ts`；red `node --test scripts/tests/published-roster-viewer-structure.test.mjs` 失败在缺少 `/published-roster` 页面、viewer 和导航；green 后 `node --test scripts/tests/published-roster-view-model.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 通过 24 tests；`npm run typecheck`、`git diff --check`、`bash scripts/check-state.sh --strict` 均通过。
+- browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`；API 已有 2026-08 正式版；`/published-roster?month=2026-08` 展示正式班表入口、G1 小组长团队视图、一线个人视图；一线周视图只显示 `EMP-001` 一行和 7 天；格子详情显示只读详情、A5、正式版号，且请假/换班/异常修复按钮全部 disabled；页面未出现 `current published`、`Published Roster` 或 `revision draft`。

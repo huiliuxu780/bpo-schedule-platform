@@ -238,6 +238,19 @@ status: "done"
 notes: "Published gap closed loop only; no real forecasting model, standard-capacity model, Excel import, permissions, approval, export, batch, automatic scheduling, new gap page, full version history page, production formula, settlement, or charge-factor work."
 ```
 
+### R967 - 下游正式班表查看 v1
+
+```yaml
+id: R967
+module: "BPO WFM 三条主线"
+description: "在 IM298 正式班表缺口闭环之后，为小组长和一线补齐当前正式班表的只读消费入口。新增独立 `正式班表` 导航入口和 `/published-roster?month=2026-08` 页面；页面只读取现有 current published API，不展示 draft、revision draft 或 upcoming；小组长用本地固定团队样例查看团队月/周班表，一线用本地人员切换器查看个人月/周班表；点击格子查看只读详情，包含人员、日期、班次、时间、来源正式版和轻风险提示；请假、换班、异常修复只作为不可提交入口占位。"
+source: "PM-confirmed IM299 drill on 2026-07-06"
+submitted_at: "2026-07-06"
+version: "1.0"
+status: "done"
+notes: "Downstream read-only formal roster viewer only; no auth, permissions, organization hierarchy, approval, request submission, export, batch, forecasting model, standard-capacity model, Excel import, new persistence, scheduled publish UI, full version history, production formula, settlement, or charge-factor work."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.
