@@ -103,6 +103,20 @@ stories:
     task_ids:
       - "IM296"
     archive_refs: []
+  US885:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R965"
+    task_ids:
+      - "IM297"
+    archive_refs: []
+  US886:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R966"
+    task_ids:
+      - "IM298"
+    archive_refs: []
 tasks:
   F001:
     file: "tasks/backlog.yaml"
@@ -195,6 +209,16 @@ tasks:
     file: "tasks/backlog.yaml"
     story_ids:
       - "US884"
+    gate: "backend-vertical"
+  IM297:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US885"
+    gate: "backend-vertical"
+  IM298:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US886"
     gate: "backend-vertical"
 requirements:
   R949:
@@ -293,6 +317,18 @@ requirements:
       - "US884"
     task_ids:
       - "IM296"
+  R965:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US885"
+    task_ids:
+      - "IM297"
+  R966:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US886"
+    task_ids:
+      - "IM298"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
@@ -312,4 +348,6 @@ decisions:
   - "D-2026-07-02-roster-domain-publish-rules"
   - "D-2026-07-02-roster-local-persistence-loop"
   - "D-2026-07-06-roster-publish-workbench-v1"
+  - "D-2026-07-06-roster-revision-workbench-v1"
+  - "D-2026-07-06-published-roster-gap-workbench-v1"
 archive_refs: []

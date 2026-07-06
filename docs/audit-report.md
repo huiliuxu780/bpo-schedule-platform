@@ -349,6 +349,50 @@
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
 
+### 2026-07-06 - IM298 Published Forecast vs Arranged/Actual 缺口闭环 v1 Gate
+
+#### 审计结论
+
+- 新增 R966 / US886 / IM298，当前队列恢复为一个 ready 的排班师可演示闭环。
+- IM298 明确 Arranged 从 current published cells/snapshot 派生，Forecast/Actual 仅使用当前本地样例口径，不引入真实预测模型。
+- IM298 不是单纯缺口列表：缺口行定位相关日期/人员上下文，并连接既有修订草稿、受控编辑和重新发布流程；重发布后缺口刷新。
+- 本 Gate 不新增依赖、package/lockfile、migration、权限、审批、导出、批量、Excel 导入、真实外部数据源、预测模型、标准人力、自动排班、新页面、完整版本历史、生产公式、结算或计费规则。
+
+#### 验证
+
+- Gate 写入后需运行 `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`。
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
+### 2026-07-06 - IM298 Published Forecast vs Arranged/Actual 缺口闭环 v1 Implementation
+
+#### 审计结论
+
+- IM298 已完成一个排班师可演示闭环，不是单纯缺口报表。
+- `/roster-drafts?month=2026-08` 在 current published 存在后显示“正式班表缺口”，缺口行包含日期、半小时、Forecast、Arranged、Actual 和业务原因。
+- Arranged 从 current published cells 派生；未发布草稿和修订草稿不作为正式缺口的 Arranged 来源。
+- 缺口行可定位到相关周视图人员/日期；同一上下文保留既有创建修订草稿、受控编辑和重新发布修订流程；重发布后缺口刷新为新的当前正式版口径。
+- API missing current-published 响应补齐稳定 `cells: []`，避免前端对 missing 状态做猜测。
+- 本轮未新增依赖、package/lockfile、migration、权限、审批、通知、导出、批量、Excel 导入、真实外部数据源、预测模型、标准人力、自动排班、新页面、完整版本历史、生产公式、结算或计费规则。
+
+#### 验证
+
+- red/green frontend: `node --test scripts/tests/roster-draft-workbench-structure.test.mjs` 先失败在缺少 `publishedGapRows`，实现后通过 16 tests。
+- red/green backend: `.venv/bin/python -m unittest backend.tests.test_roster_publish_api` 先失败在 missing response 缺 `cells`，实现后通过 6 tests。
+- typecheck: `npm run typecheck` 通过。
+- browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`，前端显式使用 `NEXT_PUBLIC_BPO_API_BASE_URL=http://127.0.0.1:8001`；发布、正式缺口、定位、创建修订草稿、重新发布修订、重发布后正式缺口刷新均通过；页面未出现 `current published` 内部英文口径。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、871 Node tests（870 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、272 backend tests 和 project Harness check。
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### 2026-07-06 - IM297 已发布月班表修订草稿闭环 v1 Gate
 
 #### 审计结论

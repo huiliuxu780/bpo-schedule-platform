@@ -179,3 +179,28 @@ decisions:
       - "components/roster-draft-workbench.tsx"
       - "backend/app/main.py"
       - "backend/app/roster_service.py"
+  D-2026-07-06-roster-revision-workbench-v1:
+    title: "Roster revision workbench v1 keeps current published effective while revision draft is edited"
+    file: "docs/user-stories.md"
+    related_files:
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/raw-requirements.md"
+      - "tasks/backlog.yaml"
+      - "components/roster-draft-workbench.tsx"
+      - "backend/app/main.py"
+      - "backend/app/roster_service.py"
+  D-2026-07-06-published-roster-gap-workbench-v1:
+    title: "Published roster gaps must close through locate and existing revision republish flow"
+    file: "docs/user-stories.md"
+    related_files:
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/raw-requirements.md"
+      - "tasks/backlog.yaml"
+      - "components/roster-draft-workbench.tsx"
+      - "scripts/tests/roster-draft-workbench-structure.test.mjs"
+      - "backend/app/main.py"
+      - "backend/tests/test_roster_publish_api.py"

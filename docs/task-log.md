@@ -190,3 +190,23 @@
 - focused verification: `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_revision_api backend.tests.test_roster_publish_api backend.tests.test_roster_drafts backend.tests.test_roster_persistence` 通过 28 tests；`node --test scripts/tests/roster-draft-workbench-structure.test.mjs` 通过 15 tests；`npm run typecheck` 通过。
 - browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`；已发布态显示 `创建修订草稿`；创建后进入 `修订草稿`，显示 `重新发布修订`、`上一版来源`、`本次修改摘要`，且不出现 `版本历史页` 或 `未来生效`。
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、870 Node tests（869 pass / 1 skip）、lint、typecheck、Next build、271 backend tests 和 project Harness check。
+
+- task_id: `IM298`
+- source_ids:
+  - `R966`
+- story_ids:
+  - `US886`
+- action: Published Forecast vs Arranged/Actual 缺口闭环 v1 Gate。
+- status: `ready`
+- notes: 将下一步收束为一个正式班表缺口发现到修订重发布的排班师闭环：current published 存在时展示基于正式版的 Forecast/Arranged/Actual 缺口；缺口定位相关日期/人员格子；定位上下文进入既有修订草稿、受控编辑和重新发布流程；重新发布后缺口刷新。未进入真实预测模型、标准人力、Excel 导入、权限审批、导出批量、自动推荐、自动排班、新缺口页、完整版本历史页、生产公式、结算或计费规则。
+
+- task_id: `IM298`
+- source_ids:
+  - `R966`
+- story_ids:
+  - `US886`
+- action: Published Forecast vs Arranged/Actual 缺口闭环 v1 Implementation。
+- status: `done`
+- notes: 完成正式班表缺口闭环：`/roster-drafts?month=2026-08` 在 current published 存在后显示“正式班表缺口”，Forecast/Actual 仍为本地样例口径，Arranged 从 current published cells/snapshot 派生；缺口可定位到周视图相关人员/日期；定位上下文保留创建修订草稿、受控编辑和重新发布修订入口；重发布后缺口基于新的当前正式版刷新。未进入真实预测模型、标准人力、Excel 导入、权限审批、导出批量、自动推荐、自动排班、新缺口页、完整版本历史页、生产公式、结算或计费规则。
+- focused verification: red `node --test scripts/tests/roster-draft-workbench-structure.test.mjs` 失败在缺少 `publishedGapRows`；red `.venv/bin/python -m unittest backend.tests.test_roster_publish_api` 失败在 missing current-published response 缺少 `cells`; green 后两项均通过，且 `npm run typecheck` 通过。
+- browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003` with `NEXT_PUBLIC_BPO_API_BASE_URL=http://127.0.0.1:8001`；发布后显示已发布快照和创建修订入口；缺口 tab 显示“正式班表缺口”、Forecast/Arranged/Actual、Arranged 从正式版派生且无 `current published` 文案泄漏；定位缺口切到周度处理相关人员/日期；创建修订草稿后出现上一版来源/本次修改摘要；重新发布后回到已发布态，缺口仍按正式版刷新。

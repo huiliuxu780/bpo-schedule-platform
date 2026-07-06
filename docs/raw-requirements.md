@@ -221,8 +221,21 @@ description: "在 IM296 已发布班表工作台之上，补齐发布后发现�
 source: "PM-confirmed IM297 drill on 2026-07-06"
 submitted_at: "2026-07-06"
 version: "1.0"
-status: "draft"
+status: "done"
 notes: "Revision draft loop only; no scheduled publish UI, future effective-time selection, full version history page, bulk revision, approval workflow, notification, export, batch, auth, permissions, automatic scheduling, forecasting model, standard-capacity model, Excel import, production formula, settlement, or charge-factor work."
+```
+
+### R966 - Published Forecast vs Arranged/Actual 缺口闭环 v1
+
+```yaml
+id: R966
+module: "BPO WFM 三条主线"
+description: "在 IM297 已发布班表修订闭环之上，补齐正式班表缺口发现到修订发布的最小业务闭环。排班师在 `/roster-drafts?month=2026-08` 查看基于 current published 的 Forecast vs Arranged/Actual 缺口；Forecast/Actual 继续使用当前本地样例口径，Arranged 必须从 current published cells/snapshot 派生，而不是未发布草稿；点击缺口行只定位相关日期/人员格子，不自动创建修订、不自动推荐处理动作；定位上下文必须能进入既有创建修订草稿、格子受控编辑和重新发布修订流程；重发布后缺口基于新的 current published 刷新。"
+source: "PM-confirmed IM298 drill on 2026-07-06"
+submitted_at: "2026-07-06"
+version: "1.0"
+status: "done"
+notes: "Published gap closed loop only; no real forecasting model, standard-capacity model, Excel import, permissions, approval, export, batch, automatic scheduling, new gap page, full version history page, production formula, settlement, or charge-factor work."
 ```
 
 ## History Policy

@@ -226,6 +226,7 @@ def get_current_roster_published_snapshot(
             "status": "missing",
             "published": None,
             "snapshot": None,
+            "cells": [],
         }
     return _roster_detail_response(detail)
 

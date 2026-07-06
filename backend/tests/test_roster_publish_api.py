@@ -60,6 +60,22 @@ class RosterPublishApiTest(unittest.TestCase):
             current_response["snapshot"]["soft_risks"],
         )
         self.assertGreaterEqual(len(current_response["snapshot"]["arranged_coverage"]), 2)
+        self.assertEqual(len(current_response["cells"]), 2)
+        self.assertEqual(current_response["cells"][0]["employee_id"], "EMP-001")
+
+    def test_current_published_missing_response_has_stable_cells_contract(self) -> None:
+        with _isolated_database():
+            current_response = get_current_roster_published_snapshot(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+            )
+
+        self.assertEqual(current_response["status"], "missing")
+        self.assertIsNone(current_response["published"])
+        self.assertIsNone(current_response["snapshot"])
+        self.assertEqual(current_response["cells"], [])
 
     def test_lock_held_by_other_actor_blocks_publish_until_released(self) -> None:
         with _isolated_database():

@@ -211,6 +211,25 @@ test("roster draft workbench supports published roster revision draft loop", () 
   assert.ok(!content.includes("未来生效"))
 })
 
+test("roster draft workbench closes published roster gaps through locate and revision flow", () => {
+  const content = readProjectFile("components/roster-draft-workbench.tsx")
+
+  assert.ok(content.includes("type PublishedRosterSnapshot"))
+  assert.ok(content.includes("cells: PublishedRosterCell[]"))
+  assert.ok(content.includes("const publishedGapRows = React.useMemo"))
+  assert.ok(content.includes("buildPublishedRosterGapPreview"))
+  assert.ok(content.includes("publishedGapRows"))
+  assert.ok(content.includes('gapRows={publishedGapRows}'))
+  assert.ok(content.includes("正式班表缺口"))
+  assert.ok(content.includes("先发布正式班表"))
+  assert.ok(content.includes("当前正式版"))
+  assert.ok(content.includes("Arranged 从正式版派生"))
+  assert.ok(content.includes("创建修订草稿"))
+  assert.ok(content.includes("重新发布修订"))
+  assert.ok(!content.includes("自动推荐"))
+  assert.ok(!content.includes("自动处理"))
+})
+
 test("roster draft workbench keeps mature-scheduling references structural and non-production", () => {
   const content = readProjectFile("components/roster-draft-workbench.tsx")
 

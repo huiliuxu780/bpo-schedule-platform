@@ -387,8 +387,32 @@ acceptance:
   - "重新发布修订草稿时立即替换 current published，上一正式版进入被替换口径。"
   - "工作台展示当前正式版、上一版来源和本次修改摘要，不新增完整版本历史页。"
   - "本轮不新增 scheduled publish UI、future effective time、批量修订、审批、权限、通知、导出、批量、Excel 导入、预测模型、标准人力、自动排班、生产公式、结算或计费规则。"
-status: "draft"
+status: "done"
 notes: "IM297 revision draft loop after IM296 publish workbench."
+```
+
+### US886 - Published Forecast vs Arranged/Actual 缺口闭环 v1
+
+```yaml
+id: US886
+requirement_ids:
+  - R966
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望正式班表发布后能看到基于 current published 的 Forecast vs Arranged/Actual 缺口，并从缺口定位进入既有修订与重新发布流程，以便我能发现正式班表问题并闭环修正，而不是只看到一个缺口报表。"
+task_type: "backend-vertical"
+priority: "P0"
+acceptance:
+  - "存在 current published 时，`/roster-drafts?month=2026-08` 展示正式班表缺口队列。"
+  - "缺口行展示日期、半小时、Forecast、Arranged、Actual、缺口类型和来源口径。"
+  - "Arranged 从 current published cells/snapshot 派生；未发布草稿或修订草稿不能污染 current published 缺口。"
+  - "点击缺口行只定位相关日期/人员格子，不自动创建修订、不自动推荐处理动作。"
+  - "定位上下文能进入既有创建修订草稿、受控编辑和重新发布修订流程。"
+  - "重新发布修订后，缺口队列基于新的 current published 刷新。"
+  - "没有 current published 时，工作台提示先发布正式班表。"
+  - "本轮不新增真实预测模型、标准人力、Excel 导入、权限审批、导出批量、自动排班、新缺口页、完整版本历史页、生产公式、结算或计费规则。"
+status: "done"
+notes: "IM298 published gap closed loop after IM297 revision workbench."
 ```
 
 ## History Policy

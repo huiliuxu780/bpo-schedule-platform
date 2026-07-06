@@ -206,3 +206,13 @@ tasks:
     requirement_ids:
       - R965
     notes: "Completed roster vertical after IM296: current published remains effective while scheduler creates a revision draft, edits existing cells with the current controlled shift-code/note editor, immediately republishes the revision to replace current published, and sees previous-version source plus revision change summary in the workbench. No scheduled publish UI, future effective time, full version history page, add/delete personnel/date cells, forecasting model, standard-capacity model, Excel import, permissions, approval, notification, export, batch, automatic scheduling, production formulas, settlement, or charge-factor work."
+
+  - id: IM298
+    title: "Published Forecast vs Arranged/Actual 缺口闭环 v1"
+    status: done
+    required_workflow: backend-vertical
+    story_ids:
+      - US886
+    requirement_ids:
+      - R966
+    notes: "Build one scheduler-facing loop after IM297: show Forecast vs Arranged/Actual gaps based on current published, locate a gap to related date/person context, expose the existing revision entry from that context, and refresh gaps after revision republish. No real forecasting model, standard-capacity model, Excel import, permissions, approval, export, batch, automatic scheduling, new gap page, full version history page, production formulas, settlement, or charge-factor work."

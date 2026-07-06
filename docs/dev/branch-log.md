@@ -24,6 +24,27 @@
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
 
+### IM298 Published Roster Gap Workbench Gate
+
+- branch_name: `codex/im298-published-gap-workbench`
+- base_main_commit: `stacked on local codex/im297-roster-revision-workbench at d49747cc`
+- stacked_on: `codex/im297-roster-revision-workbench`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Gate and current queue for Published Forecast vs Arranged/Actual gap closed loop inside `/roster-drafts`.
+- qoder_mode: `false; PM confirmed the corrected A scope directly after challenging the prior thin-slice conclusion.`
+- allowed_files_check: current/registry state docs, traceability docs, `components/roster-draft-workbench.tsx`, `scripts/tests/roster-draft-workbench-structure.test.mjs`, `backend/app/main.py`, and `backend/tests/test_roster_publish_api.py` only.
+- scope_diff_check: expected current queue, traceability, published gap UI behavior, current-published response contract test, and focused structure test only; no new dependency, package/lockfile, database schema/migration, external integration, Excel upload/import, automatic scheduling, approval, permission, notification, export, batch, production formula, settlement, standard-capacity model, forecasting model, new gap page, full version history page, or charge-factor changes.
+- focused_check_result: red `node --test scripts/tests/roster-draft-workbench-structure.test.mjs` failed on missing `publishedGapRows`; red `.venv/bin/python -m unittest backend.tests.test_roster_publish_api` failed on missing current-published `cells`; green focused checks passed with 16 frontend structure tests and 6 backend API tests; `npm run typecheck` passed.
+- browser_smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003` with `NEXT_PUBLIC_BPO_API_BASE_URL=http://127.0.0.1:8001`; published snapshot, formal gap panel, gap-to-week locate, revision draft creation, revision republish, and post-republish formal gap refresh passed; no visible `current published` internal copy.
+- check_result: `git diff --check` passed. `bash scripts/check-state.sh --strict` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 871 Node tests (870 pass / 1 skip), shadcn convention check, `npm run lint`, `npm run typecheck`, Next build, 272 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM297 Roster Revision Workbench
 
 - branch_name: `codex/im297-roster-revision-workbench`
