@@ -31,6 +31,7 @@ test("duty change request workbench uses request-first states and actions", () =
   assert.ok(content.includes('"use client"'))
   assert.ok(content.includes('data-slot="duty-change-request-shell"'))
   assert.ok(content.includes('data-slot="duty-change-request-tabs"'))
+  assert.ok(content.includes('className="min-h-0 flex-1 flex-col gap-0"'))
   assert.ok(content.includes('data-slot="duty-change-request-list"'))
   assert.ok(content.includes('data-slot="duty-change-request-detail-drawer"'))
   assert.ok(content.includes("班务变更申请"))
