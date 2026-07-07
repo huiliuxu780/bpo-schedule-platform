@@ -296,6 +296,82 @@ class RosterServiceTest(unittest.TestCase):
                 "published snapshot is missing",
             )
 
+    def test_downstream_roster_request_intent_persists_and_resolves_against_current_published(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            service = _service(directory)
+            _publish_current_roster(service)
+
+            created = service.create_request_intent(
+                request_id="REQ-001",
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                roster_cell_id="CELL-001",
+                action_type="leave",
+                requester_role="frontline",
+                requester_id="EMP-001",
+                note="8 月 1 日上午请假，需要排班师修订正式班表。",
+                occurred_at="2026-08-01T08:00",
+            )
+            open_items = service.list_open_request_intents(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+            )
+            service.create_revision(
+                "ROSTER-202608-DRAFT",
+                new_version_id="ROSTER-202608-REV-1",
+                actor_id="scheduler-1",
+                occurred_at="2026-08-01T08:30",
+            )
+            resolved = service.resolve_request_intent(
+                "REQ-001",
+                resolver_id="scheduler-1",
+                resolved_at="2026-08-01T09:00",
+                linked_revision_version_id="ROSTER-202608-REV-1",
+            )
+
+            self.assertEqual(created.status, "open")
+            self.assertEqual(created.employee_id, "EMP-001")
+            self.assertEqual(created.business_date, "2026-08-01")
+            self.assertEqual(created.roster_version_id, "ROSTER-202608-DRAFT")
+            self.assertEqual([item.request_id for item in open_items], ["REQ-001"])
+            self.assertEqual(resolved.status, "resolved")
+            self.assertEqual(resolved.resolved_by, "scheduler-1")
+            self.assertEqual(resolved.linked_revision_version_id, "ROSTER-202608-REV-1")
+            self.assertEqual(
+                service.list_open_request_intents(
+                    business_month="2026-08",
+                    project_id="BOSCH-CS",
+                    workplace_id="SHANGHAI",
+                    team_id="G1",
+                ),
+                [],
+            )
+
+    def test_downstream_roster_request_intent_requires_current_published_cell(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            service = _service(directory)
+
+            with self.assertRaisesRegex(ValueError, "current published roster cell not found"):
+                service.create_request_intent(
+                    request_id="REQ-404",
+                    business_month="2026-08",
+                    project_id="BOSCH-CS",
+                    workplace_id="SHANGHAI",
+                    team_id="G1",
+                    roster_cell_id="CELL-MISSING",
+                    action_type="exception_fix",
+                    requester_role="team_lead",
+                    requester_id="LEAD-G1",
+                    note="现场发现班表异常。",
+                    occurred_at="2026-08-01T08:00",
+                )
+
 
 def _service(directory: str) -> RosterService:
     database_url = f"sqlite+pysqlite:///{Path(directory) / 'roster.db'}"
@@ -371,6 +447,30 @@ def _context(required_coverage_slots: set[str] | None = None) -> RosterValidatio
         },
         valid_shift_codes={"A5"},
         required_coverage_slots=required_coverage_slots or set(),
+    )
+
+
+def _publish_current_roster(service: RosterService) -> None:
+    draft = _draft_version("ROSTER-202608-DRAFT")
+    service.save_draft(
+        draft,
+        [
+            _assignment("CELL-001", "EMP-001", shift_code="A5"),
+            _assignment("CELL-002", "EMP-002", shift_code="A5"),
+        ],
+        actor_id="scheduler-1",
+        occurred_at="2026-07-04T09:00",
+    )
+    service.schedule_publish(
+        draft.roster_version_id,
+        actor_id="scheduler-1",
+        occurred_at="2026-07-04T10:00",
+        effective_at="2026-07-04T10:00",
+        context=_context(),
+    )
+    service.activate_due_published(
+        now="2026-07-04T10:00",
+        actor_id="system",
     )
 
 

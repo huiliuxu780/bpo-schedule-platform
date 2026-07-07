@@ -230,6 +230,22 @@ test("roster draft workbench closes published roster gaps through locate and rev
   assert.ok(!content.includes("自动处理"))
 })
 
+test("roster draft workbench handles downstream request intents through locate and revision flow", () => {
+  const content = readProjectFile("components/roster-draft-workbench.tsx")
+
+  assert.ok(content.includes("type DownstreamRosterRequestIntent"))
+  assert.ok(content.includes("const downstreamRequestRows = React.useMemo"))
+  assert.ok(content.includes("/api/v1/roster-requests"))
+  assert.ok(content.includes("/api/v1/roster-requests/{request_id}/resolve") || content.includes("/resolve"))
+  assert.ok(content.includes('data-slot="downstream-roster-request-queue"'))
+  assert.ok(content.includes("下游处理队列"))
+  assert.ok(content.includes("定位到正式班表格子"))
+  assert.ok(content.includes("创建修订草稿"))
+  assert.ok(content.includes("关闭处理意图"))
+  assert.ok(!content.includes("审批通过"))
+  assert.ok(!content.includes("通知一线"))
+})
+
 test("roster draft workbench keeps mature-scheduling references structural and non-production", () => {
   const content = readProjectFile("components/roster-draft-workbench.tsx")
 

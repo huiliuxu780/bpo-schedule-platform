@@ -102,6 +102,27 @@ type RosterRevisionCellSource = {
   sourceCellId?: string | null
 }
 
+type DownstreamRosterRequestIntent = {
+  request_id: string
+  business_month: string
+  project_id?: string | null
+  workplace_id?: string | null
+  team_id?: string | null
+  roster_version_id: string
+  roster_cell_id: string
+  employee_id: string
+  business_date: string
+  action_type: "leave" | "swap" | "exception_fix" | "site_adjustment"
+  requester_role: "frontline" | "team_lead"
+  requester_id: string
+  note: string
+  status: "open" | "resolved"
+  created_at: string
+  resolved_at?: string | null
+  resolved_by?: string | null
+  linked_revision_version_id?: string | null
+}
+
 type PublishedRosterSnapshot = {
   status: "published" | "missing"
   published: RosterVersionSummary | null
@@ -235,6 +256,13 @@ const queueLabels: Record<QueueKind, string> = {
   annotation: "已过滤标注",
 }
 
+const requestLabels: Record<DownstreamRosterRequestIntent["action_type"], string> = {
+  leave: "请假",
+  swap: "换班",
+  exception_fix: "异常修复",
+  site_adjustment: "现场调配",
+}
+
 const gapStatusLabels: Record<RosterGapStatus, string> = {
   shortage: "缺口",
   balanced: "平衡",
@@ -271,6 +299,9 @@ export function RosterDraftWorkbench({
     React.useState<RosterRevisionDraft | null>(null)
   const [lockState, setLockState] = React.useState<RosterLockState | null>(null)
   const [publishMessage, setPublishMessage] = React.useState<string | null>(null)
+  const [downstreamRequests, setDownstreamRequests] = React.useState<
+    DownstreamRosterRequestIntent[]
+  >([])
 
   const selectedWeek =
     model.weeks.find((week) => week.weekId === selectedWeekId) ?? model.weeks[0]
@@ -295,6 +326,10 @@ export function RosterDraftWorkbench({
   )
   const visibleGapRows =
     publishedSnapshot?.status === "published" ? publishedGapRows : gapRows
+  const downstreamRequestRows = React.useMemo(
+    () => downstreamRequests.filter((request) => request.status === "open"),
+    [downstreamRequests]
+  )
   const revisionCellSourceByKey = React.useMemo(
     () => buildRevisionCellSourceByKey(revisionDraft),
     [revisionDraft]
@@ -341,6 +376,23 @@ export function RosterDraftWorkbench({
     }
   }, [model])
 
+  React.useEffect(() => {
+    let cancelled = false
+
+    async function loadDownstreamRequests() {
+      const rows = await fetchDownstreamRosterRequests(model)
+      if (!cancelled) {
+        setDownstreamRequests(rows)
+      }
+    }
+
+    void loadDownstreamRequests()
+
+    return () => {
+      cancelled = true
+    }
+  }, [model, publishedSnapshot?.published?.version_id])
+
   function locateCell(employeeId: string, date: string, nextView: WorkbenchView = "week") {
     setSelectedCellKey(cellKey(employeeId, date))
     const week = model.weeks.find((item) =>
@@ -355,6 +407,11 @@ export function RosterDraftWorkbench({
 
   function selectGapRelatedCell(employeeId: string, date: string) {
     locateCell(employeeId, date, "week")
+    setInspectorTab("detail")
+  }
+
+  function locateDownstreamRequest(request: DownstreamRosterRequestIntent) {
+    locateCell(request.employee_id, request.business_date, "week")
     setInspectorTab("detail")
   }
 
@@ -462,6 +519,7 @@ export function RosterDraftWorkbench({
             business_month: model.targetMonth,
             project_id: model.project.projectId,
             workplace_id: model.project.workplaceName,
+            team_id: ROSTER_TEAM_ID,
             actor_id: ROSTER_PUBLISH_ACTOR_ID,
             occurred_at: currentLocalIsoMinute(),
             revision_version_id: buildRosterRevisionVersionId(model.targetMonth),
@@ -519,10 +577,49 @@ export function RosterDraftWorkbench({
       setCellEdits({})
       setPublishMessage("修订已发布为当前正式班表")
       setRosterLifecycleState("published")
+      await refreshDownstreamRequests()
     } catch {
       setPublishMessage("修订发布服务暂时不可用")
       setRosterLifecycleState("revision_draft")
     }
+  }
+
+  async function resolveDownstreamRequest(request: DownstreamRosterRequestIntent) {
+    const linkedVersionId =
+      revisionDraft?.version?.version_id ?? publishedSnapshot?.published?.version_id
+    if (!linkedVersionId) {
+      setPublishMessage("先创建修订草稿并重新发布后，再关闭处理意图")
+      setInspectorOpen(true)
+      setInspectorTab("queue")
+      return
+    }
+
+    try {
+      const response = await fetch(
+        buildRosterPublishApiUrl(`/api/v1/roster-requests/${encodeURIComponent(request.request_id)}/resolve`),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            resolver_id: ROSTER_PUBLISH_ACTOR_ID,
+            resolved_at: currentLocalIsoMinute(),
+            linked_revision_version_id: linkedVersionId,
+          }),
+        }
+      )
+      if (!response.ok) {
+        setPublishMessage("处理意图未关闭")
+        return
+      }
+      await refreshDownstreamRequests()
+      setPublishMessage("处理意图已关闭")
+    } catch {
+      setPublishMessage("处理队列服务暂时不可用")
+    }
+  }
+
+  async function refreshDownstreamRequests() {
+    setDownstreamRequests(await fetchDownstreamRosterRequests(model))
   }
 
   async function releaseOwnRosterLock() {
@@ -553,7 +650,7 @@ export function RosterDraftWorkbench({
           onSelectedWeekIdChange={setSelectedWeekId}
           selectedWeek={selectedWeek}
           teamNames={teamNames}
-          queueCount={queueItems.length}
+        queueCount={queueItems.length}
           editedCellCount={editedCellCount}
           rosterLifecycleState={rosterLifecycleState}
           isRosterReadOnly={isRosterReadOnly}
@@ -625,9 +722,10 @@ export function RosterDraftWorkbench({
           rosterLifecycleState={rosterLifecycleState}
           isRosterReadOnly={isRosterReadOnly}
           derivedCoverage={derivedCoverage}
-          gapRows={visibleGapRows}
-          onOpenInspector={() => setInspectorOpen(true)}
-        />
+        gapRows={visibleGapRows}
+        downstreamRequestCount={downstreamRequestRows.length}
+        onOpenInspector={() => setInspectorOpen(true)}
+      />
       </div>
 
       <RosterInspectorDrawer
@@ -643,6 +741,7 @@ export function RosterDraftWorkbench({
         derivedCoverage={derivedCoverage}
         gapRows={publishedGapRows}
         draftGapRows={gapRows}
+        downstreamRequests={downstreamRequestRows}
         editedCellCount={editedCellCount}
         activeTab={inspectorTab}
         onActiveTabChange={setInspectorTab}
@@ -650,6 +749,8 @@ export function RosterDraftWorkbench({
         onResetCellDraftEdit={resetCellDraftEdit}
         onLocateCell={locateCell}
         onSelectRelatedCell={selectGapRelatedCell}
+        onLocateDownstreamRequest={locateDownstreamRequest}
+        onResolveDownstreamRequest={resolveDownstreamRequest}
       />
     </Drawer>
   )
@@ -1032,6 +1133,7 @@ function RosterBoardStatusbar({
   isRosterReadOnly,
   derivedCoverage,
   gapRows,
+  downstreamRequestCount,
   onOpenInspector,
 }: {
   model: RosterDraftViewModel
@@ -1042,6 +1144,7 @@ function RosterBoardStatusbar({
   isRosterReadOnly: boolean
   derivedCoverage: RosterDerivedCoverage
   gapRows: RosterGapPreviewRow[]
+  downstreamRequestCount: number
   onOpenInspector: () => void
 }) {
   const shortageCount = gapRows.filter((row) => row.status === "shortage").length
@@ -1067,6 +1170,7 @@ function RosterBoardStatusbar({
         <span>{derivedCoverage.totalShiftCount} 班次</span>
         <span>{derivedCoverage.coveredSlotCount} 个半小时覆盖点</span>
         <span>{shortageCount} 个缺口</span>
+        <span>{downstreamRequestCount} 个下游处理</span>
         <span>{model.summary.exceptionCount} 异常</span>
         <span>{model.summary.pendingEmployeeCount} 待排</span>
       </div>
@@ -1093,6 +1197,7 @@ function RosterInspectorDrawer({
   derivedCoverage,
   gapRows,
   draftGapRows,
+  downstreamRequests,
   editedCellCount,
   activeTab,
   onActiveTabChange,
@@ -1100,6 +1205,8 @@ function RosterInspectorDrawer({
   onResetCellDraftEdit,
   onLocateCell,
   onSelectRelatedCell,
+  onLocateDownstreamRequest,
+  onResolveDownstreamRequest,
 }: {
   selectedCell?: SelectedCell
   items: QueueItem[]
@@ -1113,6 +1220,7 @@ function RosterInspectorDrawer({
   derivedCoverage: RosterDerivedCoverage
   gapRows: RosterGapPreviewRow[]
   draftGapRows: RosterGapPreviewRow[]
+  downstreamRequests: DownstreamRosterRequestIntent[]
   editedCellCount: number
   activeTab: WorkbenchInspectorTab
   onActiveTabChange: (tab: WorkbenchInspectorTab) => void
@@ -1120,6 +1228,8 @@ function RosterInspectorDrawer({
   onResetCellDraftEdit: (key: string) => void
   onLocateCell: (employeeId: string, date: string, view?: WorkbenchView) => void
   onSelectRelatedCell: (employeeId: string, date: string) => void
+  onLocateDownstreamRequest: (request: DownstreamRosterRequestIntent) => void
+  onResolveDownstreamRequest: (request: DownstreamRosterRequestIntent) => void
 }) {
   return (
     <DrawerContent
@@ -1193,7 +1303,14 @@ function RosterInspectorDrawer({
             />
           </TabsContent>
           <TabsContent value="queue" className="m-0">
-            <WorkbenchQueuePanel items={items} onLocateCell={onLocateCell} />
+            <div className="grid gap-4">
+              <DownstreamRequestQueuePanel
+                requests={downstreamRequests}
+                onLocateRequest={onLocateDownstreamRequest}
+                onResolveRequest={onResolveDownstreamRequest}
+              />
+              <WorkbenchQueuePanel items={items} onLocateCell={onLocateCell} />
+            </div>
           </TabsContent>
         </Tabs>
       </div>
@@ -1855,6 +1972,77 @@ function WorkbenchQueuePanel({
   )
 }
 
+function DownstreamRequestQueuePanel({
+  requests,
+  onLocateRequest,
+  onResolveRequest,
+}: {
+  requests: DownstreamRosterRequestIntent[]
+  onLocateRequest: (request: DownstreamRosterRequestIntent) => void
+  onResolveRequest: (request: DownstreamRosterRequestIntent) => void
+}) {
+  return (
+    <div
+      data-slot="downstream-roster-request-queue"
+      className="rounded-lg border bg-card p-3"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <div className="text-sm font-medium">下游处理队列</div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            小组长和一线登记的本地处理意图，定位到正式班表格子后进入修订。
+          </div>
+        </div>
+        <Badge variant="secondary">{requests.length}</Badge>
+      </div>
+      <div className="mt-3 grid gap-2">
+        {requests.length === 0 ? (
+          <div className="rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+            暂无下游处理意图
+          </div>
+        ) : (
+          requests.map((request) => (
+            <div key={request.request_id} className="rounded-md border p-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-medium">
+                    {request.employee_id} / {request.business_date}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {requestLabels[request.action_type]} · {request.requester_role}
+                  </div>
+                </div>
+                <Badge variant="outline">{request.status}</Badge>
+              </div>
+              <div className="mt-2 text-sm">{request.note}</div>
+              <div className="mt-2 text-xs font-medium">
+                定位到正式班表格子：{request.roster_cell_id}
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => onLocateRequest(request)}
+                >
+                  定位到正式班表格子
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => onResolveRequest(request)}
+                >
+                  关闭处理意图
+                </Button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  )
+}
+
 async function fetchCurrentPublishedSnapshot(
   model: RosterDraftViewModel
 ): Promise<PublishedRosterSnapshot | null> {
@@ -1862,6 +2050,7 @@ async function fetchCurrentPublishedSnapshot(
     business_month: model.targetMonth,
     project_id: model.project.projectId,
     workplace_id: model.project.workplaceName,
+    team_id: ROSTER_TEAM_ID,
   })
   try {
     const response = await fetch(
@@ -1879,6 +2068,30 @@ async function fetchCurrentPublishedSnapshot(
   }
 }
 
+async function fetchDownstreamRosterRequests(
+  model: RosterDraftViewModel
+): Promise<DownstreamRosterRequestIntent[]> {
+  const params = new URLSearchParams({
+    business_month: model.targetMonth,
+    project_id: model.project.projectId,
+    workplace_id: model.project.workplaceName,
+    team_id: ROSTER_TEAM_ID,
+  })
+  try {
+    const response = await fetch(
+      buildRosterPublishApiUrl(`/api/v1/roster-requests?${params.toString()}`),
+      { cache: "no-store" }
+    )
+    if (!response.ok) {
+      return []
+    }
+    const payload = await response.json()
+    return Array.isArray(payload?.items) ? payload.items : []
+  } catch {
+    return []
+  }
+}
+
 async function fetchActiveRevisionDraft(
   model: RosterDraftViewModel
 ): Promise<RosterRevisionDraft | null> {
@@ -1886,6 +2099,7 @@ async function fetchActiveRevisionDraft(
     business_month: model.targetMonth,
     project_id: model.project.projectId,
     workplace_id: model.project.workplaceName,
+    team_id: ROSTER_TEAM_ID,
   })
   try {
     const response = await fetch(
@@ -1994,7 +2208,7 @@ function buildRosterPublishPayload(
           assignment_kind: assignmentKind,
           project_id: model.project.projectId,
           workplace_id: model.project.workplaceName,
-          team_id: row.teamName,
+          team_id: teamIdFromTeamName(row.teamName) ?? row.teamName,
           shift_code: effectiveCell.shiftCode,
           interval_start_at: interval?.startAt,
           interval_end_at: interval?.endAt,
@@ -2012,6 +2226,7 @@ function buildRosterPublishPayload(
     business_month: model.targetMonth,
     project_id: model.project.projectId,
     workplace_id: model.project.workplaceName,
+    team_id: ROSTER_TEAM_ID,
     valid_shift_codes: uniqueValues(cells.map((cell) => cell.shift_code)),
     required_coverage_slots: model.forecastIntervals.map((item) =>
       rosterSlotToIso(item.businessDate, item.slotLabel)
@@ -2021,7 +2236,7 @@ function buildRosterPublishPayload(
       active: true,
       project_id: model.project.projectId,
       workplace_id: model.project.workplaceName,
-      team_id: row.teamName,
+      team_id: teamIdFromTeamName(row.teamName) ?? row.teamName,
       status: "active",
     })),
     cells,
@@ -2141,6 +2356,11 @@ function formatPublishedSlot(slotStartAt: string): string {
 }
 
 const ROSTER_PUBLISH_ACTOR_ID = "scheduler-1"
+const ROSTER_TEAM_ID = "G1"
+
+function teamIdFromTeamName(teamName: string): string | null {
+  return teamName === "G1 投诉组" ? "G1" : teamName === "G2 在线组" ? "G2" : null
+}
 
 function buildQueueItems(
   model: RosterDraftViewModel,

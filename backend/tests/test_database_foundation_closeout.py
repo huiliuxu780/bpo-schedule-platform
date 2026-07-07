@@ -55,6 +55,7 @@ class DatabaseFoundationCloseoutTest(unittest.TestCase):
             "roster_cell_change_logs",
             "roster_published_snapshots",
             "roster_edit_locks",
+            "roster_request_intents",
         }
         with tempfile.TemporaryDirectory() as directory:
             database_url = f"sqlite+pysqlite:///{Path(directory) / 'foundation.db'}"

@@ -349,6 +349,30 @@
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
 
+### 2026-07-07 - IM302 正式班表下游处理意图闭环 v1 Implementation
+
+#### 审计结论
+
+- IM302 已完成一个角色闭环，不是单独的 DB 或 API 小片：下游用户从正式班表格子登记处理意图，排班师在月班表工作台队列处理。
+- 新增本地 `roster_request_intents` 持久化表、repository/service/API，处理意图绑定 business month、project、workplace、team、current published version、roster cell、employee、date、action、requester role 和 note。
+- `/published-roster?month=2026-08` 的请假、换班、异常修复、现场调配动作可登记本地处理意图；文案保持“本地队列”，不声称审批、通知或权限能力。
+- `/roster-drafts?month=2026-08` 新增下游处理队列，可查看 open 意图、定位到人员/日期格子，并关闭处理意图；处理动作复用既有修订草稿和重新发布上下文。
+- 本轮未新增真实审批、认证、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。
+
+#### 验证
+
+- focused backend: `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_publish_api backend.tests.test_database_foundation_closeout` 通过 16 tests，含 Alembic `20260706_0012`。
+- focused frontend: `node --test scripts/tests/published-roster-view-model.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 通过 29 tests。
+- typecheck: `npm run typecheck` 通过。
+- runtime smoke: local backend `127.0.0.1:8001` + frontend `127.0.0.1:3003`；正式班表可见，格子详情显示 `登记处理意图`；后端 API 完成 `REQ-IM302-BROWSER-SMOKE` 创建、修订草稿创建和 resolve，最终状态为 `resolved`。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、884 Node tests（883 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、275 backend tests 和 project Harness check。
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### 2026-07-06 - IM301 正式班表变更申请边界 v1 Implementation
 
 #### 审计结论

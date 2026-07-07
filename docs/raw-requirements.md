@@ -277,6 +277,19 @@ status: "done"
 notes: "Request boundary shell only; no real request submission, approval, auth, permissions, backend API, database, new persistence, notification, export, batch, forecasting model, standard-capacity model, Excel import, production formula, settlement, or charge-factor work."
 ```
 
+### R970 - 正式班表下游处理意图闭环 v1
+
+```yaml
+id: R970
+module: "BPO WFM 三条主线"
+description: "在 IM301 正式班表申请边界之上，补齐一个本地 DB-backed 的下游处理意图闭环。小组长或一线在 `/published-roster?month=2026-08` 的正式班表格子详情里选择请假、换班、异常修复或现场调配后，可以登记一条本地处理意图；系统把意图挂到当前正式班表版本、稳定 roster cell、人员和日期上；排班师在 `/roster-drafts?month=2026-08` 的队列中看到下游处理意图，能定位到对应人员/日期格子，并通过既有创建修订草稿、受控编辑、重新发布修订上下文关闭该意图。"
+source: "PM confirmed DB-backed local persistence after IM301; user rejected tiny task split on 2026-07-06/2026-07-07"
+submitted_at: "2026-07-07"
+version: "1.0"
+status: "done"
+notes: "Local handling-intent loop only; no real approval workflow, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, or charge-factor work."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

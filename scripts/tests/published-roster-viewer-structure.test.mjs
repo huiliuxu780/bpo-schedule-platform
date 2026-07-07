@@ -52,7 +52,7 @@ test("published roster month mode renders a calendar overview instead of a 31-da
   assert.ok(!content.includes('mode === "month" ? downstreamView.monthDays'))
 })
 
-test("published roster viewer exposes request boundary shells without submission or approval", () => {
+test("published roster viewer creates local request intents without approval", () => {
   const content = [
     readProjectFile("components/published-roster-viewer.tsx"),
     readProjectFile("lib/published-roster-view.ts"),
@@ -61,10 +61,12 @@ test("published roster viewer exposes request boundary shells without submission
   assert.ok(content.includes("请假"))
   assert.ok(content.includes("换班"))
   assert.ok(content.includes("异常修复"))
-  assert.ok(content.includes("RequestBoundaryPanel"))
-  assert.ok(content.includes('data-slot="published-roster-request-boundary"'))
-  assert.ok(content.includes("boundary_only"))
-  assert.ok(content.includes("暂不写入"))
+  assert.ok(content.includes("RequestIntentPanel"))
+  assert.ok(content.includes('data-slot="published-roster-request-intent"'))
+  assert.ok(content.includes("/api/v1/roster-requests"))
+  assert.ok(content.includes("登记处理意图"))
+  assert.ok(content.includes("本地队列"))
+  assert.ok(content.includes("intent_ready"))
   assert.ok(!content.includes("disabled={action.disabled}"))
   assert.ok(!content.includes("申请能力待开通"))
   assert.ok(!content.includes("提交申请"))

@@ -27,10 +27,11 @@ export type DownstreamPublishedRosterInput = {
 export type DownstreamRosterRole = "team_lead" | "frontline"
 
 export type DownstreamRosterRequestAction = {
-  key: "leave" | "swap" | "exception_fix"
+  key: "leave" | "swap" | "exception_fix" | "site_adjustment"
   label: string
   disabled: false
-  submissionState: "boundary_only"
+  submissionState: "intent_ready"
+  intentEndpoint: "/api/v1/roster-requests"
   ownerLabel: string
   requiredFields: string[]
   boundaryTitle: string
@@ -38,6 +39,7 @@ export type DownstreamRosterRequestAction = {
 }
 
 export type DownstreamRosterCellDetail = {
+  cellId: string
   employeeId: string
   employeeName: string
   teamName: string
@@ -137,7 +139,8 @@ const requestActions: DownstreamRosterRequestAction[] = [
     key: "leave",
     label: "请假",
     disabled: false,
-    submissionState: "boundary_only",
+    submissionState: "intent_ready",
+    intentEndpoint: "/api/v1/roster-requests",
     ownerLabel: "小组长初核",
     requiredFields: ["请假类型", "开始时间", "结束时间", "原因说明"],
     boundaryTitle: "请假申请边界",
@@ -147,7 +150,8 @@ const requestActions: DownstreamRosterRequestAction[] = [
     key: "swap",
     label: "换班",
     disabled: false,
-    submissionState: "boundary_only",
+    submissionState: "intent_ready",
+    intentEndpoint: "/api/v1/roster-requests",
     ownerLabel: "小组长协调",
     requiredFields: ["目标人员", "目标日期", "目标班次", "双方确认情况"],
     boundaryTitle: "换班申请边界",
@@ -157,11 +161,23 @@ const requestActions: DownstreamRosterRequestAction[] = [
     key: "exception_fix",
     label: "异常修复",
     disabled: false,
-    submissionState: "boundary_only",
+    submissionState: "intent_ready",
+    intentEndpoint: "/api/v1/roster-requests",
     ownerLabel: "排班师处理",
     requiredFields: ["异常类型", "实际发生时间", "修复说明", "证明材料"],
     boundaryTitle: "异常修复边界",
     boundaryDescription: "用于说明正式班表与现场情况不一致时需要补齐的信息，当前仅定位路径。",
+  },
+  {
+    key: "site_adjustment",
+    label: "现场调配",
+    disabled: false,
+    submissionState: "intent_ready",
+    intentEndpoint: "/api/v1/roster-requests",
+    ownerLabel: "排班师处理",
+    requiredFields: ["现场情况", "影响人员", "建议处理", "发生时间"],
+    boundaryTitle: "现场调配处理意图",
+    boundaryDescription: "用于记录小组长现场调配诉求，进入排班师下游处理队列。",
   },
 ]
 
@@ -324,6 +340,7 @@ function buildPublishedRosterRow({
         isManual: Boolean(publishedCell?.manually_adjusted),
         detail: publishedCell
           ? {
+              cellId: publishedCell.cell_id,
               employeeId: sourceRow.employeeId,
               employeeName: sourceRow.employeeName,
               teamName: sourceRow.teamName,

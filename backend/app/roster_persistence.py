@@ -42,6 +42,28 @@ class RosterCellChangeLogRecord:
 
 
 @dataclass(frozen=True)
+class RosterRequestIntentRecord:
+    request_id: str
+    business_month: str
+    project_id: str | None
+    workplace_id: str | None
+    team_id: str | None
+    roster_version_id: str
+    roster_cell_id: str
+    employee_id: str
+    business_date: str
+    action_type: str
+    requester_role: str
+    requester_id: str
+    note: str
+    status: str
+    created_at: str
+    resolved_at: str | None = None
+    resolved_by: str | None = None
+    linked_revision_version_id: str | None = None
+
+
+@dataclass(frozen=True)
 class RosterVersionDetail:
     version: RosterVersion
     cells: list[RosterAssignment]
@@ -190,6 +212,33 @@ class RosterEditLockEntity(Base):
     actor_id: Mapped[str] = mapped_column(String(120), nullable=False)
     acquired_at: Mapped[str] = mapped_column(String(40), nullable=False)
     expires_at: Mapped[str] = mapped_column(String(40), nullable=False)
+
+
+class RosterRequestIntentEntity(Base):
+    __tablename__ = "roster_request_intents"
+
+    request_id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    business_month: Mapped[str] = mapped_column(String(7), nullable=False, index=True)
+    project_id: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    workplace_id: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    team_id: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    roster_version_id: Mapped[str] = mapped_column(
+        ForeignKey("roster_versions.roster_version_id"),
+        nullable=False,
+        index=True,
+    )
+    roster_cell_id: Mapped[str] = mapped_column(String(160), nullable=False, index=True)
+    employee_id: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
+    business_date: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
+    action_type: Mapped[str] = mapped_column(String(40), nullable=False)
+    requester_role: Mapped[str] = mapped_column(String(40), nullable=False)
+    requester_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    note: Mapped[str] = mapped_column(String(1000), nullable=False)
+    status: Mapped[str] = mapped_column(String(40), nullable=False, index=True)
+    created_at: Mapped[str] = mapped_column(String(40), nullable=False)
+    resolved_at: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    resolved_by: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    linked_revision_version_id: Mapped[str | None] = mapped_column(String(120), nullable=True)
 
 
 class RosterPersistenceRepository:
@@ -351,6 +400,67 @@ class RosterPersistenceRepository:
         with self.session_factory() as session:
             entity = session.get(RosterEditLockEntity, roster_version_id)
             return _edit_lock_record(entity) if entity is not None else None
+
+    def create_request_intent(
+        self,
+        intent: RosterRequestIntentRecord,
+    ) -> RosterRequestIntentRecord:
+        with self.session_factory.begin() as session:
+            session.add(_request_intent_entity(intent))
+        return self.get_request_intent(intent.request_id)
+
+    def list_open_request_intents(
+        self,
+        *,
+        business_month: str,
+        project_id: str | None,
+        workplace_id: str | None,
+        team_id: str | None,
+    ) -> list[RosterRequestIntentRecord]:
+        with self.session_factory() as session:
+            rows = list(
+                session.scalars(
+                    select(RosterRequestIntentEntity)
+                    .where(
+                        RosterRequestIntentEntity.business_month == business_month,
+                        RosterRequestIntentEntity.project_id == _scope_value(project_id),
+                        RosterRequestIntentEntity.workplace_id == _scope_value(workplace_id),
+                        RosterRequestIntentEntity.team_id == _scope_value(team_id),
+                        RosterRequestIntentEntity.status == "open",
+                    )
+                    .order_by(
+                        RosterRequestIntentEntity.created_at,
+                        RosterRequestIntentEntity.request_id,
+                    )
+                )
+            )
+        return [_request_intent_record(row) for row in rows]
+
+    def get_request_intent(self, request_id: str) -> RosterRequestIntentRecord | None:
+        with self.session_factory() as session:
+            entity = session.get(RosterRequestIntentEntity, request_id)
+            return _request_intent_record(entity) if entity is not None else None
+
+    def resolve_request_intent(
+        self,
+        request_id: str,
+        *,
+        resolver_id: str,
+        resolved_at: str,
+        linked_revision_version_id: str,
+    ) -> RosterRequestIntentRecord:
+        with self.session_factory.begin() as session:
+            entity = session.get(RosterRequestIntentEntity, request_id)
+            if entity is None:
+                raise ValueError(f"roster request intent does not exist: {request_id}")
+            entity.status = "resolved"
+            entity.resolved_at = resolved_at
+            entity.resolved_by = resolver_id
+            entity.linked_revision_version_id = linked_revision_version_id
+        intent = self.get_request_intent(request_id)
+        if intent is None:
+            raise RuntimeError("resolved roster request intent could not be read back")
+        return intent
 
     def get_version(self, roster_version_id: str) -> RosterVersionDetail | None:
         with self.session_factory() as session:
@@ -594,6 +704,29 @@ def _change_log_entity(
     )
 
 
+def _request_intent_entity(intent: RosterRequestIntentRecord) -> RosterRequestIntentEntity:
+    return RosterRequestIntentEntity(
+        request_id=intent.request_id,
+        business_month=intent.business_month,
+        project_id=_scope_value(intent.project_id),
+        workplace_id=_scope_value(intent.workplace_id),
+        team_id=_scope_value(intent.team_id),
+        roster_version_id=intent.roster_version_id,
+        roster_cell_id=intent.roster_cell_id,
+        employee_id=intent.employee_id,
+        business_date=intent.business_date,
+        action_type=intent.action_type,
+        requester_role=intent.requester_role,
+        requester_id=intent.requester_id,
+        note=intent.note,
+        status=intent.status,
+        created_at=intent.created_at,
+        resolved_at=intent.resolved_at,
+        resolved_by=intent.resolved_by,
+        linked_revision_version_id=intent.linked_revision_version_id,
+    )
+
+
 def _version_record(entity: RosterVersionEntity) -> RosterVersion:
     return RosterVersion(
         roster_version_id=entity.roster_version_id,
@@ -674,6 +807,29 @@ def _edit_lock_record(entity: RosterEditLockEntity) -> RosterEditLock:
         actor_id=entity.actor_id,
         acquired_at=entity.acquired_at,
         expires_at=entity.expires_at,
+    )
+
+
+def _request_intent_record(entity: RosterRequestIntentEntity) -> RosterRequestIntentRecord:
+    return RosterRequestIntentRecord(
+        request_id=entity.request_id,
+        business_month=entity.business_month,
+        project_id=_empty_to_none(entity.project_id),
+        workplace_id=_empty_to_none(entity.workplace_id),
+        team_id=_empty_to_none(entity.team_id),
+        roster_version_id=entity.roster_version_id,
+        roster_cell_id=entity.roster_cell_id,
+        employee_id=entity.employee_id,
+        business_date=entity.business_date,
+        action_type=entity.action_type,
+        requester_role=entity.requester_role,
+        requester_id=entity.requester_id,
+        note=entity.note,
+        status=entity.status,
+        created_at=entity.created_at,
+        resolved_at=entity.resolved_at,
+        resolved_by=entity.resolved_by,
+        linked_revision_version_id=entity.linked_revision_version_id,
     )
 
 

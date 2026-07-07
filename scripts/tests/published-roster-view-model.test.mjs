@@ -128,26 +128,32 @@ test("frontline sees one selected employee and request boundary actions", () => 
       {
         key: "leave",
         label: "请假",
-        submissionState: "boundary_only",
+        submissionState: "intent_ready",
         ownerLabel: "小组长初核",
       },
       {
         key: "swap",
         label: "换班",
-        submissionState: "boundary_only",
+        submissionState: "intent_ready",
         ownerLabel: "小组长协调",
       },
       {
         key: "exception_fix",
         label: "异常修复",
-        submissionState: "boundary_only",
+        submissionState: "intent_ready",
+        ownerLabel: "排班师处理",
+      },
+      {
+        key: "site_adjustment",
+        label: "现场调配",
+        submissionState: "intent_ready",
         ownerLabel: "排班师处理",
       },
     ]
   )
 })
 
-test("request boundaries explain required information without enabling submission", () => {
+test("request actions describe local handling intents without enabling approval", () => {
   const view = buildDownstreamPublishedRosterView({
     model,
     published: {
@@ -170,10 +176,12 @@ test("request boundaries explain required information without enabling submissio
       ["leave", ["请假类型", "开始时间", "结束时间", "原因说明"]],
       ["swap", ["目标人员", "目标日期", "目标班次", "双方确认情况"]],
       ["exception_fix", ["异常类型", "实际发生时间", "修复说明", "证明材料"]],
+      ["site_adjustment", ["现场情况", "影响人员", "建议处理", "发生时间"]],
     ]
   )
-  assert.equal(actions.every((action) => action.submissionState === "boundary_only"), true)
+  assert.equal(actions.every((action) => action.submissionState === "intent_ready"), true)
   assert.equal(actions.every((action) => action.disabled === false), true)
+  assert.equal(actions.every((action) => action.intentEndpoint === "/api/v1/roster-requests"), true)
 })
 
 test("team lead month calendar summarizes each day and maps the day back to its week", () => {

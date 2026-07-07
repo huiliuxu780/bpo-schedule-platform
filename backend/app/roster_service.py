@@ -18,6 +18,7 @@ from backend.app.roster_drafts import (
 )
 from backend.app.roster_persistence import (
     RosterPersistenceRepository,
+    RosterRequestIntentRecord,
     RosterVersionDetail,
 )
 
@@ -26,6 +27,10 @@ from backend.app.roster_persistence import (
 class RosterActivationResult:
     activated_version_ids: list[str]
     failed_version_ids: list[str]
+
+
+REQUEST_INTENT_ACTIONS = {"leave", "swap", "exception_fix", "site_adjustment"}
+REQUEST_INTENT_ROLES = {"frontline", "team_lead"}
 
 
 class RosterService:
@@ -315,6 +320,93 @@ class RosterService:
             actor_id,
             now,
             EditLockDecision.FORCE_RELEASE,
+        )
+
+    def create_request_intent(
+        self,
+        *,
+        request_id: str,
+        business_month: str,
+        project_id: str | None,
+        workplace_id: str | None,
+        team_id: str | None,
+        roster_cell_id: str,
+        action_type: str,
+        requester_role: str,
+        requester_id: str,
+        note: str,
+        occurred_at: str,
+    ) -> RosterRequestIntentRecord:
+        if action_type not in REQUEST_INTENT_ACTIONS:
+            raise ValueError(f"unsupported roster request action: {action_type}")
+        if requester_role not in REQUEST_INTENT_ROLES:
+            raise ValueError(f"unsupported roster requester role: {requester_role}")
+        current = self.repository.get_current_published(
+            business_month=business_month,
+            project_id=project_id,
+            workplace_id=workplace_id,
+            team_id=team_id,
+        )
+        if current is None:
+            raise ValueError("current published roster cell not found")
+        linked_cell = next(
+            (cell for cell in current.cells if cell.roster_cell_id == roster_cell_id),
+            None,
+        )
+        if linked_cell is None:
+            raise ValueError("current published roster cell not found")
+        return self.repository.create_request_intent(
+            RosterRequestIntentRecord(
+                request_id=request_id,
+                business_month=business_month,
+                project_id=project_id,
+                workplace_id=workplace_id,
+                team_id=team_id,
+                roster_version_id=current.version.roster_version_id,
+                roster_cell_id=roster_cell_id,
+                employee_id=linked_cell.employee_id,
+                business_date=linked_cell.business_date,
+                action_type=action_type,
+                requester_role=requester_role,
+                requester_id=requester_id,
+                note=note,
+                status="open",
+                created_at=occurred_at,
+            )
+        )
+
+    def list_open_request_intents(
+        self,
+        *,
+        business_month: str,
+        project_id: str | None,
+        workplace_id: str | None,
+        team_id: str | None,
+    ) -> list[RosterRequestIntentRecord]:
+        return self.repository.list_open_request_intents(
+            business_month=business_month,
+            project_id=project_id,
+            workplace_id=workplace_id,
+            team_id=team_id,
+        )
+
+    def resolve_request_intent(
+        self,
+        request_id: str,
+        *,
+        resolver_id: str,
+        resolved_at: str,
+        linked_revision_version_id: str,
+    ) -> RosterRequestIntentRecord:
+        if self.repository.get_version(linked_revision_version_id) is None:
+            raise ValueError(
+                f"linked revision version does not exist: {linked_revision_version_id}"
+            )
+        return self.repository.resolve_request_intent(
+            request_id,
+            resolver_id=resolver_id,
+            resolved_at=resolved_at,
+            linked_revision_version_id=linked_revision_version_id,
         )
 
     def _apply_edit_lock(

@@ -271,7 +271,7 @@ export function PublishedRosterViewer({
             </DrawerDescription>
           </DrawerHeader>
           {selectedCell?.cell.detail ? (
-            <PublishedRosterDetail cell={selectedCell.cell} />
+            <PublishedRosterDetail cell={selectedCell.cell} role={role} model={model} />
           ) : (
             <div className="px-4 text-sm text-muted-foreground">当天暂无班次。</div>
           )}
@@ -476,10 +476,21 @@ type DownstreamPublishedRosterCellDay = {
   weekdayLabel: string
 }
 
-function PublishedRosterDetail({ cell }: { cell: DownstreamRosterCell }) {
+function PublishedRosterDetail({
+  cell,
+  role,
+  model,
+}: {
+  cell: DownstreamRosterCell
+  role: DownstreamRosterRole
+  model: RosterDraftViewModel
+}) {
   const detail = cell.detail
   const [selectedActionKey, setSelectedActionKey] =
     React.useState<DownstreamRosterRequestAction["key"]>("leave")
+  const [intentNote, setIntentNote] = React.useState("")
+  const [intentMessage, setIntentMessage] = React.useState<string | null>(null)
+  const [isCreatingIntent, setIsCreatingIntent] = React.useState(false)
 
   if (!detail) {
     return null
@@ -515,20 +526,75 @@ function PublishedRosterDetail({ cell }: { cell: DownstreamRosterCell }) {
             </Button>
           ))}
         </div>
-        <RequestBoundaryPanel action={selectedAction} />
+        <RequestIntentPanel
+          action={selectedAction}
+          note={intentNote}
+          message={intentMessage}
+          isCreating={isCreatingIntent}
+          onNoteChange={setIntentNote}
+          onCreateIntent={async () => {
+            setIsCreatingIntent(true)
+            setIntentMessage(null)
+            try {
+              const response = await fetch(buildRosterApiUrl(selectedAction.intentEndpoint), {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  request_id: `REQ-${Date.now()}`,
+                  business_month: model.targetMonth,
+                  project_id: model.project.projectId,
+                  workplace_id: model.project.workplaceName,
+                  team_id: "G1",
+                  roster_cell_id: detail.cellId,
+                  action_type: selectedAction.key,
+                  requester_role: role,
+                  requester_id: role === "frontline" ? detail.employeeId : "LEAD-G1",
+                  note:
+                    intentNote.trim() ||
+                    `${selectedAction.label} / ${detail.employeeName} / ${detail.date}`,
+                  occurred_at: currentLocalIsoMinute(),
+                }),
+              })
+              const payload = await response.json().catch(() => null)
+              if (!response.ok) {
+                setIntentMessage(
+                  payload?.error?.message ??
+                    payload?.detail?.error?.message ??
+                    "处理意图未登记"
+                )
+                return
+              }
+              setIntentMessage("已进入排班师本地处理队列")
+            } catch {
+              setIntentMessage("处理队列服务暂时不可用")
+            } finally {
+              setIsCreatingIntent(false)
+            }
+          }}
+        />
       </div>
     </div>
   )
 }
 
-function RequestBoundaryPanel({
+function RequestIntentPanel({
   action,
+  note,
+  message,
+  isCreating,
+  onNoteChange,
+  onCreateIntent,
 }: {
   action: DownstreamRosterRequestAction
+  note: string
+  message: string | null
+  isCreating: boolean
+  onNoteChange: (note: string) => void
+  onCreateIntent: () => void
 }) {
   return (
     <div
-      data-slot="published-roster-request-boundary"
+      data-slot="published-roster-request-intent"
       data-request-action={action.key}
       className="mt-3 rounded-lg border bg-muted/30 p-3"
     >
@@ -552,7 +618,26 @@ function RequestBoundaryPanel({
         ))}
       </div>
       <div className="mt-3 text-xs text-muted-foreground">
-        暂不写入系统；这里只定义一线和小组长看到问题后的路径边界。
+        本地队列记录处理意图；不进入审批、不通知、不做权限判断。
+      </div>
+      <textarea
+        className="mt-3 min-h-20 w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        value={note}
+        onChange={(event) => onNoteChange(event.target.value)}
+        placeholder="补充现场情况"
+      />
+      <div className="mt-3 flex items-center justify-between gap-3">
+        <Button
+          type="button"
+          size="sm"
+          onClick={onCreateIntent}
+          disabled={isCreating}
+        >
+          登记处理意图
+        </Button>
+        {message ? (
+          <span className="text-xs text-muted-foreground">{message}</span>
+        ) : null}
       </div>
     </div>
   )
@@ -574,6 +659,7 @@ async function fetchFormalRoster(
     business_month: model.targetMonth,
     project_id: model.project.projectId,
     workplace_id: model.project.workplaceName,
+    team_id: fixedTeamId,
   })
 
   try {
@@ -617,4 +703,8 @@ function buildRosterApiUrl(path: string): string {
     process.env.NEXT_PUBLIC_BPO_API_BASE_URL?.replace(/\/$/, "") ??
     "http://127.0.0.1:8000"
   return `${base}${path.startsWith("/") ? path : `/${path}`}`
+}
+
+function currentLocalIsoMinute(): string {
+  return new Date().toISOString().slice(0, 16)
 }

@@ -65,6 +65,27 @@
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
 
+### IM302 Downstream Roster Request Intent Loop
+
+- branch_name: `codex/im302-downstream-roster-request-loop`
+- base_main_commit: `stacked on local IM301 baseline`
+- stacked_on: `codex/im301-formal-roster-request-boundaries`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Local DB-backed downstream formal-roster request intent loop from `/published-roster` to `/roster-drafts`.
+- qoder_mode: `false; PM explicitly asked Codex to stop tiny slicing and land the DB-backed loop.`
+- allowed_files_check: backend roster persistence/service/API/migration/tests, published-roster viewer/model/tests, roster-draft workbench/tests, traceability docs, and the IM302 implementation plan.
+- scope_diff_check: expected local DB/API/frontend vertical plus traceability only; no package/lockfile, real external integration, auth, permissions, approval workflow, notification, export, batch, automatic scheduling, forecasting model, standard-capacity model, Excel import, production formulas, settlement, or charge-factor changes.
+- focused_check_result: `node --test scripts/tests/published-roster-view-model.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` passed with 29 tests; `npm run typecheck` passed; `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_publish_api backend.tests.test_database_foundation_closeout` passed with 16 tests; `git diff --check` passed before trace closeout.
+- browser_check_result: `127.0.0.1:3003/published-roster?month=2026-08` showed the current formal roster, calendar day, week detail, Alice Chen `A5 09:00-14:30`, and `登记处理意图`; browser automation then timed out, so the same local backend completed API smoke for create revision and resolve.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 884 Node tests (883 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 275 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM301 Formal Roster Request Boundaries
 
 - branch_name: `codex/im301-formal-roster-request-boundaries`

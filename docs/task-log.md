@@ -245,3 +245,15 @@
 - focused verification: red `node --test scripts/tests/published-roster-view-model.test.mjs` 失败在缺少 `ownerLabel` / `submissionState` / `requiredFields`；red `node --test scripts/tests/published-roster-viewer-structure.test.mjs` 失败在缺少 `RequestBoundaryPanel`；green 后 `node --test scripts/tests/published-roster-view-model.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 通过 28 tests；`npm run typecheck`、`git diff --check` 均通过。
 - browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`；打开 `/published-roster?month=2026-08`，点击 `2026-08-03` 与 `EMP-001` 周明细格子，详情内请假、换班、异常修复分别切换到对应边界面板；面板展示小组长初核/小组长协调/排班师处理与各自所需字段；页面未出现 `提交申请`、`提交审批` 或 `current published`。
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、883 Node tests（882 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、272 backend tests 和 project Harness check。
+
+- task_id: `IM302`
+- source_ids:
+  - `R970`
+- story_ids:
+  - `US890`
+- action: 正式班表下游处理意图闭环 v1 Implementation。
+- status: `done`
+- notes: 完成一个本地 DB-backed 的下游处理闭环：小组长/一线在 `/published-roster?month=2026-08` 正式班表格子详情登记请假、换班、异常修复或现场调配处理意图；处理意图绑定 current published version、roster cell、employee、date、role 和 note；排班师在 `/roster-drafts?month=2026-08` 下游处理队列查看 open 意图、定位到人员/日期格子，并通过既有修订草稿/重新发布上下文关闭意图。未新增真实审批、认证、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。
+- focused verification: red `.venv/bin/python -m unittest backend.tests.test_roster_service` 失败在缺少 `create_request_intent`；red `.venv/bin/python -m unittest backend.tests.test_roster_publish_api` 失败在缺少 request-intent API；red `node --test scripts/tests/published-roster-view-model.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 失败在缺少 intent-ready UI 和下游队列；green 后 29 Node tests、`npm run typecheck`、16 backend tests、`git diff --check` 均通过。
+- runtime smoke: local backend `127.0.0.1:8001` + frontend `127.0.0.1:3003`；正式班表页读到 `ROSTER-2026-08-DRAFT-G1-SH`，月历显示 8 月 3 日 `A5/REST`，周明细打开 Alice Chen 的 `A5 09:00-14:30` 只读格子和 `登记处理意图` 面板；浏览器插件随后超时，使用同一后端 API 完成意图创建、修订草稿创建和 resolve 闭环：`REQ-IM302-BROWSER-SMOKE` 从 `open` 变为 `resolved` 并挂到 `ROSTER-2026-08-REV-IM302-SMOKE`。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、884 Node tests（883 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、275 backend tests 和 project Harness check。

@@ -483,6 +483,29 @@ status: "done"
 notes: "IM301 formal-roster request boundary shell after IM300 calendar month correction."
 ```
 
+### US890 - 正式班表下游处理意图闭环 v1
+
+```yaml
+id: US890
+requirement_ids:
+  - R970
+module: "BPO WFM 三条主线"
+role: "小组长 / 一线 / 排班师"
+story: "作为小组长或一线，我希望在正式班表格子上登记请假、换班、异常修复或现场调配的处理意图；作为排班师，我希望这些意图进入我的月班表工作台队列并能定位到格子、进入修订处理、最后关闭，以便正式班表发布后的现场问题能形成一个可追踪的本地处理闭环。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "`/published-roster?month=2026-08` 的格子详情动作可登记本地处理意图，成功后显示进入排班师本地处理队列。"
+  - "处理意图持久化到本地 DB，并绑定 business month、project、workplace、team、current published version、roster cell、employee、date、action、requester role 和 note。"
+  - "`/roster-drafts?month=2026-08` 展示下游处理队列，只列出 open 意图。"
+  - "队列项能定位到相关员工/日期格子，不自动推荐、不自动排班。"
+  - "排班师可从队列上下文进入既有创建修订草稿、受控编辑和重新发布修订流程。"
+  - "队列项可关闭，并记录 resolver、resolved_at 和 linked revision version。"
+  - "本轮不新增真实审批、认证、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。"
+status: "done"
+notes: "IM302 local DB-backed downstream request intent loop after IM301 boundary shell."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

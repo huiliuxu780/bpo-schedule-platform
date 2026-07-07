@@ -427,6 +427,94 @@ def release_roster_draft_lock(request: dict[str, Any] = Body(...)) -> dict[str, 
     return _roster_lock_response(result)
 
 
+@app.post("/api/v1/roster-requests")
+def create_roster_request_intent(request: dict[str, Any] = Body(...)) -> dict[str, Any]:
+    service = _get_roster_service()
+    occurred_at = request.get("occurred_at") or request.get("now")
+    if not occurred_at:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "code": "ROSTER_REQUEST_TIME_REQUIRED",
+                    "message": "处理意图创建时间不能为空",
+                }
+            },
+        )
+    try:
+        intent = service.create_request_intent(
+            request_id=str(request["request_id"]),
+            business_month=str(request["business_month"]),
+            project_id=request.get("project_id"),
+            workplace_id=request.get("workplace_id"),
+            team_id=request.get("team_id"),
+            roster_cell_id=str(request["roster_cell_id"]),
+            action_type=str(request["action_type"]),
+            requester_role=str(request["requester_role"]),
+            requester_id=str(request["requester_id"]),
+            note=str(request.get("note") or ""),
+            occurred_at=str(occurred_at),
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": {
+                    "code": "ROSTER_REQUEST_CREATE_BLOCKED",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
+    return _roster_request_intent_response(intent)
+
+
+@app.get("/api/v1/roster-requests")
+def list_roster_request_intents(
+    business_month: str,
+    project_id: str | None = None,
+    workplace_id: str | None = None,
+    team_id: str | None = None,
+) -> dict[str, Any]:
+    service = _get_roster_service()
+    return {
+        "items": [
+            _roster_request_intent_response(intent)
+            for intent in service.list_open_request_intents(
+                business_month=business_month,
+                project_id=project_id,
+                workplace_id=workplace_id,
+                team_id=team_id,
+            )
+        ]
+    }
+
+
+@app.post("/api/v1/roster-requests/{request_id}/resolve")
+def resolve_roster_request_intent(
+    request_id: str,
+    request: dict[str, Any] = Body(...),
+) -> dict[str, Any]:
+    service = _get_roster_service()
+    try:
+        intent = service.resolve_request_intent(
+            request_id,
+            resolver_id=str(request["resolver_id"]),
+            resolved_at=str(request["resolved_at"]),
+            linked_revision_version_id=str(request["linked_revision_version_id"]),
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": {
+                    "code": "ROSTER_REQUEST_RESOLVE_BLOCKED",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
+    return _roster_request_intent_response(intent)
+
+
 def _roster_assignments_from_request(request: dict[str, Any]) -> list[RosterAssignment]:
     cells = request.get("cells") or []
     assignments: list[RosterAssignment] = []
@@ -558,6 +646,29 @@ def _roster_issue_response(issue: Any) -> dict[str, Any]:
         "code": issue.code.value,
         "assignment_id": issue.assignment_id,
         "message": issue.message,
+    }
+
+
+def _roster_request_intent_response(intent: Any) -> dict[str, Any]:
+    return {
+        "request_id": intent.request_id,
+        "business_month": intent.business_month,
+        "project_id": intent.project_id,
+        "workplace_id": intent.workplace_id,
+        "team_id": intent.team_id,
+        "roster_version_id": intent.roster_version_id,
+        "roster_cell_id": intent.roster_cell_id,
+        "employee_id": intent.employee_id,
+        "business_date": intent.business_date,
+        "action_type": intent.action_type,
+        "requester_role": intent.requester_role,
+        "requester_id": intent.requester_id,
+        "note": intent.note,
+        "status": intent.status,
+        "created_at": intent.created_at,
+        "resolved_at": intent.resolved_at,
+        "resolved_by": intent.resolved_by,
+        "linked_revision_version_id": intent.linked_revision_version_id,
     }
 
 

@@ -246,3 +246,13 @@ tasks:
     requirement_ids:
       - R969
     notes: "Convert leave/swap/exception-fix detail actions on `/published-roster?month=2026-08` from dead placeholders into local request-boundary shells showing required information, next owner, and no-write boundary. No real request submission, approval, auth, permissions, backend API, database, new persistence, notification, export, batch, forecasting model, standard-capacity model, Excel import, production formulas, settlement, or charge-factor work."
+
+  - id: IM302
+    title: "正式班表下游处理意图闭环 v1"
+    status: done
+    required_workflow: database-persistence
+    story_ids:
+      - US890
+    requirement_ids:
+      - R970
+    notes: "Implement local DB-backed downstream request intent loop after IM301: published-roster detail actions create handling intents; roster-drafts scheduler queue reads open intents, locates related employee/date cells, and resolves them against revision context. No real approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formulas, settlement, or charge-factor work."
