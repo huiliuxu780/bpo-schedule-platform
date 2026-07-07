@@ -4,6 +4,26 @@
 
 ## Current Branch Entries
 
+### IM304 Roster Change Center Redesign Contract
+
+- branch_name: `codex/im304-roster-change-governance-loop`
+- base_main_commit: `stacked on codex/im303-downstream-issue-management-loop at 3cdee7ee`
+- stacked_on: `codex/im303-downstream-issue-management-loop`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Documentation-only product contract that replaces the IM304 version-first UX direction with an event-first scheduler-facing roster change center.
+- qoder_mode: `false; PM challenged the product direction directly and confirmed the A-series design decisions interactively.`
+- allowed_files_check: `docs/superpowers/specs/2026-07-07-roster-change-governance-design.md`, `docs/current/PROJECT_CONTEXT.md`, `docs/registry/DECISION_INDEX.yaml`, `docs/task-log.md`, `docs/audit-report.md`, and this branch log only.
+- scope_diff_check: expected documentation and current decision-truth changes only; no product code, dependency, package/lockfile, backend API, database implementation, migration, auth, permissions, approval, notification, export, batch, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, or charge-factor changes.
+- focused_check_result: spec self-review passed with no placeholders or non-goal conflicts; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 277 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM295 Roster Persistence Service Loop
 
 - branch_name: `codex/im295-roster-persistence`

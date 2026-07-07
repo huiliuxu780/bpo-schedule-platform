@@ -281,3 +281,13 @@
 - focused verification: red `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_publish_api` 失败在缺少 `get_roster_change_governance` 与 `/api/v1/roster-change-governance`；red `node --test scripts/tests/roster-change-governance-structure.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 失败在缺少新页面、导航和跳转入口；green 后后端 16 tests、前端结构 27 tests、`npm run typecheck`、`git diff --check`、`bash scripts/check-state.sh --strict` 均通过。
 - runtime smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`，SQLite `/tmp/bpo-im304-smoke.db`；seed 当前正式版、请假问题、修订发布和 resolved 问题后，聚合 API 返回最新修订 `ROSTER-2026-08-REV-IM304-SMOKE`，时间线 2 个版本、1 个变更格子、1 个关联问题；浏览器打开 `/roster-change-governance?month=2026-08`，可见版本时间线、人员-日期差异、`source_cell_id：CELL-001`、修订前 A5、修订后 rest、`REQ-IM304-SMOKE-1` 和处理说明，控制台无 error/warn。
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、277 backend tests 和 project Harness check。
+
+- task_id: `IM304-REDESIGN`
+- source_ids:
+  - `R972`
+- story_ids:
+  - `US892`
+- action: 班表变更中心 v2 Product Contract。
+- status: `spec_ready_for_pm_review`
+- notes: PM review rejected IM304 v1 的 version-first / raw diff / fixed detail column 页面形态。已将现行产品契约改为 operations-first 的 `班表变更中心`：一行代表一个员工-日期-班次变更事件，默认分组为 `待处理 / 全部变更 / 按员工`，发布后影响员工班次且未被排班师确认的事件进入待处理，排班师通过单条确认和内部备注关闭事件，详情用点击行后的右侧抽屉承载。确认备注仅排班师内部可见。下一步实现前必须确认本地确认记录和内部备注持久化边界；仍不包含审批、权限、通知、导出、批量、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。
+- focused verification: spec self-review passed with no placeholders or non-goal conflicts; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 277 backend tests, and project Harness check.

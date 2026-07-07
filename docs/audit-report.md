@@ -593,3 +593,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
+
+### 2026-07-07 - IM304 班表变更中心 v2 Product Contract
+
+#### 审计结论
+
+- IM304 v1 的后端聚合和运行时 diff 能力可作为技术基础保留，但 version-first 页面形态不再作为产品执行入口。
+- PM 已确认新的页面定位为 `班表变更中心`，运营优先；一行是一名员工某一天的一次班次变更事件。
+- 默认分组为 `待处理 / 全部变更 / 按员工`；发布后影响员工班次且未被排班师确认的事件进入 `待处理`。
+- 排班师通过单条确认和内部备注关闭事件；备注仅排班师内部可见。
+- 详情改为点击行后打开右侧抽屉，不再常驻固定列。
+- 废弃旧 UX 假设：主时间线、裸 diff、固定详情栏、业务 UI 露出 `source_cell_id`/版本 ID、抽象“治理”命名。
+- 下一步实现前必须明确确认本地确认记录和内部备注是否允许持久化；本契约不授权审批、权限、通知、导出、批量、预测、标准人力、Excel、自动排班、生产公式、结算或计费规则。
+
+#### 验证
+
+- documentation self-review: spec 已检查无占位符、无与非目标冲突、明确本地确认持久化为下一 Gate 必确认边界。
+- state/whitespace: `bash scripts/check-state.sh --strict` 与 `git diff --check` 通过。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、277 backend tests 和 project Harness check。
