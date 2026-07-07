@@ -90,6 +90,8 @@ test("published roster viewer shows downstream issue status without polluting th
   assert.ok(content.includes("继续登记"))
   assert.ok(content.includes("scheduler_resolution_note"))
   assert.ok(content.includes("linked_revision_version_id"))
+  assert.ok(content.includes("/roster-change-governance"))
+  assert.ok(content.includes("查看处理结果"))
   assert.ok(!content.includes("审批状态"))
 })
 

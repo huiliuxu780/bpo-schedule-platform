@@ -543,6 +543,45 @@ def summarize_roster_request_intents(
         ) from exc
 
 
+@app.get("/api/v1/roster-change-governance")
+def get_roster_change_governance(
+    business_month: str,
+    project_id: str | None = None,
+    workplace_id: str | None = None,
+    team_id: str | None = None,
+    visibility: str = Query(default="scheduler"),
+    revision_id: str | None = None,
+    cell_id: str | None = None,
+    issue_id: str | None = None,
+    employee_id: str | None = None,
+    requester_id: str | None = None,
+) -> dict[str, Any]:
+    service = _get_roster_service()
+    try:
+        return service.get_roster_change_governance(
+            business_month=business_month,
+            project_id=project_id,
+            workplace_id=workplace_id,
+            team_id=team_id,
+            visibility=visibility,
+            revision_id=revision_id,
+            cell_id=cell_id,
+            issue_id=issue_id,
+            employee_id=employee_id,
+            requester_id=requester_id,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": {
+                    "code": "ROSTER_CHANGE_GOVERNANCE_BLOCKED",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
+
+
 @app.get("/api/v1/roster-requests/{request_id}")
 def get_roster_request_intent(request_id: str) -> dict[str, Any]:
     service = _get_roster_service()

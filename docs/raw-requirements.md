@@ -303,6 +303,19 @@ status: "done"
 notes: "Local issue management loop over existing roster request intents only; no real approval workflow, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, or charge-factor work."
 ```
 
+### R972 - 正式班表变更治理闭环 v1
+
+```yaml
+id: R972
+module: "BPO WFM 三条主线"
+description: "在 IM303 下游问题管理闭环之上，补齐正式班表发布后的变更治理工作台。新增计划与排班下的独立 `正式班表变更治理` 入口和 `/roster-change-governance?month=2026-08` 页面；页面默认读取当前月、项目、职场、团队的正式班表发布链，按发布时间倒序展示版本、发布时间、变更格子数和关联问题数；选择修订版本后，按人员-日期展示基于 `source_cell_id` 对齐父版本同格的修订前/修订后差异；已关闭下游问题通过 `linked_revision_version_id` 与 `roster_cell_id/source_cell_id` 关联到差异行，展示排班师处理说明；下游已处理问题可跳转到对应修订差异。"
+source: "PM confirmed IM304 formal roster change-governance scope after mature product reference review on 2026-07-07"
+submitted_at: "2026-07-07"
+version: "1.0"
+status: "done"
+notes: "Runtime-derived governance loop over existing roster versions, cells, published snapshots, and request intents only; no new diff persistence table, approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, or charge-factor work."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

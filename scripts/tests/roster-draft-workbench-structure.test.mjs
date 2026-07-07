@@ -247,6 +247,8 @@ test("roster draft workbench handles downstream request intents through locate a
   assert.ok(content.includes("处理说明"))
   assert.ok(content.includes("已处理"))
   assert.ok(content.includes("定位到正式班表格子"))
+  assert.ok(content.includes("/roster-change-governance"))
+  assert.ok(content.includes("查看变更治理"))
   assert.ok(content.includes("创建修订草稿"))
   assert.ok(content.includes("关闭问题"))
   assert.ok(!content.includes("审批通过"))

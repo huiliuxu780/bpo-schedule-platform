@@ -373,6 +373,7 @@ export function PublishedRosterViewer({
       <IssueStatusDrawer
         open={issueStatusOpen}
         role={role}
+        model={model}
         intents={issueIntents}
         summary={issueSummary}
         onOpenChange={setIssueStatusOpen}
@@ -754,12 +755,14 @@ function RequestIntentPanel({
 function IssueStatusDrawer({
   open,
   role,
+  model,
   intents,
   summary,
   onOpenChange,
 }: {
   open: boolean
   role: DownstreamRosterRole
+  model: RosterDraftViewModel
   intents: PublishedRosterIssueIntent[]
   summary: PublishedRosterIssueSummary | null
   onOpenChange: (open: boolean) => void
@@ -788,8 +791,18 @@ function IssueStatusDrawer({
               value={summary?.totals.resolved ?? resolvedItems.length}
             />
           </div>
-          <IssueStatusSection title="待处理" intents={openItems} />
-          <IssueStatusSection title="已处理" intents={resolvedItems} />
+          <IssueStatusSection
+            title="待处理"
+            role={role}
+            model={model}
+            intents={openItems}
+          />
+          <IssueStatusSection
+            title="已处理"
+            role={role}
+            model={model}
+            intents={resolvedItems}
+          />
         </div>
         <DrawerFooter>
           <DrawerClose asChild>
@@ -803,9 +816,13 @@ function IssueStatusDrawer({
 
 function IssueStatusSection({
   title,
+  role,
+  model,
   intents,
 }: {
   title: string
+  role: DownstreamRosterRole
+  model: RosterDraftViewModel
   intents: PublishedRosterIssueIntent[]
 }) {
   return (
@@ -838,6 +855,13 @@ function IssueStatusSection({
                   <div>处理时间：{intent.resolved_at ?? "-"}</div>
                   <div>关联修订：{intent.linked_revision_version_id ?? "-"}</div>
                   <div>处理说明：{intent.scheduler_resolution_note ?? "-"}</div>
+                  {intent.linked_revision_version_id ? (
+                    <Button asChild variant="outline" size="sm" className="mt-2 w-fit">
+                      <Link href={buildGovernanceHref(model, role, intent)}>
+                        查看处理结果
+                      </Link>
+                    </Button>
+                  ) : null}
                 </div>
               ) : null}
             </div>
@@ -846,6 +870,23 @@ function IssueStatusSection({
       </div>
     </div>
   )
+}
+
+function buildGovernanceHref(
+  model: RosterDraftViewModel,
+  role: DownstreamRosterRole,
+  intent: PublishedRosterIssueIntent
+): string {
+  const params = new URLSearchParams({
+    month: model.targetMonth,
+    revision_id: intent.linked_revision_version_id ?? "",
+    cell_id: intent.roster_cell_id,
+    issue_id: intent.request_id,
+    visibility: role,
+    employee_id: intent.employee_id,
+    requester_id: intent.requester_id,
+  })
+  return `/roster-change-governance?${params.toString()}`
 }
 
 function DetailRow({ label, value }: { label: string; value: string }) {

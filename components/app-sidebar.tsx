@@ -13,6 +13,7 @@ import {
   Database,
   Gauge,
   Handshake,
+  History,
   Inbox,
   LayoutDashboard,
   MapPin,
@@ -100,6 +101,12 @@ const nav: NavGroup[] = [
         title: "正式班表",
         href: "/published-roster",
         icon: CalendarCheck,
+        activeMatch: "prefix",
+      },
+      {
+        title: "正式班表变更治理",
+        href: "/roster-change-governance",
+        icon: History,
         activeMatch: "prefix",
       },
       {

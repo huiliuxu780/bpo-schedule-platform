@@ -269,3 +269,15 @@
 - focused verification: red `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_publish_api` 失败在缺少 `list_request_intents` / detail API；red `node --test scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 失败在缺少状态抽屉和下游问题工作区；green 后 14 backend tests、24 Node structure tests、`npm run typecheck`、`git diff --check` 均通过。
 - runtime smoke: local backend `127.0.0.1:8001` + frontend `127.0.0.1:3003`；发布 2026-08 G1 正式班表后创建两条下游问题，创建修订草稿并关闭 `REQ-IM303-SMOKE-1`；summary 返回 open=1/resolved=1，resolved 列表返回 `scheduler_resolution_note` 与 `ROSTER-2026-08-REV-IM303-SMOKE`；`/published-roster?month=2026-08` 和 `/roster-drafts?month=2026-08` 均返回 200。
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、885 Node tests（884 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、275 backend tests 和 project Harness check。
+
+- task_id: `IM304`
+- source_ids:
+  - `R972`
+- story_ids:
+  - `US892`
+- action: 正式班表变更治理闭环 v1 Implementation。
+- status: `done`
+- notes: 完成正式班表发布后的变更治理闭环：新增计划与排班下 `/roster-change-governance?month=2026-08` 独立工作台；后端聚合 API 从已有正式版本链、格子、source_cell_id 和 resolved request intents 运行时派生版本时间线、人员-日期修订前/后差异、关联下游问题和排班师处理说明；下游已处理问题和排班师下游问题工作区可跳转到对应修订差异。未新增 diff 持久表、审批、权限、通知、导出、批量、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。
+- focused verification: red `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_publish_api` 失败在缺少 `get_roster_change_governance` 与 `/api/v1/roster-change-governance`；red `node --test scripts/tests/roster-change-governance-structure.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 失败在缺少新页面、导航和跳转入口；green 后后端 16 tests、前端结构 27 tests、`npm run typecheck`、`git diff --check`、`bash scripts/check-state.sh --strict` 均通过。
+- runtime smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`，SQLite `/tmp/bpo-im304-smoke.db`；seed 当前正式版、请假问题、修订发布和 resolved 问题后，聚合 API 返回最新修订 `ROSTER-2026-08-REV-IM304-SMOKE`，时间线 2 个版本、1 个变更格子、1 个关联问题；浏览器打开 `/roster-change-governance?month=2026-08`，可见版本时间线、人员-日期差异、`source_cell_id：CELL-001`、修订前 A5、修订后 rest、`REQ-IM304-SMOKE-1` 和处理说明，控制台无 error/warn。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、277 backend tests 和 project Harness check。

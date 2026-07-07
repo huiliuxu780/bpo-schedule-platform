@@ -567,3 +567,29 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
+
+### 2026-07-07 - IM304 正式班表变更治理闭环 v1 Implementation
+
+#### 审计结论
+
+- IM304 已完成一个正式班表发布后的角色可见闭环，不是底层技术切片。
+- 排班师现在有独立 `/roster-change-governance?month=2026-08` 工作台，可按正式发布版本查看时间线、变更格子数和关联问题数。
+- 修订差异按 `source_cell_id` 对齐父版本同格，只比较业务字段，不把修订 cell id 自然变化误判为业务变更。
+- 已关闭下游问题按 `linked_revision_version_id` 与 `roster_cell_id/source_cell_id` 关联到差异行，并展示处理说明。
+- 下游已处理问题抽屉和排班师下游问题工作区都能跳转到变更治理入口。
+- 本轮未新增 diff 持久表、审批、权限、通知、导出、批量、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。
+
+#### 验证
+
+- backend red/green: `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_publish_api` 先失败在缺少治理服务/API，green 后通过 16 tests。
+- frontend red/green: `node --test scripts/tests/roster-change-governance-structure.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 先失败在缺少页面、导航、跳转入口，green 后通过 27 tests。
+- typecheck: `npm run typecheck` 通过。
+- state/whitespace: `bash scripts/check-state.sh --strict`、`git diff --check` 均通过。
+- browser smoke: local backend `127.0.0.1:8001` + frontend `localhost:3003`；`/roster-change-governance?month=2026-08` 渲染版本时间线、1 条人员-日期差异、修订前/后、关联问题和处理说明；浏览器控制台无 error/warn。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、277 backend tests 和 project Harness check。
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`

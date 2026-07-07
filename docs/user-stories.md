@@ -531,6 +531,30 @@ status: "done"
 notes: "IM303 downstream issue management loop after IM302 local request intent persistence."
 ```
 
+### US892 - 正式班表变更治理闭环 v1
+
+```yaml
+id: US892
+requirement_ids:
+  - R972
+module: "BPO WFM 三条主线"
+role: "排班师 / 小组长 / 一线"
+story: "作为排班师，我希望正式班表每次修订发布后能看到版本链、人员日期差异和关联下游问题；作为小组长或一线，我希望已处理问题能回看到具体修订前后变化和处理说明，以便正式班表发布后的变更不是散落在问题队列里，而是有一个可追溯的治理入口。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "`/roster-change-governance?month=2026-08` 是计划与排班下的独立入口，不塞进下游问题抽屉。"
+  - "页面默认展示当前正式班表发布链，按发布时间倒序列出版本、发布时间、变更格子数、关联问题数。"
+  - "选择修订版本后，按人员-日期展示修订前/修订后差异，差异以 `source_cell_id` 对齐父版本同格。"
+  - "已关闭下游问题按 `linked_revision_version_id` 和 `roster_cell_id/source_cell_id` 关联到差异行。"
+  - "差异行展示问题编号、动作、登记人、关闭时间和 `scheduler_resolution_note`。"
+  - "小组长/一线从已处理问题能跳转到对应修订和差异行；一线只看本人或本人发起的相关行。"
+  - "聚合 API 运行时派生差异，不新增 diff 持久表。"
+  - "本轮不新增审批、认证、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。"
+status: "done"
+notes: "IM304 post-publish formal roster change-governance loop after IM303 downstream issue management."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

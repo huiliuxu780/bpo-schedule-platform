@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
 
 from backend.app.roster_drafts import (
@@ -437,6 +438,122 @@ class RosterServiceTest(unittest.TestCase):
                     note="现场发现班表异常。",
                     occurred_at="2026-08-01T08:00",
                 )
+
+    def test_change_governance_derives_revision_diff_and_linked_issue(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            service = _service(directory)
+            _publish_current_roster(service)
+            service.create_request_intent(
+                request_id="REQ-001",
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                roster_cell_id="CELL-001",
+                action_type="leave",
+                requester_role="frontline",
+                requester_id="EMP-001",
+                note="8 月 1 日上午请假，需要排班师修订正式班表。",
+                occurred_at="2026-08-01T08:00",
+            )
+            revision = service.create_revision(
+                "ROSTER-202608-DRAFT",
+                new_version_id="ROSTER-202608-REV-1",
+                actor_id="scheduler-1",
+                occurred_at="2026-08-01T08:30",
+            )
+            active_draft = service.get_active_draft(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+            )
+            revised_cells = [
+                (
+                    replace(
+                        cell,
+                        assignment_kind=AssignmentKind.REST,
+                        shift_code=None,
+                        interval_start_at=None,
+                        interval_end_at=None,
+                        manually_adjusted=True,
+                    )
+                    if cell.source_cell_id == "CELL-001"
+                    else cell
+                )
+                for cell in active_draft.cells
+            ]
+            service.save_draft(
+                revision,
+                revised_cells,
+                actor_id="scheduler-1",
+                occurred_at="2026-08-01T08:40",
+            )
+            service.schedule_publish(
+                revision.roster_version_id,
+                actor_id="scheduler-1",
+                occurred_at="2026-08-01T09:00",
+                effective_at="2026-08-01T09:00",
+                context=_context(),
+                baseline_version_id="ROSTER-202608-DRAFT",
+            )
+            service.activate_due_published(
+                now="2026-08-01T09:00",
+                actor_id="system",
+            )
+            service.resolve_request_intent(
+                "REQ-001",
+                resolver_id="scheduler-1",
+                resolved_at="2026-08-01T09:10",
+                linked_revision_version_id="ROSTER-202608-REV-1",
+                scheduler_resolution_note="已按请假登记完成修订，8 月 1 日上午改为休息。",
+            )
+
+            governance = service.get_roster_change_governance(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                visibility="scheduler",
+            )
+            frontline = service.get_roster_change_governance(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                visibility="frontline",
+                employee_id="EMP-001",
+                issue_id="REQ-001",
+            )
+            unrelated_frontline = service.get_roster_change_governance(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                visibility="frontline",
+                employee_id="EMP-002",
+                issue_id="REQ-001",
+            )
+
+            self.assertEqual(governance["selected_revision_id"], "ROSTER-202608-REV-1")
+            self.assertEqual(
+                [item["version_id"] for item in governance["timeline"]],
+                ["ROSTER-202608-REV-1", "ROSTER-202608-DRAFT"],
+            )
+            self.assertEqual(governance["timeline"][0]["changed_cell_count"], 1)
+            self.assertEqual(governance["timeline"][0]["linked_issue_count"], 1)
+            self.assertEqual(len(governance["diff_rows"]), 1)
+            diff = governance["diff_rows"][0]
+            self.assertEqual(diff["source_cell_id"], "CELL-001")
+            self.assertEqual(diff["before"]["shift_code"], "A5")
+            self.assertEqual(diff["after"]["assignment_kind"], "rest")
+            self.assertEqual(diff["linked_issues"][0]["request_id"], "REQ-001")
+            self.assertEqual(
+                diff["linked_issues"][0]["scheduler_resolution_note"],
+                "已按请假登记完成修订，8 月 1 日上午改为休息。",
+            )
+            self.assertEqual(frontline["diff_rows"][0]["source_cell_id"], "CELL-001")
+            self.assertEqual(unrelated_frontline["diff_rows"], [])
 
 
 def _service(directory: str) -> RosterService:

@@ -590,6 +590,40 @@ class RosterPersistenceRepository:
             status=RosterVersionStatus.SCHEDULED_PUBLISHED,
         )
 
+    def list_versions_by_scope(
+        self,
+        *,
+        business_month: str,
+        project_id: str | None,
+        workplace_id: str | None,
+        team_id: str | None,
+        statuses: set[RosterVersionStatus] | None = None,
+    ) -> list[RosterVersionDetail]:
+        with self.session_factory() as session:
+            query = select(RosterVersionEntity.roster_version_id).where(
+                RosterVersionEntity.business_month == business_month,
+                RosterVersionEntity.project_id == _scope_value(project_id),
+                RosterVersionEntity.workplace_id == _scope_value(workplace_id),
+                RosterVersionEntity.team_id == _scope_value(team_id),
+            )
+            if statuses is not None:
+                query = query.where(
+                    RosterVersionEntity.status.in_([status.value for status in statuses])
+                )
+            version_ids = list(
+                session.scalars(
+                    query.order_by(
+                        RosterVersionEntity.updated_at.desc(),
+                        RosterVersionEntity.roster_version_id,
+                    )
+                )
+            )
+        return [
+            detail
+            for version_id in version_ids
+            if (detail := self.get_version(version_id)) is not None
+        ]
+
     def list_due_scheduled(self, now: str) -> list[RosterVersionDetail]:
         with self.session_factory() as session:
             version_ids = list(

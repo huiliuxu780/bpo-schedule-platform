@@ -266,3 +266,13 @@ tasks:
     requirement_ids:
       - R971
     notes: "Expand IM302 request intents into a complete local issue management loop: downstream status drawer, scheduler issue workspace, filters/detail/summary APIs, resolved readback, and scheduler resolution note. No approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formulas, settlement, or charge-factor work."
+
+  - id: IM304
+    title: "正式班表变更治理闭环 v1"
+    status: done
+    required_workflow: database-persistence
+    story_ids:
+      - US892
+    requirement_ids:
+      - R972
+    notes: "Add a formal roster post-publish change governance loop: independent workbench, published version timeline, runtime source-cell before/after diffs, linked resolved downstream issue explanation, and downstream resolved issue jump links. No new diff persistence table, approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formulas, settlement, or charge-factor work."

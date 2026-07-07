@@ -527,3 +527,23 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
+
+### IM304 Formal Roster Change Governance Loop
+
+- branch_name: `codex/im304-roster-change-governance-loop`
+- base_main_commit: `stacked on origin/codex/im303-downstream-issue-management-loop at 3cdee7ee`
+- stacked_on: `codex/im303-downstream-issue-management-loop`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Independent formal roster change governance workbench, aggregate runtime diff API, source-cell before/after comparison, linked resolved issue explanation, and jump links from downstream resolved issue surfaces.
+- qoder_mode: `false; PM confirmed scope interactively and allowed implementation.`
+- allowed_files_check: `backend/app/main.py`, `backend/app/roster_persistence.py`, `backend/app/roster_service.py`, backend tests, `/roster-change-governance` page/workbench, sidebar, downstream issue links, structure tests, and traceability docs only.
+- scope_diff_check: expected local runtime-derived governance capability only; no package/lockfile, dependency, database migration, new diff table, approval, permission, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formulas, settlement, or charge-factor changes.
+- focused_check_result: backend 16 tests passed; frontend structure 27 tests passed; `npm run typecheck`, `git diff --check`, and `bash scripts/check-state.sh --strict` passed. Browser smoke passed on `http://localhost:3003/roster-change-governance?month=2026-08` with local backend `127.0.0.1:8001`.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 277 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`

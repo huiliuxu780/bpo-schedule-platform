@@ -500,6 +500,187 @@ class RosterService:
             scheduler_resolution_note=scheduler_resolution_note.strip(),
         )
 
+    def get_roster_change_governance(
+        self,
+        *,
+        business_month: str,
+        project_id: str | None,
+        workplace_id: str | None,
+        team_id: str | None,
+        visibility: str,
+        revision_id: str | None = None,
+        cell_id: str | None = None,
+        issue_id: str | None = None,
+        employee_id: str | None = None,
+        requester_id: str | None = None,
+    ) -> dict[str, Any]:
+        if visibility not in {"scheduler", "team_lead", "frontline"}:
+            raise ValueError(f"unsupported roster change governance visibility: {visibility}")
+        details = self.repository.list_versions_by_scope(
+            business_month=business_month,
+            project_id=project_id,
+            workplace_id=workplace_id,
+            team_id=team_id,
+            statuses={RosterVersionStatus.PUBLISHED, RosterVersionStatus.SUPERSEDED},
+        )
+        details = sorted(
+            details,
+            key=lambda detail: (
+                detail.version.activated_at or detail.version.effective_at or "",
+                detail.version.roster_version_id,
+            ),
+            reverse=True,
+        )
+        detail_by_id = {detail.version.roster_version_id: detail for detail in details}
+        selected = detail_by_id.get(revision_id or "") or (details[0] if details else None)
+        resolved_issues = self.list_request_intents(
+            business_month=business_month,
+            project_id=project_id,
+            workplace_id=workplace_id,
+            team_id=team_id,
+            status="resolved",
+        )
+        timeline = [
+            self._change_governance_timeline_item(detail, detail_by_id, resolved_issues)
+            for detail in details
+        ]
+        diff_rows = (
+            self._change_governance_diff_rows(
+                selected,
+                detail_by_id,
+                resolved_issues,
+                visibility=visibility,
+                cell_id=cell_id,
+                issue_id=issue_id,
+                employee_id=employee_id,
+                requester_id=requester_id,
+            )
+            if selected is not None
+            else []
+        )
+        selected_diff = next(
+            (
+                row
+                for row in diff_rows
+                if (
+                    cell_id is not None
+                    and cell_id in {row["roster_cell_id"], row["source_cell_id"]}
+                )
+                or (
+                    issue_id is not None
+                    and any(issue["request_id"] == issue_id for issue in row["linked_issues"])
+                )
+            ),
+            diff_rows[0] if diff_rows else None,
+        )
+        return {
+            "scope": {
+                "business_month": business_month,
+                "project_id": project_id,
+                "workplace_id": workplace_id,
+                "team_id": team_id,
+            },
+            "visibility": visibility,
+            "selected_revision_id": selected.version.roster_version_id if selected else None,
+            "timeline": timeline,
+            "diff_rows": diff_rows,
+            "selected_diff": selected_diff,
+        }
+
+    def _change_governance_timeline_item(
+        self,
+        detail: RosterVersionDetail,
+        detail_by_id: dict[str, RosterVersionDetail],
+        resolved_issues: list[RosterRequestIntentRecord],
+    ) -> dict[str, Any]:
+        rows = self._change_governance_diff_rows(
+            detail,
+            detail_by_id,
+            resolved_issues,
+            visibility="scheduler",
+        )
+        linked_issue_ids = {
+            issue["request_id"]
+            for row in rows
+            for issue in row["linked_issues"]
+        }
+        return {
+            "version_id": detail.version.roster_version_id,
+            "published_at": detail.version.activated_at or detail.version.effective_at,
+            "status": detail.version.status.value,
+            "parent_version_id": detail.version.parent_version_id,
+            "supersedes_version_id": detail.version.supersedes_version_id,
+            "changed_cell_count": len(rows),
+            "linked_issue_count": len(linked_issue_ids),
+        }
+
+    def _change_governance_diff_rows(
+        self,
+        detail: RosterVersionDetail,
+        detail_by_id: dict[str, RosterVersionDetail],
+        resolved_issues: list[RosterRequestIntentRecord],
+        *,
+        visibility: str,
+        cell_id: str | None = None,
+        issue_id: str | None = None,
+        employee_id: str | None = None,
+        requester_id: str | None = None,
+    ) -> list[dict[str, Any]]:
+        baseline_id = detail.version.parent_version_id or detail.version.supersedes_version_id
+        baseline = detail_by_id.get(baseline_id or "")
+        if baseline is None and baseline_id:
+            baseline = self.repository.get_version(baseline_id)
+        if baseline is None:
+            return []
+        baseline_cells = {cell.roster_cell_id: cell for cell in baseline.cells}
+        rows: list[dict[str, Any]] = []
+        for cell in detail.cells:
+            source_cell_id = cell.source_cell_id or cell.roster_cell_id or ""
+            before = baseline_cells.get(source_cell_id)
+            if before is None or not _roster_cells_differ(before, cell):
+                continue
+            if cell_id is not None and cell_id not in {cell.roster_cell_id, source_cell_id}:
+                continue
+            linked = [
+                issue
+                for issue in resolved_issues
+                if issue.linked_revision_version_id == detail.version.roster_version_id
+                and issue.roster_cell_id in {cell.roster_cell_id, source_cell_id}
+                and (issue_id is None or issue.request_id == issue_id)
+            ]
+            if issue_id is not None and not linked:
+                continue
+            if visibility == "frontline" and not _frontline_can_see_change(
+                cell,
+                linked,
+                employee_id=employee_id,
+                requester_id=requester_id,
+            ):
+                continue
+            rows.append(
+                {
+                    "diff_id": f"{detail.version.roster_version_id}:{source_cell_id}",
+                    "revision_version_id": detail.version.roster_version_id,
+                    "parent_version_id": baseline.version.roster_version_id,
+                    "roster_cell_id": cell.roster_cell_id,
+                    "source_cell_id": source_cell_id,
+                    "employee_id": cell.employee_id,
+                    "business_date": cell.business_date,
+                    "change_type": "changed",
+                    "before": _roster_cell_snapshot(before),
+                    "after": _roster_cell_snapshot(cell),
+                    "linked_issues": [_request_intent_snapshot(issue) for issue in linked],
+                }
+            )
+        return sorted(
+            rows,
+            key=lambda row: (
+                row["business_date"],
+                row["employee_id"],
+                row["source_cell_id"],
+            ),
+        )
+
     def _apply_edit_lock(
         self,
         roster_version_id: str,
@@ -544,6 +725,72 @@ def _shift_counts(cells: list[RosterAssignment]) -> dict[str, int]:
             continue
         counts[cell.shift_code] = counts.get(cell.shift_code, 0) + 1
     return dict(sorted(counts.items()))
+
+
+def _roster_cells_differ(before: RosterAssignment, after: RosterAssignment) -> bool:
+    return _roster_cell_comparable_snapshot(before) != _roster_cell_comparable_snapshot(after)
+
+
+def _roster_cell_comparable_snapshot(cell: RosterAssignment) -> dict[str, Any]:
+    return {
+        "employee_id": cell.employee_id,
+        "business_date": cell.business_date,
+        "assignment_kind": cell.assignment_kind.value,
+        "shift_code": cell.shift_code,
+        "annotation_code": cell.annotation_code,
+        "interval_start_at": cell.interval_start_at,
+        "interval_end_at": cell.interval_end_at,
+        "manually_adjusted": cell.manually_adjusted,
+    }
+
+
+def _roster_cell_snapshot(cell: RosterAssignment) -> dict[str, Any]:
+    return {
+        "cell_id": cell.roster_cell_id,
+        "assignment_id": cell.assignment_id,
+        "employee_id": cell.employee_id,
+        "business_date": cell.business_date,
+        "assignment_kind": cell.assignment_kind.value,
+        "shift_code": cell.shift_code,
+        "annotation_code": cell.annotation_code,
+        "interval_start_at": cell.interval_start_at,
+        "interval_end_at": cell.interval_end_at,
+        "manually_adjusted": cell.manually_adjusted,
+    }
+
+
+def _request_intent_snapshot(intent: RosterRequestIntentRecord) -> dict[str, Any]:
+    return {
+        "request_id": intent.request_id,
+        "roster_cell_id": intent.roster_cell_id,
+        "employee_id": intent.employee_id,
+        "business_date": intent.business_date,
+        "action_type": intent.action_type,
+        "requester_role": intent.requester_role,
+        "requester_id": intent.requester_id,
+        "note": intent.note,
+        "status": intent.status,
+        "resolved_at": intent.resolved_at,
+        "resolved_by": intent.resolved_by,
+        "linked_revision_version_id": intent.linked_revision_version_id,
+        "scheduler_resolution_note": intent.scheduler_resolution_note,
+    }
+
+
+def _frontline_can_see_change(
+    cell: RosterAssignment,
+    linked_issues: list[RosterRequestIntentRecord],
+    *,
+    employee_id: str | None,
+    requester_id: str | None,
+) -> bool:
+    if employee_id is not None and cell.employee_id == employee_id:
+        return True
+    return any(
+        (employee_id is not None and issue.employee_id == employee_id)
+        or (requester_id is not None and issue.requester_id == requester_id)
+        for issue in linked_issues
+    )
 
 
 def _issue_json(issue: RosterPublishIssue) -> dict[str, Any]:

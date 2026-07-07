@@ -2162,6 +2162,13 @@ function DownstreamIssueWorkspacePanel({
                     <div>处理时间：{request.resolved_at ?? "-"}</div>
                     <div>关联修订：{request.linked_revision_version_id ?? "-"}</div>
                     <div>处理说明：{request.scheduler_resolution_note ?? "-"}</div>
+                    {request.linked_revision_version_id ? (
+                      <Button asChild variant="outline" size="sm" className="mt-2 w-fit">
+                        <Link href={buildIssueGovernanceHref(request)}>
+                          查看变更治理
+                        </Link>
+                      </Button>
+                    ) : null}
                   </>
                 ) : null}
               </div>
@@ -2205,6 +2212,19 @@ function DownstreamIssueWorkspacePanel({
       </div>
     </div>
   )
+}
+
+function buildIssueGovernanceHref(request: DownstreamRosterRequestIntent): string {
+  const params = new URLSearchParams({
+    month: request.business_month,
+    revision_id: request.linked_revision_version_id ?? "",
+    cell_id: request.roster_cell_id,
+    issue_id: request.request_id,
+    visibility: "scheduler",
+    employee_id: request.employee_id,
+    requester_id: request.requester_id,
+  })
+  return `/roster-change-governance?${params.toString()}`
 }
 
 async function fetchCurrentPublishedSnapshot(

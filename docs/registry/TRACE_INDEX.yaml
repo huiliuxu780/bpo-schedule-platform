@@ -407,6 +407,12 @@ requirements:
       - "US891"
     task_ids:
       - "IM303"
+  R972:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US892"
+    task_ids:
+      - "IM304"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
@@ -433,4 +439,5 @@ decisions:
   - "D-2026-07-06-formal-roster-request-boundary"
   - "D-2026-07-07-downstream-roster-request-intent"
   - "D-2026-07-07-downstream-issue-management-loop"
+  - "D-2026-07-07-roster-change-governance-loop"
 archive_refs: []
