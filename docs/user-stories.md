@@ -575,8 +575,8 @@ acceptance:
   - "确认后事件离开 `待处理`，并在 `全部变更` 中显示为 `已确认`。"
   - "正常业务 UI 不展示 `source_cell_id`、raw version id、revision/diff 工程术语。"
   - "本轮不新增审批、认证、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。"
-status: "ready"
-notes: "IM305 event-first correction and local confirmation loop after IM304 product review."
+status: "done"
+notes: "IM305 completed the event-first roster change center with local single-event confirmation and internal scheduler note persistence."
 ```
 
 ## History Policy

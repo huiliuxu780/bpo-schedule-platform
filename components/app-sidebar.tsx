@@ -104,7 +104,7 @@ const nav: NavGroup[] = [
         activeMatch: "prefix",
       },
       {
-        title: "正式班表变更治理",
+        title: "班表变更中心",
         href: "/roster-change-governance",
         icon: History,
         activeMatch: "prefix",

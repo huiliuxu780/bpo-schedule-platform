@@ -612,17 +612,22 @@
 - state/whitespace: `bash scripts/check-state.sh --strict` 与 `git diff --check` 通过。
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、277 backend tests 和 project Harness check。
 
-### 2026-07-07 - IM305 班表变更中心事件化与确认闭环 Gate
+### 2026-07-07 - IM305 班表变更中心事件化与确认闭环 Implementation
 
 #### 审计结论
 
-- PM 已允许为单条确认和内部备注新增本地持久化记录。
-- IM305 是 IM304 的产品纠偏实现，不是新增审批系统：主对象从版本 diff 改为发布后员工班次变更事件。
-- 目标闭环为：待处理变更事件 -> 点击行打开详情抽屉 -> 查看前后班次、来源、关联问题 -> 单条确认并填写内部备注 -> 离开待处理、保留在全部变更。
-- 本 Gate 明确不包含审批、认证、权限、通知、导出、批量、预测、标准人力、Excel、自动排班、生产公式、结算或计费规则。
+- IM305 已完成 IM304 的产品纠偏：页面不再以版本时间线和 raw diff 为主，而是以员工-日期-班次变更事件为主。
+- `/roster-change-governance?month=2026-08` 和导航已改为 `班表变更中心`，默认提供 `待处理 / 全部变更 / 按员工`。
+- 后端新增本地 `roster_change_confirmations` 持久化表，确认记录包含事件 ID、业务范围、确认人、确认时间和排班师内部备注。
+- 确认 API 支持单事件确认；确认后事件离开 `待处理`，仍在 `全部变更` 作为 `已确认` 可审计。
+- 前端点击事件行后打开右侧抽屉，展示修订前/后、来源、关联问题、内部备注和确认动作。
+- 旧 IM304 UX 假设继续废弃：主时间线、裸 diff、固定详情栏、业务 UI 露出 `source_cell_id`/版本 ID、抽象“治理”命名。
+- 本轮未新增审批、认证、权限、通知、导出、批量、预测、标准人力、Excel、自动排班、生产公式、结算或计费规则。
 
 #### 验证
 
-- `bash scripts/check-state.sh --strict`: 通过，包含 ready story US893 与 active task IM305 匹配。
-- `git diff --check`: 通过。
-- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、277 backend tests 和 project Harness check。
+- backend red/green: service test 先失败在缺少 `summary`，API test 先失败在缺少确认路由；green 后 `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_publish_api -v` 通过 18 tests。
+- frontend red/green: `node --test scripts/tests/roster-change-governance-structure.test.mjs` 先失败在旧页面缺少 `班表变更中心`、事件 API 和抽屉 slot；green 后聚焦结构套件通过 27 tests。
+- typecheck: `npm run typecheck` 通过。
+- shadcn review: `npx shadcn@latest info --json` 确认为 Next.js / radix-nova / lucide；硬编码色阶、`space-y/space-x`、旧治理文案和禁区词扫描未发现新组件泄漏。
+- browser smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003`，SQLite `.local/im305-roster-change-center-smoke.db`；页面显示 1 条待处理事件，抽屉确认后变为 0 条待处理、1 条已确认，内部备注持久回显；390px 宽度检查无横向溢出。

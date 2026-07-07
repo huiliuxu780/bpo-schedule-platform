@@ -297,7 +297,8 @@
   - `R973`
 - story_ids:
   - `US893`
-- action: 班表变更中心事件化与确认闭环 Gate。
-- status: `ready_for_pm_confirmation`
-- notes: 已确认允许本地持久化单条变更确认和内部备注。Gate 将 IM304 纠偏为一个角色可演示闭环：`/roster-change-governance?month=2026-08` 以员工-日期-班次变更事件为主对象，默认 `待处理`，提供 `待处理 / 全部变更 / 按员工` 分组，点击行打开右侧抽屉，排班师单条确认并填写内部备注；确认后离开待处理但保留在全部变更审计视图。仍不包含审批、权限、通知、导出、批量、预测、标准人力、Excel、自动排班、生产公式、结算或计费规则。
-- focused verification: `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 277 backend tests, and project Harness check.
+- action: 班表变更中心事件化与确认闭环 Implementation。
+- status: `done`
+- notes: 完成 IM304 的产品纠偏闭环：`/roster-change-governance?month=2026-08` 页面和导航改为 `班表变更中心`；后端继续复用运行时 diff 基础，但对前端输出员工-日期-班次变更事件、待处理/已确认统计和按员工分组；排班师点击事件行打开右侧详情抽屉，查看修订前/修订后、来源分类和关联问题，并单条确认填写内部备注；确认记录写入本地 `roster_change_confirmations`，事件离开 `待处理` 并在 `全部变更` 保留为 `已确认`。仍不包含审批、权限、通知、导出、批量、预测、标准人力、Excel、自动排班、生产公式、结算或计费规则。
+- focused verification: red `.venv/bin/python -m unittest backend.tests.test_roster_service.RosterServiceTest.test_change_center_returns_event_rows_and_persists_confirmation -v` 失败在缺少 `summary`；green 后服务层确认持久化测试通过。red `.venv/bin/python -m unittest backend.tests.test_roster_publish_api.RosterPublishApiTest.test_roster_publish_routes_are_registered backend.tests.test_roster_publish_api.RosterPublishApiTest.test_roster_change_event_confirm_api_persists_internal_note -v` 失败在缺少确认 API；green 后通过。red `node --test scripts/tests/roster-change-governance-structure.test.mjs` 失败在旧页面缺少 `班表变更中心`、事件 API 和抽屉 slot；green 后通过。聚焦套件 `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_publish_api -v` 18 tests 通过；`node --test scripts/tests/roster-change-governance-structure.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 27 tests 通过；`npm run typecheck` 通过。
+- browser smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003`，SQLite `.local/im305-roster-change-center-smoke.db`；seed 当前正式版、请假问题、修订发布和 resolved 问题后，页面显示 `班表变更中心`、`1 条待处理`、`EMP-001 / 2026-08-01`、`请假 REQ-001`；点击事件打开右侧抽屉，显示内部备注、确认变更、修订前/后和关联问题；提交内部备注后页面显示 `0 条待处理`、`已确认 1`，备注回显；390px 宽度检查无横向溢出。

@@ -279,7 +279,7 @@ tasks:
 
   - id: IM305
     title: "班表变更中心事件化与确认闭环"
-    status: ready
+    status: done
     required_workflow: database-persistence
     story_ids:
       - US893

@@ -33,15 +33,14 @@ export default async function RosterChangeGovernancePage({
 
   return (
     <AppShell
-      title="正式班表变更治理"
-      breadcrumbItems={[{ label: "正式班表变更治理" }]}
+      title="班表变更中心"
+      breadcrumbItems={[{ label: "班表变更中心" }]}
     >
       <main className="@container/main flex h-[calc(100svh-var(--header-height))] min-h-0 flex-1 flex-col overflow-hidden bg-muted/40 p-0">
         <RosterChangeGovernanceWorkbench
           key={targetMonth}
           model={model}
           targetMonths={targetMonths}
-          initialRevisionId={params.revision_id ?? null}
           initialCellId={params.cell_id ?? null}
           initialIssueId={params.issue_id ?? null}
           initialVisibility={params.visibility ?? "scheduler"}

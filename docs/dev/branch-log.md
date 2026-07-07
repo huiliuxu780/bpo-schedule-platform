@@ -4,19 +4,20 @@
 
 ## Current Branch Entries
 
-### IM305 Roster Change Center Event Confirmation Gate
+### IM305 Roster Change Center Event Confirmation Implementation
 
-- branch_name: `codex/im304-roster-change-governance-loop`
+- branch_name: `codex/im305-roster-change-center`
 - target_branch: `codex/im305-roster-change-center`
-- base_main_commit: `stacked on local IM304 redesign contract at fb951e2f`
+- base_main_commit: `stacked on local IM305 Gate commit e044d9dd; main/origin main at 66193b1d`
 - stacked_on: `codex/im304-roster-change-governance-loop`
-- remote_status: `not_pushed; local Gate branch until PM confirms implementation start.`
-- scope: Gate and implementation plan for event-first roster change center with local single-event confirmation and internal scheduler note persistence.
+- remote_status: `not_pushed; local implementation branch until PM push confirmation.`
+- scope: Event-first roster change center with local single-event confirmation and internal scheduler note persistence.
 - qoder_mode: `false; PM allowed local confirmation persistence directly.`
-- allowed_files_check: current/registry state docs, traceability docs, `docs/superpowers/plans/2026-07-07-roster-change-center-event-confirmation.md`, and future IM305 implementation files listed in `docs/current/ACTIVE_TASKS.yaml`.
-- scope_diff_check: expected Gate/plan/state changes only in this commit; no product implementation code yet.
-- focused_check_result: `bash scripts/check-state.sh --strict` passed; `git diff --check` passed.
-- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 277 backend tests, and project Harness check.
+- allowed_files_check: `backend/app/roster_persistence.py`, `backend/app/roster_service.py`, `backend/app/main.py`, `backend/migrations/versions/20260707_0014_roster_change_confirmations.py`, backend tests, `/roster-change-governance` page/workbench, sidebar, structure tests, and traceability docs only.
+- scope_diff_check: expected local database-persistence vertical slice only; no package/lockfile, dependency, approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formulas, settlement, charge-factor work, or bulk confirmation.
+- focused_check_result: service red/green passed; API red/green passed; frontend structure red/green passed. `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_publish_api -v` passed with 18 tests. `node --test scripts/tests/roster-change-governance-structure.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` passed with 27 tests. `npm run typecheck` passed.
+- browser_smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003` with `NEXT_PUBLIC_BPO_API_BASE_URL=http://127.0.0.1:8002`; seeded `.local/im305-roster-change-center-smoke.db`; event list showed `1 条待处理`, `EMP-001 / 2026-08-01`, and `请假 REQ-001`; detail drawer opened; confirmation with internal note persisted and changed summary to `0 条待处理` / `已确认 1`; 390px viewport had no horizontal overflow.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 279 backend tests, and project Harness check.
 - local_commit_sha: `pending`
 - integration_status: `not_started`
 - integration_method: `N/A`

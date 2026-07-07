@@ -582,6 +582,35 @@ def get_roster_change_governance(
         ) from exc
 
 
+@app.post("/api/v1/roster-change-governance/events/{change_event_id}/confirm")
+def confirm_roster_change_event(
+    change_event_id: str,
+    payload: dict[str, Any] = Body(...),
+) -> dict[str, Any]:
+    service = _get_roster_service()
+    try:
+        return service.confirm_roster_change_event(
+            change_event_id,
+            business_month=str(payload.get("business_month") or ""),
+            project_id=payload.get("project_id"),
+            workplace_id=payload.get("workplace_id"),
+            team_id=payload.get("team_id"),
+            actor_id=str(payload.get("actor_id") or ""),
+            confirmed_at=str(payload.get("confirmed_at") or ""),
+            internal_confirmation_note=str(payload.get("internal_confirmation_note") or ""),
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": {
+                    "code": "ROSTER_CHANGE_CONFIRMATION_BLOCKED",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
+
+
 @app.get("/api/v1/roster-requests/{request_id}")
 def get_roster_request_intent(request_id: str) -> dict[str, Any]:
     service = _get_roster_service()

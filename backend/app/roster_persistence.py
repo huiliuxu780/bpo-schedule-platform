@@ -65,6 +65,18 @@ class RosterRequestIntentRecord:
 
 
 @dataclass(frozen=True)
+class RosterChangeConfirmationRecord:
+    change_event_id: str
+    business_month: str
+    project_id: str | None
+    workplace_id: str | None
+    team_id: str | None
+    confirmed_by: str
+    confirmed_at: str
+    internal_confirmation_note: str
+
+
+@dataclass(frozen=True)
 class RosterVersionDetail:
     version: RosterVersion
     cells: list[RosterAssignment]
@@ -241,6 +253,19 @@ class RosterRequestIntentEntity(Base):
     resolved_by: Mapped[str | None] = mapped_column(String(120), nullable=True)
     linked_revision_version_id: Mapped[str | None] = mapped_column(String(120), nullable=True)
     scheduler_resolution_note: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+
+
+class RosterChangeConfirmationEntity(Base):
+    __tablename__ = "roster_change_confirmations"
+
+    change_event_id: Mapped[str] = mapped_column(String(240), primary_key=True)
+    business_month: Mapped[str] = mapped_column(String(7), nullable=False, index=True)
+    project_id: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    workplace_id: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    team_id: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    confirmed_by: Mapped[str] = mapped_column(String(120), nullable=False)
+    confirmed_at: Mapped[str] = mapped_column(String(40), nullable=False)
+    internal_confirmation_note: Mapped[str] = mapped_column(String(1000), nullable=False)
 
 
 class RosterPersistenceRepository:
@@ -496,6 +521,61 @@ class RosterPersistenceRepository:
         if intent is None:
             raise RuntimeError("resolved roster request intent could not be read back")
         return intent
+
+    def save_change_confirmation(
+        self,
+        confirmation: RosterChangeConfirmationRecord,
+    ) -> RosterChangeConfirmationRecord:
+        with self.session_factory.begin() as session:
+            entity = session.get(RosterChangeConfirmationEntity, confirmation.change_event_id)
+            if entity is None:
+                session.add(_change_confirmation_entity(confirmation))
+            else:
+                entity.business_month = confirmation.business_month
+                entity.project_id = _scope_value(confirmation.project_id)
+                entity.workplace_id = _scope_value(confirmation.workplace_id)
+                entity.team_id = _scope_value(confirmation.team_id)
+                entity.confirmed_by = confirmation.confirmed_by
+                entity.confirmed_at = confirmation.confirmed_at
+                entity.internal_confirmation_note = confirmation.internal_confirmation_note
+        saved = self.get_change_confirmation(confirmation.change_event_id)
+        if saved is None:
+            raise RuntimeError("roster change confirmation could not be read back")
+        return saved
+
+    def get_change_confirmation(
+        self,
+        change_event_id: str,
+    ) -> RosterChangeConfirmationRecord | None:
+        with self.session_factory() as session:
+            entity = session.get(RosterChangeConfirmationEntity, change_event_id)
+            return _change_confirmation_record(entity) if entity is not None else None
+
+    def list_change_confirmations(
+        self,
+        *,
+        business_month: str,
+        project_id: str | None,
+        workplace_id: str | None,
+        team_id: str | None,
+    ) -> list[RosterChangeConfirmationRecord]:
+        with self.session_factory() as session:
+            rows = list(
+                session.scalars(
+                    select(RosterChangeConfirmationEntity)
+                    .where(
+                        RosterChangeConfirmationEntity.business_month == business_month,
+                        RosterChangeConfirmationEntity.project_id == _scope_value(project_id),
+                        RosterChangeConfirmationEntity.workplace_id == _scope_value(workplace_id),
+                        RosterChangeConfirmationEntity.team_id == _scope_value(team_id),
+                    )
+                    .order_by(
+                        RosterChangeConfirmationEntity.confirmed_at,
+                        RosterChangeConfirmationEntity.change_event_id,
+                    )
+                )
+            )
+        return [_change_confirmation_record(row) for row in rows]
 
     def get_version(self, roster_version_id: str) -> RosterVersionDetail | None:
         with self.session_factory() as session:
@@ -797,6 +877,21 @@ def _request_intent_entity(intent: RosterRequestIntentRecord) -> RosterRequestIn
     )
 
 
+def _change_confirmation_entity(
+    confirmation: RosterChangeConfirmationRecord,
+) -> RosterChangeConfirmationEntity:
+    return RosterChangeConfirmationEntity(
+        change_event_id=confirmation.change_event_id,
+        business_month=confirmation.business_month,
+        project_id=_scope_value(confirmation.project_id),
+        workplace_id=_scope_value(confirmation.workplace_id),
+        team_id=_scope_value(confirmation.team_id),
+        confirmed_by=confirmation.confirmed_by,
+        confirmed_at=confirmation.confirmed_at,
+        internal_confirmation_note=confirmation.internal_confirmation_note,
+    )
+
+
 def _version_record(entity: RosterVersionEntity) -> RosterVersion:
     return RosterVersion(
         roster_version_id=entity.roster_version_id,
@@ -901,6 +996,21 @@ def _request_intent_record(entity: RosterRequestIntentEntity) -> RosterRequestIn
         resolved_by=entity.resolved_by,
         linked_revision_version_id=entity.linked_revision_version_id,
         scheduler_resolution_note=entity.scheduler_resolution_note,
+    )
+
+
+def _change_confirmation_record(
+    entity: RosterChangeConfirmationEntity,
+) -> RosterChangeConfirmationRecord:
+    return RosterChangeConfirmationRecord(
+        change_event_id=entity.change_event_id,
+        business_month=entity.business_month,
+        project_id=_empty_to_none(entity.project_id),
+        workplace_id=_empty_to_none(entity.workplace_id),
+        team_id=_empty_to_none(entity.team_id),
+        confirmed_by=entity.confirmed_by,
+        confirmed_at=entity.confirmed_at,
+        internal_confirmation_note=entity.internal_confirmation_note,
     )
 
 

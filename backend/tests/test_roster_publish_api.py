@@ -10,6 +10,7 @@ from backend.app.main import (
     acquire_roster_draft_lock,
     app,
     create_roster_request_intent,
+    confirm_roster_change_event,
     get_roster_request_intent,
     get_roster_change_governance,
     list_roster_request_intents,
@@ -36,6 +37,10 @@ class RosterPublishApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/roster-requests/{request_id}", "GET"), routes)
         self.assertIn(("/api/v1/roster-requests/{request_id}/resolve", "POST"), routes)
         self.assertIn(("/api/v1/roster-change-governance", "GET"), routes)
+        self.assertIn(
+            ("/api/v1/roster-change-governance/events/{change_event_id}/confirm", "POST"),
+            routes,
+        )
 
     def test_local_roster_publish_api_allows_browser_preflight(self) -> None:
         middleware_names = {middleware.cls.__name__ for middleware in app.user_middleware}
@@ -300,6 +305,107 @@ class RosterPublishApiTest(unittest.TestCase):
         self.assertEqual(response["diff_rows"][0]["before"]["shift_code"], "A5")
         self.assertEqual(response["diff_rows"][0]["after"]["assignment_kind"], "rest")
         self.assertEqual(response["diff_rows"][0]["linked_issues"][0]["request_id"], "REQ-001")
+        self.assertEqual(response["summary"]["pending_count"], 1)
+        self.assertEqual(response["change_events"][0]["change_event_id"], "ROSTER-2026-08-REV-1:CELL-001")
+        self.assertNotIn("source_cell_id", response["change_events"][0])
+
+    def test_roster_change_event_confirm_api_persists_internal_note(self) -> None:
+        with _isolated_database():
+            publish_roster_draft(_publish_request())
+            create_roster_request_intent(
+                {
+                    "request_id": "REQ-001",
+                    "business_month": "2026-08",
+                    "project_id": "BOSCH-CS",
+                    "workplace_id": "SHANGHAI",
+                    "team_id": "G1",
+                    "roster_cell_id": "CELL-001",
+                    "action_type": "leave",
+                    "requester_role": "frontline",
+                    "requester_id": "EMP-001",
+                    "note": "8 月 1 日上午请假，需要排班师修订正式班表。",
+                    "occurred_at": "2026-08-01T08:00",
+                }
+            )
+            service = _get_roster_service()
+            service.create_revision(
+                "ROSTER-2026-08-DRAFT",
+                new_version_id="ROSTER-2026-08-REV-1",
+                actor_id="scheduler-1",
+                occurred_at="2026-08-01T08:30",
+            )
+            publish_roster_draft(
+                _publish_request(
+                    version_id="ROSTER-2026-08-REV-1",
+                    occurred_at="2026-08-01T09:00",
+                )
+                | {
+                    "cells": [
+                        {
+                            "cell_id": "ROSTER-2026-08-REV-1-CELL-001",
+                            "assignment_id": "ASSIGN-001",
+                            "employee_id": "EMP-001",
+                            "business_date": "2026-08-01",
+                            "assignment_kind": "rest",
+                            "source_cell_id": "CELL-001",
+                            "manually_adjusted": True,
+                        },
+                        {
+                            "cell_id": "ROSTER-2026-08-REV-1-CELL-002",
+                            "assignment_id": "ASSIGN-002",
+                            "employee_id": "EMP-002",
+                            "business_date": "2026-08-01",
+                            "shift_code": "T1",
+                            "interval_start_at": "2026-08-01T10:00",
+                            "interval_end_at": "2026-08-01T11:00",
+                            "source_cell_id": "CELL-002",
+                            "manually_adjusted": True,
+                        },
+                    ]
+                }
+            )
+            resolve_roster_request_intent(
+                "REQ-001",
+                {
+                    "resolver_id": "scheduler-1",
+                    "resolved_at": "2026-08-01T09:10",
+                    "linked_revision_version_id": "ROSTER-2026-08-REV-1",
+                    "scheduler_resolution_note": "已按请假登记完成修订，8 月 1 日上午改为休息。",
+                },
+            )
+
+            confirmed = confirm_roster_change_event(
+                "ROSTER-2026-08-REV-1:CELL-001",
+                {
+                    "business_month": "2026-08",
+                    "project_id": "BOSCH-CS",
+                    "workplace_id": "SHANGHAI",
+                    "team_id": "G1",
+                    "actor_id": "scheduler-1",
+                    "confirmed_at": "2026-08-01T10:00",
+                    "internal_confirmation_note": "已核对正式班表和下游问题，现场无需再处理。",
+                },
+            )
+            after_confirm = get_roster_change_governance(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                visibility="scheduler",
+                revision_id=None,
+                cell_id=None,
+                issue_id=None,
+                employee_id=None,
+                requester_id=None,
+            )
+
+        self.assertEqual(confirmed["confirmation"]["status"], "confirmed")
+        self.assertEqual(
+            confirmed["confirmation"]["internal_confirmation_note"],
+            "已核对正式班表和下游问题，现场无需再处理。",
+        )
+        self.assertEqual(after_confirm["summary"]["pending_count"], 0)
+        self.assertEqual(after_confirm["summary"]["confirmed_count"], 1)
 
 
 def _isolated_database():

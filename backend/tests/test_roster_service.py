@@ -555,6 +555,74 @@ class RosterServiceTest(unittest.TestCase):
             self.assertEqual(frontline["diff_rows"][0]["source_cell_id"], "CELL-001")
             self.assertEqual(unrelated_frontline["diff_rows"], [])
 
+    def test_change_center_returns_event_rows_and_persists_confirmation(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            service = _service(directory)
+            _publish_leave_revision(service)
+
+            change_center = service.get_roster_change_governance(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                visibility="scheduler",
+            )
+
+            self.assertEqual(change_center["summary"]["pending_count"], 1)
+            self.assertEqual(change_center["summary"]["confirmed_count"], 0)
+            self.assertEqual(change_center["summary"]["affected_employee_count"], 1)
+            self.assertEqual(change_center["summary"]["linked_issue_count"], 1)
+            self.assertEqual(len(change_center["change_events"]), 1)
+            event = change_center["change_events"][0]
+            self.assertEqual(event["change_event_id"], "ROSTER-202608-REV-1:CELL-001")
+            self.assertEqual(event["employee_id"], "EMP-001")
+            self.assertEqual(event["business_date"], "2026-08-01")
+            self.assertEqual(event["change_type"], "modified")
+            self.assertEqual(event["source_category"], "申请/异常")
+            self.assertEqual(event["source_summary"], "请假 REQ-001")
+            self.assertEqual(event["before"]["shift_code"], "A5")
+            self.assertEqual(event["after"]["assignment_kind"], "rest")
+            self.assertEqual(event["confirmation"]["status"], "pending")
+            self.assertEqual(change_center["grouped_by_employee"][0]["employee_id"], "EMP-001")
+            self.assertEqual(
+                change_center["grouped_by_employee"][0]["events"],
+                ["ROSTER-202608-REV-1:CELL-001"],
+            )
+            self.assertNotIn("source_cell_id", event)
+
+            confirmed = service.confirm_roster_change_event(
+                event["change_event_id"],
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                actor_id="scheduler-1",
+                confirmed_at="2026-08-01T10:00",
+                internal_confirmation_note="已核对正式班表和下游问题，现场无需再处理。",
+            )
+
+            self.assertEqual(confirmed["confirmation"]["status"], "confirmed")
+            self.assertEqual(confirmed["confirmation"]["confirmed_by"], "scheduler-1")
+            self.assertEqual(
+                confirmed["confirmation"]["internal_confirmation_note"],
+                "已核对正式班表和下游问题，现场无需再处理。",
+            )
+
+            after_confirm = service.get_roster_change_governance(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                visibility="scheduler",
+            )
+
+            self.assertEqual(after_confirm["summary"]["pending_count"], 0)
+            self.assertEqual(after_confirm["summary"]["confirmed_count"], 1)
+            self.assertEqual(
+                after_confirm["change_events"][0]["confirmation"]["status"],
+                "confirmed",
+            )
+
 
 def _service(directory: str) -> RosterService:
     database_url = f"sqlite+pysqlite:///{Path(directory) / 'roster.db'}"
@@ -654,6 +722,75 @@ def _publish_current_roster(service: RosterService) -> None:
     service.activate_due_published(
         now="2026-07-04T10:00",
         actor_id="system",
+    )
+
+
+def _publish_leave_revision(service: RosterService) -> None:
+    _publish_current_roster(service)
+    service.create_request_intent(
+        request_id="REQ-001",
+        business_month="2026-08",
+        project_id="BOSCH-CS",
+        workplace_id="SHANGHAI",
+        team_id="G1",
+        roster_cell_id="CELL-001",
+        action_type="leave",
+        requester_role="frontline",
+        requester_id="EMP-001",
+        note="8 月 1 日上午请假，需要排班师修订正式班表。",
+        occurred_at="2026-08-01T08:00",
+    )
+    revision = service.create_revision(
+        "ROSTER-202608-DRAFT",
+        new_version_id="ROSTER-202608-REV-1",
+        actor_id="scheduler-1",
+        occurred_at="2026-08-01T08:30",
+    )
+    active_draft = service.get_active_draft(
+        business_month="2026-08",
+        project_id="BOSCH-CS",
+        workplace_id="SHANGHAI",
+        team_id="G1",
+    )
+    revised_cells = [
+        (
+            replace(
+                cell,
+                assignment_kind=AssignmentKind.REST,
+                shift_code=None,
+                interval_start_at=None,
+                interval_end_at=None,
+                manually_adjusted=True,
+            )
+            if cell.source_cell_id == "CELL-001"
+            else cell
+        )
+        for cell in active_draft.cells
+    ]
+    service.save_draft(
+        revision,
+        revised_cells,
+        actor_id="scheduler-1",
+        occurred_at="2026-08-01T08:40",
+    )
+    service.schedule_publish(
+        revision.roster_version_id,
+        actor_id="scheduler-1",
+        occurred_at="2026-08-01T09:00",
+        effective_at="2026-08-01T09:00",
+        context=_context(),
+        baseline_version_id="ROSTER-202608-DRAFT",
+    )
+    service.activate_due_published(
+        now="2026-08-01T09:00",
+        actor_id="system",
+    )
+    service.resolve_request_intent(
+        "REQ-001",
+        resolver_id="scheduler-1",
+        resolved_at="2026-08-01T09:10",
+        linked_revision_version_id="ROSTER-202608-REV-1",
+        scheduler_resolution_note="已按请假登记完成修订，8 月 1 日上午改为休息。",
     )
 
 

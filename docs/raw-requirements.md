@@ -325,8 +325,8 @@ description: "纠正 IM304 的 version-first 页面方向，把 `/roster-change-
 source: "PM confirmed event-first A path and allowed local confirmation persistence on 2026-07-07"
 submitted_at: "2026-07-07"
 version: "1.0"
-status: "ready"
-notes: "Local roster-change confirmation loop only; no approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, charge-factor work, or bulk confirmation."
+status: "done"
+notes: "Completed local roster-change confirmation loop only; no approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, charge-factor work, or bulk confirmation."
 ```
 
 ## History Policy

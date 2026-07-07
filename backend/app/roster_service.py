@@ -1,4 +1,5 @@
 from dataclasses import dataclass, replace
+from datetime import date
 from typing import Any
 
 from backend.app.roster_drafts import (
@@ -17,6 +18,7 @@ from backend.app.roster_drafts import (
     validate_roster_publish,
 )
 from backend.app.roster_persistence import (
+    RosterChangeConfirmationRecord,
     RosterPersistenceRepository,
     RosterRequestIntentRecord,
     RosterVersionDetail,
@@ -32,6 +34,12 @@ class RosterActivationResult:
 REQUEST_INTENT_ACTIONS = {"leave", "swap", "exception_fix", "site_adjustment"}
 REQUEST_INTENT_ROLES = {"frontline", "team_lead"}
 REQUEST_INTENT_STATUSES = {"open", "resolved"}
+REQUEST_INTENT_ACTION_LABELS = {
+    "leave": "请假",
+    "swap": "换班",
+    "exception_fix": "异常修复",
+    "site_adjustment": "现场调整",
+}
 
 
 class RosterService:
@@ -573,6 +581,28 @@ class RosterService:
             ),
             diff_rows[0] if diff_rows else None,
         )
+        confirmations = {
+            confirmation.change_event_id: confirmation
+            for confirmation in self.repository.list_change_confirmations(
+                business_month=business_month,
+                project_id=project_id,
+                workplace_id=workplace_id,
+                team_id=team_id,
+            )
+        }
+        change_events = [
+            _change_event_from_diff(row, confirmations.get(row["diff_id"]))
+            for row in diff_rows
+        ]
+        selected_event = next(
+            (
+                event
+                for event in change_events
+                if selected_diff is not None
+                and event["change_event_id"] == selected_diff["diff_id"]
+            ),
+            change_events[0] if change_events else None,
+        )
         return {
             "scope": {
                 "business_month": business_month,
@@ -585,7 +615,64 @@ class RosterService:
             "timeline": timeline,
             "diff_rows": diff_rows,
             "selected_diff": selected_diff,
+            "summary": _change_event_summary(change_events),
+            "change_events": change_events,
+            "grouped_by_employee": _group_change_events_by_employee(change_events),
+            "selected_event": selected_event,
         }
+
+    def confirm_roster_change_event(
+        self,
+        change_event_id: str,
+        *,
+        business_month: str,
+        project_id: str | None,
+        workplace_id: str | None,
+        team_id: str | None,
+        actor_id: str,
+        confirmed_at: str,
+        internal_confirmation_note: str,
+    ) -> dict[str, Any]:
+        actor = actor_id.strip()
+        note = internal_confirmation_note.strip()
+        if not actor:
+            raise ValueError("actor_id is required")
+        if not confirmed_at.strip():
+            raise ValueError("confirmed_at is required")
+        if not note:
+            raise ValueError("internal_confirmation_note is required")
+        current = self.get_roster_change_governance(
+            business_month=business_month,
+            project_id=project_id,
+            workplace_id=workplace_id,
+            team_id=team_id,
+            visibility="scheduler",
+        )
+        if not any(event["change_event_id"] == change_event_id for event in current["change_events"]):
+            raise ValueError(f"roster change event does not exist: {change_event_id}")
+        self.repository.save_change_confirmation(
+            RosterChangeConfirmationRecord(
+                change_event_id=change_event_id,
+                business_month=business_month,
+                project_id=project_id,
+                workplace_id=workplace_id,
+                team_id=team_id,
+                confirmed_by=actor,
+                confirmed_at=confirmed_at,
+                internal_confirmation_note=note,
+            )
+        )
+        updated = self.get_roster_change_governance(
+            business_month=business_month,
+            project_id=project_id,
+            workplace_id=workplace_id,
+            team_id=team_id,
+            visibility="scheduler",
+        )
+        for event in updated["change_events"]:
+            if event["change_event_id"] == change_event_id:
+                return event
+        raise RuntimeError("confirmed roster change event could not be read back")
 
     def _change_governance_timeline_item(
         self,
@@ -751,6 +838,9 @@ def _roster_cell_snapshot(cell: RosterAssignment) -> dict[str, Any]:
         "employee_id": cell.employee_id,
         "business_date": cell.business_date,
         "assignment_kind": cell.assignment_kind.value,
+        "project_id": cell.project_id,
+        "workplace_id": cell.workplace_id,
+        "team_id": cell.team_id,
         "shift_code": cell.shift_code,
         "annotation_code": cell.annotation_code,
         "interval_start_at": cell.interval_start_at,
@@ -775,6 +865,123 @@ def _request_intent_snapshot(intent: RosterRequestIntentRecord) -> dict[str, Any
         "linked_revision_version_id": intent.linked_revision_version_id,
         "scheduler_resolution_note": intent.scheduler_resolution_note,
     }
+
+
+def _change_event_from_diff(
+    row: dict[str, Any],
+    confirmation: RosterChangeConfirmationRecord | None,
+) -> dict[str, Any]:
+    linked_issues = row["linked_issues"]
+    return {
+        "change_event_id": row["diff_id"],
+        "employee_id": row["employee_id"],
+        "employee_name": row["employee_id"],
+        "team_id": row["after"].get("team_id"),
+        "business_date": row["business_date"],
+        "weekday": _weekday_label(row["business_date"]),
+        "change_type": "modified",
+        "source_category": _change_source_category(row),
+        "source_summary": _change_source_summary(linked_issues),
+        "before": row["before"],
+        "after": row["after"],
+        "linked_issues": linked_issues,
+        "confirmation": _change_confirmation_snapshot(confirmation),
+    }
+
+
+def _change_source_category(row: dict[str, Any]) -> str:
+    if row["linked_issues"]:
+        return "申请/异常"
+    if row["after"].get("manually_adjusted"):
+        return "排班师手工调整"
+    return "系统派生修正"
+
+
+def _change_source_summary(linked_issues: list[dict[str, Any]]) -> str:
+    if not linked_issues:
+        return "无关联申请"
+    first = linked_issues[0]
+    label = REQUEST_INTENT_ACTION_LABELS.get(first["action_type"], first["action_type"])
+    if len(linked_issues) == 1:
+        return f"{label} {first['request_id']}"
+    return f"{label} {first['request_id']} 等 {len(linked_issues)} 个"
+
+
+def _change_confirmation_snapshot(
+    confirmation: RosterChangeConfirmationRecord | None,
+) -> dict[str, Any]:
+    if confirmation is None:
+        return {
+            "status": "pending",
+            "confirmed_at": None,
+            "confirmed_by": None,
+            "internal_confirmation_note": None,
+        }
+    return {
+        "status": "confirmed",
+        "confirmed_at": confirmation.confirmed_at,
+        "confirmed_by": confirmation.confirmed_by,
+        "internal_confirmation_note": confirmation.internal_confirmation_note,
+    }
+
+
+def _change_event_summary(change_events: list[dict[str, Any]]) -> dict[str, int]:
+    pending = [
+        event
+        for event in change_events
+        if event["confirmation"]["status"] == "pending"
+    ]
+    confirmed = [
+        event
+        for event in change_events
+        if event["confirmation"]["status"] == "confirmed"
+    ]
+    linked_issue_ids = {
+        issue["request_id"]
+        for event in change_events
+        for issue in event["linked_issues"]
+    }
+    return {
+        "pending_count": len(pending),
+        "confirmed_count": len(confirmed),
+        "affected_employee_count": len({event["employee_id"] for event in change_events}),
+        "linked_issue_count": len(linked_issue_ids),
+    }
+
+
+def _group_change_events_by_employee(change_events: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    grouped: dict[str, dict[str, Any]] = {}
+    for event in change_events:
+        employee_id = event["employee_id"]
+        group = grouped.setdefault(
+            employee_id,
+            {
+                "employee_id": employee_id,
+                "employee_name": event["employee_name"],
+                "pending_count": 0,
+                "confirmed_count": 0,
+                "events": [],
+            },
+        )
+        if event["confirmation"]["status"] == "pending":
+            group["pending_count"] += 1
+        else:
+            group["confirmed_count"] += 1
+        group["events"].append(event["change_event_id"])
+    return sorted(
+        grouped.values(),
+        key=lambda group: (
+            -group["pending_count"],
+            group["employee_id"],
+        ),
+    )
+
+
+def _weekday_label(business_date: str) -> str:
+    try:
+        return date.fromisoformat(business_date).strftime("%a")
+    except ValueError:
+        return ""
 
 
 def _frontline_can_see_change(
