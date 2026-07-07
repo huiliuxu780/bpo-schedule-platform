@@ -51,7 +51,42 @@ type SelectedPublishedCell = {
   cell: DownstreamRosterCell
 }
 
+type PublishedRosterIssueIntent = {
+  request_id: string
+  business_month: string
+  project_id?: string | null
+  workplace_id?: string | null
+  team_id?: string | null
+  roster_version_id: string
+  roster_cell_id: string
+  employee_id: string
+  business_date: string
+  action_type: "leave" | "swap" | "exception_fix" | "site_adjustment"
+  requester_role: "frontline" | "team_lead"
+  requester_id: string
+  note: string
+  status: "open" | "resolved"
+  created_at: string
+  resolved_at?: string | null
+  resolved_by?: string | null
+  linked_revision_version_id?: string | null
+  scheduler_resolution_note?: string | null
+}
+
+type PublishedRosterIssueSummary = {
+  totals: Record<"open" | "resolved", number>
+  by_cell: Record<string, { open?: number; resolved?: number; latest_created_at?: string }>
+  by_action: Record<string, { open?: number; resolved?: number }>
+  by_employee: Record<string, { open?: number; resolved?: number }>
+}
+
 const fixedTeamId = "G1"
+const publishedIssueActionLabels: Record<PublishedRosterIssueIntent["action_type"], string> = {
+  leave: "请假",
+  swap: "换班",
+  exception_fix: "异常修复",
+  site_adjustment: "现场调配",
+}
 
 export function PublishedRosterViewer({
   model,
@@ -78,6 +113,10 @@ export function PublishedRosterViewer({
   const [selectedCell, setSelectedCell] =
     React.useState<SelectedPublishedCell | null>(null)
   const [detailOpen, setDetailOpen] = React.useState(false)
+  const [issueStatusOpen, setIssueStatusOpen] = React.useState(false)
+  const [issueIntents, setIssueIntents] = React.useState<PublishedRosterIssueIntent[]>([])
+  const [issueSummary, setIssueSummary] =
+    React.useState<PublishedRosterIssueSummary | null>(null)
 
   React.useEffect(() => {
     let cancelled = false
@@ -98,6 +137,37 @@ export function PublishedRosterViewer({
       cancelled = true
     }
   }, [model])
+
+  const refreshRosterIssues = React.useCallback(async () => {
+    const [items, summary] = await Promise.all([
+      fetchRosterIssueIntents(model, role, selectedEmployeeId),
+      fetchRosterIssueSummary(model, role, selectedEmployeeId),
+    ])
+    setIssueIntents(items)
+    setIssueSummary(summary)
+  }, [model, role, selectedEmployeeId])
+
+  React.useEffect(() => {
+    let cancelled = false
+
+    async function loadRosterIssues() {
+      const [items, summary] = await Promise.all([
+        fetchRosterIssueIntents(model, role, selectedEmployeeId),
+        fetchRosterIssueSummary(model, role, selectedEmployeeId),
+      ])
+      if (cancelled) {
+        return
+      }
+      setIssueIntents(items)
+      setIssueSummary(summary)
+    }
+
+    void loadRosterIssues()
+
+    return () => {
+      cancelled = true
+    }
+  }, [model, role, selectedEmployeeId])
 
   const downstreamView = React.useMemo(
     () =>
@@ -213,6 +283,14 @@ export function PublishedRosterViewer({
             </SelectContent>
           </Select>
         ) : null}
+        <Button
+          type="button"
+          variant="outline"
+          className="h-9"
+          onClick={() => setIssueStatusOpen(true)}
+        >
+          {role === "team_lead" ? "团队问题状态" : "我的问题状态"}
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 gap-0 border-b bg-background @3xl/main:grid-cols-4">
@@ -271,7 +349,16 @@ export function PublishedRosterViewer({
             </DrawerDescription>
           </DrawerHeader>
           {selectedCell?.cell.detail ? (
-            <PublishedRosterDetail cell={selectedCell.cell} role={role} model={model} />
+            <PublishedRosterDetail
+              cell={selectedCell.cell}
+              role={role}
+              model={model}
+              openIssueCount={getPublishedRosterOpenIssueCount(
+                issueSummary,
+                selectedCell.cell.detail.cellId
+              )}
+              onIssueCreated={refreshRosterIssues}
+            />
           ) : (
             <div className="px-4 text-sm text-muted-foreground">当天暂无班次。</div>
           )}
@@ -282,6 +369,14 @@ export function PublishedRosterViewer({
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
+
+      <IssueStatusDrawer
+        open={issueStatusOpen}
+        role={role}
+        intents={issueIntents}
+        summary={issueSummary}
+        onOpenChange={setIssueStatusOpen}
+      />
     </section>
   )
 }
@@ -480,10 +575,14 @@ function PublishedRosterDetail({
   cell,
   role,
   model,
+  openIssueCount,
+  onIssueCreated,
 }: {
   cell: DownstreamRosterCell
   role: DownstreamRosterRole
   model: RosterDraftViewModel
+  openIssueCount: number
+  onIssueCreated: () => Promise<void>
 }) {
   const detail = cell.detail
   const [selectedActionKey, setSelectedActionKey] =
@@ -510,6 +609,14 @@ function PublishedRosterDetail({
         <DetailRow label="来源版本" value={detail.sourceVersionLabel} />
         <DetailRow label="提示" value={detail.riskLabel} />
       </div>
+      {openIssueCount > 0 ? (
+        <div
+          data-slot="published-roster-cell-open-issue-hint"
+          className="rounded-md border bg-muted/60 px-3 py-2 text-sm text-foreground"
+        >
+          已有待处理问题 {openIssueCount} 条，可继续登记。
+        </div>
+      ) : null}
       <Separator />
       <div>
         <div className="text-sm font-medium">后续动作</div>
@@ -565,6 +672,7 @@ function PublishedRosterDetail({
                 return
               }
               setIntentMessage("已进入排班师本地处理队列")
+              await onIssueCreated()
             } catch {
               setIntentMessage("处理队列服务暂时不可用")
             } finally {
@@ -643,6 +751,103 @@ function RequestIntentPanel({
   )
 }
 
+function IssueStatusDrawer({
+  open,
+  role,
+  intents,
+  summary,
+  onOpenChange,
+}: {
+  open: boolean
+  role: DownstreamRosterRole
+  intents: PublishedRosterIssueIntent[]
+  summary: PublishedRosterIssueSummary | null
+  onOpenChange: (open: boolean) => void
+}) {
+  const openItems = intents.filter((intent) => intent.status === "open")
+  const resolvedItems = intents.filter((intent) => intent.status === "resolved")
+  return (
+    <Drawer open={open} onOpenChange={onOpenChange} direction="right">
+      <DrawerContent
+        data-slot="published-roster-issue-status-drawer"
+        className="inset-y-0 right-0 left-auto mt-0 h-dvh w-[min(460px,calc(100vw-24px))] rounded-none"
+      >
+        <DrawerHeader>
+          <DrawerTitle>
+            {role === "team_lead" ? "团队问题状态" : "我的问题状态"}
+          </DrawerTitle>
+          <DrawerDescription>
+            open 与 resolved 本地问题状态；不进入审批流。
+          </DrawerDescription>
+        </DrawerHeader>
+        <div className="min-h-0 flex-1 overflow-auto px-4">
+          <div className="grid grid-cols-2 gap-2">
+            <SummaryTile label="待处理" value={summary?.totals.open ?? openItems.length} />
+            <SummaryTile
+              label="已处理"
+              value={summary?.totals.resolved ?? resolvedItems.length}
+            />
+          </div>
+          <IssueStatusSection title="待处理" intents={openItems} />
+          <IssueStatusSection title="已处理" intents={resolvedItems} />
+        </div>
+        <DrawerFooter>
+          <DrawerClose asChild>
+            <Button variant="outline">关闭</Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  )
+}
+
+function IssueStatusSection({
+  title,
+  intents,
+}: {
+  title: string
+  intents: PublishedRosterIssueIntent[]
+}) {
+  return (
+    <div className="mt-4">
+      <div className="mb-2 text-sm font-medium">{title}</div>
+      <div className="grid gap-2">
+        {intents.length === 0 ? (
+          <div className="rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+            暂无{title}问题
+          </div>
+        ) : (
+          intents.map((intent) => (
+            <div key={intent.request_id} className="rounded-md border p-3 text-sm">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="truncate font-medium">
+                    {intent.employee_id} / {intent.business_date}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {publishedIssueActionLabels[intent.action_type]} · {intent.requester_role}
+                  </div>
+                </div>
+                <Badge variant={intent.status === "open" ? "default" : "secondary"}>
+                  {intent.status === "open" ? "待处理" : "已处理"}
+                </Badge>
+              </div>
+              <div className="mt-2">{intent.note}</div>
+              {intent.status === "resolved" ? (
+                <div className="mt-3 grid gap-1 text-xs text-muted-foreground">
+                  <div>处理时间：{intent.resolved_at ?? "-"}</div>
+                  <div>关联修订：{intent.linked_revision_version_id ?? "-"}</div>
+                  <div>处理说明：{intent.scheduler_resolution_note ?? "-"}</div>
+                </div>
+              ) : null}
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  )
+}
+
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-3">
@@ -674,6 +879,71 @@ async function fetchFormalRoster(
   } catch {
     return missingFormalRoster()
   }
+}
+
+async function fetchRosterIssueIntents(
+  model: RosterDraftViewModel,
+  role: DownstreamRosterRole,
+  selectedEmployeeId: string | null
+): Promise<PublishedRosterIssueIntent[]> {
+  const params = buildRosterIssueParams(model, role, selectedEmployeeId)
+  try {
+    const response = await fetch(
+      buildRosterApiUrl(`/api/v1/roster-requests?${params.toString()}`),
+      { cache: "no-store" }
+    )
+    if (!response.ok) {
+      return []
+    }
+    const payload = await response.json()
+    return Array.isArray(payload?.items) ? payload.items : []
+  } catch {
+    return []
+  }
+}
+
+async function fetchRosterIssueSummary(
+  model: RosterDraftViewModel,
+  role: DownstreamRosterRole,
+  selectedEmployeeId: string | null
+): Promise<PublishedRosterIssueSummary | null> {
+  const params = buildRosterIssueParams(model, role, selectedEmployeeId)
+  try {
+    const response = await fetch(
+      buildRosterApiUrl(`/api/v1/roster-requests/summary?${params.toString()}`),
+      { cache: "no-store" }
+    )
+    if (!response.ok) {
+      return null
+    }
+    return response.json()
+  } catch {
+    return null
+  }
+}
+
+function buildRosterIssueParams(
+  model: RosterDraftViewModel,
+  role: DownstreamRosterRole,
+  selectedEmployeeId: string | null
+) {
+  const params = new URLSearchParams({
+    business_month: model.targetMonth,
+    project_id: model.project.projectId,
+    workplace_id: model.project.workplaceName,
+    team_id: fixedTeamId,
+  })
+  if (role === "frontline" && selectedEmployeeId) {
+    params.set("employee_id", selectedEmployeeId)
+  }
+  return params
+}
+
+function getPublishedRosterOpenIssueCount(
+  summary: PublishedRosterIssueSummary | null,
+  rosterCellId: string
+) {
+  return summary?.by_cell?.[rosterCellId]?.open ?? 0
 }
 
 function normalizeFormalRoster(

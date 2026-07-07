@@ -257,3 +257,15 @@
 - focused verification: red `.venv/bin/python -m unittest backend.tests.test_roster_service` 失败在缺少 `create_request_intent`；red `.venv/bin/python -m unittest backend.tests.test_roster_publish_api` 失败在缺少 request-intent API；red `node --test scripts/tests/published-roster-view-model.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 失败在缺少 intent-ready UI 和下游队列；green 后 29 Node tests、`npm run typecheck`、16 backend tests、`git diff --check` 均通过。
 - runtime smoke: local backend `127.0.0.1:8001` + frontend `127.0.0.1:3003`；正式班表页读到 `ROSTER-2026-08-DRAFT-G1-SH`，月历显示 8 月 3 日 `A5/REST`，周明细打开 Alice Chen 的 `A5 09:00-14:30` 只读格子和 `登记处理意图` 面板；浏览器插件随后超时，使用同一后端 API 完成意图创建、修订草稿创建和 resolve 闭环：`REQ-IM302-BROWSER-SMOKE` 从 `open` 变为 `resolved` 并挂到 `ROSTER-2026-08-REV-IM302-SMOKE`。
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、884 Node tests（883 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、275 backend tests 和 project Harness check。
+
+- task_id: `IM303`
+- source_ids:
+  - `R971`
+- story_ids:
+  - `US891`
+- action: 正式班表下游问题管理闭环 v1 Implementation。
+- status: `done`
+- notes: 完成 IM302 之上的本地问题管理闭环：下游正式班表提供我的/团队问题状态抽屉，open/resolved 都可回看；格子详情显示同格待处理提示且允许继续登记；排班师在 `/roster-drafts?month=2026-08` 的独立下游问题工作区按状态、动作、人员筛选问题，查看详情、定位正式班表格子，并关闭问题时记录 `scheduler_resolution_note` 和 linked revision version。未新增真实审批、认证、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。
+- focused verification: red `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_publish_api` 失败在缺少 `list_request_intents` / detail API；red `node --test scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 失败在缺少状态抽屉和下游问题工作区；green 后 14 backend tests、24 Node structure tests、`npm run typecheck`、`git diff --check` 均通过。
+- runtime smoke: local backend `127.0.0.1:8001` + frontend `127.0.0.1:3003`；发布 2026-08 G1 正式班表后创建两条下游问题，创建修订草稿并关闭 `REQ-IM303-SMOKE-1`；summary 返回 open=1/resolved=1，resolved 列表返回 `scheduler_resolution_note` 与 `ROSTER-2026-08-REV-IM303-SMOKE`；`/published-roster?month=2026-08` 和 `/roster-drafts?month=2026-08` 均返回 200。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、885 Node tests（884 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、275 backend tests 和 project Harness check。

@@ -296,14 +296,14 @@ class RosterServiceTest(unittest.TestCase):
                 "published snapshot is missing",
             )
 
-    def test_downstream_roster_request_intent_persists_and_resolves_against_current_published(
+    def test_downstream_roster_request_intent_persists_filters_summarizes_and_resolves(
         self,
     ) -> None:
         with tempfile.TemporaryDirectory() as directory:
             service = _service(directory)
             _publish_current_roster(service)
 
-            created = service.create_request_intent(
+            first = service.create_request_intent(
                 request_id="REQ-001",
                 business_month="2026-08",
                 project_id="BOSCH-CS",
@@ -316,7 +316,35 @@ class RosterServiceTest(unittest.TestCase):
                 note="8 月 1 日上午请假，需要排班师修订正式班表。",
                 occurred_at="2026-08-01T08:00",
             )
-            open_items = service.list_open_request_intents(
+            second = service.create_request_intent(
+                request_id="REQ-002",
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                roster_cell_id="CELL-002",
+                action_type="swap",
+                requester_role="team_lead",
+                requester_id="LEAD-G1",
+                note="现场协调换班，需要排班师确认修订。",
+                occurred_at="2026-08-01T08:05",
+            )
+            open_leave_items = service.list_request_intents(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                status="open",
+                action_type="leave",
+            )
+            employee_items = service.list_request_intents(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                employee_id="EMP-002",
+            )
+            summary_before = service.summarize_request_intents(
                 business_month="2026-08",
                 project_id="BOSCH-CS",
                 workplace_id="SHANGHAI",
@@ -333,22 +361,60 @@ class RosterServiceTest(unittest.TestCase):
                 resolver_id="scheduler-1",
                 resolved_at="2026-08-01T09:00",
                 linked_revision_version_id="ROSTER-202608-REV-1",
+                scheduler_resolution_note="已按请假登记完成修订，8 月 1 日上午改为休息。",
+            )
+            detail = service.get_request_intent("REQ-001")
+            resolved_items = service.list_request_intents(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                status="resolved",
+            )
+            summary_after = service.summarize_request_intents(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
             )
 
-            self.assertEqual(created.status, "open")
-            self.assertEqual(created.employee_id, "EMP-001")
-            self.assertEqual(created.business_date, "2026-08-01")
-            self.assertEqual(created.roster_version_id, "ROSTER-202608-DRAFT")
-            self.assertEqual([item.request_id for item in open_items], ["REQ-001"])
+            self.assertEqual(first.status, "open")
+            self.assertEqual(first.employee_id, "EMP-001")
+            self.assertEqual(first.business_date, "2026-08-01")
+            self.assertEqual(first.roster_version_id, "ROSTER-202608-DRAFT")
+            self.assertEqual(second.employee_id, "EMP-002")
+            self.assertEqual([item.request_id for item in open_leave_items], ["REQ-001"])
+            self.assertEqual([item.request_id for item in employee_items], ["REQ-002"])
+            self.assertEqual(summary_before["totals"], {"open": 2, "resolved": 0})
+            self.assertEqual(summary_before["by_cell"]["CELL-001"]["open"], 1)
             self.assertEqual(resolved.status, "resolved")
             self.assertEqual(resolved.resolved_by, "scheduler-1")
             self.assertEqual(resolved.linked_revision_version_id, "ROSTER-202608-REV-1")
+            self.assertEqual(
+                resolved.scheduler_resolution_note,
+                "已按请假登记完成修订，8 月 1 日上午改为休息。",
+            )
+            self.assertEqual(detail.scheduler_resolution_note, resolved.scheduler_resolution_note)
+            self.assertEqual([item.request_id for item in resolved_items], ["REQ-001"])
+            self.assertEqual(summary_after["totals"], {"open": 1, "resolved": 1})
+            self.assertEqual(
+                [
+                    item.request_id
+                    for item in service.list_open_request_intents(
+                        business_month="2026-08",
+                        project_id="BOSCH-CS",
+                        workplace_id="SHANGHAI",
+                        team_id="G1",
+                    )
+                ],
+                ["REQ-002"],
+            )
             self.assertEqual(
                 service.list_open_request_intents(
                     business_month="2026-08",
                     project_id="BOSCH-CS",
                     workplace_id="SHANGHAI",
-                    team_id="G1",
+                    team_id="G2",
                 ),
                 [],
             )

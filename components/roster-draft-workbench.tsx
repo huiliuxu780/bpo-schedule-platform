@@ -121,6 +121,7 @@ type DownstreamRosterRequestIntent = {
   resolved_at?: string | null
   resolved_by?: string | null
   linked_revision_version_id?: string | null
+  scheduler_resolution_note?: string | null
 }
 
 type PublishedRosterSnapshot = {
@@ -302,6 +303,11 @@ export function RosterDraftWorkbench({
   const [downstreamRequests, setDownstreamRequests] = React.useState<
     DownstreamRosterRequestIntent[]
   >([])
+  const [issueStatusFilter, setIssueStatusFilter] =
+    React.useState<DownstreamRosterRequestIntent["status"]>("open")
+  const [issueActionFilter, setIssueActionFilter] = React.useState("all")
+  const [issueEmployeeFilter, setIssueEmployeeFilter] = React.useState("all")
+  const [resolutionNotes, setResolutionNotes] = React.useState<Record<string, string>>({})
 
   const selectedWeek =
     model.weeks.find((week) => week.weekId === selectedWeekId) ?? model.weeks[0]
@@ -327,7 +333,23 @@ export function RosterDraftWorkbench({
   const visibleGapRows =
     publishedSnapshot?.status === "published" ? publishedGapRows : gapRows
   const downstreamRequestRows = React.useMemo(
-    () => downstreamRequests.filter((request) => request.status === "open"),
+    () =>
+      downstreamRequests.filter((request) => {
+        if (request.status !== issueStatusFilter) {
+          return false
+        }
+        if (issueActionFilter !== "all" && request.action_type !== issueActionFilter) {
+          return false
+        }
+        if (issueEmployeeFilter !== "all" && request.employee_id !== issueEmployeeFilter) {
+          return false
+        }
+        return true
+      }),
+    [downstreamRequests, issueActionFilter, issueEmployeeFilter, issueStatusFilter]
+  )
+  const downstreamIssueEmployeeOptions = React.useMemo(
+    () => Array.from(new Set(downstreamRequests.map((request) => request.employee_id))),
     [downstreamRequests]
   )
   const revisionCellSourceByKey = React.useMemo(
@@ -584,11 +606,20 @@ export function RosterDraftWorkbench({
     }
   }
 
-  async function resolveDownstreamRequest(request: DownstreamRosterRequestIntent) {
+  async function resolveDownstreamRequest(
+    request: DownstreamRosterRequestIntent,
+    schedulerResolutionNote: string
+  ) {
     const linkedVersionId =
       revisionDraft?.version?.version_id ?? publishedSnapshot?.published?.version_id
     if (!linkedVersionId) {
       setPublishMessage("先创建修订草稿并重新发布后，再关闭处理意图")
+      setInspectorOpen(true)
+      setInspectorTab("queue")
+      return
+    }
+    if (!schedulerResolutionNote.trim()) {
+      setPublishMessage("关闭问题前必须填写处理说明")
       setInspectorOpen(true)
       setInspectorTab("queue")
       return
@@ -604,6 +635,7 @@ export function RosterDraftWorkbench({
             resolver_id: ROSTER_PUBLISH_ACTOR_ID,
             resolved_at: currentLocalIsoMinute(),
             linked_revision_version_id: linkedVersionId,
+            scheduler_resolution_note: schedulerResolutionNote,
           }),
         }
       )
@@ -612,6 +644,11 @@ export function RosterDraftWorkbench({
         return
       }
       await refreshDownstreamRequests()
+      setResolutionNotes((current) => {
+        const next = { ...current }
+        delete next[request.request_id]
+        return next
+      })
       setPublishMessage("处理意图已关闭")
     } catch {
       setPublishMessage("处理队列服务暂时不可用")
@@ -742,9 +779,20 @@ export function RosterDraftWorkbench({
         gapRows={publishedGapRows}
         draftGapRows={gapRows}
         downstreamRequests={downstreamRequestRows}
+        downstreamIssueEmployeeOptions={downstreamIssueEmployeeOptions}
+        issueStatusFilter={issueStatusFilter}
+        issueActionFilter={issueActionFilter}
+        issueEmployeeFilter={issueEmployeeFilter}
+        resolutionNotes={resolutionNotes}
         editedCellCount={editedCellCount}
         activeTab={inspectorTab}
         onActiveTabChange={setInspectorTab}
+        onIssueStatusFilterChange={setIssueStatusFilter}
+        onIssueActionFilterChange={setIssueActionFilter}
+        onIssueEmployeeFilterChange={setIssueEmployeeFilter}
+        onResolutionNoteChange={(requestId, note) =>
+          setResolutionNotes((current) => ({ ...current, [requestId]: note }))
+        }
         onUpdateCellDraftEdit={updateCellDraftEdit}
         onResetCellDraftEdit={resetCellDraftEdit}
         onLocateCell={locateCell}
@@ -1198,9 +1246,18 @@ function RosterInspectorDrawer({
   gapRows,
   draftGapRows,
   downstreamRequests,
+  downstreamIssueEmployeeOptions,
+  issueStatusFilter,
+  issueActionFilter,
+  issueEmployeeFilter,
+  resolutionNotes,
   editedCellCount,
   activeTab,
   onActiveTabChange,
+  onIssueStatusFilterChange,
+  onIssueActionFilterChange,
+  onIssueEmployeeFilterChange,
+  onResolutionNoteChange,
   onUpdateCellDraftEdit,
   onResetCellDraftEdit,
   onLocateCell,
@@ -1221,15 +1278,27 @@ function RosterInspectorDrawer({
   gapRows: RosterGapPreviewRow[]
   draftGapRows: RosterGapPreviewRow[]
   downstreamRequests: DownstreamRosterRequestIntent[]
+  downstreamIssueEmployeeOptions: string[]
+  issueStatusFilter: DownstreamRosterRequestIntent["status"]
+  issueActionFilter: string
+  issueEmployeeFilter: string
+  resolutionNotes: Record<string, string>
   editedCellCount: number
   activeTab: WorkbenchInspectorTab
   onActiveTabChange: (tab: WorkbenchInspectorTab) => void
+  onIssueStatusFilterChange: (status: DownstreamRosterRequestIntent["status"]) => void
+  onIssueActionFilterChange: (action: string) => void
+  onIssueEmployeeFilterChange: (employeeId: string) => void
+  onResolutionNoteChange: (requestId: string, note: string) => void
   onUpdateCellDraftEdit: (key: string, edit: RosterCellDraftEdit) => void
   onResetCellDraftEdit: (key: string) => void
   onLocateCell: (employeeId: string, date: string, view?: WorkbenchView) => void
   onSelectRelatedCell: (employeeId: string, date: string) => void
   onLocateDownstreamRequest: (request: DownstreamRosterRequestIntent) => void
-  onResolveDownstreamRequest: (request: DownstreamRosterRequestIntent) => void
+  onResolveDownstreamRequest: (
+    request: DownstreamRosterRequestIntent,
+    schedulerResolutionNote: string
+  ) => void
 }) {
   return (
     <DrawerContent
@@ -1304,8 +1373,17 @@ function RosterInspectorDrawer({
           </TabsContent>
           <TabsContent value="queue" className="m-0">
             <div className="grid gap-4">
-              <DownstreamRequestQueuePanel
+              <DownstreamIssueWorkspacePanel
                 requests={downstreamRequests}
+                employeeOptions={downstreamIssueEmployeeOptions}
+                issueStatusFilter={issueStatusFilter}
+                issueActionFilter={issueActionFilter}
+                issueEmployeeFilter={issueEmployeeFilter}
+                resolutionNotes={resolutionNotes}
+                onIssueStatusFilterChange={onIssueStatusFilterChange}
+                onIssueActionFilterChange={onIssueActionFilterChange}
+                onIssueEmployeeFilterChange={onIssueEmployeeFilterChange}
+                onResolutionNoteChange={onResolutionNoteChange}
                 onLocateRequest={onLocateDownstreamRequest}
                 onResolveRequest={onResolveDownstreamRequest}
               />
@@ -1972,33 +2050,93 @@ function WorkbenchQueuePanel({
   )
 }
 
-function DownstreamRequestQueuePanel({
+function DownstreamIssueWorkspacePanel({
   requests,
+  employeeOptions,
+  issueStatusFilter,
+  issueActionFilter,
+  issueEmployeeFilter,
+  resolutionNotes,
+  onIssueStatusFilterChange,
+  onIssueActionFilterChange,
+  onIssueEmployeeFilterChange,
+  onResolutionNoteChange,
   onLocateRequest,
   onResolveRequest,
 }: {
   requests: DownstreamRosterRequestIntent[]
+  employeeOptions: string[]
+  issueStatusFilter: DownstreamRosterRequestIntent["status"]
+  issueActionFilter: string
+  issueEmployeeFilter: string
+  resolutionNotes: Record<string, string>
+  onIssueStatusFilterChange: (status: DownstreamRosterRequestIntent["status"]) => void
+  onIssueActionFilterChange: (action: string) => void
+  onIssueEmployeeFilterChange: (employeeId: string) => void
+  onResolutionNoteChange: (requestId: string, note: string) => void
   onLocateRequest: (request: DownstreamRosterRequestIntent) => void
-  onResolveRequest: (request: DownstreamRosterRequestIntent) => void
+  onResolveRequest: (
+    request: DownstreamRosterRequestIntent,
+    schedulerResolutionNote: string
+  ) => void
 }) {
   return (
     <div
-      data-slot="downstream-roster-request-queue"
+      data-slot="downstream-issue-workspace"
       className="rounded-lg border bg-card p-3"
     >
       <div className="flex items-center justify-between gap-3">
         <div>
-          <div className="text-sm font-medium">下游处理队列</div>
+          <div className="text-sm font-medium">下游问题工作区</div>
           <div className="mt-1 text-xs text-muted-foreground">
-            小组长和一线登记的本地处理意图，定位到正式班表格子后进入修订。
+            小组长和一线登记的本地问题，定位到正式班表格子后进入修订。
           </div>
         </div>
         <Badge variant="secondary">{requests.length}</Badge>
       </div>
+      <div className="mt-3 grid gap-2 @sm:grid-cols-3">
+        <Tabs
+          value={issueStatusFilter}
+          onValueChange={(value) =>
+            onIssueStatusFilterChange(value as DownstreamRosterRequestIntent["status"])
+          }
+        >
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="open">待处理</TabsTrigger>
+            <TabsTrigger value="resolved">已处理</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <Select value={issueActionFilter} onValueChange={onIssueActionFilterChange}>
+          <SelectTrigger className="h-9" aria-label="问题动作">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">全部动作</SelectItem>
+            {Object.entries(requestLabels).map(([value, label]) => (
+              <SelectItem key={value} value={value}>
+                {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={issueEmployeeFilter} onValueChange={onIssueEmployeeFilterChange}>
+          <SelectTrigger className="h-9" aria-label="问题人员">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">全部人员</SelectItem>
+            {employeeOptions.map((employeeId) => (
+              <SelectItem key={employeeId} value={employeeId}>
+                {employeeId}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
       <div className="mt-3 grid gap-2">
         {requests.length === 0 ? (
           <div className="rounded-md border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
-            暂无下游处理意图
+            暂无下游问题
           </div>
         ) : (
           requests.map((request) => (
@@ -2015,9 +2153,28 @@ function DownstreamRequestQueuePanel({
                 <Badge variant="outline">{request.status}</Badge>
               </div>
               <div className="mt-2 text-sm">{request.note}</div>
-              <div className="mt-2 text-xs font-medium">
-                定位到正式班表格子：{request.roster_cell_id}
+              <div className="mt-2 grid gap-1 text-xs text-muted-foreground">
+                <div>问题编号：{request.request_id}</div>
+                <div>定位到正式班表格子：{request.roster_cell_id}</div>
+                <div>登记时间：{request.created_at}</div>
+                {request.status === "resolved" ? (
+                  <>
+                    <div>处理时间：{request.resolved_at ?? "-"}</div>
+                    <div>关联修订：{request.linked_revision_version_id ?? "-"}</div>
+                    <div>处理说明：{request.scheduler_resolution_note ?? "-"}</div>
+                  </>
+                ) : null}
               </div>
+              {request.status === "open" ? (
+                <textarea
+                  className="mt-3 min-h-16 w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  value={resolutionNotes[request.request_id] ?? ""}
+                  onChange={(event) =>
+                    onResolutionNoteChange(request.request_id, event.target.value)
+                  }
+                  placeholder="处理说明"
+                />
+              ) : null}
               <div className="mt-3 flex flex-wrap gap-2">
                 <Button
                   type="button"
@@ -2027,13 +2184,20 @@ function DownstreamRequestQueuePanel({
                 >
                   定位到正式班表格子
                 </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => onResolveRequest(request)}
-                >
-                  关闭处理意图
-                </Button>
+                {request.status === "open" ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() =>
+                      onResolveRequest(
+                        request,
+                        resolutionNotes[request.request_id] ?? ""
+                      )
+                    }
+                  >
+                    关闭问题
+                  </Button>
+                ) : null}
               </div>
             </div>
           ))

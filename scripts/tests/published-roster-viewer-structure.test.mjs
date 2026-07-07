@@ -73,6 +73,26 @@ test("published roster viewer creates local request intents without approval", (
   assert.ok(!content.includes("提交审批"))
 })
 
+test("published roster viewer shows downstream issue status without polluting the roster grid", () => {
+  const content = readProjectFile("components/published-roster-viewer.tsx")
+
+  assert.ok(content.includes("type PublishedRosterIssueIntent"))
+  assert.ok(content.includes("type PublishedRosterIssueSummary"))
+  assert.ok(content.includes("IssueStatusDrawer"))
+  assert.ok(content.includes('data-slot="published-roster-issue-status-drawer"'))
+  assert.ok(content.includes('data-slot="published-roster-cell-open-issue-hint"'))
+  assert.ok(content.includes("/api/v1/roster-requests/summary"))
+  assert.ok(content.includes("fetchRosterIssueSummary"))
+  assert.ok(content.includes("fetchRosterIssueIntents"))
+  assert.ok(content.includes("我的问题状态"))
+  assert.ok(content.includes("团队问题状态"))
+  assert.ok(content.includes("已有待处理问题"))
+  assert.ok(content.includes("继续登记"))
+  assert.ok(content.includes("scheduler_resolution_note"))
+  assert.ok(content.includes("linked_revision_version_id"))
+  assert.ok(!content.includes("审批状态"))
+})
+
 test("published roster navigation is a distinct planning sidebar item", () => {
   const content = readProjectFile("components/app-sidebar.tsx")
 

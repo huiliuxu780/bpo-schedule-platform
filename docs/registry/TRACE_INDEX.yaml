@@ -1,5 +1,5 @@
 version: 2
-updated_at: "2026-07-06"
+updated_at: "2026-07-07"
 rules:
   - "This registry stores current IDs, paths, and relationships only."
   - "Historical trace entries before IM279 were intentionally removed from this compact registry on 2026-07-01."
@@ -401,6 +401,12 @@ requirements:
       - "US890"
     task_ids:
       - "IM302"
+  R971:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US891"
+    task_ids:
+      - "IM303"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
@@ -426,4 +432,5 @@ decisions:
   - "D-2026-07-06-downstream-published-roster-v1"
   - "D-2026-07-06-formal-roster-request-boundary"
   - "D-2026-07-07-downstream-roster-request-intent"
+  - "D-2026-07-07-downstream-issue-management-loop"
 archive_refs: []

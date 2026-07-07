@@ -373,6 +373,33 @@
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
 
+### 2026-07-07 - IM303 正式班表下游问题管理闭环 v1 Implementation
+
+#### 审计结论
+
+- IM303 已完成一个下游问题可追踪闭环，不是单点字段或小队列补丁。
+- `/published-roster?month=2026-08` 保持主月/周正式班表干净，只在格子详情显示同格待处理提示，并提供独立“我的/团队问题状态”抽屉。
+- 下游状态抽屉展示 open 与 resolved 问题；resolved 回看处理时间、关联修订版本和排班师处理说明。
+- `/roster-drafts?month=2026-08` 新增独立下游问题工作区，可按状态、动作、人员筛选，查看详情、定位正式班表格子。
+- 排班师关闭问题时必须记录 `scheduler_resolution_note`，并继续绑定 linked revision version。
+- 后端补齐 request-intent 详情、汇总、筛选和 resolution note；未新增审批流 API。
+- 本轮未新增真实审批、认证、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。
+
+#### 验证
+
+- red/green backend: `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_publish_api` 先失败在缺少 `list_request_intents` / detail API，之后通过 14 tests。
+- red/green frontend: `node --test scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 先失败在缺少状态抽屉和问题工作区，之后通过 24 tests。
+- typecheck: `npm run typecheck` 通过。
+- diff check: `git diff --check` 通过。
+- runtime smoke: local backend `127.0.0.1:8001` + frontend `127.0.0.1:3003`；API summary 返回 open=1/resolved=1，resolved item 带 `scheduler_resolution_note` 和 linked revision version；两个页面均返回 200。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、885 Node tests（884 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、275 backend tests 和 project Harness check。
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### 2026-07-06 - IM301 正式班表变更申请边界 v1 Implementation
 
 #### 审计结论

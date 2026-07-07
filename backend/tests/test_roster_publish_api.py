@@ -10,7 +10,9 @@ from backend.app.main import (
     acquire_roster_draft_lock,
     app,
     create_roster_request_intent,
+    get_roster_request_intent,
     list_roster_request_intents,
+    summarize_roster_request_intents,
     get_current_roster_published_snapshot,
     _get_roster_service,
     publish_roster_draft,
@@ -29,6 +31,8 @@ class RosterPublishApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/roster-drafts/locks/release", "POST"), routes)
         self.assertIn(("/api/v1/roster-requests", "GET"), routes)
         self.assertIn(("/api/v1/roster-requests", "POST"), routes)
+        self.assertIn(("/api/v1/roster-requests/summary", "GET"), routes)
+        self.assertIn(("/api/v1/roster-requests/{request_id}", "GET"), routes)
         self.assertIn(("/api/v1/roster-requests/{request_id}/resolve", "POST"), routes)
 
     def test_local_roster_publish_api_allows_browser_preflight(self) -> None:
@@ -115,7 +119,7 @@ class RosterPublishApiTest(unittest.TestCase):
         self.assertFalse(release_response["read_only"])
         self.assertEqual(publish_response["status"], "published")
 
-    def test_roster_request_intent_api_creates_lists_and_resolves_local_queue_item(self) -> None:
+    def test_roster_request_intent_api_lists_details_summarizes_and_resolves(self) -> None:
         with _isolated_database():
             publish_roster_draft(_publish_request())
             create_response = create_roster_request_intent(
@@ -133,7 +137,31 @@ class RosterPublishApiTest(unittest.TestCase):
                     "occurred_at": "2026-08-01T08:00",
                 }
             )
+            create_roster_request_intent(
+                {
+                    "request_id": "REQ-002",
+                    "business_month": "2026-08",
+                    "project_id": "BOSCH-CS",
+                    "workplace_id": "SHANGHAI",
+                    "team_id": "G1",
+                    "roster_cell_id": "CELL-002",
+                    "action_type": "swap",
+                    "requester_role": "team_lead",
+                    "requester_id": "LEAD-G1",
+                    "note": "现场换班待排班师确认。",
+                    "occurred_at": "2026-08-01T08:05",
+                }
+            )
             list_response = list_roster_request_intents(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                status="open",
+                action_type="leave",
+            )
+            detail_response = get_roster_request_intent("REQ-001")
+            summary_before = summarize_roster_request_intents(
                 business_month="2026-08",
                 project_id="BOSCH-CS",
                 workplace_id="SHANGHAI",
@@ -152,6 +180,7 @@ class RosterPublishApiTest(unittest.TestCase):
                     "resolver_id": "scheduler-1",
                     "resolved_at": "2026-08-01T09:00",
                     "linked_revision_version_id": "ROSTER-2026-08-REV-1",
+                    "scheduler_resolution_note": "已完成请假修订并发布。",
                 },
             )
             list_after_resolve = list_roster_request_intents(
@@ -159,6 +188,14 @@ class RosterPublishApiTest(unittest.TestCase):
                 project_id="BOSCH-CS",
                 workplace_id="SHANGHAI",
                 team_id="G1",
+                status="open",
+            )
+            resolved_response = list_roster_request_intents(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                status="resolved",
             )
 
         self.assertEqual(create_response["status"], "open")
@@ -166,9 +203,14 @@ class RosterPublishApiTest(unittest.TestCase):
         self.assertEqual(create_response["employee_id"], "EMP-001")
         self.assertEqual(create_response["business_date"], "2026-08-01")
         self.assertEqual([item["request_id"] for item in list_response["items"]], ["REQ-001"])
+        self.assertEqual(detail_response["request_id"], "REQ-001")
+        self.assertEqual(summary_before["totals"], {"open": 2, "resolved": 0})
+        self.assertEqual(summary_before["by_cell"]["CELL-001"]["open"], 1)
         self.assertEqual(resolve_response["status"], "resolved")
         self.assertEqual(resolve_response["linked_revision_version_id"], "ROSTER-2026-08-REV-1")
-        self.assertEqual(list_after_resolve["items"], [])
+        self.assertEqual(resolve_response["scheduler_resolution_note"], "已完成请假修订并发布。")
+        self.assertEqual([item["request_id"] for item in list_after_resolve["items"]], ["REQ-002"])
+        self.assertEqual([item["request_id"] for item in resolved_response["items"]], ["REQ-001"])
 
 
 def _isolated_database():

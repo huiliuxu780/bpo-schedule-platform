@@ -290,6 +290,19 @@ status: "done"
 notes: "Local handling-intent loop only; no real approval workflow, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, or charge-factor work."
 ```
 
+### R971 - 正式班表下游问题管理闭环 v1
+
+```yaml
+id: R971
+module: "BPO WFM 三条主线"
+description: "在 IM302 本地处理意图闭环之上，把正式班表发布后的下游意图升级为可追踪的问题管理闭环。小组长/一线在 `/published-roster?month=2026-08` 能从正式班表格子继续登记问题，并在独立状态抽屉查看我的/团队 open 与 resolved 问题、处理时间、关联修订版本和排班师处理说明；正式班表主月/周视图保持干净，只在格子详情显示待处理提示。排班师在 `/roster-drafts?month=2026-08` 拥有独立下游问题工作区，能按 open/resolved、动作、人员等筛选，查看详情、定位格子，并关闭问题时记录 scheduler_resolution_note 与 linked_revision_version_id。"
+source: "PM confirmed bigger IM303 scope after rejecting tiny downstream tracking slice on 2026-07-07"
+submitted_at: "2026-07-07"
+version: "1.0"
+status: "done"
+notes: "Local issue management loop over existing roster request intents only; no real approval workflow, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, or charge-factor work."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

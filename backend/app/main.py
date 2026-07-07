@@ -474,19 +474,90 @@ def list_roster_request_intents(
     project_id: str | None = None,
     workplace_id: str | None = None,
     team_id: str | None = None,
+    status: str | None = None,
+    action_type: str | None = None,
+    employee_id: str | None = None,
+    requester_role: str | None = None,
+    requester_id: str | None = None,
 ) -> dict[str, Any]:
     service = _get_roster_service()
-    return {
-        "items": [
-            _roster_request_intent_response(intent)
-            for intent in service.list_open_request_intents(
-                business_month=business_month,
-                project_id=project_id,
-                workplace_id=workplace_id,
-                team_id=team_id,
-            )
-        ]
-    }
+    try:
+        return {
+            "items": [
+                _roster_request_intent_response(intent)
+                for intent in service.list_request_intents(
+                    business_month=business_month,
+                    project_id=project_id,
+                    workplace_id=workplace_id,
+                    team_id=team_id,
+                    status=status,
+                    action_type=action_type,
+                    employee_id=employee_id,
+                    requester_role=requester_role,
+                    requester_id=requester_id,
+                )
+            ]
+        }
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": {
+                    "code": "ROSTER_REQUEST_LIST_BLOCKED",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
+
+
+@app.get("/api/v1/roster-requests/summary")
+def summarize_roster_request_intents(
+    business_month: str,
+    project_id: str | None = None,
+    workplace_id: str | None = None,
+    team_id: str | None = None,
+    employee_id: str | None = None,
+    requester_role: str | None = None,
+    requester_id: str | None = None,
+) -> dict[str, Any]:
+    service = _get_roster_service()
+    try:
+        return service.summarize_request_intents(
+            business_month=business_month,
+            project_id=project_id,
+            workplace_id=workplace_id,
+            team_id=team_id,
+            employee_id=employee_id,
+            requester_role=requester_role,
+            requester_id=requester_id,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": {
+                    "code": "ROSTER_REQUEST_SUMMARY_BLOCKED",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
+
+
+@app.get("/api/v1/roster-requests/{request_id}")
+def get_roster_request_intent(request_id: str) -> dict[str, Any]:
+    service = _get_roster_service()
+    try:
+        return _roster_request_intent_response(service.get_request_intent(request_id))
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "ROSTER_REQUEST_NOT_FOUND",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
 
 
 @app.post("/api/v1/roster-requests/{request_id}/resolve")
@@ -501,6 +572,7 @@ def resolve_roster_request_intent(
             resolver_id=str(request["resolver_id"]),
             resolved_at=str(request["resolved_at"]),
             linked_revision_version_id=str(request["linked_revision_version_id"]),
+            scheduler_resolution_note=str(request.get("scheduler_resolution_note") or ""),
         )
     except ValueError as exc:
         raise HTTPException(
@@ -669,6 +741,7 @@ def _roster_request_intent_response(intent: Any) -> dict[str, Any]:
         "resolved_at": intent.resolved_at,
         "resolved_by": intent.resolved_by,
         "linked_revision_version_id": intent.linked_revision_version_id,
+        "scheduler_resolution_note": intent.scheduler_resolution_note,
     }
 
 

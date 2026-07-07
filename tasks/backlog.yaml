@@ -256,3 +256,13 @@ tasks:
     requirement_ids:
       - R970
     notes: "Implement local DB-backed downstream request intent loop after IM301: published-roster detail actions create handling intents; roster-drafts scheduler queue reads open intents, locates related employee/date cells, and resolves them against revision context. No real approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formulas, settlement, or charge-factor work."
+
+  - id: IM303
+    title: "正式班表下游问题管理闭环 v1"
+    status: done
+    required_workflow: database-persistence
+    story_ids:
+      - US891
+    requirement_ids:
+      - R971
+    notes: "Expand IM302 request intents into a complete local issue management loop: downstream status drawer, scheduler issue workspace, filters/detail/summary APIs, resolved readback, and scheduler resolution note. No approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formulas, settlement, or charge-factor work."

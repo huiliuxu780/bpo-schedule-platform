@@ -61,6 +61,7 @@ class RosterRequestIntentRecord:
     resolved_at: str | None = None
     resolved_by: str | None = None
     linked_revision_version_id: str | None = None
+    scheduler_resolution_note: str | None = None
 
 
 @dataclass(frozen=True)
@@ -239,6 +240,7 @@ class RosterRequestIntentEntity(Base):
     resolved_at: Mapped[str | None] = mapped_column(String(40), nullable=True)
     resolved_by: Mapped[str | None] = mapped_column(String(120), nullable=True)
     linked_revision_version_id: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    scheduler_resolution_note: Mapped[str | None] = mapped_column(String(1000), nullable=True)
 
 
 class RosterPersistenceRepository:
@@ -417,17 +419,48 @@ class RosterPersistenceRepository:
         workplace_id: str | None,
         team_id: str | None,
     ) -> list[RosterRequestIntentRecord]:
+        return self.list_request_intents(
+            business_month=business_month,
+            project_id=project_id,
+            workplace_id=workplace_id,
+            team_id=team_id,
+            status="open",
+        )
+
+    def list_request_intents(
+        self,
+        *,
+        business_month: str,
+        project_id: str | None,
+        workplace_id: str | None,
+        team_id: str | None,
+        status: str | None = None,
+        action_type: str | None = None,
+        employee_id: str | None = None,
+        requester_role: str | None = None,
+        requester_id: str | None = None,
+    ) -> list[RosterRequestIntentRecord]:
         with self.session_factory() as session:
+            conditions = [
+                RosterRequestIntentEntity.business_month == business_month,
+                RosterRequestIntentEntity.project_id == _scope_value(project_id),
+                RosterRequestIntentEntity.workplace_id == _scope_value(workplace_id),
+                RosterRequestIntentEntity.team_id == _scope_value(team_id),
+            ]
+            if status is not None:
+                conditions.append(RosterRequestIntentEntity.status == status)
+            if action_type is not None:
+                conditions.append(RosterRequestIntentEntity.action_type == action_type)
+            if employee_id is not None:
+                conditions.append(RosterRequestIntentEntity.employee_id == employee_id)
+            if requester_role is not None:
+                conditions.append(RosterRequestIntentEntity.requester_role == requester_role)
+            if requester_id is not None:
+                conditions.append(RosterRequestIntentEntity.requester_id == requester_id)
             rows = list(
                 session.scalars(
                     select(RosterRequestIntentEntity)
-                    .where(
-                        RosterRequestIntentEntity.business_month == business_month,
-                        RosterRequestIntentEntity.project_id == _scope_value(project_id),
-                        RosterRequestIntentEntity.workplace_id == _scope_value(workplace_id),
-                        RosterRequestIntentEntity.team_id == _scope_value(team_id),
-                        RosterRequestIntentEntity.status == "open",
-                    )
+                    .where(*conditions)
                     .order_by(
                         RosterRequestIntentEntity.created_at,
                         RosterRequestIntentEntity.request_id,
@@ -448,6 +481,7 @@ class RosterPersistenceRepository:
         resolver_id: str,
         resolved_at: str,
         linked_revision_version_id: str,
+        scheduler_resolution_note: str,
     ) -> RosterRequestIntentRecord:
         with self.session_factory.begin() as session:
             entity = session.get(RosterRequestIntentEntity, request_id)
@@ -457,6 +491,7 @@ class RosterPersistenceRepository:
             entity.resolved_at = resolved_at
             entity.resolved_by = resolver_id
             entity.linked_revision_version_id = linked_revision_version_id
+            entity.scheduler_resolution_note = scheduler_resolution_note
         intent = self.get_request_intent(request_id)
         if intent is None:
             raise RuntimeError("resolved roster request intent could not be read back")
@@ -724,6 +759,7 @@ def _request_intent_entity(intent: RosterRequestIntentRecord) -> RosterRequestIn
         resolved_at=intent.resolved_at,
         resolved_by=intent.resolved_by,
         linked_revision_version_id=intent.linked_revision_version_id,
+        scheduler_resolution_note=intent.scheduler_resolution_note,
     )
 
 
@@ -830,6 +866,7 @@ def _request_intent_record(entity: RosterRequestIntentEntity) -> RosterRequestIn
         resolved_at=entity.resolved_at,
         resolved_by=entity.resolved_by,
         linked_revision_version_id=entity.linked_revision_version_id,
+        scheduler_resolution_note=entity.scheduler_resolution_note,
     )
 
 

@@ -31,6 +31,7 @@ class RosterActivationResult:
 
 REQUEST_INTENT_ACTIONS = {"leave", "swap", "exception_fix", "site_adjustment"}
 REQUEST_INTENT_ROLES = {"frontline", "team_lead"}
+REQUEST_INTENT_STATUSES = {"open", "resolved"}
 
 
 class RosterService:
@@ -390,6 +391,92 @@ class RosterService:
             team_id=team_id,
         )
 
+    def list_request_intents(
+        self,
+        *,
+        business_month: str,
+        project_id: str | None,
+        workplace_id: str | None,
+        team_id: str | None,
+        status: str | None = None,
+        action_type: str | None = None,
+        employee_id: str | None = None,
+        requester_role: str | None = None,
+        requester_id: str | None = None,
+    ) -> list[RosterRequestIntentRecord]:
+        if status is not None and status not in REQUEST_INTENT_STATUSES:
+            raise ValueError(f"unsupported roster request status: {status}")
+        if action_type is not None and action_type not in REQUEST_INTENT_ACTIONS:
+            raise ValueError(f"unsupported roster request action: {action_type}")
+        if requester_role is not None and requester_role not in REQUEST_INTENT_ROLES:
+            raise ValueError(f"unsupported roster requester role: {requester_role}")
+        return self.repository.list_request_intents(
+            business_month=business_month,
+            project_id=project_id,
+            workplace_id=workplace_id,
+            team_id=team_id,
+            status=status,
+            action_type=action_type,
+            employee_id=employee_id,
+            requester_role=requester_role,
+            requester_id=requester_id,
+        )
+
+    def get_request_intent(self, request_id: str) -> RosterRequestIntentRecord:
+        intent = self.repository.get_request_intent(request_id)
+        if intent is None:
+            raise ValueError(f"roster request intent does not exist: {request_id}")
+        return intent
+
+    def summarize_request_intents(
+        self,
+        *,
+        business_month: str,
+        project_id: str | None,
+        workplace_id: str | None,
+        team_id: str | None,
+        employee_id: str | None = None,
+        requester_role: str | None = None,
+        requester_id: str | None = None,
+    ) -> dict[str, Any]:
+        items = self.list_request_intents(
+            business_month=business_month,
+            project_id=project_id,
+            workplace_id=workplace_id,
+            team_id=team_id,
+            employee_id=employee_id,
+            requester_role=requester_role,
+            requester_id=requester_id,
+        )
+        totals = {"open": 0, "resolved": 0}
+        by_cell: dict[str, dict[str, int]] = {}
+        by_action: dict[str, dict[str, int]] = {}
+        by_employee: dict[str, dict[str, int]] = {}
+        latest_by_cell: dict[str, str] = {}
+        for item in items:
+            if item.status in totals:
+                totals[item.status] += 1
+            for key, bucket in (
+                (item.roster_cell_id, by_cell),
+                (item.action_type, by_action),
+                (item.employee_id, by_employee),
+            ):
+                if key not in bucket:
+                    bucket[key] = {"open": 0, "resolved": 0}
+                if item.status in bucket[key]:
+                    bucket[key][item.status] += 1
+            current_latest = latest_by_cell.get(item.roster_cell_id)
+            if current_latest is None or item.created_at > current_latest:
+                latest_by_cell[item.roster_cell_id] = item.created_at
+        for cell_id, latest in latest_by_cell.items():
+            by_cell[cell_id]["latest_created_at"] = latest
+        return {
+            "totals": totals,
+            "by_cell": by_cell,
+            "by_action": by_action,
+            "by_employee": by_employee,
+        }
+
     def resolve_request_intent(
         self,
         request_id: str,
@@ -397,16 +484,20 @@ class RosterService:
         resolver_id: str,
         resolved_at: str,
         linked_revision_version_id: str,
+        scheduler_resolution_note: str,
     ) -> RosterRequestIntentRecord:
         if self.repository.get_version(linked_revision_version_id) is None:
             raise ValueError(
                 f"linked revision version does not exist: {linked_revision_version_id}"
             )
+        if not scheduler_resolution_note.strip():
+            raise ValueError("scheduler resolution note is required")
         return self.repository.resolve_request_intent(
             request_id,
             resolver_id=resolver_id,
             resolved_at=resolved_at,
             linked_revision_version_id=linked_revision_version_id,
+            scheduler_resolution_note=scheduler_resolution_note.strip(),
         )
 
     def _apply_edit_lock(

@@ -65,6 +65,27 @@
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
 
+### IM303 Downstream Issue Management Loop
+
+- branch_name: `codex/im303-downstream-issue-management-loop`
+- base_main_commit: `stacked on codex/im302-downstream-roster-request-loop at 5d83398`
+- stacked_on: `codex/im302-downstream-roster-request-loop`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Expand local downstream roster request intents into a demonstrable issue management loop with downstream status readback and scheduler issue workspace.
+- qoder_mode: `false; PM confirmed the larger IM303 scope directly after rejecting a tiny tracking slice.`
+- allowed_files_check: backend request-intent API/service/persistence/migration/tests, published-roster viewer, roster-draft workbench, focused structure tests, and traceability docs only.
+- scope_diff_check: expected local issue-management loop only; no package/lockfile, auth, permissions, approval workflow, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formulas, settlement, or charge-factor work.
+- focused_check_result: `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_publish_api` passed with 14 tests; `node --test scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` passed with 24 tests; `npm run typecheck` passed; `git diff --check` passed.
+- runtime_smoke: local backend `127.0.0.1:8001` + frontend `127.0.0.1:3003`; API summary open=1/resolved=1 after resolving `REQ-IM303-SMOKE-1`; `/published-roster?month=2026-08` and `/roster-drafts?month=2026-08` returned 200.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 885 Node tests (884 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 275 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM302 Downstream Roster Request Intent Loop
 
 - branch_name: `codex/im302-downstream-roster-request-loop`

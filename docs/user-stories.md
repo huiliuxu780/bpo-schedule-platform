@@ -506,6 +506,31 @@ status: "done"
 notes: "IM302 local DB-backed downstream request intent loop after IM301 boundary shell."
 ```
 
+### US891 - 正式班表下游问题管理闭环 v1
+
+```yaml
+id: US891
+requirement_ids:
+  - R971
+module: "BPO WFM 三条主线"
+role: "小组长 / 一线 / 排班师"
+story: "作为小组长或一线，我希望登记后的正式班表问题能看到处理中和已处理状态；作为排班师，我希望这些下游问题进入独立工作区并能筛选、定位、记录处理说明后关闭，以便发布后的现场问题不只是一次性登记，而是能被追踪到处理结果。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "`/published-roster?month=2026-08` 保持正式班表主月/周视图干净，不把问题队列塞进主网格。"
+  - "正式班表格子详情显示该格子的 open 问题提示；重复登记同格 open 问题时提示但仍允许登记。"
+  - "正式班表提供独立状态抽屉：一线看本人相关问题，小组长看 G1 团队问题；open 与 resolved 都可查看。"
+  - "resolved 问题展示处理时间、关联修订版本和排班师处理说明。"
+  - "`/roster-drafts?month=2026-08` 提供独立下游问题工作区，不混入缺口/异常队列。"
+  - "排班师可按状态、动作、人员筛选问题，查看详情，定位正式班表格子。"
+  - "排班师关闭问题时必须记录 `scheduler_resolution_note`，并继续绑定 linked revision version。"
+  - "后端支持轻量详情、汇总和列表筛选 API；不新增审批流 API。"
+  - "本轮不新增真实审批、认证、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。"
+status: "done"
+notes: "IM303 downstream issue management loop after IM302 local request intent persistence."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.
