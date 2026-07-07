@@ -579,6 +579,30 @@ status: "done"
 notes: "IM305 completed the event-first roster change center with local single-event confirmation and internal scheduler note persistence."
 ```
 
+### US894 - 班务变更申请与月班表调整承接
+
+```yaml
+id: US894
+requirement_ids:
+  - R974
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望看到的是班长和一线提交的班务变更申请，而不是发布后的版本差异；我可以处理请假、换班、异常修复和现场调配申请，并在同意后直接进入月班表调整定位员工和日期，以便申请处理和班表调整形成一个可演示闭环。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/roster-change-governance?month=2026-08` 页面标题和导航显示为 `班务变更申请`。"
+  - "页面第一屏展示 `待处理 / 跟进中 / 已处理 / 按员工`，主对象是一条班务变更申请。"
+  - "待处理详情抽屉展示当前班次、申请内容、提示、处理说明，以及 `同意 / 拒绝 / 现场跟进`。"
+  - "同意后进入 `跟进中`，下一步为 `去调整班表`，并展示月班表调整承接段。"
+  - "月班表调整承接段包含当前处理申请、员工日期定位、`返回申请`、`保存调整`。"
+  - "保存调整后申请进入 `已处理`，并展示处理结果和班表结果。"
+  - "正常业务 UI 不展示版本时间线、差异行、`source_cell_id`、revision 或工程差异作为页面主对象。"
+  - "本轮不新增审批、认证、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。"
+status: "done"
+notes: "IM306 request-first frontend product prototype and wording correction over the existing route."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

@@ -286,3 +286,13 @@ tasks:
     requirement_ids:
       - R973
     notes: "Rebuild IM304 into an event-first scheduler workbench: post-publish employee shift change events, pending/all/by-employee grouping, on-demand detail drawer, and local single-event confirmation with internal scheduler note. No approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formulas, settlement, charge-factor work, or bulk confirmation."
+
+  - id: IM306
+    title: "班务变更申请与月班表调整承接"
+    status: done
+    required_workflow: frontend-scaffold
+    story_ids:
+      - US894
+    requirement_ids:
+      - R974
+    notes: "Reposition the existing roster-change route as a request-first `班务变更申请` frontend prototype: pending/follow-up/processed request states, right-side detail drawer, agree/reject/follow-up actions, monthly roster adjustment handoff, save-adjustment closure, and removal of version/difference terminology from the visible business UI. No backend persistence, approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formulas, settlement, or charge-factor work."

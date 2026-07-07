@@ -329,6 +329,19 @@ status: "done"
 notes: "Completed local roster-change confirmation loop only; no approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, charge-factor work, or bulk confirmation."
 ```
 
+### R974 - 班务变更申请与月班表调整承接
+
+```yaml
+id: R974
+module: "BPO WFM 三条主线"
+description: "将旧 `班表变更中心` UX 方向纠正为 `班务变更申请`：排班师处理班长和一线提交的请假、换班、异常修复、现场调配申请；页面主对象是一条下游申请，状态为待处理、跟进中、已处理；详情动作是同意、拒绝、现场跟进；同意后进入月班表调整，自动定位员工和日期，保存调整后回到已处理并展示处理结果和班表结果。"
+source: "PM confirmed request-first product baseline after mature scheduling product comparison on 2026-07-07"
+submitted_at: "2026-07-07"
+version: "1.0"
+status: "done"
+notes: "Frontend product prototype and wording correction only in this pass; no new backend persistence, approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, or charge-factor work."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

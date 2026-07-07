@@ -145,6 +145,34 @@ stories:
     task_ids:
       - "IM302"
     archive_refs: []
+  US891:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R971"
+    task_ids:
+      - "IM303"
+    archive_refs: []
+  US892:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R972"
+    task_ids:
+      - "IM304"
+    archive_refs: []
+  US893:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R973"
+    task_ids:
+      - "IM305"
+    archive_refs: []
+  US894:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R974"
+    task_ids:
+      - "IM306"
+    archive_refs: []
 tasks:
   F001:
     file: "tasks/backlog.yaml"
@@ -268,6 +296,26 @@ tasks:
     story_ids:
       - "US890"
     gate: "database-persistence"
+  IM303:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US891"
+    gate: "database-persistence"
+  IM304:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US892"
+    gate: "database-persistence"
+  IM305:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US893"
+    gate: "database-persistence"
+  IM306:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US894"
+    gate: "frontend-scaffold"
 requirements:
   R949:
     file: "docs/raw-requirements.md"
@@ -419,6 +467,12 @@ requirements:
       - "US893"
     task_ids:
       - "IM305"
+  R974:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US894"
+    task_ids:
+      - "IM306"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
@@ -446,4 +500,5 @@ decisions:
   - "D-2026-07-07-downstream-roster-request-intent"
   - "D-2026-07-07-downstream-issue-management-loop"
   - "D-2026-07-07-roster-change-governance-loop"
+  - "D-2026-07-07-duty-change-request-baseline"
 archive_refs: []

@@ -4,6 +4,25 @@
 
 ## Current Audit
 
+### 2026-07-07 - IM306 班务变更申请与月班表调整承接
+
+#### 审计结论
+
+- `/roster-change-governance?month=2026-08` 的业务标题和导航改为 `班务变更申请`。
+- 页面主对象从发布后变更事件改为下游班务变更申请。
+- 第一屏提供 `待处理 / 跟进中 / 已处理 / 按员工`，并展示请假、换班、异常修复、现场调配申请。
+- 右侧详情抽屉提供当前班次、申请内容、提示、处理说明和 `同意 / 拒绝 / 现场跟进`。
+- 同意后展示月班表调整承接段，包含当前处理申请、员工日期定位、`返回申请` 和 `保存调整`。
+- 保存调整后申请进入已处理，展示处理结果和班表结果。
+- 新增产品基线文档 `docs/superpowers/specs/2026-07-07-duty-change-request-design.md`。
+- 本轮未新增后端持久化、审批、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。
+
+#### 验证
+
+- red: `node --test scripts/tests/roster-change-governance-structure.test.mjs` 先失败在缺少 `班务变更申请` 和 `duty-change-request` 页面结构。
+- focused: `node --test scripts/tests/roster-change-governance-structure.test.mjs` 通过，3 个测试。
+- `npm run typecheck`: 通过。
+
 ### 2026-07-04 - IM295 月班表 Draft/Published 本地持久化闭环
 
 #### 审计结论

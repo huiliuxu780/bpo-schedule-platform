@@ -4,6 +4,27 @@
 
 ## Current Branch Entries
 
+### IM306 Duty Change Request Prototype
+
+- branch_name: `codex/im305-roster-change-center`
+- target_branch: `codex/im305-roster-change-center`
+- base_main_commit: `aee4c407`
+- stacked_on: `codex/im305-roster-change-center`
+- remote_status: `not_pushed; local product correction until PM push confirmation.`
+- scope: Reposition `/roster-change-governance` from post-change confirmation into request-first `班务变更申请` frontend prototype with request states, detail drawer, agree/reject/follow-up actions, monthly roster adjustment handoff, and product baseline spec.
+- qoder_mode: `false; PM challenged the naming and product model directly, then approved the request-first prototype direction.`
+- allowed_files_check: `app/roster-change-governance/page.tsx`, `components/roster-change-governance-workbench.tsx`, `components/app-sidebar.tsx`, `scripts/tests/roster-change-governance-structure.test.mjs`, `docs/superpowers/specs/2026-07-07-duty-change-request-design.md`, and traceability docs only.
+- scope_diff_check: expected frontend prototype and traceability only; no backend persistence, migration, package/lockfile, dependency, approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formulas, settlement, or charge-factor work.
+- focused_check_result: red `node --test scripts/tests/roster-change-governance-structure.test.mjs` failed on missing `班务变更申请` and `duty-change-request` slots; green focused structure test passed with 3 tests; `npm run typecheck` passed.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 279 backend tests, and project Harness check.
+- local_commit_sha: `reported in Done Report after local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM305 Roster Change Center Event Confirmation Implementation
 
 - branch_name: `codex/im305-roster-change-center`

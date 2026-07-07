@@ -4,6 +4,18 @@
 
 ## Current Log
 
+### 2026-07-07
+
+- task_id: `IM306`
+- source_ids:
+  - `R974`
+- story_ids:
+  - `US894`
+- action: 班务变更申请与月班表调整承接前端原型。
+- status: `done`
+- notes: `/roster-change-governance?month=2026-08` 的可见页面和导航从 `班表变更中心` 改为 `班务变更申请`；页面主对象改为班长/一线提交的请假、换班、异常修复、现场调配申请；提供 `待处理 / 跟进中 / 已处理 / 按员工`、右侧详情抽屉、`同意 / 拒绝 / 现场跟进`、`去调整班表`、`保存调整`、`返回申请`、`处理下一条`。新增产品基线 `docs/superpowers/specs/2026-07-07-duty-change-request-design.md`。本轮未新增后端持久化、审批、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。
+- verification: red/green `node --test scripts/tests/roster-change-governance-structure.test.mjs`；`npm run typecheck` 通过；final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过。
+
 ### 2026-07-04
 
 - task_id: `IM295`
