@@ -4,6 +4,27 @@
 
 ## Current Branch Entries
 
+### IM305 Roster Change Center Event Confirmation Gate
+
+- branch_name: `codex/im304-roster-change-governance-loop`
+- target_branch: `codex/im305-roster-change-center`
+- base_main_commit: `stacked on local IM304 redesign contract at fb951e2f`
+- stacked_on: `codex/im304-roster-change-governance-loop`
+- remote_status: `not_pushed; local Gate branch until PM confirms implementation start.`
+- scope: Gate and implementation plan for event-first roster change center with local single-event confirmation and internal scheduler note persistence.
+- qoder_mode: `false; PM allowed local confirmation persistence directly.`
+- allowed_files_check: current/registry state docs, traceability docs, `docs/superpowers/plans/2026-07-07-roster-change-center-event-confirmation.md`, and future IM305 implementation files listed in `docs/current/ACTIVE_TASKS.yaml`.
+- scope_diff_check: expected Gate/plan/state changes only in this commit; no product implementation code yet.
+- focused_check_result: `bash scripts/check-state.sh --strict` passed; `git diff --check` passed.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 277 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM304 Roster Change Center Redesign Contract
 
 - branch_name: `codex/im304-roster-change-governance-loop`

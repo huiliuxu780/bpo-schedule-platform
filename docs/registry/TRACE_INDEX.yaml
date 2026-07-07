@@ -413,6 +413,12 @@ requirements:
       - "US892"
     task_ids:
       - "IM304"
+  R973:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US893"
+    task_ids:
+      - "IM305"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"

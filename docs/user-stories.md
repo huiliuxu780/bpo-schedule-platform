@@ -555,6 +555,30 @@ status: "done"
 notes: "IM304 post-publish formal roster change-governance loop after IM303 downstream issue management."
 ```
 
+### US893 - 班表变更中心事件化与确认闭环
+
+```yaml
+id: US893
+requirement_ids:
+  - R973
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望正式班表发布后看到的是待处理的员工班次变更事件，而不是版本 diff；我可以打开某一条变更查看前后班次、来源和关联问题，并用内部备注确认这条变更已经核对，以便发布后变更能形成可操作、可追溯的处理闭环。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "`/roster-change-governance?month=2026-08` 页面标题和导航为 `班表变更中心`。"
+  - "默认视图为 `待处理`，主列表一行代表一个员工某一天的一次班次变更事件。"
+  - "页面提供 `待处理 / 全部变更 / 按员工` 三个分组。"
+  - "点击事件行打开右侧详情抽屉，抽屉展示前后班次、来源分类、关联问题和内部确认区。"
+  - "排班师可对单条事件确认并填写内部备注，确认记录本地持久化。"
+  - "确认后事件离开 `待处理`，并在 `全部变更` 中显示为 `已确认`。"
+  - "正常业务 UI 不展示 `source_cell_id`、raw version id、revision/diff 工程术语。"
+  - "本轮不新增审批、认证、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。"
+status: "ready"
+notes: "IM305 event-first correction and local confirmation loop after IM304 product review."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

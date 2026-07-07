@@ -611,3 +611,18 @@
 - documentation self-review: spec 已检查无占位符、无与非目标冲突、明确本地确认持久化为下一 Gate 必确认边界。
 - state/whitespace: `bash scripts/check-state.sh --strict` 与 `git diff --check` 通过。
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、277 backend tests 和 project Harness check。
+
+### 2026-07-07 - IM305 班表变更中心事件化与确认闭环 Gate
+
+#### 审计结论
+
+- PM 已允许为单条确认和内部备注新增本地持久化记录。
+- IM305 是 IM304 的产品纠偏实现，不是新增审批系统：主对象从版本 diff 改为发布后员工班次变更事件。
+- 目标闭环为：待处理变更事件 -> 点击行打开详情抽屉 -> 查看前后班次、来源、关联问题 -> 单条确认并填写内部备注 -> 离开待处理、保留在全部变更。
+- 本 Gate 明确不包含审批、认证、权限、通知、导出、批量、预测、标准人力、Excel、自动排班、生产公式、结算或计费规则。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`: 通过，包含 ready story US893 与 active task IM305 匹配。
+- `git diff --check`: 通过。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、277 backend tests 和 project Harness check。

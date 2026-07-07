@@ -291,3 +291,13 @@
 - status: `spec_ready_for_pm_review`
 - notes: PM review rejected IM304 v1 的 version-first / raw diff / fixed detail column 页面形态。已将现行产品契约改为 operations-first 的 `班表变更中心`：一行代表一个员工-日期-班次变更事件，默认分组为 `待处理 / 全部变更 / 按员工`，发布后影响员工班次且未被排班师确认的事件进入待处理，排班师通过单条确认和内部备注关闭事件，详情用点击行后的右侧抽屉承载。确认备注仅排班师内部可见。下一步实现前必须确认本地确认记录和内部备注持久化边界；仍不包含审批、权限、通知、导出、批量、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。
 - focused verification: spec self-review passed with no placeholders or non-goal conflicts; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 277 backend tests, and project Harness check.
+
+- task_id: `IM305`
+- source_ids:
+  - `R973`
+- story_ids:
+  - `US893`
+- action: 班表变更中心事件化与确认闭环 Gate。
+- status: `ready_for_pm_confirmation`
+- notes: 已确认允许本地持久化单条变更确认和内部备注。Gate 将 IM304 纠偏为一个角色可演示闭环：`/roster-change-governance?month=2026-08` 以员工-日期-班次变更事件为主对象，默认 `待处理`，提供 `待处理 / 全部变更 / 按员工` 分组，点击行打开右侧抽屉，排班师单条确认并填写内部备注；确认后离开待处理但保留在全部变更审计视图。仍不包含审批、权限、通知、导出、批量、预测、标准人力、Excel、自动排班、生产公式、结算或计费规则。
+- focused verification: `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 277 backend tests, and project Harness check.

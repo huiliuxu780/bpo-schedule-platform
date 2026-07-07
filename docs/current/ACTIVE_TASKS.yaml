@@ -5,4 +5,52 @@ notes:
   - "Only current executable tasks belong here."
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
-tasks: []
+tasks:
+  - id: IM305
+    title: "班表变更中心事件化与确认闭环"
+    story_ids:
+      - US893
+    requirement_ids:
+      - R973
+    status: ready
+    required_workflow: database-persistence
+    branch: "codex/im305-roster-change-center"
+    gate_plan: "docs/superpowers/plans/2026-07-07-roster-change-center-event-confirmation.md"
+    allowed_files:
+      - "backend/app/roster_persistence.py"
+      - "backend/app/roster_service.py"
+      - "backend/app/main.py"
+      - "backend/migrations/versions/20260707_0014_roster_change_confirmations.py"
+      - "backend/tests/test_roster_service.py"
+      - "backend/tests/test_roster_publish_api.py"
+      - "app/roster-change-governance/page.tsx"
+      - "components/roster-change-governance-workbench.tsx"
+      - "components/app-sidebar.tsx"
+      - "scripts/tests/roster-change-governance-structure.test.mjs"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/BLOCKERS.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/registry/DECISION_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/superpowers/plans/2026-07-07-roster-change-center-event-confirmation.md"
+    forbidden_scope:
+      - "new dependencies or package/lockfile changes"
+      - "auth, permission, approval, notification, export, or batch operations"
+      - "real external integrations, Excel import/upload, forecasting model, standard-capacity model, automatic scheduling"
+      - "production formulas, settlement rules, charge factors, or production status-code decisions"
+      - "bulk confirmation"
+      - "unrelated roster draft, published roster, dashboard, or schedule-plan page rebuilds"
+    verification:
+      - ".venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_publish_api -v"
+      - "node --test scripts/tests/roster-change-governance-structure.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs"
+      - "npm run typecheck"
+      - "git diff --check"
+      - "bash scripts/check-state.sh --strict"
+      - "BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh"

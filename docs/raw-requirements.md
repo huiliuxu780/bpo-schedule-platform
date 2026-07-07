@@ -316,6 +316,19 @@ status: "done"
 notes: "Runtime-derived governance loop over existing roster versions, cells, published snapshots, and request intents only; no new diff persistence table, approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, or charge-factor work."
 ```
 
+### R973 - 班表变更中心事件化与确认闭环
+
+```yaml
+id: R973
+module: "BPO WFM 三条主线"
+description: "纠正 IM304 的 version-first 页面方向，把 `/roster-change-governance?month=2026-08` 重构为运营优先的 `班表变更中心`。页面默认以发布后员工班次变更事件为主对象，一行代表一个员工某一天的一次班次变更；提供 `待处理 / 全部变更 / 按员工` 分组；点击行打开右侧详情抽屉；排班师可对单条事件确认并填写内部备注，确认记录本地持久化，确认后离开待处理但保留在全部变更审计视图。"
+source: "PM confirmed event-first A path and allowed local confirmation persistence on 2026-07-07"
+submitted_at: "2026-07-07"
+version: "1.0"
+status: "ready"
+notes: "Local roster-change confirmation loop only; no approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, charge-factor work, or bulk confirmation."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

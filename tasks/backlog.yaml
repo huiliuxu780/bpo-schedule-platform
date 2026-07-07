@@ -276,3 +276,13 @@ tasks:
     requirement_ids:
       - R972
     notes: "Add a formal roster post-publish change governance loop: independent workbench, published version timeline, runtime source-cell before/after diffs, linked resolved downstream issue explanation, and downstream resolved issue jump links. No new diff persistence table, approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formulas, settlement, or charge-factor work."
+
+  - id: IM305
+    title: "班表变更中心事件化与确认闭环"
+    status: ready
+    required_workflow: database-persistence
+    story_ids:
+      - US893
+    requirement_ids:
+      - R973
+    notes: "Rebuild IM304 into an event-first scheduler workbench: post-publish employee shift change events, pending/all/by-employee grouping, on-demand detail drawer, and local single-event confirmation with internal scheduler note. No approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formulas, settlement, charge-factor work, or bulk confirmation."

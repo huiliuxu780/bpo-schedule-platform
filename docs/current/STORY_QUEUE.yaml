@@ -5,4 +5,21 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US893
+    requirement_ids:
+      - R973
+    title: "班表变更中心事件化与确认闭环"
+    status: ready
+    role: "排班师"
+    task_ids:
+      - IM305
+    acceptance:
+      - "`/roster-change-governance?month=2026-08` 默认呈现 `班表变更中心`，而不是 version-first 变更治理页。"
+      - "主列表一行代表一名员工某一天的一次班次变更事件，默认进入 `待处理`。"
+      - "页面提供 `待处理 / 全部变更 / 按员工` 三个分组。"
+      - "点击事件行打开右侧详情抽屉，不再常驻固定详情列。"
+      - "排班师可以单条确认变更并填写内部备注；确认记录本地持久化。"
+      - "确认后事件离开 `待处理`，仍在 `全部变更` 中作为 `已确认` 可审计。"
+      - "正常业务 UI 不展示 `source_cell_id`、raw version id、revision/diff 工程术语。"
+      - "不新增审批、权限、通知、导出、批量、预测、标准人力、Excel、自动排班、生产公式、结算或计费规则。"
