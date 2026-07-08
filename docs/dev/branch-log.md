@@ -47,6 +47,26 @@
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
 
+### NAV-SLIM-GATE Navigation Function Slimming Gate
+
+- branch_name: `codex/im308-duty-change-adjustment-handoff`
+- base_main_commit: `stacked on local IM308/IM309 branch`
+- stacked_on: `codex/im308-duty-change-adjustment-handoff`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Product Gate for first-level navigation and feature-entry slimming after PM reviewed mature WFM navigation references.
+- qoder_mode: `false; product clarification and Gate only.`
+- allowed_files_check: `docs/superpowers/specs/2026-07-08-navigation-function-slimming-gate.md`, `docs/current/PROJECT_CONTEXT.md`, `docs/registry/DECISION_INDEX.yaml`, and traceability docs only.
+- scope_diff_check: expected documentation and current-truth update only; no dashboard first-screen change, business implementation, package/lockfile, dependency, backend API, migration, database persistence field, auth, permissions, approval, notification, export, batch, external integration, forecasting, standard capacity, Excel, automatic scheduling, production formulas, settlement, or charge-factor changes.
+- focused_check_result: contract self-review found no TODO/TBD placeholders or implementation scope drift; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 891 Node tests (890 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### IM304 Roster Change Center Redesign Contract
 
 - branch_name: `codex/im304-roster-change-governance-loop`

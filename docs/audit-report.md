@@ -717,3 +717,19 @@
 - focused gate: `npm run typecheck` 通过；`npm run lint` 初次失败在 React effect 同步 setState，修正后通过。
 - browser smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003`，本地正式班表与 `REQ-IM309-SMOKE-1` 创建后，页面展示 `我的申请 / 团队申请`、申请列表、右侧详情、`最终班表结果`、处理说明和 `查看月班表`；团队申请切换正常；console 无 error。
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、891 Node tests（890 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、281 backend tests 和 project Harness check。
+
+### 2026-07-08 - NAV-SLIM-GATE 导航与功能入口瘦身
+
+#### 审计结论
+
+- PM 已确认产品导航第一层收敛为 `经营总览 / 排班 / 待办 / 系统管理`。
+- 本 Gate 参考 When I Work、Deputy、Connecteam 的成熟 WFM 导航：排班集中为 Schedule/Scheduler，申请和处理事项进入 Requests/Tasks，人员、地点、模板、设置进入 Workplace/Gear/Admin。
+- `排班` 承载需求预测、供需计划、月班表、正式班表、履约风险；班次明细和不可用记录作为下钻。
+- `待办` 承载班务申请、复核案例、风险处理、数据确认、发布确认。
+- `系统管理` 承载主数据、数据导入、业务版本、字段映射、状态日志和系统设置，并放侧边栏底部。
+- 第一轮实施只授权导航入口、命名和兼容跳转收口；不改经营总览首屏，不删现有路由，不动后端/API/数据库。
+- 废弃旧入口词：`班务申请中心`、`班务变更申请`、`班表变更中心`、`变更治理`、`处理台`、`数据后台`。
+
+#### 验证
+
+- documentation gate: contract self-review found no TODO/TBD placeholders or implementation scope drift; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 891 Node tests (890 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
