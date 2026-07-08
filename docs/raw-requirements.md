@@ -368,6 +368,19 @@ status: "done"
 notes: "IM308 delivered the same-page three-column adjustment handoff over existing local request and roster revision APIs; no swap two-person linkage, full roster editor, complex validation, approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, charge-factor work, new dependency, backend migration, or new persistence field."
 ```
 
+### R977 - 班务申请中心结果追踪 v1
+
+```yaml
+id: R977
+module: "BPO WFM 三条主线"
+description: "在 IM308 排班师端 `班务变更申请` 可处理并调整月班表之后，补齐下游一线员工和班长的申请结果追踪入口。新增独立 `/duty-requests?month=2026-08` `班务申请中心` 页面和计划与排班导航入口；页面按角色自适应展示 `我的申请 / 团队申请`，提供状态、月份和搜索筛选，左侧为申请列表，右侧为申请详情。详情展示原班表、申请内容、处理说明、最终班表结果、处理人、处理时间，并提供 `查看月班表` 回到正式月班表。"
+source: "PM confirmed option A result tracking center, role-adaptive view, five business statuses, list-detail layout, result card, and read-only action boundary on 2026-07-08"
+submitted_at: "2026-07-08"
+version: "1.0"
+status: "done"
+notes: "Frontend result-tracking slice over existing roster request list API only; no new request creation, approval, auth, permissions, notification, expedite, withdraw, comment, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, charge-factor work, new dependency, backend migration, or new persistence field."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

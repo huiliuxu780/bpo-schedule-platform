@@ -104,6 +104,12 @@ const nav: NavGroup[] = [
         activeMatch: "prefix",
       },
       {
+        title: "班务申请中心",
+        href: "/duty-requests",
+        icon: Inbox,
+        activeMatch: "prefix",
+      },
+      {
         title: "班务变更申请",
         href: "/roster-change-governance",
         icon: History,

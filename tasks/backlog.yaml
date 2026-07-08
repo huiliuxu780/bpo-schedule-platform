@@ -316,3 +316,13 @@ tasks:
     requirement_ids:
       - R976
     notes: "Reshape `/roster-change-governance` into same-page three-column adjustment handoff: request queue, current-cell monthly roster adjustment, request handling panel, fixed shift dropdown, lightweight impact hint, save as `已调整`, and next-request continuity. Reuse existing local revision/publish/request resolve APIs where possible. No swap two-person linkage, full roster editor, complex validation, approval, auth, permissions, notification, export, batch, external integration, forecasting, standard capacity, Excel, automatic scheduling, production formulas, settlement, charge-factor work, dependency, backend migration, or new persistence field."
+
+  - id: IM309
+    title: "班务申请中心结果追踪"
+    status: done
+    required_workflow: frontend-scaffold
+    story_ids:
+      - US897
+    requirement_ids:
+      - R977
+    notes: "Add standalone downstream `/duty-requests` request result center for frontline and team-lead views: list/detail layout, five business statuses, result card, handling note, final roster result, and link back to formal roster. Reuse existing roster request list API only. No request creation, approval, auth, permissions, notification, expedite, withdraw, comments, export, batch, external integration, forecasting, standard capacity, Excel, automatic scheduling, production formulas, settlement, charge-factor work, dependency, backend migration, or new persistence field."

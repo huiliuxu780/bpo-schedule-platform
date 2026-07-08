@@ -699,3 +699,21 @@
 - focused gate: `npm run lint`、`npm run typecheck`、`git diff --check` 通过。
 - browser smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003`，seed 正式班表和两条 open request 后，同意进入保存状态、保存后 `已调整` 且自动选中下一条；后端 readback `REQ-IM308-SMOKE-1` 为 `resolved / adjusted`，`linked_revision_version_id` 非空，浏览器 console 无 error/warn。
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、281 backend tests 和 project Harness check。
+
+### 2026-07-08 - IM309 班务申请中心结果追踪
+
+#### 审计结论
+
+- IM309 已补齐 IM308 后的下游结果追踪闭环：`/duty-requests?month=2026-08` 是独立的 `班务申请中心`，不是排班师处理页的附属抽屉。
+- 一线员工默认看 `我的申请`，班长看 `团队申请`，同一模块复用同一套列表与详情结构。
+- 页面状态使用 `待处理 / 跟进中 / 已调整 / 已拒绝 / 已关闭`，避免把内部状态码、版本修订或发布术语暴露给业务用户。
+- 页面首屏为左侧申请列表 + 右侧申请详情；详情包含原班表、申请内容、处理说明、最终班表结果、处理人、处理时间和 `查看月班表`。
+- 本轮只复用现有 roster request list API 和正式月班表路由，不新增后端迁移、新持久化字段、新依赖、申请发起、审批、认证、权限、通知、催办、撤回、评论、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。
+- 旧判断继续废弃：把结果追踪藏在正式月班表格子里、继续做 `班表变更中心`、以版本/diff 作为下游用户主对象。
+
+#### 验证
+
+- frontend red/green: `node --test scripts/tests/duty-request-center-structure.test.mjs` 先失败在缺少 route、workbench 和导航；green 后通过 3 tests。
+- focused gate: `npm run typecheck` 通过；`npm run lint` 初次失败在 React effect 同步 setState，修正后通过。
+- browser smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003`，本地正式班表与 `REQ-IM309-SMOKE-1` 创建后，页面展示 `我的申请 / 团队申请`、申请列表、右侧详情、`最终班表结果`、处理说明和 `查看月班表`；团队申请切换正常；console 无 error。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、891 Node tests（890 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、281 backend tests 和 project Harness check。

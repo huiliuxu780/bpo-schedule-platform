@@ -650,6 +650,30 @@ status: "done"
 notes: "IM308 delivered the same-page adjustment handoff: request queue, current-cell adjustment, handling panel, revision-anchor save, and next-request continuity."
 ```
 
+### US897 - 班务申请中心结果追踪
+
+```yaml
+id: US897
+requirement_ids:
+  - R977
+module: "BPO WFM 三条主线"
+role: "一线员工 / 班长"
+story: "作为一线员工或班长，我希望有一个独立的班务申请中心，可以查看我的申请或团队申请当前状态、处理说明和最终班表结果，并能跳回正式月班表对应位置，以便我不用依赖排班师口头反馈就能知道申请是否已经落到班表。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增 `/duty-requests?month=2026-08` 页面，标题和导航为 `班务申请中心`。"
+  - "页面提供 `我的申请 / 团队申请` 两个角色视图。"
+  - "状态筛选使用 `待处理 / 跟进中 / 已调整 / 已拒绝 / 已关闭`。"
+  - "首屏为左侧申请列表 + 右侧申请详情。"
+  - "申请详情展示原班表、申请内容、处理说明、最终班表结果、处理人和处理时间。"
+  - "`查看月班表` 可跳回 `/published-roster` 并携带月份、员工和格子参数。"
+  - "页面不提供新建申请、催办、撤回、审批、通知、评论或双人换班联动。"
+  - "正常业务 UI 不展示 revision、publish、diff 等工程术语。"
+status: "done"
+notes: "IM309 delivered the downstream read-only request result center over existing roster request list API and formal-roster link."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

@@ -327,6 +327,18 @@
 - browser smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003`，SQLite `.local/im307-duty-change-request-smoke.db`；页面显示 `班务变更申请`、`待处理 / 跟进中 / 已处理 / 按员工`、短按钮 `同意 / 拒绝 / 跟进`；同意后进入跟进中并出现月班表调整，保存调整后显示 `已调整` 且有 revision 锚点；拒绝后显示 `已拒绝` 且无 revision 锚点；当前班次读取正式班表 `A5 09:00-10:00`、`T1 10:00-11:00`，未出现 `班表变更中心`、`已完成班表调整` 或 `休息 -> 休息`。
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、281 backend tests 和 project Harness check。
 
+- task_id: `IM309`
+- source_ids:
+  - `R977`
+- story_ids:
+  - `US897`
+- action: 班务申请中心结果追踪 Implementation。
+- status: `done`
+- notes: 完成下游 `班务申请中心` V1：新增 `/duty-requests?month=2026-08` 独立页面和计划与排班导航入口；一线员工和班长通过 `我的申请 / 团队申请` 查看申请结果；页面提供状态、月份和搜索筛选；左侧是申请列表，右侧详情展示原班表、申请内容、处理说明、最终班表结果、处理人、处理时间和 `查看月班表`。复用现有 `roster_request_intents` 列表 API，不新增申请发起、审批、权限、通知、催办、撤回、评论、换班双人联动、导出、批量、外部集成、预测、标准人力、Excel、自动排班、生产公式、结算或计费规则。
+- focused verification: red `node --test scripts/tests/duty-request-center-structure.test.mjs` 先失败在缺少 `/duty-requests` route、workbench 和导航入口；green 后 3 tests 通过。`npm run typecheck` 通过；`npm run lint` 初次失败在 effect 同步 setState，修正为派生选中项后通过。
+- browser smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003`；发布本地正式班表并创建 `REQ-IM309-SMOKE-1` 后，`/duty-requests?month=2026-08` 显示 `班务申请中心`、`我的申请 / 团队申请`、申请列表、右侧详情、`最终班表结果` 和 `查看月班表`；切换团队申请后页面仍显示同一条团队申请；浏览器 console 仅有 React DevTools/HMR 信息，无 error。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、891 Node tests（890 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、281 backend tests 和 project Harness check。
+
 - task_id: `IM308`
 - source_ids:
   - `R976`
