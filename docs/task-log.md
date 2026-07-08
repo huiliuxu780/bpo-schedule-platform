@@ -336,3 +336,15 @@
 - status: `ready`
 - notes: 已根据可视化线框确认同页三栏、当前格快速调整、固定班次下拉、轻量影响提示、保存后选中下一条的产品决策；形成 `docs/superpowers/specs/2026-07-08-duty-change-adjustment-handoff-design.md` 和 current ready task。实施边界为 frontend-scaffold，优先复用现有 revision/publish/request resolve API；如需新迁移或新持久化字段必须停下来重新确认 Gate。
 - verification: contract self-review found no TODO/TBD placeholders; `bash scripts/check-state.sh --strict` and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
+
+- task_id: `IM308`
+- source_ids:
+  - `R976`
+- story_ids:
+  - `US896`
+- action: 班务变更申请月班表调整承接 Implementation。
+- status: `done`
+- notes: 完成排班师同页处理闭环：`/roster-change-governance?month=2026-08` 现在以三栏呈现申请队列、当前格调整和处理面板；默认选中待处理申请，避免左侧队列与右侧处理状态错位；点 `同意` 后进入当前员工/日期格调整，`调整为` 使用固定班次下拉，保存前展示轻量影响提示；保存会复用现有修订创建、发布和 request resolve API，让申请变为 `已调整` 并保留非空 `linked_revision_version_id`，然后自动选中下一条待处理申请。未新增后端迁移、新持久化字段、依赖、审批、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。
+- focused verification: red `node --test scripts/tests/roster-change-governance-structure.test.mjs` 先失败在缺少三栏 slot；green 后通过，并补充修订创建、发布、resolve 和 revision anchor 结构断言。`npm run lint`、`npm run typecheck`、`git diff --check` 通过。
+- browser smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003` with `NEXT_PUBLIC_BPO_API_BASE_URL=http://127.0.0.1:8002`；seed 当前正式班表和两条 open request 后，页面显示三栏、默认选中待处理申请、无旧“打开月班表调整页”；点击 `同意` 后指标从 `待处理 4 / 跟进中 0 / 已处理 2` 变为 `待处理 3 / 跟进中 1 / 已处理 2` 且出现 `保存调整 / 返回申请`；点击 `保存调整` 后变为 `待处理 3 / 跟进中 0 / 已处理 3` 并自动选中下一条待处理；API readback `REQ-IM308-SMOKE-1` 为 `status=resolved`、`result_type=adjusted`、`linked_revision_version_id=ROSTER-2026-08-REV-202607081338`。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、281 backend tests 和 project Harness check。

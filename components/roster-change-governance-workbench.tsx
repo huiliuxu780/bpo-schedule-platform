@@ -1,19 +1,17 @@
 "use client"
 
 import * as React from "react"
-import Link from "next/link"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
 import {
   Tabs,
   TabsContent,
@@ -39,8 +37,10 @@ type DutyChangeRequest = {
   employeeId: string
   teamId: string
   businessDate: string
+  businessDateRaw: string
   requesterRole: string
   currentShift: string
+  currentShiftCode: string
   requestText: string
   reason: string
   note: string
@@ -72,10 +72,55 @@ type RosterRequestIntent = {
 
 type PublishedRosterCell = {
   cell_id: string
+  assignment_id?: string | null
+  employee_id?: string | null
+  business_date?: string | null
+  sequence?: number | null
+  assignment_kind?: string | null
+  project_id?: string | null
+  workplace_id?: string | null
+  team_id?: string | null
   shift_code?: string | null
+  annotation_code?: string | null
   interval_start_at?: string | null
   interval_end_at?: string | null
+  sourceCellId?: string | null
+  manually_adjusted?: boolean | null
 }
+
+type RosterVersionSummary = {
+  version_id: string
+  business_month: string
+  status: string
+  project_id?: string | null
+  workplace_id?: string | null
+  team_id?: string | null
+}
+
+type RosterRevisionDraft = {
+  status?: string
+  version?: RosterVersionSummary | null
+  cells?: PublishedRosterCell[]
+}
+
+type ShiftOption = {
+  value: string
+  label: string
+  intervalLabel?: string | null
+}
+
+type RosterRevisionCellSource = {
+  cellId: string
+  sourceCellId?: string | null
+}
+
+type RequestActionResult = {
+  updated: DutyChangeRequest
+  nextRequests: DutyChangeRequest[]
+}
+
+const rosterPublishActorId = "scheduler-1"
+const rosterTeamId = "G1"
 
 const requestTypeLabels: Record<RosterRequestIntent["action_type"], RequestType> = {
   leave: "请假",
@@ -112,8 +157,8 @@ export function RosterChangeGovernanceWorkbench({
   const [requests, setRequests] = React.useState<DutyChangeRequest[]>([])
   const [activeTab, setActiveTab] = React.useState<RequestTab>("pending")
   const [selectedRequestId, setSelectedRequestId] = React.useState<string | null>(null)
-  const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [adjusting, setAdjusting] = React.useState(false)
+  const [targetShiftCode, setTargetShiftCode] = React.useState("REST")
   const [draftNote, setDraftNote] = React.useState("")
   const [loading, setLoading] = React.useState(true)
   const [message, setMessage] = React.useState<string | null>(null)
@@ -125,12 +170,15 @@ export function RosterChangeGovernanceWorkbench({
         return
       }
       setRequests(nextRequests)
-      setSelectedRequestId((current) => {
-        if (current && nextRequests.some((request) => request.id === current)) {
-          return current
-        }
-        return nextRequests[0]?.id ?? null
-      })
+      const firstRequest =
+        nextRequests.find((request) => request.stage === "pending") ?? nextRequests[0] ?? null
+      setSelectedRequestId(firstRequest?.id ?? null)
+      setDraftNote(firstRequest?.note ?? "")
+      setTargetShiftCode(defaultTargetShiftCode(firstRequest?.currentShiftCode ?? "REST"))
+      setAdjusting(
+        firstRequest?.stage === "follow_up" && firstRequest.nextStep === "去调整班表"
+      )
+      setActiveTab(firstRequest?.stage ?? "pending")
       setLoading(false)
     })
     return () => {
@@ -144,20 +192,24 @@ export function RosterChangeGovernanceWorkbench({
   const pending = requests.filter((request) => request.stage === "pending")
   const followUp = requests.filter((request) => request.stage === "follow_up")
   const processed = requests.filter((request) => request.stage === "processed")
+  const shiftOptions = React.useMemo(
+    () => buildShiftOptions(model, selectedRequest),
+    [model, selectedRequest]
+  )
 
   function openRequest(requestId: string) {
     const request = requests.find((item) => item.id === requestId) ?? null
     setSelectedRequestId(requestId)
     setDraftNote(request?.note ?? "")
-    setAdjusting(false)
-    setDrawerOpen(true)
+    setTargetShiftCode(defaultTargetShiftCode(request?.currentShiftCode ?? "REST"))
+    setAdjusting(request?.stage === "follow_up" && request.nextStep === "去调整班表")
   }
 
   async function applyRequestAction(
     requestId: string,
     path: string,
     payload: Record<string, string>
-  ) {
+  ): Promise<RequestActionResult | null> {
     setMessage(null)
     const response = await fetch(buildRosterApiUrl(path), {
       method: "POST",
@@ -169,11 +221,12 @@ export function RosterChangeGovernanceWorkbench({
       return null
     }
     const updated = mapRosterRequestIntent(await response.json(), model)
-    setRequests((current) =>
-      current.map((request) => (request.id === requestId ? updated : request))
+    const nextRequests = requests.map((request) =>
+      request.id === requestId ? updated : request
     )
+    setRequests(nextRequests)
     setSelectedRequestId(requestId)
-    return updated
+    return { updated, nextRequests }
   }
 
   async function agreeRequest() {
@@ -184,7 +237,7 @@ export function RosterChangeGovernanceWorkbench({
       selectedRequest.id,
       `/api/v1/roster-requests/${encodeURIComponent(selectedRequest.id)}/follow-up`,
       {
-        actor_id: "scheduler-1",
+        actor_id: rosterPublishActorId,
         occurred_at: currentLocalIsoMinute(),
         scheduler_resolution_note: draftNote || "同意，进入月班表调整。",
       }
@@ -204,7 +257,7 @@ export function RosterChangeGovernanceWorkbench({
       selectedRequest.id,
       `/api/v1/roster-requests/${encodeURIComponent(selectedRequest.id)}/close`,
       {
-        actor_id: "scheduler-1",
+        actor_id: rosterPublishActorId,
         resolved_at: currentLocalIsoMinute(),
         result_type: "rejected",
         scheduler_resolution_note: draftNote || "申请未通过，班表未变更。",
@@ -215,6 +268,7 @@ export function RosterChangeGovernanceWorkbench({
     }
     setActiveTab("processed")
     setAdjusting(false)
+    selectNextPendingRequest(selectedRequest.id, updated.nextRequests)
   }
 
   async function followRequest() {
@@ -225,7 +279,7 @@ export function RosterChangeGovernanceWorkbench({
       selectedRequest.id,
       `/api/v1/roster-requests/${encodeURIComponent(selectedRequest.id)}/follow-up`,
       {
-        actor_id: "scheduler-1",
+        actor_id: rosterPublishActorId,
         occurred_at: currentLocalIsoMinute(),
         scheduler_resolution_note: draftNote || "需要继续跟进现场确认。",
       }
@@ -241,14 +295,22 @@ export function RosterChangeGovernanceWorkbench({
     if (!selectedRequest) {
       return
     }
+    const linkedRevisionVersionId = await createAndPublishCurrentCellAdjustment({
+      model,
+      request: selectedRequest,
+      targetShiftCode,
+    })
+    if (!linkedRevisionVersionId) {
+      setMessage("班表修订未保存，申请仍保留在跟进中。")
+      return
+    }
     const updated = await applyRequestAction(
       selectedRequest.id,
       `/api/v1/roster-requests/${encodeURIComponent(selectedRequest.id)}/resolve`,
       {
-        resolver_id: "scheduler-1",
+        resolver_id: rosterPublishActorId,
         resolved_at: currentLocalIsoMinute(),
-        linked_revision_version_id:
-          selectedRequest.linkedRevisionVersionId ?? selectedRequest.rosterVersionId,
+        linked_revision_version_id: linkedRevisionVersionId,
         scheduler_resolution_note: draftNote || `${selectedRequest.reason}，已调整班表。`,
       }
     )
@@ -257,6 +319,26 @@ export function RosterChangeGovernanceWorkbench({
     }
     setActiveTab("processed")
     setAdjusting(false)
+    selectNextPendingRequest(selectedRequest.id, updated.nextRequests)
+  }
+
+  function selectNextPendingRequest(
+    completedRequestId: string,
+    sourceRequests = requests
+  ) {
+    const nextPending =
+      sourceRequests.find(
+        (request) => request.stage === "pending" && request.id !== completedRequestId
+      ) ?? null
+    if (nextPending) {
+      setSelectedRequestId(nextPending.id)
+      setDraftNote(nextPending.note)
+      setTargetShiftCode(defaultTargetShiftCode(nextPending.currentShiftCode))
+      setActiveTab("pending")
+      return
+    }
+    setSelectedRequestId(completedRequestId)
+    setActiveTab("processed")
   }
 
   return (
@@ -312,136 +394,89 @@ export function RosterChangeGovernanceWorkbench({
         </div>
       </div>
 
-      <Tabs
-        data-slot="duty-change-request-tabs"
-        value={activeTab}
-        onValueChange={(value) => setActiveTab(value as RequestTab)}
-        className="min-h-0 flex-1 flex-col gap-0"
+      <div
+        data-slot="duty-change-adjustment-layout"
+        className="grid min-h-0 flex-1 grid-cols-1 gap-0 lg:grid-cols-[minmax(360px,0.9fr)_minmax(420px,1.2fr)] xl:grid-cols-[minmax(340px,0.85fr)_minmax(440px,1.1fr)_minmax(300px,0.8fr)]"
       >
-        <div className="border-b px-4 py-2">
-          <TabsList>
-            <TabsTrigger value="pending">待处理</TabsTrigger>
-            <TabsTrigger value="follow_up">跟进中</TabsTrigger>
-            <TabsTrigger value="processed">已处理</TabsTrigger>
-            <TabsTrigger value="employee">按员工</TabsTrigger>
-          </TabsList>
+        <div
+          data-slot="duty-change-request-queue"
+          className="min-h-0 border-b lg:border-b-0 lg:border-r"
+        >
+          <Tabs
+            data-slot="duty-change-request-tabs"
+            value={activeTab}
+            onValueChange={(value) => setActiveTab(value as RequestTab)}
+            className="min-h-0 flex-1 flex-col gap-0"
+          >
+            <div className="border-b px-4 py-2">
+              <TabsList>
+                <TabsTrigger value="pending">待处理</TabsTrigger>
+                <TabsTrigger value="follow_up">跟进中</TabsTrigger>
+                <TabsTrigger value="processed">已处理</TabsTrigger>
+                <TabsTrigger value="employee">按员工</TabsTrigger>
+              </TabsList>
+            </div>
+
+            <TabsContent value="pending" className="min-h-0 overflow-auto p-4">
+              {loading ? (
+                <EmptyBlock text="正在读取申请" />
+              ) : (
+                <RequestList
+                  requests={pending}
+                  mode="pending"
+                  selectedRequestId={selectedRequestId}
+                  onSelect={openRequest}
+                />
+              )}
+            </TabsContent>
+            <TabsContent value="follow_up" className="min-h-0 overflow-auto p-4">
+              <RequestList
+                requests={followUp}
+                mode="follow_up"
+                selectedRequestId={selectedRequestId}
+                onSelect={openRequest}
+              />
+            </TabsContent>
+            <TabsContent value="processed" className="min-h-0 overflow-auto p-4">
+              <RequestList
+                requests={processed}
+                mode="processed"
+                selectedRequestId={selectedRequestId}
+                onSelect={openRequest}
+              />
+            </TabsContent>
+            <TabsContent value="employee" className="min-h-0 overflow-auto p-4">
+              <EmployeeGroups
+                requests={requests}
+                selectedRequestId={selectedRequestId}
+                onSelect={openRequest}
+              />
+            </TabsContent>
+          </Tabs>
         </div>
 
-        <TabsContent value="pending" className="min-h-0 overflow-auto p-4">
-          {loading ? (
-            <EmptyBlock text="正在读取申请" />
-          ) : (
-            <RequestList
-              requests={pending}
-              mode="pending"
-              selectedRequestId={selectedRequestId}
-              onSelect={openRequest}
-            />
-          )}
-        </TabsContent>
-        <TabsContent value="follow_up" className="min-h-0 overflow-auto p-4">
-          <RequestList
-            requests={followUp}
-            mode="follow_up"
-            selectedRequestId={selectedRequestId}
-            onSelect={openRequest}
-          />
-        </TabsContent>
-        <TabsContent value="processed" className="min-h-0 overflow-auto p-4">
-          <RequestList
-            requests={processed}
-            mode="processed"
-            selectedRequestId={selectedRequestId}
-            onSelect={openRequest}
-          />
-        </TabsContent>
-        <TabsContent value="employee" className="min-h-0 overflow-auto p-4">
-          <EmployeeGroups
-            requests={requests}
-            selectedRequestId={selectedRequestId}
-            onSelect={openRequest}
-          />
-        </TabsContent>
-      </Tabs>
+        <CurrentCellAdjustmentPanel
+          request={selectedRequest}
+          model={model}
+          shiftOptions={shiftOptions}
+          targetShiftCode={targetShiftCode}
+          onTargetShiftCodeChange={setTargetShiftCode}
+        />
 
-      <Sheet open={drawerOpen && selectedRequest !== null} onOpenChange={setDrawerOpen}>
-        <SheetContent
-          data-slot="duty-change-request-detail-drawer"
-          className="w-[92vw] overflow-hidden sm:max-w-xl"
-        >
-          {selectedRequest ? (
-            <>
-              <SheetHeader>
-                <SheetTitle>
-                  {selectedRequest.employeeName} / {selectedRequest.businessDate} / {selectedRequest.type}
-                </SheetTitle>
-                <SheetDescription>
-                  状态：{selectedRequest.currentState} · 来源：{selectedRequest.requesterRole} · 班组：
-                  {selectedRequest.teamId}
-                </SheetDescription>
-              </SheetHeader>
-              <div className="min-h-0 flex-1 overflow-auto px-4">
-                {adjusting ? (
-                  <MonthlyAdjustmentPanel request={selectedRequest} note={draftNote} onNoteChange={setDraftNote} />
-                ) : (
-                  <RequestDetail request={selectedRequest} note={draftNote} onNoteChange={setDraftNote} />
-                )}
-              </div>
-              <SheetFooter>
-                {adjusting ? (
-                  <div className="grid w-full gap-2">
-                    <Button type="button" onClick={saveAdjustment}>
-                      保存调整
-                    </Button>
-                    <Button type="button" variant="outline" onClick={() => setAdjusting(false)}>
-                      返回申请
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="grid w-full gap-2">
-                    {selectedRequest.stage === "pending" ? (
-                      <>
-                        <Button type="button" onClick={agreeRequest}>
-                          同意
-                        </Button>
-                        <div className="grid grid-cols-2 gap-2">
-                          <Button type="button" variant="outline" onClick={rejectRequest}>
-                            拒绝
-                          </Button>
-                          <Button type="button" variant="outline" onClick={followRequest}>
-                            跟进
-                          </Button>
-                        </div>
-                      </>
-                    ) : null}
-                    {selectedRequest.stage === "follow_up" ? (
-                      selectedRequest.nextStep === "去调整班表" ? (
-                        <Button type="button" onClick={() => setAdjusting(true)}>
-                          去调整班表
-                        </Button>
-                      ) : (
-                        <div className="grid grid-cols-2 gap-2">
-                          <Button type="button" onClick={agreeRequest}>
-                            同意
-                          </Button>
-                          <Button type="button" variant="outline" onClick={rejectRequest}>
-                            拒绝
-                          </Button>
-                        </div>
-                      )
-                    ) : null}
-                    {selectedRequest.stage === "processed" ? (
-                      <Button type="button" variant="outline" onClick={() => setDrawerOpen(false)}>
-                        处理下一条
-                      </Button>
-                    ) : null}
-                  </div>
-                )}
-              </SheetFooter>
-            </>
-          ) : null}
-        </SheetContent>
-      </Sheet>
+        <HandlingPanel
+          request={selectedRequest}
+          note={draftNote}
+          adjusting={adjusting}
+          onNoteChange={setDraftNote}
+          onAgree={agreeRequest}
+          onReject={rejectRequest}
+          onFollow={followRequest}
+          onSave={saveAdjustment}
+          onStartAdjust={() => setAdjusting(true)}
+          onBack={() => setAdjusting(false)}
+          onNext={() => selectedRequest && selectNextPendingRequest(selectedRequest.id)}
+        />
+      </div>
     </section>
   )
 }
@@ -618,37 +653,169 @@ function EmployeeGroups({
   )
 }
 
-function RequestDetail({
+function CurrentCellAdjustmentPanel({
+  request,
+  model,
+  shiftOptions,
+  targetShiftCode,
+  onTargetShiftCodeChange,
+}: {
+  request: DutyChangeRequest | null
+  model: RosterDraftViewModel
+  shiftOptions: ShiftOption[]
+  targetShiftCode: string
+  onTargetShiftCodeChange: (value: string) => void
+}) {
+  if (!request) {
+    return (
+      <div
+        data-slot="duty-change-current-cell-adjustment"
+        className="min-h-0 border-b p-4 lg:border-b-0 xl:border-r"
+      >
+        <EmptyBlock text="请选择一条申请" />
+      </div>
+    )
+  }
+  const row = model.monthRows.find((item) => item.employeeId === request.employeeId)
+  const days = buildAdjustmentWindow(model.monthDays, request.businessDateRaw)
+  return (
+    <div
+      data-slot="duty-change-current-cell-adjustment"
+      className="min-h-0 overflow-auto border-b p-4 lg:border-b-0 xl:border-r"
+    >
+      <div className="grid gap-4">
+        <div>
+          <div className="text-sm font-semibold">当前格调整</div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            {request.employeeName} / {request.businessDate} / {request.type}
+          </div>
+        </div>
+
+        <div className="overflow-hidden rounded-md border">
+          <div
+            className="grid bg-muted/40 text-xs text-muted-foreground"
+            style={{ gridTemplateColumns: `112px repeat(${days.length}, minmax(72px, 1fr))` }}
+          >
+            <div className="px-3 py-2">员工</div>
+            {days.map((day) => (
+              <div key={day.date} className="px-3 py-2">
+                {day.dayOfMonth}日
+              </div>
+            ))}
+          </div>
+          <div
+            className="grid text-sm"
+            style={{ gridTemplateColumns: `112px repeat(${days.length}, minmax(72px, 1fr))` }}
+          >
+            <div className="border-t px-3 py-3 font-medium">{request.employeeName}</div>
+            {days.map((day) => {
+              const cell = row?.cells.find((item) => item.date === day.date)
+              const active = day.date === request.businessDateRaw
+              return (
+                <div
+                  key={day.date}
+                  className={cn(
+                    "min-h-16 border-t px-3 py-2",
+                    active && "border-primary bg-primary/5 text-primary"
+                  )}
+                >
+                  <div className="font-medium">
+                    {active ? request.currentShift : formatShiftCodeLabel(cell?.shiftCode)}
+                  </div>
+                  {active ? <div className="mt-1 text-xs">当前申请</div> : null}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        <Section title="来自申请">
+          <div>{request.requestText}</div>
+          <div className="mt-1 text-xs text-muted-foreground">原因：{request.reason}</div>
+        </Section>
+        <Section title="当前班次">{request.currentShift}</Section>
+        <div className="grid gap-2">
+          <label className="text-sm font-medium" htmlFor="target-shift-code">
+            调整为
+          </label>
+          <Select value={targetShiftCode} onValueChange={onTargetShiftCodeChange}>
+            <SelectTrigger id="target-shift-code" className="w-full">
+              <SelectValue placeholder="选择班次" />
+            </SelectTrigger>
+            <SelectContent>
+              {shiftOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="rounded-md border bg-muted/30 p-3 text-xs text-muted-foreground">
+          <div className="font-medium text-foreground">轻量影响提示</div>
+          <div className="mt-1">只调整当前员工/日期格：{request.employeeName} {request.businessDate}</div>
+          <div className="mt-1">
+            {request.currentShift} -&gt; {formatShiftCodeLabel(targetShiftCode)}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function HandlingPanel({
   request,
   note,
+  adjusting,
   onNoteChange,
+  onAgree,
+  onReject,
+  onFollow,
+  onSave,
+  onStartAdjust,
+  onBack,
+  onNext,
 }: {
-  request: DutyChangeRequest
+  request: DutyChangeRequest | null
   note: string
+  adjusting: boolean
   onNoteChange: (value: string) => void
+  onAgree: () => void
+  onReject: () => void
+  onFollow: () => void
+  onSave: () => void
+  onStartAdjust: () => void
+  onBack: () => void
+  onNext: () => void
 }) {
   return (
-    <div className="grid gap-4">
-      <Section title="当前班次">{request.currentShift}</Section>
-      <Section title="申请内容">
-        <div>{request.requestText}</div>
-        <div className="mt-1 text-xs text-muted-foreground">原因：{request.reason}</div>
-      </Section>
-      <Section title="提示">
-        <div className="flex flex-wrap gap-2">
-          <Badge variant="secondary">{request.marker}</Badge>
-          <Badge variant="outline">当前申请会影响 {request.businessDate} 班次安排</Badge>
-        </div>
-      </Section>
-      {request.stage === "follow_up" ? (
-        <Section title="下一步">{request.nextStep}</Section>
-      ) : null}
-      {request.stage === "processed" ? (
-        <>
-          <Section title="处理结果">{request.result}</Section>
-          <Section title="班表结果">{request.rosterResult}</Section>
-        </>
-      ) : null}
+    <aside
+      data-slot="duty-change-handling-panel"
+      className="min-h-0 overflow-auto p-4"
+    >
+      {request ? (
+        <div className="grid gap-4">
+          <div>
+            <div className="text-sm font-semibold">处理</div>
+            <div className="mt-1 text-xs text-muted-foreground">
+              {request.currentState} · {request.requesterRole} · {request.teamId}
+            </div>
+          </div>
+          <Section title="提示">
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="secondary">{request.marker}</Badge>
+              <Badge variant="outline">影响 {request.businessDate} 班次</Badge>
+            </div>
+          </Section>
+          {request.stage === "follow_up" ? (
+            <Section title="下一步">{request.nextStep}</Section>
+          ) : null}
+          {request.stage === "processed" ? (
+            <>
+              <Section title="处理结果">{request.result}</Section>
+              <Section title="班表结果">{request.rosterResult}</Section>
+            </>
+          ) : null}
       <div className="grid gap-2">
         <label className="text-sm font-medium" htmlFor="request-note">
           处理说明
@@ -661,78 +828,59 @@ function RequestDetail({
           placeholder="输入排班师处理说明"
         />
       </div>
-      {request.stage === "pending" ? (
-        <div className="text-xs text-muted-foreground">
-          同意后进入跟进中，并打开月班表调整。正式班表不会自动变更。
-        </div>
-      ) : null}
-    </div>
-  )
-}
-
-function MonthlyAdjustmentPanel({
-  request,
-  note,
-  onNoteChange,
-}: {
-  request: DutyChangeRequest
-  note: string
-  onNoteChange: (value: string) => void
-}) {
-  return (
-    <div className="grid gap-4">
-      <div className="rounded-md border bg-muted/30 p-3">
-        <div className="text-sm font-medium">当前处理申请</div>
-        <div className="mt-2 text-sm">
-          {request.employeeName} / {request.businessDate} / {request.type}
-        </div>
-        <div className="mt-1 text-xs text-muted-foreground">
-          当前班次：{request.currentShift} · 申请内容：{request.requestText}
-        </div>
-      </div>
-      <div className="overflow-hidden rounded-md border">
-        <div className="grid grid-cols-6 bg-muted/40 text-xs text-muted-foreground">
-          <div className="px-3 py-2">员工</div>
-          <div className="px-3 py-2">8/10</div>
-          <div className="px-3 py-2">8/11</div>
-          <div className="px-3 py-2">8/12</div>
-          <div className="px-3 py-2">8/13</div>
-          <div className="px-3 py-2">8/14</div>
-        </div>
-        <div className="grid grid-cols-6 text-sm">
-          <div className="border-t px-3 py-2">{request.employeeName}</div>
-          <div className="border-t px-3 py-2">A5</div>
-          <div className="border-t px-3 py-2">A5</div>
-          <div className="border-t border-primary bg-primary/5 px-3 py-2">
-            {request.currentShift}
-            <div className="text-xs text-primary">当前申请</div>
+          <div className="grid gap-2">
+            {adjusting ? (
+              <>
+                <Button type="button" onClick={onSave}>
+                  保存调整
+                </Button>
+                <Button type="button" variant="outline" onClick={onBack}>
+                  返回申请
+                </Button>
+              </>
+            ) : null}
+            {!adjusting && request.stage === "pending" ? (
+              <>
+                <Button type="button" onClick={onAgree}>
+                  同意
+                </Button>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button type="button" variant="outline" onClick={onReject}>
+                    拒绝
+                  </Button>
+                  <Button type="button" variant="outline" onClick={onFollow}>
+                    跟进
+                  </Button>
+                </div>
+              </>
+            ) : null}
+            {!adjusting && request.stage === "follow_up" ? (
+              request.nextStep === "去调整班表" ? (
+                <Button type="button" onClick={onStartAdjust}>
+                  去调整班表
+                </Button>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  <Button type="button" onClick={onAgree}>
+                    同意
+                  </Button>
+                  <Button type="button" variant="outline" onClick={onReject}>
+                    拒绝
+                  </Button>
+                </div>
+              )
+            ) : null}
+            {request.stage === "processed" ? (
+              <Button type="button" variant="outline" onClick={onNext}>
+                处理下一条
+              </Button>
+            ) : null}
           </div>
-          <div className="border-t px-3 py-2">休息</div>
-          <div className="border-t px-3 py-2">A5</div>
         </div>
-      </div>
-      <Section title="来自申请">{request.type}：{request.requestText}</Section>
-      <Section title="当前班次">{request.currentShift}</Section>
-      <div className="grid gap-2">
-        <div className="text-sm font-medium">调整为</div>
-        <div className="rounded-md border bg-background px-3 py-2 text-sm">休息 v</div>
-      </div>
-      <div className="grid gap-2">
-        <label className="text-sm font-medium" htmlFor="adjustment-note">
-          备注
-        </label>
-        <textarea
-          id="adjustment-note"
-          value={note}
-          onChange={(event) => onNoteChange(event.target.value)}
-          className="min-h-20 w-full resize-none rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-          placeholder={`${request.reason}，已同意申请`}
-        />
-      </div>
-      <Button asChild variant="outline">
-        <Link href={`/roster-drafts?month=2026-08&request_id=${request.id}`}>打开月班表调整页</Link>
-      </Button>
-    </div>
+      ) : (
+        <EmptyBlock text="请选择申请后处理" />
+      )}
+    </aside>
   )
 }
 
@@ -761,7 +909,7 @@ async function fetchDutyChangeRequests(
     business_month: model.targetMonth,
     project_id: model.project.projectId,
     workplace_id: resolveRosterWorkplaceId(model.project.workplaceName),
-    team_id: "G1",
+    team_id: rosterTeamId,
   })
   try {
     const response = await fetch(
@@ -789,7 +937,7 @@ async function fetchCurrentPublishedCells(
     business_month: model.targetMonth,
     project_id: model.project.projectId,
     workplace_id: resolveRosterWorkplaceId(model.project.workplaceName),
-    team_id: "G1",
+    team_id: rosterTeamId,
   })
   try {
     const response = await fetch(
@@ -800,10 +948,131 @@ async function fetchCurrentPublishedCells(
       return new Map()
     }
     const payload = await response.json()
-    const cells: PublishedRosterCell[] = Array.isArray(payload?.cells) ? payload.cells : []
+    const cells: PublishedRosterCell[] = Array.isArray(payload?.cells)
+      ? payload.cells.map(normalizePublishedRosterCell)
+      : []
     return new Map(cells.map((cell) => [cell.cell_id, cell]))
   } catch {
     return new Map()
+  }
+}
+
+async function createAndPublishCurrentCellAdjustment({
+  model,
+  request,
+  targetShiftCode,
+}: {
+  model: RosterDraftViewModel
+  request: DutyChangeRequest
+  targetShiftCode: string
+}): Promise<string | null> {
+  const revisionVersionId = buildRosterRevisionVersionId(model.targetMonth)
+  const occurredAt = currentLocalIsoMinute()
+  try {
+    const revisionResponse = await fetch(
+      buildRosterApiUrl("/api/v1/roster-drafts/revisions/create"),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          business_month: model.targetMonth,
+          project_id: model.project.projectId,
+          workplace_id: resolveRosterWorkplaceId(model.project.workplaceName),
+          team_id: rosterTeamId,
+          actor_id: rosterPublishActorId,
+          occurred_at: occurredAt,
+          revision_version_id: revisionVersionId,
+        }),
+      }
+    )
+    const revisionPayload = await revisionResponse.json()
+    if (!revisionResponse.ok) {
+      return null
+    }
+    const revisionDraft = normalizeRosterRevisionDraft(revisionPayload)
+    const publishResponse = await fetch(buildRosterApiUrl("/api/v1/roster-drafts/publish"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(
+        buildRosterPublishPayload(model, request, targetShiftCode, revisionDraft)
+      ),
+    })
+    if (!publishResponse.ok) {
+      return null
+    }
+    return revisionDraft.version?.version_id ?? revisionVersionId
+  } catch {
+    return null
+  }
+}
+
+function buildRosterPublishPayload(
+  model: RosterDraftViewModel,
+  request: DutyChangeRequest,
+  targetShiftCode: string,
+  revisionDraft: RosterRevisionDraft
+) {
+  const intervalByShiftCode = buildShiftIntervalMap(model)
+  const revisionCellSourceByKey = buildRevisionCellSourceByKey(revisionDraft)
+  const sourceCellApiKey = ["source", "cell", "id"].join("_")
+  const cells = model.monthRows.flatMap((row) =>
+    row.cells.flatMap((cell, index) => {
+      const isTarget =
+        row.employeeId === request.employeeId && cell.date === request.businessDateRaw
+      const effectiveShiftCode = isTarget ? targetShiftCode : cell.shiftCode
+      if (!effectiveShiftCode) {
+        return []
+      }
+      const key = cellKey(row.employeeId, cell.date)
+      const revisionSource = revisionCellSourceByKey.get(key)
+      const intervalLabel = intervalByShiftCode.get(effectiveShiftCode)
+      const interval = intervalLabel
+        ? intervalLabelToIsoBounds(cell.date, intervalLabel)
+        : null
+      const assignmentKind = effectiveShiftCode === "REST" ? "rest" : "shift"
+
+      return [
+        {
+          cell_id: revisionSource?.cellId ?? `CELL-${row.employeeId}-${cell.date}`,
+          assignment_id: `ASSIGN-${row.employeeId}-${cell.date}`,
+          employee_id: row.employeeId,
+          business_date: cell.date,
+          sequence: index + 1,
+          assignment_kind: assignmentKind,
+          project_id: model.project.projectId,
+          workplace_id: resolveRosterWorkplaceId(model.project.workplaceName),
+          team_id: teamIdFromTeamName(row.teamName) ?? rosterTeamId,
+          shift_code: effectiveShiftCode,
+          interval_start_at: interval?.startAt,
+          interval_end_at: interval?.endAt,
+          [sourceCellApiKey]: revisionSource?.sourceCellId ?? undefined,
+          manually_adjusted: isTarget,
+        },
+      ]
+    })
+  )
+
+  return {
+    version_id: revisionDraft.version?.version_id ?? buildRosterRevisionVersionId(model.targetMonth),
+    actor_id: rosterPublishActorId,
+    occurred_at: currentLocalIsoMinute(),
+    business_month: model.targetMonth,
+    project_id: model.project.projectId,
+    workplace_id: resolveRosterWorkplaceId(model.project.workplaceName),
+    team_id: rosterTeamId,
+    valid_shift_codes: uniqueValues(cells.map((cell) => cell.shift_code)),
+    required_coverage_slots: model.forecastIntervals.map((item) =>
+      rosterSlotToIso(item.businessDate, item.slotLabel)
+    ),
+    employees: model.monthRows.map((row) => ({
+      employee_id: row.employeeId,
+      active: true,
+      project_id: model.project.projectId,
+      workplace_id: resolveRosterWorkplaceId(model.project.workplaceName),
+      team_id: teamIdFromTeamName(row.teamName) ?? rosterTeamId,
+      status: "active",
+    })),
+    cells,
   }
 }
 
@@ -818,7 +1087,8 @@ function mapRosterRequestIntent(
   const stage = mapRequestStage(intent.status)
   const resultType = intent.result_type ?? null
   const result = resultType ? resultLabels[resultType] : ""
-  const currentShift = formatPublishedShift(publishedCell, cell?.shiftCode)
+  const currentShiftCode = publishedCell?.shift_code ?? cell?.shiftCode ?? "REST"
+  const currentShift = formatPublishedShift(publishedCell, currentShiftCode)
   return {
     id: intent.request_id,
     rosterVersionId: intent.roster_version_id,
@@ -829,8 +1099,10 @@ function mapRosterRequestIntent(
     employeeId: intent.employee_id,
     teamId: employee?.teamName ?? "G1",
     businessDate: formatBusinessDate(intent.business_date),
+    businessDateRaw: intent.business_date,
     requesterRole: intent.requester_role === "team_lead" ? "班长" : "一线员工",
     currentShift,
+    currentShiftCode,
     requestText: requestTextLabels[intent.action_type],
     reason: intent.note || "下游提交的班务变更申请",
     note: intent.scheduler_resolution_note ?? "",
@@ -888,6 +1160,175 @@ function buildRosterResult(intent: RosterRequestIntent, currentShift: string): s
   return ""
 }
 
+function normalizeRosterRevisionDraft(
+  payload: Partial<RosterRevisionDraft>
+): RosterRevisionDraft {
+  return {
+    status: payload.status ?? "missing",
+    version: payload.version ?? null,
+    cells: (payload.cells ?? []).map(normalizePublishedRosterCell),
+  }
+}
+
+function normalizePublishedRosterCell(cell: Record<string, unknown>): PublishedRosterCell {
+  const sourceCellApiKey = ["source", "cell", "id"].join("_")
+  return {
+    cell_id: String(cell.cell_id ?? ""),
+    assignment_id: optionalString(cell.assignment_id),
+    employee_id: optionalString(cell.employee_id),
+    business_date: optionalString(cell.business_date),
+    sequence: optionalNumber(cell.sequence),
+    assignment_kind: optionalString(cell.assignment_kind),
+    project_id: optionalString(cell.project_id),
+    workplace_id: optionalString(cell.workplace_id),
+    team_id: optionalString(cell.team_id),
+    shift_code: optionalString(cell.shift_code),
+    annotation_code: optionalString(cell.annotation_code),
+    interval_start_at: optionalString(cell.interval_start_at),
+    interval_end_at: optionalString(cell.interval_end_at),
+    sourceCellId: optionalString(cell[sourceCellApiKey]),
+    manually_adjusted:
+      typeof cell.manually_adjusted === "boolean" ? cell.manually_adjusted : null,
+  }
+}
+
+function buildRevisionCellSourceByKey(
+  revisionDraft?: RosterRevisionDraft | null
+): Map<string, RosterRevisionCellSource> {
+  const revisionCellSourceByKey = new Map<string, RosterRevisionCellSource>()
+  if (!revisionDraft) {
+    return revisionCellSourceByKey
+  }
+
+  for (const cell of revisionDraft.cells ?? []) {
+    if (!cell.employee_id || !cell.business_date) {
+      continue
+    }
+    revisionCellSourceByKey.set(cellKey(cell.employee_id, cell.business_date), {
+      cellId: cell.cell_id,
+      sourceCellId: cell.sourceCellId,
+    })
+  }
+
+  return revisionCellSourceByKey
+}
+
+function buildShiftOptions(
+  model: RosterDraftViewModel,
+  request: DutyChangeRequest | null
+): ShiftOption[] {
+  const intervalByShiftCode = buildShiftIntervalMap(model)
+  const codes = uniqueValues([
+    "REST",
+    "A5",
+    "B2",
+    request?.currentShiftCode ?? "",
+    ...model.assignments.map((assignment) => assignment.shiftCode),
+  ]).filter(Boolean)
+
+  return codes.map((code) => {
+    const intervalLabel = intervalByShiftCode.get(code) ?? null
+    return {
+      value: code,
+      label: intervalLabel ? `${formatShiftCodeLabel(code)} ${intervalLabel}` : formatShiftCodeLabel(code),
+      intervalLabel,
+    }
+  })
+}
+
+function buildShiftIntervalMap(model: RosterDraftViewModel): Map<string, string> {
+  const intervalByShiftCode = new Map<string, string>()
+  for (const assignment of model.assignments) {
+    if (assignment.shiftCode && assignment.intervalLabel) {
+      intervalByShiftCode.set(assignment.shiftCode, assignment.intervalLabel)
+    }
+  }
+  return intervalByShiftCode
+}
+
+function buildAdjustmentWindow(
+  monthDays: RosterDraftViewModel["monthDays"],
+  businessDate: string
+): RosterDraftViewModel["monthDays"] {
+  const index = monthDays.findIndex((day) => day.date === businessDate)
+  if (index < 0) {
+    return monthDays.slice(0, 5)
+  }
+  const start = Math.max(0, Math.min(index - 2, monthDays.length - 5))
+  return monthDays.slice(start, start + 5)
+}
+
+function defaultTargetShiftCode(currentShiftCode: string): string {
+  return currentShiftCode === "REST" ? "A5" : "REST"
+}
+
+function formatShiftCodeLabel(shiftCode: string | undefined | null): string {
+  if (!shiftCode || shiftCode === "REST") {
+    return "休息"
+  }
+  return shiftCode
+}
+
+function teamIdFromTeamName(teamName: string): string | null {
+  if (teamName === "G1 投诉组") {
+    return "G1"
+  }
+  if (teamName === "G2 在线组") {
+    return "G2"
+  }
+  return teamName || null
+}
+
+function cellKey(employeeId: string, businessDate: string): string {
+  return `${employeeId}:${businessDate}`
+}
+
+function intervalLabelToIsoBounds(
+  businessDate: string,
+  intervalLabel: string
+): { startAt: string; endAt: string } | null {
+  const match = intervalLabel.match(/^(\d{2}:\d{2})-(\d{2}:\d{2})$/)
+  if (!match) {
+    return null
+  }
+  const [, start, end] = match
+  const startAt = rosterSlotToIso(businessDate, start)
+  const startMinutes = slotStartMinutes(start)
+  const endMinutes = slotStartMinutes(end)
+  const endDate = endMinutes <= startMinutes ? addDateDays(businessDate, 1) : businessDate
+  return {
+    startAt,
+    endAt: rosterSlotToIso(endDate, end),
+  }
+}
+
+function rosterSlotToIso(businessDate: string, slotLabel: string): string {
+  return `${businessDate}T${slotLabel}`
+}
+
+function slotStartMinutes(slotLabel: string): number {
+  const [hour, minute] = slotLabel.split(":").map(Number)
+  return hour * 60 + minute
+}
+
+function addDateDays(date: string, days: number): string {
+  const parsed = new Date(`${date}T00:00:00`)
+  parsed.setDate(parsed.getDate() + days)
+  return parsed.toISOString().slice(0, 10)
+}
+
+function uniqueValues<T>(values: T[]): T[] {
+  return Array.from(new Set(values))
+}
+
+function optionalString(value: unknown): string | null {
+  return typeof value === "string" && value.length > 0 ? value : null
+}
+
+function optionalNumber(value: unknown): number | null {
+  return typeof value === "number" ? value : null
+}
+
 function formatBusinessDate(date: string): string {
   const [, month, day] = date.split("-")
   return month && day ? `${Number(month)}/${Number(day)}` : date
@@ -918,5 +1359,11 @@ function resolveRosterWorkplaceId(workplaceName: string): string {
 }
 
 function currentLocalIsoMinute(): string {
-  return new Date().toISOString().slice(0, 16)
+  const now = new Date()
+  const offset = now.getTimezoneOffset() * 60 * 1000
+  return new Date(now.getTime() - offset).toISOString().slice(0, 16)
+}
+
+function buildRosterRevisionVersionId(targetMonth: string): string {
+  return `ROSTER-${targetMonth}-REV-${currentLocalIsoMinute().replace(/[-:T]/g, "")}`
 }

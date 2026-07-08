@@ -644,3 +644,24 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
+
+### IM308 Duty Change Adjustment Handoff Implementation
+
+- branch_name: `codex/im308-duty-change-adjustment-handoff`
+- base_main_commit: `stacked on local codex/im305-roster-change-center`
+- stacked_on: `codex/im305-roster-change-center`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Implement same-page three-column duty-change adjustment handoff in `/roster-change-governance`, reusing existing local roster revision/publish/request resolve APIs.
+- qoder_mode: `false; implemented directly after PM confirmed start.`
+- allowed_files_check: `components/roster-change-governance-workbench.tsx`, focused structure test, current/registry/traceability docs, backlog/R/US docs, and implementation plan only.
+- scope_diff_check: expected frontend workbench reshaping and traceability only; no package/lockfile, dependency, backend API, migration, database persistence field, auth, permissions, approval, notification, export, batch, external integration, forecasting, standard capacity, Excel, automatic scheduling, production formulas, settlement, or charge-factor changes.
+- focused_check_result: `node --test scripts/tests/roster-change-governance-structure.test.mjs` passed; `npm run lint` passed; `npm run typecheck` passed; `git diff --check` passed.
+- browser_smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003`; seeded current published roster plus two open requests; page rendered request queue/current-cell adjustment/handling panel; agree changed metrics to pending 3 / follow-up 1 / processed 2; save changed metrics to pending 3 / follow-up 0 / processed 3 and selected the next pending request; API readback showed `REQ-IM308-SMOKE-1` resolved, `result_type=adjusted`, and non-empty `linked_revision_version_id`.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`

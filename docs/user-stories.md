@@ -646,8 +646,8 @@ acceptance:
   - "保存前显示轻量影响提示。"
   - "保存调整后申请显示 `已调整`，保留 revision 锚点，并自动选中下一条待处理申请。"
   - "本轮不新增换班双人联动、完整工时/技能/覆盖校验、完整月班表编辑器、审批、认证、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。"
-status: "ready"
-notes: "IM308 confirmed adjustment handoff product contract after visual layout decisions."
+status: "done"
+notes: "IM308 delivered the same-page adjustment handoff: request queue, current-cell adjustment, handling panel, revision-anchor save, and next-request continuity."
 ```
 
 ## History Policy

@@ -364,8 +364,8 @@ description: "在 IM307 真实申请三态闭环之上，把 `班务变更申请
 source: "PM confirmed visual option A + current-cell quick adjustment + fixed shift dropdown + lightweight impact hint + next-request continuity on 2026-07-08"
 submitted_at: "2026-07-08"
 version: "1.0"
-status: "ready"
-notes: "Frontend scaffold over existing local request and roster revision APIs where possible; no swap two-person linkage, full roster editor, complex validation, approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, charge-factor work, new dependency, backend migration, or new persistence field."
+status: "done"
+notes: "IM308 delivered the same-page three-column adjustment handoff over existing local request and roster revision APIs; no swap two-person linkage, full roster editor, complex validation, approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, charge-factor work, new dependency, backend migration, or new persistence field."
 ```
 
 ## History Policy

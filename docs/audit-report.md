@@ -681,3 +681,21 @@
 #### 验证
 
 - documentation gate: contract self-review found no TODO/TBD placeholders; `bash scripts/check-state.sh --strict` and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
+
+### 2026-07-08 - IM308 班务变更申请月班表调整承接 Implementation
+
+#### 审计结论
+
+- IM308 已把 `班务变更申请` 从列表+抽屉推进为同页三栏处理闭环：申请队列、当前格调整、处理面板。
+- 排班师不再只是点击确认；`同意` 后必须进入当前员工/日期格调整，`保存调整` 才会发布修订并把申请置为 `已调整`。
+- 保存链路复用现有本地 revision create / publish / request resolve API，已验证 `linked_revision_version_id` 非空。
+- 默认选中第一条待处理申请，避免左侧显示待处理、右侧却显示已处理的错位。
+- 旧方向继续废弃：`处理台` 命名、`班表变更中心`、版本时间线、裸 source-cell difference、post-change confirmation、长按钮名、长结果标签。
+- 本轮未新增后端迁移、新持久化字段、依赖、审批、认证、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。
+
+#### 验证
+
+- frontend red/green: `node --test scripts/tests/roster-change-governance-structure.test.mjs` 先失败在缺少三栏承接 slot；green 后通过，并覆盖 revision create / publish / resolve / revision anchor 结构。
+- focused gate: `npm run lint`、`npm run typecheck`、`git diff --check` 通过。
+- browser smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003`，seed 正式班表和两条 open request 后，同意进入保存状态、保存后 `已调整` 且自动选中下一条；后端 readback `REQ-IM308-SMOKE-1` 为 `resolved / adjusted`，`linked_revision_version_id` 非空，浏览器 console 无 error/warn。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、281 backend tests 和 project Harness check。

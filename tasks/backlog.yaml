@@ -309,7 +309,7 @@ tasks:
 
   - id: IM308
     title: "班务变更申请月班表调整承接"
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     story_ids:
       - US896
