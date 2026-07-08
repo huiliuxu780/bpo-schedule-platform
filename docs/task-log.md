@@ -314,3 +314,15 @@
 - notes: 完成 IM304 的产品纠偏闭环：`/roster-change-governance?month=2026-08` 页面和导航改为 `班表变更中心`；后端继续复用运行时 diff 基础，但对前端输出员工-日期-班次变更事件、待处理/已确认统计和按员工分组；排班师点击事件行打开右侧详情抽屉，查看修订前/修订后、来源分类和关联问题，并单条确认填写内部备注；确认记录写入本地 `roster_change_confirmations`，事件离开 `待处理` 并在 `全部变更` 保留为 `已确认`。仍不包含审批、权限、通知、导出、批量、预测、标准人力、Excel、自动排班、生产公式、结算或计费规则。
 - focused verification: red `.venv/bin/python -m unittest backend.tests.test_roster_service.RosterServiceTest.test_change_center_returns_event_rows_and_persists_confirmation -v` 失败在缺少 `summary`；green 后服务层确认持久化测试通过。red `.venv/bin/python -m unittest backend.tests.test_roster_publish_api.RosterPublishApiTest.test_roster_publish_routes_are_registered backend.tests.test_roster_publish_api.RosterPublishApiTest.test_roster_change_event_confirm_api_persists_internal_note -v` 失败在缺少确认 API；green 后通过。red `node --test scripts/tests/roster-change-governance-structure.test.mjs` 失败在旧页面缺少 `班表变更中心`、事件 API 和抽屉 slot；green 后通过。聚焦套件 `.venv/bin/python -m unittest backend.tests.test_roster_service backend.tests.test_roster_publish_api -v` 18 tests 通过；`node --test scripts/tests/roster-change-governance-structure.test.mjs scripts/tests/published-roster-viewer-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` 27 tests 通过；`npm run typecheck` 通过。
 - browser smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003`，SQLite `.local/im305-roster-change-center-smoke.db`；seed 当前正式版、请假问题、修订发布和 resolved 问题后，页面显示 `班表变更中心`、`1 条待处理`、`EMP-001 / 2026-08-01`、`请假 REQ-001`；点击事件打开右侧抽屉，显示内部备注、确认变更、修订前/后和关联问题；提交内部备注后页面显示 `0 条待处理`、`已确认 1`，备注回显；390px 宽度检查无横向溢出。
+
+- task_id: `IM307`
+- source_ids:
+  - `R975`
+- story_ids:
+  - `US895`
+- action: 班务变更申请真实三态处理闭环 Implementation。
+- status: `done`
+- notes: 完成 `班务变更申请` 从静态原型到真实本地申请链路的推进：`/roster-change-governance?month=2026-08` 读取真实 `roster_request_intents`；申请状态使用 `open / in_progress / resolved`，页面显示 `待处理 / 跟进中 / 已处理`；动作使用 `同意 / 拒绝 / 跟进`；已处理结果用短标签 `已调整 / 已拒绝 / 已关闭`；拒绝/关闭不要求 revision，已调整保留班表结果锚点。未新增审批、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。
+- focused verification: 后端服务/API 红测先失败在缺少 follow-up/close 和 `result_type`；green 后 5 个聚焦 backend tests 通过。前端结构红测先失败在未接 `/api/v1/roster-requests` 和当前正式班表读取；green 后 `node --test scripts/tests/roster-change-governance-structure.test.mjs` 通过；`npm run typecheck`、`npm run lint`、`bash scripts/check-state.sh --strict`、`git diff --check` 通过。
+- browser smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003`，SQLite `.local/im307-duty-change-request-smoke.db`；页面显示 `班务变更申请`、`待处理 / 跟进中 / 已处理 / 按员工`、短按钮 `同意 / 拒绝 / 跟进`；同意后进入跟进中并出现月班表调整，保存调整后显示 `已调整` 且有 revision 锚点；拒绝后显示 `已拒绝` 且无 revision 锚点；当前班次读取正式班表 `A5 09:00-10:00`、`T1 10:00-11:00`，未出现 `班表变更中心`、`已完成班表调整` 或 `休息 -> 休息`。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、281 backend tests 和 project Harness check。

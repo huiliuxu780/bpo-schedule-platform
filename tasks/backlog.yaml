@@ -296,3 +296,13 @@ tasks:
     requirement_ids:
       - R974
     notes: "Reposition the existing roster-change route as a request-first `班务变更申请` frontend prototype: pending/follow-up/processed request states, right-side detail drawer, agree/reject/follow-up actions, monthly roster adjustment handoff, save-adjustment closure, and removal of version/difference terminology from the visible business UI. No backend persistence, approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formulas, settlement, or charge-factor work."
+
+  - id: IM307
+    title: "班务变更申请真实三态处理闭环"
+    status: done
+    required_workflow: database-persistence
+    story_ids:
+      - US895
+    requirement_ids:
+      - R975
+    notes: "Connect `/roster-change-governance` to real `roster_request_intents`: local MVP three-state handling `open / in_progress / resolved`, short result labels `adjusted / rejected / closed` mapped to `已调整 / 已拒绝 / 已关闭`, follow-up and close APIs, and frontend request list/detail/actions over real data. No approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formulas, settlement, or charge-factor work."

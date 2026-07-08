@@ -14,12 +14,14 @@ from backend.app.main import (
     get_roster_request_intent,
     get_roster_change_governance,
     list_roster_request_intents,
+    close_roster_request_intent_without_revision,
     summarize_roster_request_intents,
     get_current_roster_published_snapshot,
     _get_roster_service,
     publish_roster_draft,
     release_roster_draft_lock,
     resolve_roster_request_intent,
+    start_roster_request_intent_follow_up,
 )
 
 
@@ -33,6 +35,8 @@ class RosterPublishApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/roster-drafts/locks/release", "POST"), routes)
         self.assertIn(("/api/v1/roster-requests", "GET"), routes)
         self.assertIn(("/api/v1/roster-requests", "POST"), routes)
+        self.assertIn(("/api/v1/roster-requests/{request_id}/follow-up", "POST"), routes)
+        self.assertIn(("/api/v1/roster-requests/{request_id}/close", "POST"), routes)
         self.assertIn(("/api/v1/roster-requests/summary", "GET"), routes)
         self.assertIn(("/api/v1/roster-requests/{request_id}", "GET"), routes)
         self.assertIn(("/api/v1/roster-requests/{request_id}/resolve", "POST"), routes)
@@ -211,13 +215,87 @@ class RosterPublishApiTest(unittest.TestCase):
         self.assertEqual(create_response["business_date"], "2026-08-01")
         self.assertEqual([item["request_id"] for item in list_response["items"]], ["REQ-001"])
         self.assertEqual(detail_response["request_id"], "REQ-001")
-        self.assertEqual(summary_before["totals"], {"open": 2, "resolved": 0})
+        self.assertEqual(summary_before["totals"], {"open": 2, "in_progress": 0, "resolved": 0})
         self.assertEqual(summary_before["by_cell"]["CELL-001"]["open"], 1)
         self.assertEqual(resolve_response["status"], "resolved")
+        self.assertEqual(resolve_response["result_type"], "adjusted")
         self.assertEqual(resolve_response["linked_revision_version_id"], "ROSTER-2026-08-REV-1")
         self.assertEqual(resolve_response["scheduler_resolution_note"], "已完成请假修订并发布。")
         self.assertEqual([item["request_id"] for item in list_after_resolve["items"]], ["REQ-002"])
         self.assertEqual([item["request_id"] for item in resolved_response["items"]], ["REQ-001"])
+
+    def test_roster_request_intent_api_tracks_in_progress_and_short_results(self) -> None:
+        with _isolated_database():
+            publish_roster_draft(_publish_request())
+            create_roster_request_intent(
+                {
+                    "request_id": "REQ-001",
+                    "business_month": "2026-08",
+                    "project_id": "BOSCH-CS",
+                    "workplace_id": "SHANGHAI",
+                    "team_id": "G1",
+                    "roster_cell_id": "CELL-001",
+                    "action_type": "leave",
+                    "requester_role": "frontline",
+                    "requester_id": "EMP-001",
+                    "note": "8 月 1 日上午请假，需要排班师修订正式班表。",
+                    "occurred_at": "2026-08-01T08:00",
+                }
+            )
+            create_roster_request_intent(
+                {
+                    "request_id": "REQ-002",
+                    "business_month": "2026-08",
+                    "project_id": "BOSCH-CS",
+                    "workplace_id": "SHANGHAI",
+                    "team_id": "G1",
+                    "roster_cell_id": "CELL-002",
+                    "action_type": "swap",
+                    "requester_role": "team_lead",
+                    "requester_id": "LEAD-G1",
+                    "note": "现场换班待排班师确认。",
+                    "occurred_at": "2026-08-01T08:05",
+                }
+            )
+            follow_response = start_roster_request_intent_follow_up(
+                "REQ-001",
+                {
+                    "actor_id": "scheduler-1",
+                    "occurred_at": "2026-08-01T08:10",
+                    "scheduler_resolution_note": "同意，进入月班表调整。",
+                },
+            )
+            close_response = close_roster_request_intent_without_revision(
+                "REQ-002",
+                {
+                    "actor_id": "scheduler-1",
+                    "resolved_at": "2026-08-01T08:15",
+                    "result_type": "rejected",
+                    "scheduler_resolution_note": "双方未确认，拒绝本次换班申请。",
+                },
+            )
+            in_progress_response = list_roster_request_intents(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                status="in_progress",
+            )
+            summary_response = summarize_roster_request_intents(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+            )
+
+        self.assertEqual(follow_response["status"], "in_progress")
+        self.assertEqual(follow_response["result_type"], None)
+        self.assertEqual(close_response["status"], "resolved")
+        self.assertEqual(close_response["result_type"], "rejected")
+        self.assertEqual(close_response["linked_revision_version_id"], None)
+        self.assertEqual([item["request_id"] for item in in_progress_response["items"]], ["REQ-001"])
+        self.assertEqual(summary_response["totals"], {"open": 0, "in_progress": 1, "resolved": 1})
+        self.assertEqual(summary_response["by_result"], {"adjusted": 0, "rejected": 1, "closed": 0})
 
     def test_roster_change_governance_api_returns_revision_diff_and_linked_issue(self) -> None:
         with _isolated_database():

@@ -310,3 +310,17 @@ decisions:
       - "components/roster-change-governance-workbench.tsx"
       - "components/app-sidebar.tsx"
       - "scripts/tests/roster-change-governance-structure.test.mjs"
+  D-2026-07-08-duty-change-request-real-three-state:
+    title: "Duty change requests use real local three-state handling and short result labels"
+    file: "docs/user-stories.md"
+    related_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "backend/app/main.py"
+      - "backend/app/roster_persistence.py"
+      - "backend/app/roster_service.py"
+      - "backend/migrations/versions/20260708_0015_roster_request_result_type.py"
+      - "components/roster-change-governance-workbench.tsx"
+      - "scripts/tests/roster-change-governance-structure.test.mjs"

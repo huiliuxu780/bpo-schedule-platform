@@ -603,6 +603,30 @@ status: "done"
 notes: "IM306 request-first frontend product prototype and wording correction over the existing route."
 ```
 
+### US895 - 班务变更申请真实三态处理闭环
+
+```yaml
+id: US895
+requirement_ids:
+  - R975
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望 `班务变更申请` 读取真实下游申请，并能把申请从待处理推进到跟进中或已处理，以便请假、换班、异常修复和现场调配不是静态样例，而是可演示、可追踪的本地处理闭环。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "`/roster-change-governance?month=2026-08` 读取真实 `roster_request_intents`，不再以静态样例作为主数据。"
+  - "页面展示 `待处理 / 跟进中 / 已处理 / 按员工`，状态来自 `open / in_progress / resolved`。"
+  - "动作按钮使用短文案 `同意 / 拒绝 / 跟进`。"
+  - "同意或跟进会把申请写为 `in_progress`。"
+  - "拒绝会把申请写为 `resolved` + `rejected`，不要求 revision。"
+  - "保存调整会把申请写为 `resolved` + `adjusted`，并保留班表结果锚点。"
+  - "已处理结果用短标签 `已调整 / 已拒绝 / 已关闭`，详情再解释含义。"
+  - "本轮不新增真实审批、认证、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。"
+status: "done"
+notes: "IM307 real local three-state request handling over existing roster request intents."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

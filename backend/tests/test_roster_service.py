@@ -386,9 +386,10 @@ class RosterServiceTest(unittest.TestCase):
             self.assertEqual(second.employee_id, "EMP-002")
             self.assertEqual([item.request_id for item in open_leave_items], ["REQ-001"])
             self.assertEqual([item.request_id for item in employee_items], ["REQ-002"])
-            self.assertEqual(summary_before["totals"], {"open": 2, "resolved": 0})
+            self.assertEqual(summary_before["totals"], {"open": 2, "in_progress": 0, "resolved": 0})
             self.assertEqual(summary_before["by_cell"]["CELL-001"]["open"], 1)
             self.assertEqual(resolved.status, "resolved")
+            self.assertEqual(resolved.result_type, "adjusted")
             self.assertEqual(resolved.resolved_by, "scheduler-1")
             self.assertEqual(resolved.linked_revision_version_id, "ROSTER-202608-REV-1")
             self.assertEqual(
@@ -397,7 +398,7 @@ class RosterServiceTest(unittest.TestCase):
             )
             self.assertEqual(detail.scheduler_resolution_note, resolved.scheduler_resolution_note)
             self.assertEqual([item.request_id for item in resolved_items], ["REQ-001"])
-            self.assertEqual(summary_after["totals"], {"open": 1, "resolved": 1})
+            self.assertEqual(summary_after["totals"], {"open": 1, "in_progress": 0, "resolved": 1})
             self.assertEqual(
                 [
                     item.request_id
@@ -419,6 +420,82 @@ class RosterServiceTest(unittest.TestCase):
                 ),
                 [],
             )
+
+    def test_roster_request_intent_tracks_in_progress_and_short_resolution_results(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            service = _service(directory)
+            _publish_current_roster(service)
+
+            service.create_request_intent(
+                request_id="REQ-001",
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                roster_cell_id="CELL-001",
+                action_type="leave",
+                requester_role="frontline",
+                requester_id="EMP-001",
+                note="8 月 1 日上午请假，需要排班师修订正式班表。",
+                occurred_at="2026-08-01T08:00",
+            )
+            service.create_request_intent(
+                request_id="REQ-002",
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+                roster_cell_id="CELL-002",
+                action_type="swap",
+                requester_role="team_lead",
+                requester_id="LEAD-G1",
+                note="现场换班待排班师确认。",
+                occurred_at="2026-08-01T08:05",
+            )
+            in_progress = service.start_request_intent_follow_up(
+                "REQ-001",
+                actor_id="scheduler-1",
+                occurred_at="2026-08-01T08:10",
+                scheduler_resolution_note="同意，进入月班表调整。",
+            )
+            rejected = service.close_request_intent_without_revision(
+                "REQ-002",
+                actor_id="scheduler-1",
+                resolved_at="2026-08-01T08:15",
+                result_type="rejected",
+                scheduler_resolution_note="双方未确认，拒绝本次换班申请。",
+            )
+            service.create_revision(
+                "ROSTER-202608-DRAFT",
+                new_version_id="ROSTER-202608-REV-1",
+                actor_id="scheduler-1",
+                occurred_at="2026-08-01T08:30",
+            )
+            adjusted = service.resolve_request_intent(
+                "REQ-001",
+                resolver_id="scheduler-1",
+                resolved_at="2026-08-01T09:00",
+                linked_revision_version_id="ROSTER-202608-REV-1",
+                scheduler_resolution_note="已按请假登记完成修订，8 月 1 日上午改为休息。",
+            )
+            summary_after = service.summarize_request_intents(
+                business_month="2026-08",
+                project_id="BOSCH-CS",
+                workplace_id="SHANGHAI",
+                team_id="G1",
+            )
+
+            self.assertEqual(in_progress.status, "in_progress")
+            self.assertEqual(in_progress.result_type, None)
+            self.assertEqual(rejected.status, "resolved")
+            self.assertEqual(rejected.result_type, "rejected")
+            self.assertEqual(rejected.linked_revision_version_id, None)
+            self.assertEqual(adjusted.status, "resolved")
+            self.assertEqual(adjusted.result_type, "adjusted")
+            self.assertEqual(summary_after["totals"], {"open": 0, "in_progress": 0, "resolved": 2})
+            self.assertEqual(summary_after["by_result"], {"adjusted": 1, "rejected": 1, "closed": 0})
 
     def test_downstream_roster_request_intent_requires_current_published_cell(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

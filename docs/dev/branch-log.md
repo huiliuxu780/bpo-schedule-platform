@@ -610,3 +610,23 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
+
+### IM307 Duty Change Request Real Three-State Loop
+
+- branch_name: `codex/im305-roster-change-center`
+- base_main_commit: `stacked on existing duty-change request branch`
+- stacked_on: `codex/im305-roster-change-center`
+- remote_status: `not_pushed; branch is ahead of origin until PM push confirmation.`
+- scope: Connect `班务变更申请` to real local `roster_request_intents`, add `in_progress` status and short `result_type` labels, expose follow-up/close APIs, and update `/roster-change-governance` request list/detail/actions to use real data.
+- qoder_mode: `false; PM confirmed A path interactively.`
+- allowed_files_check: backend roster request persistence/service/API/migration, backend tests, roster-change workbench structure test, current/registry/traceability docs only.
+- scope_diff_check: expected local MVP request handling only; no package/lockfile, dependency, real external integration, auth, permissions, approval, notification, export, batch, Excel import, forecasting model, standard-capacity model, automatic scheduling, production formulas, settlement, or charge-factor changes.
+- focused_check_result: backend 5 focused tests passed; frontend roster-change structure test passed; `npm run typecheck`, `npm run lint`, `bash scripts/check-state.sh --strict`, and `git diff --check` passed. Browser smoke passed on `http://localhost:3003/roster-change-governance?month=2026-08` with local backend `127.0.0.1:8002`, covering agree -> follow-up, save adjustment -> adjusted with revision anchor, reject -> rejected without revision anchor, current published shift readback, short labels, and no horizontal overflow.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`

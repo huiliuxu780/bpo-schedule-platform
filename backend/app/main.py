@@ -628,6 +628,59 @@ def get_roster_request_intent(request_id: str) -> dict[str, Any]:
         ) from exc
 
 
+@app.post("/api/v1/roster-requests/{request_id}/follow-up")
+def start_roster_request_intent_follow_up(
+    request_id: str,
+    request: dict[str, Any] = Body(...),
+) -> dict[str, Any]:
+    service = _get_roster_service()
+    try:
+        intent = service.start_request_intent_follow_up(
+            request_id,
+            actor_id=str(request["actor_id"]),
+            occurred_at=str(request["occurred_at"]),
+            scheduler_resolution_note=str(request.get("scheduler_resolution_note") or ""),
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": {
+                    "code": "ROSTER_REQUEST_FOLLOW_UP_BLOCKED",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
+    return _roster_request_intent_response(intent)
+
+
+@app.post("/api/v1/roster-requests/{request_id}/close")
+def close_roster_request_intent_without_revision(
+    request_id: str,
+    request: dict[str, Any] = Body(...),
+) -> dict[str, Any]:
+    service = _get_roster_service()
+    try:
+        intent = service.close_request_intent_without_revision(
+            request_id,
+            actor_id=str(request["actor_id"]),
+            resolved_at=str(request["resolved_at"]),
+            result_type=str(request["result_type"]),
+            scheduler_resolution_note=str(request.get("scheduler_resolution_note") or ""),
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": {
+                    "code": "ROSTER_REQUEST_CLOSE_BLOCKED",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
+    return _roster_request_intent_response(intent)
+
+
 @app.post("/api/v1/roster-requests/{request_id}/resolve")
 def resolve_roster_request_intent(
     request_id: str,
@@ -806,6 +859,7 @@ def _roster_request_intent_response(intent: Any) -> dict[str, Any]:
         "note": intent.note,
         "status": intent.status,
         "created_at": intent.created_at,
+        "result_type": intent.result_type,
         "resolved_at": intent.resolved_at,
         "resolved_by": intent.resolved_by,
         "linked_revision_version_id": intent.linked_revision_version_id,

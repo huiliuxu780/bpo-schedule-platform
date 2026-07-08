@@ -650,3 +650,22 @@
 - typecheck: `npm run typecheck` 通过。
 - shadcn review: `npx shadcn@latest info --json` 确认为 Next.js / radix-nova / lucide；硬编码色阶、`space-y/space-x`、旧治理文案和禁区词扫描未发现新组件泄漏。
 - browser smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003`，SQLite `.local/im305-roster-change-center-smoke.db`；页面显示 1 条待处理事件，抽屉确认后变为 0 条待处理、1 条已确认，内部备注持久回显；390px 宽度检查无横向溢出。
+
+### 2026-07-08 - IM307 班务变更申请真实三态处理闭环
+
+#### 审计结论
+
+- IM307 已把 `班务变更申请` 从静态原型推进为真实本地申请处理闭环。
+- `/roster-change-governance?month=2026-08` 现在读取 `roster_request_intents`，页面主对象仍是一条申请，不回到版本、diff 或变更事件。
+- 后端申请状态扩展为 `open / in_progress / resolved`，页面映射为 `待处理 / 跟进中 / 已处理`。
+- 已处理结果使用短标签：`adjusted / rejected / closed` 映射为 `已调整 / 已拒绝 / 已关闭`。
+- 拒绝和关闭不再要求伪造班表 revision；已调整继续保留班表结果锚点。
+- 本轮未新增审批、认证、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。
+
+#### 验证
+
+- backend red/green: 服务层测试先失败在缺少 `start_request_intent_follow_up`；API 测试先失败在缺少 follow-up/close 路由；green 后 5 个聚焦 backend tests 通过。
+- frontend red/green: `node --test scripts/tests/roster-change-governance-structure.test.mjs` 先失败在缺少 `/api/v1/roster-requests` 和当前正式班表读取；green 后通过。
+- browser smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003`，同意、保存调整、拒绝、计数变化、短结果标签、revision 锚点、当前班次读取和 390px 无横向溢出均通过；页面未出现旧 `班表变更中心`、长结果标签或 `休息 -> 休息`。
+- focused gate: `npm run typecheck`、`npm run lint`、`bash scripts/check-state.sh --strict`、`git diff --check` 通过。
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、281 backend tests 和 project Harness check。

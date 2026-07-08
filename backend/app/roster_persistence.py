@@ -58,6 +58,7 @@ class RosterRequestIntentRecord:
     note: str
     status: str
     created_at: str
+    result_type: str | None = None
     resolved_at: str | None = None
     resolved_by: str | None = None
     linked_revision_version_id: str | None = None
@@ -249,6 +250,7 @@ class RosterRequestIntentEntity(Base):
     note: Mapped[str] = mapped_column(String(1000), nullable=False)
     status: Mapped[str] = mapped_column(String(40), nullable=False, index=True)
     created_at: Mapped[str] = mapped_column(String(40), nullable=False)
+    result_type: Mapped[str | None] = mapped_column(String(40), nullable=True, index=True)
     resolved_at: Mapped[str | None] = mapped_column(String(40), nullable=True)
     resolved_by: Mapped[str | None] = mapped_column(String(120), nullable=True)
     linked_revision_version_id: Mapped[str | None] = mapped_column(String(120), nullable=True)
@@ -507,19 +509,42 @@ class RosterPersistenceRepository:
         resolved_at: str,
         linked_revision_version_id: str,
         scheduler_resolution_note: str,
+        result_type: str = "adjusted",
+    ) -> RosterRequestIntentRecord:
+        return self.update_request_intent_status(
+            request_id,
+            status="resolved",
+            actor_id=resolver_id,
+            occurred_at=resolved_at,
+            result_type=result_type,
+            linked_revision_version_id=linked_revision_version_id,
+            scheduler_resolution_note=scheduler_resolution_note,
+        )
+
+    def update_request_intent_status(
+        self,
+        request_id: str,
+        *,
+        status: str,
+        actor_id: str,
+        occurred_at: str,
+        result_type: str | None = None,
+        linked_revision_version_id: str | None = None,
+        scheduler_resolution_note: str | None = None,
     ) -> RosterRequestIntentRecord:
         with self.session_factory.begin() as session:
             entity = session.get(RosterRequestIntentEntity, request_id)
             if entity is None:
                 raise ValueError(f"roster request intent does not exist: {request_id}")
-            entity.status = "resolved"
-            entity.resolved_at = resolved_at
-            entity.resolved_by = resolver_id
+            entity.status = status
+            entity.result_type = result_type
+            entity.resolved_at = occurred_at if status == "resolved" else None
+            entity.resolved_by = actor_id if status == "resolved" else None
             entity.linked_revision_version_id = linked_revision_version_id
             entity.scheduler_resolution_note = scheduler_resolution_note
         intent = self.get_request_intent(request_id)
         if intent is None:
-            raise RuntimeError("resolved roster request intent could not be read back")
+            raise RuntimeError("updated roster request intent could not be read back")
         return intent
 
     def save_change_confirmation(
@@ -870,6 +895,7 @@ def _request_intent_entity(intent: RosterRequestIntentRecord) -> RosterRequestIn
         note=intent.note,
         status=intent.status,
         created_at=intent.created_at,
+        result_type=intent.result_type,
         resolved_at=intent.resolved_at,
         resolved_by=intent.resolved_by,
         linked_revision_version_id=intent.linked_revision_version_id,
@@ -992,6 +1018,7 @@ def _request_intent_record(entity: RosterRequestIntentEntity) -> RosterRequestIn
         note=entity.note,
         status=entity.status,
         created_at=entity.created_at,
+        result_type=entity.result_type,
         resolved_at=entity.resolved_at,
         resolved_by=entity.resolved_by,
         linked_revision_version_id=entity.linked_revision_version_id,

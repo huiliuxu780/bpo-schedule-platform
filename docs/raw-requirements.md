@@ -342,6 +342,19 @@ status: "done"
 notes: "Frontend product prototype and wording correction only in this pass; no new backend persistence, approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, or charge-factor work."
 ```
 
+### R975 - 班务变更申请真实三态处理闭环
+
+```yaml
+id: R975
+module: "BPO WFM 三条主线"
+description: "在 IM306 `班务变更申请` 原型之上，接入真实 `roster_request_intents`，让排班师处理班长和一线提交的请假、换班、异常修复、现场调配申请。申请状态从本地 `open / in_progress / resolved` 显示为 `待处理 / 跟进中 / 已处理`；动作使用 `同意 / 拒绝 / 跟进`；已处理结果使用短标签 `已调整 / 已拒绝 / 已关闭`。`已调整` 继续关联班表结果，`已拒绝` 和 `已关闭` 不强制关联 revision。"
+source: "PM confirmed option A real three-state request loop and short result labels on 2026-07-08"
+submitted_at: "2026-07-08"
+version: "1.0"
+status: "done"
+notes: "Local MVP request handling loop over existing roster request intents only; no real approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, or charge-factor work."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.

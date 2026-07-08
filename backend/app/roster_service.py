@@ -33,12 +33,13 @@ class RosterActivationResult:
 
 REQUEST_INTENT_ACTIONS = {"leave", "swap", "exception_fix", "site_adjustment"}
 REQUEST_INTENT_ROLES = {"frontline", "team_lead"}
-REQUEST_INTENT_STATUSES = {"open", "resolved"}
+REQUEST_INTENT_STATUSES = {"open", "in_progress", "resolved"}
+REQUEST_INTENT_RESULT_TYPES = {"adjusted", "rejected", "closed"}
 REQUEST_INTENT_ACTION_LABELS = {
     "leave": "请假",
     "swap": "换班",
     "exception_fix": "异常修复",
-    "site_adjustment": "现场调整",
+    "site_adjustment": "现场调配",
 }
 
 
@@ -456,7 +457,8 @@ class RosterService:
             requester_role=requester_role,
             requester_id=requester_id,
         )
-        totals = {"open": 0, "resolved": 0}
+        totals = {"open": 0, "in_progress": 0, "resolved": 0}
+        by_result = {"adjusted": 0, "rejected": 0, "closed": 0}
         by_cell: dict[str, dict[str, int]] = {}
         by_action: dict[str, dict[str, int]] = {}
         by_employee: dict[str, dict[str, int]] = {}
@@ -470,9 +472,11 @@ class RosterService:
                 (item.employee_id, by_employee),
             ):
                 if key not in bucket:
-                    bucket[key] = {"open": 0, "resolved": 0}
+                    bucket[key] = {"open": 0, "in_progress": 0, "resolved": 0}
                 if item.status in bucket[key]:
                     bucket[key][item.status] += 1
+            if item.result_type in by_result:
+                by_result[item.result_type] += 1
             current_latest = latest_by_cell.get(item.roster_cell_id)
             if current_latest is None or item.created_at > current_latest:
                 latest_by_cell[item.roster_cell_id] = item.created_at
@@ -480,10 +484,54 @@ class RosterService:
             by_cell[cell_id]["latest_created_at"] = latest
         return {
             "totals": totals,
+            "by_result": by_result,
             "by_cell": by_cell,
             "by_action": by_action,
             "by_employee": by_employee,
         }
+
+    def start_request_intent_follow_up(
+        self,
+        request_id: str,
+        *,
+        actor_id: str,
+        occurred_at: str,
+        scheduler_resolution_note: str,
+    ) -> RosterRequestIntentRecord:
+        if not scheduler_resolution_note.strip():
+            raise ValueError("scheduler resolution note is required")
+        intent = self.get_request_intent(request_id)
+        if intent.status == "resolved":
+            raise ValueError("resolved roster request intent cannot return to follow-up")
+        return self.repository.update_request_intent_status(
+            request_id,
+            status="in_progress",
+            actor_id=actor_id,
+            occurred_at=occurred_at,
+            scheduler_resolution_note=scheduler_resolution_note.strip(),
+        )
+
+    def close_request_intent_without_revision(
+        self,
+        request_id: str,
+        *,
+        actor_id: str,
+        resolved_at: str,
+        result_type: str,
+        scheduler_resolution_note: str,
+    ) -> RosterRequestIntentRecord:
+        if result_type not in {"rejected", "closed"}:
+            raise ValueError(f"unsupported roster request close result: {result_type}")
+        if not scheduler_resolution_note.strip():
+            raise ValueError("scheduler resolution note is required")
+        return self.repository.update_request_intent_status(
+            request_id,
+            status="resolved",
+            actor_id=actor_id,
+            occurred_at=resolved_at,
+            result_type=result_type,
+            scheduler_resolution_note=scheduler_resolution_note.strip(),
+        )
 
     def resolve_request_intent(
         self,
@@ -506,6 +554,7 @@ class RosterService:
             resolved_at=resolved_at,
             linked_revision_version_id=linked_revision_version_id,
             scheduler_resolution_note=scheduler_resolution_note.strip(),
+            result_type="adjusted",
         )
 
     def get_roster_change_governance(

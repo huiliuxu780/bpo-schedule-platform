@@ -26,9 +26,13 @@ import { cn } from "@/lib/utils"
 type RequestStage = "pending" | "follow_up" | "processed"
 type RequestType = "请假" | "换班" | "异常修复" | "现场调配"
 type RequestTab = RequestStage | "employee"
+type RequestStatus = "open" | "in_progress" | "resolved"
+type RequestResultType = "adjusted" | "rejected" | "closed"
 
 type DutyChangeRequest = {
   id: string
+  rosterVersionId: string
+  rosterCellId: string
   marker: string
   type: RequestType
   employeeName: string
@@ -45,105 +49,53 @@ type DutyChangeRequest = {
   nextStep: string
   result: string
   rosterResult: string
+  linkedRevisionVersionId: string | null
+  resultType: RequestResultType | null
+  rawStatus: RequestStatus
 }
 
-const initialRequests: DutyChangeRequest[] = [
-  {
-    id: "REQ-LEAVE-001",
-    marker: "今日班次",
-    type: "请假",
-    employeeName: "张三",
-    employeeId: "EMP-001",
-    teamId: "G1",
-    businessDate: "8/12",
-    requesterRole: "一线员工",
-    currentShift: "A5 09:00-14:30",
-    requestText: "改为休息",
-    reason: "病假",
-    note: "",
-    stage: "pending",
-    currentState: "待处理",
-    nextStep: "",
-    result: "",
-    rosterResult: "",
-  },
-  {
-    id: "REQ-SWAP-002",
-    marker: "换班需核对",
-    type: "换班",
-    employeeName: "李四",
-    employeeId: "EMP-002",
-    teamId: "G1",
-    businessDate: "8/13",
-    requesterRole: "一线员工",
-    currentShift: "B2 14:00-22:00",
-    requestText: "与王五换班",
-    reason: "个人事项",
-    note: "",
-    stage: "pending",
-    currentState: "待处理",
-    nextStep: "",
-    result: "",
-    rosterResult: "",
-  },
-  {
-    id: "REQ-FIX-003",
-    marker: "当前有班",
-    type: "异常修复",
-    employeeName: "王五",
-    employeeId: "EMP-003",
-    teamId: "G1",
-    businessDate: "8/14",
-    requesterRole: "班长",
-    currentShift: "休息",
-    requestText: "需要补班",
-    reason: "现场记录与正式班表不一致",
-    note: "",
-    stage: "pending",
-    currentState: "待处理",
-    nextStep: "",
-    result: "",
-    rosterResult: "",
-  },
-  {
-    id: "REQ-SITE-004",
-    marker: "现场事项",
-    type: "现场调配",
-    employeeName: "赵六",
-    employeeId: "EMP-004",
-    teamId: "G1",
-    businessDate: "8/15",
-    requesterRole: "班长",
-    currentShift: "A5 09:00-14:30",
-    requestText: "调到二线支援",
-    reason: "现场临时支援",
-    note: "已联系班长确认是否需要二线支援。",
-    stage: "follow_up",
-    currentState: "现场跟进中",
-    nextStep: "等待现场确认",
-    result: "",
-    rosterResult: "",
-  },
-  {
-    id: "REQ-DONE-005",
-    marker: "今日班次",
-    type: "请假",
-    employeeName: "陈七",
-    employeeId: "EMP-005",
-    teamId: "G1",
-    businessDate: "8/10",
-    requesterRole: "一线员工",
-    currentShift: "A5 09:00-14:30",
-    requestText: "改为休息",
-    reason: "事假",
-    note: "已核对申请。",
-    stage: "processed",
-    currentState: "已处理",
-    nextStep: "",
-    result: "已完成班表调整",
-    rosterResult: "A5 -> 休息",
-  },
-]
+type RosterRequestIntent = {
+  request_id: string
+  roster_version_id: string
+  roster_cell_id: string
+  employee_id: string
+  business_date: string
+  action_type: "leave" | "swap" | "exception_fix" | "site_adjustment"
+  requester_role: "frontline" | "team_lead"
+  requester_id: string
+  note: string
+  status: RequestStatus
+  result_type?: RequestResultType | null
+  linked_revision_version_id?: string | null
+  scheduler_resolution_note?: string | null
+}
+
+type PublishedRosterCell = {
+  cell_id: string
+  shift_code?: string | null
+  interval_start_at?: string | null
+  interval_end_at?: string | null
+}
+
+const requestTypeLabels: Record<RosterRequestIntent["action_type"], RequestType> = {
+  leave: "请假",
+  swap: "换班",
+  exception_fix: "异常修复",
+  site_adjustment: "现场调配",
+}
+
+const requestTextLabels: Record<RosterRequestIntent["action_type"], string> = {
+  leave: "申请调整休假",
+  swap: "申请换班",
+  exception_fix: "申请修复异常班务",
+  site_adjustment: "申请现场调配",
+}
+
+const resultLabels: Record<RequestResultType, string> = {
+  adjusted: "已调整",
+  rejected: "已拒绝",
+  closed: "已关闭",
+}
 
 export function RosterChangeGovernanceWorkbench({
   model,
@@ -157,12 +109,34 @@ export function RosterChangeGovernanceWorkbench({
   initialEmployeeId: string | null
   initialRequesterId: string | null
 }) {
-  const [requests, setRequests] = React.useState<DutyChangeRequest[]>(initialRequests)
+  const [requests, setRequests] = React.useState<DutyChangeRequest[]>([])
   const [activeTab, setActiveTab] = React.useState<RequestTab>("pending")
-  const [selectedRequestId, setSelectedRequestId] = React.useState(initialRequests[0]?.id ?? null)
+  const [selectedRequestId, setSelectedRequestId] = React.useState<string | null>(null)
   const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [adjusting, setAdjusting] = React.useState(false)
   const [draftNote, setDraftNote] = React.useState("")
+  const [loading, setLoading] = React.useState(true)
+  const [message, setMessage] = React.useState<string | null>(null)
+
+  React.useEffect(() => {
+    let cancelled = false
+    void fetchDutyChangeRequests(model).then((nextRequests) => {
+      if (cancelled) {
+        return
+      }
+      setRequests(nextRequests)
+      setSelectedRequestId((current) => {
+        if (current && nextRequests.some((request) => request.id === current)) {
+          return current
+        }
+        return nextRequests[0]?.id ?? null
+      })
+      setLoading(false)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [model])
 
   const selectedRequest = selectedRequestId
     ? requests.find((request) => request.id === selectedRequestId) ?? null
@@ -179,68 +153,108 @@ export function RosterChangeGovernanceWorkbench({
     setDrawerOpen(true)
   }
 
-  function updateRequest(requestId: string, updater: (request: DutyChangeRequest) => DutyChangeRequest) {
-    setRequests((current) => current.map((request) => (request.id === requestId ? updater(request) : request)))
+  async function applyRequestAction(
+    requestId: string,
+    path: string,
+    payload: Record<string, string>
+  ) {
+    setMessage(null)
+    const response = await fetch(buildRosterApiUrl(path), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+    if (!response.ok) {
+      setMessage("处理失败，请刷新后重试。")
+      return null
+    }
+    const updated = mapRosterRequestIntent(await response.json(), model)
+    setRequests((current) =>
+      current.map((request) => (request.id === requestId ? updated : request))
+    )
+    setSelectedRequestId(requestId)
+    return updated
   }
 
-  function agreeRequest() {
+  async function agreeRequest() {
     if (!selectedRequest) {
       return
     }
-    updateRequest(selectedRequest.id, (request) => ({
-      ...request,
-      note: draftNote,
-      stage: "follow_up",
-      currentState: "已同意",
-      nextStep: "去调整班表",
-    }))
+    const updated = await applyRequestAction(
+      selectedRequest.id,
+      `/api/v1/roster-requests/${encodeURIComponent(selectedRequest.id)}/follow-up`,
+      {
+        actor_id: "scheduler-1",
+        occurred_at: currentLocalIsoMinute(),
+        scheduler_resolution_note: draftNote || "同意，进入月班表调整。",
+      }
+    )
+    if (!updated) {
+      return
+    }
     setActiveTab("follow_up")
     setAdjusting(true)
   }
 
-  function rejectRequest() {
+  async function rejectRequest() {
     if (!selectedRequest) {
       return
     }
-    updateRequest(selectedRequest.id, (request) => ({
-      ...request,
-      note: draftNote,
-      stage: "processed",
-      currentState: "已处理",
-      result: "已拒绝",
-      rosterResult: "班表未变更",
-      nextStep: "",
-    }))
+    const updated = await applyRequestAction(
+      selectedRequest.id,
+      `/api/v1/roster-requests/${encodeURIComponent(selectedRequest.id)}/close`,
+      {
+        actor_id: "scheduler-1",
+        resolved_at: currentLocalIsoMinute(),
+        result_type: "rejected",
+        scheduler_resolution_note: draftNote || "申请未通过，班表未变更。",
+      }
+    )
+    if (!updated) {
+      return
+    }
     setActiveTab("processed")
+    setAdjusting(false)
   }
 
-  function followRequest() {
+  async function followRequest() {
     if (!selectedRequest) {
       return
     }
-    updateRequest(selectedRequest.id, (request) => ({
-      ...request,
-      note: draftNote,
-      stage: "follow_up",
-      currentState: "现场跟进中",
-      nextStep: "等待现场确认",
-    }))
+    const updated = await applyRequestAction(
+      selectedRequest.id,
+      `/api/v1/roster-requests/${encodeURIComponent(selectedRequest.id)}/follow-up`,
+      {
+        actor_id: "scheduler-1",
+        occurred_at: currentLocalIsoMinute(),
+        scheduler_resolution_note: draftNote || "需要继续跟进现场确认。",
+      }
+    )
+    if (!updated) {
+      return
+    }
     setActiveTab("follow_up")
+    setAdjusting(false)
   }
 
-  function saveAdjustment() {
+  async function saveAdjustment() {
     if (!selectedRequest) {
       return
     }
-    updateRequest(selectedRequest.id, (request) => ({
-      ...request,
-      note: draftNote || `${request.reason}，已同意申请`,
-      stage: "processed",
-      currentState: "已处理",
-      result: "已完成班表调整",
-      rosterResult: `${request.currentShift.split(" ")[0]} -> 休息`,
-      nextStep: "",
-    }))
+    const updated = await applyRequestAction(
+      selectedRequest.id,
+      `/api/v1/roster-requests/${encodeURIComponent(selectedRequest.id)}/resolve`,
+      {
+        resolver_id: "scheduler-1",
+        resolved_at: currentLocalIsoMinute(),
+        linked_revision_version_id:
+          selectedRequest.linkedRevisionVersionId ?? selectedRequest.rosterVersionId,
+        scheduler_resolution_note: draftNote || `${selectedRequest.reason}，已调整班表。`,
+      }
+    )
+    if (!updated) {
+      return
+    }
     setActiveTab("processed")
     setAdjusting(false)
   }
@@ -281,8 +295,14 @@ export function RosterChangeGovernanceWorkbench({
         <Metric label="待处理" value={pending.length} />
         <Metric label="跟进中" value={followUp.length} />
         <Metric label="已处理" value={processed.length} />
-        <Metric label="今日新增" value={3} />
+        <Metric label="本月申请" value={requests.length} />
       </div>
+
+      {message ? (
+        <div className="border-b bg-destructive/10 px-4 py-2 text-xs text-destructive">
+          {message}
+        </div>
+      ) : null}
 
       <div className="flex flex-wrap gap-2 border-b px-4 py-3 text-xs">
         <FilterLabel text="全部类型" />
@@ -308,12 +328,16 @@ export function RosterChangeGovernanceWorkbench({
         </div>
 
         <TabsContent value="pending" className="min-h-0 overflow-auto p-4">
-          <RequestList
-            requests={pending}
-            mode="pending"
-            selectedRequestId={selectedRequestId}
-            onSelect={openRequest}
-          />
+          {loading ? (
+            <EmptyBlock text="正在读取申请" />
+          ) : (
+            <RequestList
+              requests={pending}
+              mode="pending"
+              selectedRequestId={selectedRequestId}
+              onSelect={openRequest}
+            />
+          )}
         </TabsContent>
         <TabsContent value="follow_up" className="min-h-0 overflow-auto p-4">
           <RequestList
@@ -385,7 +409,7 @@ export function RosterChangeGovernanceWorkbench({
                             拒绝
                           </Button>
                           <Button type="button" variant="outline" onClick={followRequest}>
-                            现场跟进
+                            跟进
                           </Button>
                         </div>
                       </>
@@ -728,4 +752,171 @@ function EmptyBlock({ text }: { text: string }) {
       {text}
     </div>
   )
+}
+
+async function fetchDutyChangeRequests(
+  model: RosterDraftViewModel
+): Promise<DutyChangeRequest[]> {
+  const params = new URLSearchParams({
+    business_month: model.targetMonth,
+    project_id: model.project.projectId,
+    workplace_id: resolveRosterWorkplaceId(model.project.workplaceName),
+    team_id: "G1",
+  })
+  try {
+    const response = await fetch(
+      buildRosterApiUrl(`/api/v1/roster-requests?${params.toString()}`),
+      { cache: "no-store" }
+    )
+    if (!response.ok) {
+      return []
+    }
+    const payload = await response.json()
+    const items: RosterRequestIntent[] = Array.isArray(payload?.items) ? payload.items : []
+    const currentCells = await fetchCurrentPublishedCells(model)
+    return items.map((item) =>
+      mapRosterRequestIntent(item, model, currentCells.get(item.roster_cell_id))
+    )
+  } catch {
+    return []
+  }
+}
+
+async function fetchCurrentPublishedCells(
+  model: RosterDraftViewModel
+): Promise<Map<string, PublishedRosterCell>> {
+  const params = new URLSearchParams({
+    business_month: model.targetMonth,
+    project_id: model.project.projectId,
+    workplace_id: resolveRosterWorkplaceId(model.project.workplaceName),
+    team_id: "G1",
+  })
+  try {
+    const response = await fetch(
+      buildRosterApiUrl(`/api/v1/roster-drafts/current-published?${params.toString()}`),
+      { cache: "no-store" }
+    )
+    if (!response.ok) {
+      return new Map()
+    }
+    const payload = await response.json()
+    const cells: PublishedRosterCell[] = Array.isArray(payload?.cells) ? payload.cells : []
+    return new Map(cells.map((cell) => [cell.cell_id, cell]))
+  } catch {
+    return new Map()
+  }
+}
+
+function mapRosterRequestIntent(
+  intent: RosterRequestIntent,
+  model: RosterDraftViewModel,
+  publishedCell?: PublishedRosterCell
+): DutyChangeRequest {
+  const employee = model.monthRows.find((row) => row.employeeId === intent.employee_id)
+  const cell = employee?.cells.find((item) => item.date === intent.business_date)
+  const type = requestTypeLabels[intent.action_type]
+  const stage = mapRequestStage(intent.status)
+  const resultType = intent.result_type ?? null
+  const result = resultType ? resultLabels[resultType] : ""
+  const currentShift = formatPublishedShift(publishedCell, cell?.shiftCode)
+  return {
+    id: intent.request_id,
+    rosterVersionId: intent.roster_version_id,
+    rosterCellId: intent.roster_cell_id,
+    marker: buildRequestMarker(intent),
+    type,
+    employeeName: employee?.employeeName ?? intent.employee_id,
+    employeeId: intent.employee_id,
+    teamId: employee?.teamName ?? "G1",
+    businessDate: formatBusinessDate(intent.business_date),
+    requesterRole: intent.requester_role === "team_lead" ? "班长" : "一线员工",
+    currentShift,
+    requestText: requestTextLabels[intent.action_type],
+    reason: intent.note || "下游提交的班务变更申请",
+    note: intent.scheduler_resolution_note ?? "",
+    stage,
+    currentState: mapRequestState(intent.status, resultType),
+    nextStep: intent.status === "in_progress" ? "去调整班表" : "",
+    result,
+    rosterResult: buildRosterResult(intent, currentShift),
+    linkedRevisionVersionId: intent.linked_revision_version_id ?? null,
+    resultType,
+    rawStatus: intent.status,
+  }
+}
+
+function mapRequestStage(status: RequestStatus): RequestStage {
+  if (status === "open") {
+    return "pending"
+  }
+  if (status === "in_progress") {
+    return "follow_up"
+  }
+  return "processed"
+}
+
+function mapRequestState(status: RequestStatus, resultType: RequestResultType | null): string {
+  if (status === "open") {
+    return "待处理"
+  }
+  if (status === "in_progress") {
+    return "跟进中"
+  }
+  return resultType ? resultLabels[resultType] : "已处理"
+}
+
+function buildRequestMarker(intent: RosterRequestIntent): string {
+  if (intent.action_type === "swap") {
+    return "换班需核对"
+  }
+  if (intent.action_type === "site_adjustment") {
+    return "现场事项"
+  }
+  return intent.status === "in_progress" ? "需跟进" : "当前班次"
+}
+
+function buildRosterResult(intent: RosterRequestIntent, currentShift: string): string {
+  if (intent.result_type === "adjusted") {
+    return `${currentShift} -> 休息`
+  }
+  if (intent.result_type === "rejected") {
+    return "班表未变更"
+  }
+  if (intent.result_type === "closed") {
+    return "现场确认后关闭"
+  }
+  return ""
+}
+
+function formatBusinessDate(date: string): string {
+  const [, month, day] = date.split("-")
+  return month && day ? `${Number(month)}/${Number(day)}` : date
+}
+
+function formatPublishedShift(
+  publishedCell: PublishedRosterCell | undefined,
+  fallbackShiftCode: string | undefined
+): string {
+  const shiftCode = publishedCell?.shift_code ?? fallbackShiftCode
+  if (!shiftCode) {
+    return "休息"
+  }
+  const start = publishedCell?.interval_start_at?.slice(11, 16)
+  const end = publishedCell?.interval_end_at?.slice(11, 16)
+  return start && end ? `${shiftCode} ${start}-${end}` : shiftCode
+}
+
+function buildRosterApiUrl(path: string): string {
+  const base =
+    process.env.NEXT_PUBLIC_BPO_API_BASE_URL?.replace(/\/$/, "") ??
+    "http://127.0.0.1:8000"
+  return `${base}${path.startsWith("/") ? path : `/${path}`}`
+}
+
+function resolveRosterWorkplaceId(workplaceName: string): string {
+  return workplaceName === "上海职场" ? "SHANGHAI" : workplaceName
+}
+
+function currentLocalIsoMinute(): string {
+  return new Date().toISOString().slice(0, 16)
 }
