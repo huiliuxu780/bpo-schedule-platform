@@ -5,4 +5,20 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US896
+    title: "班务变更申请月班表调整承接"
+    status: ready
+    priority: P0
+    requirement_ids:
+      - R976
+    task_ids:
+      - IM308
+    role: "排班师"
+    outcome: "在 `/roster-change-governance?month=2026-08` 同页完成申请同意、当前格班次调整、保存为已调整并进入下一条。"
+    acceptance_refs:
+      - "同页三栏承接：申请队列、月班表调整区、申请与处理。"
+      - "中栏定位当前申请对应员工/日期格，只做当前格快速调整。"
+      - "`调整为` 使用固定班次下拉。"
+      - "保存前显示轻量影响提示。"
+      - "保存后申请显示 `已调整`，保留 revision 锚点，并自动选中下一条待处理申请。"

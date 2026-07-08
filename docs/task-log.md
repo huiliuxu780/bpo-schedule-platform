@@ -326,3 +326,13 @@
 - focused verification: 后端服务/API 红测先失败在缺少 follow-up/close 和 `result_type`；green 后 5 个聚焦 backend tests 通过。前端结构红测先失败在未接 `/api/v1/roster-requests` 和当前正式班表读取；green 后 `node --test scripts/tests/roster-change-governance-structure.test.mjs` 通过；`npm run typecheck`、`npm run lint`、`bash scripts/check-state.sh --strict`、`git diff --check` 通过。
 - browser smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003`，SQLite `.local/im307-duty-change-request-smoke.db`；页面显示 `班务变更申请`、`待处理 / 跟进中 / 已处理 / 按员工`、短按钮 `同意 / 拒绝 / 跟进`；同意后进入跟进中并出现月班表调整，保存调整后显示 `已调整` 且有 revision 锚点；拒绝后显示 `已拒绝` 且无 revision 锚点；当前班次读取正式班表 `A5 09:00-10:00`、`T1 10:00-11:00`，未出现 `班表变更中心`、`已完成班表调整` 或 `休息 -> 休息`。
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、281 backend tests 和 project Harness check。
+
+- task_id: `IM308`
+- source_ids:
+  - `R976`
+- story_ids:
+  - `US896`
+- action: 班务变更申请月班表调整承接产品契约与 Gate。
+- status: `ready`
+- notes: 已根据可视化线框确认同页三栏、当前格快速调整、固定班次下拉、轻量影响提示、保存后选中下一条的产品决策；形成 `docs/superpowers/specs/2026-07-08-duty-change-adjustment-handoff-design.md` 和 current ready task。实施边界为 frontend-scaffold，优先复用现有 revision/publish/request resolve API；如需新迁移或新持久化字段必须停下来重新确认 Gate。
+- verification: contract self-review found no TODO/TBD placeholders; `bash scripts/check-state.sh --strict` and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.

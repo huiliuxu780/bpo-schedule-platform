@@ -479,6 +479,12 @@ requirements:
       - "US895"
     task_ids:
       - "IM307"
+  R976:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US896"
+    task_ids:
+      - "IM308"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-current-done-history-invariant"
@@ -508,4 +514,5 @@ decisions:
   - "D-2026-07-07-roster-change-governance-loop"
   - "D-2026-07-07-duty-change-request-baseline"
   - "D-2026-07-08-duty-change-request-real-three-state"
+  - "D-2026-07-08-duty-change-adjustment-handoff"
 archive_refs: []

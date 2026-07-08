@@ -669,3 +669,15 @@
 - browser smoke: local backend `127.0.0.1:8002` + frontend `localhost:3003`，同意、保存调整、拒绝、计数变化、短结果标签、revision 锚点、当前班次读取和 390px 无横向溢出均通过；页面未出现旧 `班表变更中心`、长结果标签或 `休息 -> 休息`。
 - focused gate: `npm run typecheck`、`npm run lint`、`bash scripts/check-state.sh --strict`、`git diff --check` 通过。
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state check、888 Node tests（887 pass / 1 skip）、shadcn convention check、lint、typecheck、Next build、281 backend tests 和 project Harness check。
+
+### 2026-07-08 - IM308 班务变更申请月班表调整承接 Gate
+
+#### 审计结论
+
+- IM308 已形成产品契约和 ready Gate，尚未进入实现。
+- PM 已确认同页三栏承接、当前格快速调整、固定班次下拉、轻量影响提示、保存后选中下一条。
+- 实施边界是 `frontend-scaffold`：优先复用现有本地 revision/publish/request resolve API，不新增迁移、新持久化字段、依赖、审批、权限、通知、导出、批量、自动排班、预测、标准人力、Excel、生产公式、结算或计费规则。
+
+#### 验证
+
+- documentation gate: contract self-review found no TODO/TBD placeholders; `bash scripts/check-state.sh --strict` and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 888 Node tests (887 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.

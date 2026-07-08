@@ -627,6 +627,29 @@ status: "done"
 notes: "IM307 real local three-state request handling over existing roster request intents."
 ```
 
+### US896 - 班务变更申请月班表调整承接
+
+```yaml
+id: US896
+requirement_ids:
+  - R976
+module: "BPO WFM 三条主线"
+role: "排班师"
+story: "作为排班师，我希望在 `班务变更申请` 同页看到申请队列、当前申请对应班表格子和处理面板；我同意申请后可以只调整当前员工/日期格，保存为 `已调整` 并继续处理下一条，以便申请处理和班表调整成为一个连续、可演示的工作流。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/roster-change-governance?month=2026-08` 使用同页三栏：申请队列、月班表调整区、申请与处理。"
+  - "选中申请后，中栏定位当前申请对应员工/日期格。"
+  - "点 `同意` 后进入当前格快速调整。"
+  - "`调整为` 使用固定班次下拉。"
+  - "保存前显示轻量影响提示。"
+  - "保存调整后申请显示 `已调整`，保留 revision 锚点，并自动选中下一条待处理申请。"
+  - "本轮不新增换班双人联动、完整工时/技能/覆盖校验、完整月班表编辑器、审批、认证、权限、通知、导出、批量、外部集成、预测模型、标准人力、Excel 导入、自动排班、生产公式、结算或计费规则。"
+status: "ready"
+notes: "IM308 confirmed adjustment handoff product contract after visual layout decisions."
+```
+
 ## History Policy
 
 - Do not append completed historical user stories here.

@@ -355,6 +355,19 @@ status: "done"
 notes: "Local MVP request handling loop over existing roster request intents only; no real approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, or charge-factor work."
 ```
 
+### R976 - 班务变更申请月班表调整承接
+
+```yaml
+id: R976
+module: "BPO WFM 三条主线"
+description: "在 IM307 真实申请三态闭环之上，把 `班务变更申请` 的同意后处理改成同页三栏承接：左侧申请队列，中间月班表当前格调整区，右侧申请与处理。排班师同意一条申请后，系统定位当前申请对应员工/日期格，排班师从固定班次下拉选择目标班次，保存前看到轻量影响提示，保存后申请显示 `已调整` 并保留 revision 锚点，同时队列自动选中下一条待处理申请。"
+source: "PM confirmed visual option A + current-cell quick adjustment + fixed shift dropdown + lightweight impact hint + next-request continuity on 2026-07-08"
+submitted_at: "2026-07-08"
+version: "1.0"
+status: "ready"
+notes: "Frontend scaffold over existing local request and roster revision APIs where possible; no swap two-person linkage, full roster editor, complex validation, approval, auth, permissions, notification, export, batch, external integration, forecasting model, standard-capacity model, Excel import, automatic scheduling, production formula, settlement, charge-factor work, new dependency, backend migration, or new persistence field."
+```
+
 ## History Policy
 
 - Do not append completed historical requirements here.
