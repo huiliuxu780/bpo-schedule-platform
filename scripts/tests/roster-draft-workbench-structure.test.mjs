@@ -266,11 +266,13 @@ test("roster draft workbench keeps mature-scheduling references structural and n
   assert.ok(!content.includes("Auto-Schedule"))
 })
 
-test("roster draft navigation is available in the planning sidebar group", () => {
+test("roster draft route is owned by the slim scheduling sidebar entry", () => {
   const content = readProjectFile("components/app-sidebar.tsx")
 
+  assert.ok(content.includes('title: "排班"'))
   assert.ok(content.includes("/roster-drafts"))
-  assert.ok(content.includes("月班表草稿"))
+  assert.ok(content.includes("/published-roster"))
+  assert.ok(!content.includes('title: "月班表草稿"'))
 })
 
 test("roster draft UI does not expose forbidden production capability claims", () => {

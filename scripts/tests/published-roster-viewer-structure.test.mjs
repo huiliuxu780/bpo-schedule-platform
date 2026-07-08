@@ -95,14 +95,15 @@ test("published roster viewer shows downstream issue status without polluting th
   assert.ok(!content.includes("审批状态"))
 })
 
-test("published roster navigation is a distinct planning sidebar item", () => {
+test("published roster route is owned by the slim scheduling sidebar entry", () => {
   const content = readProjectFile("components/app-sidebar.tsx")
 
+  assert.ok(content.includes('title: "排班"'))
   assert.ok(content.includes("/published-roster"))
-  assert.ok(content.includes("正式班表"))
-  assert.ok(content.includes("CalendarCheck"))
   assert.ok(content.includes("/roster-drafts"))
-  assert.ok(content.includes("月班表草稿"))
+  assert.ok(content.includes("CalendarClock"))
+  assert.ok(!content.includes('title: "正式班表"'))
+  assert.ok(!content.includes('title: "月班表草稿"'))
 })
 
 test("published roster viewer does not expose internal English status wording", () => {

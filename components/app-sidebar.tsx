@@ -5,27 +5,16 @@ import Link from "next/link"
 import { useTheme } from "next-themes"
 import { usePathname } from "next/navigation"
 import {
-  CalendarCheck,
   CalendarClock,
   CalendarCog,
-  CalendarRange,
-  CircleHelp,
-  Database,
   Gauge,
-  Handshake,
-  History,
   Inbox,
   LayoutDashboard,
-  MapPin,
   Moon,
   MoreHorizontal,
-  Network,
-  PanelTop,
   Settings,
   Sun,
   type LucideIcon,
-  Users,
-  Wrench,
 } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -54,146 +43,88 @@ type NavItem = {
   href: string
   icon?: LucideIcon
   activeMatch?: "exact" | "prefix"
+  activePrefixes?: string[]
+  activeExcludePrefixes?: string[]
 }
 
-type NavGroup = {
-  title: string
-  icon: LucideIcon
-  items: NavItem[]
-}
-
-const nav: NavGroup[] = [
+const primaryNav: NavItem[] = [
   {
-    title: "运营工作台",
-    icon: LayoutDashboard,
-    items: [
-      {
-        title: "经营总览",
-        href: "/dashboard",
-        icon: Gauge,
-        activeMatch: "exact",
-      },
-    ],
+    title: "经营总览",
+    href: "/dashboard",
+    icon: Gauge,
+    activeMatch: "exact",
   },
   {
-    title: "计划与排班",
+    title: "排班",
+    href: "/roster-drafts",
     icon: CalendarClock,
-    items: [
-      {
-        title: "需求计划",
-        href: "/demand-plans",
-        icon: PanelTop,
-        activeMatch: "prefix",
-      },
-      {
-        title: "排班计划",
-        href: "/schedule-plans",
-        icon: CalendarClock,
-        activeMatch: "prefix",
-      },
-      {
-        title: "月班表草稿",
-        href: "/roster-drafts",
-        icon: CalendarRange,
-        activeMatch: "prefix",
-      },
-      {
-        title: "正式班表",
-        href: "/published-roster",
-        icon: CalendarCheck,
-        activeMatch: "prefix",
-      },
-      {
-        title: "班务申请中心",
-        href: "/duty-requests",
-        icon: Inbox,
-        activeMatch: "prefix",
-      },
-      {
-        title: "班务变更申请",
-        href: "/roster-change-governance",
-        icon: History,
-        activeMatch: "prefix",
-      },
-      {
-        title: "履约风险",
-        href: "/schedule-risks",
-        icon: CircleHelp,
-        activeMatch: "prefix",
-      },
+    activePrefixes: [
+      "/demand-plans",
+      "/schedule-plans",
+      "/roster-drafts",
+      "/published-roster",
+      "/schedule-risks",
+      "/shift-details",
+      "/unavailability",
     ],
   },
   {
-    title: "日志数据",
-    icon: Database,
-    items: [
-      {
-        title: "登录/状态日志",
-        href: "/actual-logs/production",
-        icon: Inbox,
-        activeMatch: "prefix",
-      },
-    ],
-  },
-  {
-    title: "主数据",
-    icon: Settings,
-    items: [
-      {
-        title: "客服人员",
-        href: "/master-data/agents",
-        icon: Users,
-        activeMatch: "prefix",
-      },
-      {
-        title: "组织",
-        href: "/master-data/organizations",
-        icon: Network,
-        activeMatch: "prefix",
-      },
-      {
-        title: "职场",
-        href: "/master-data/sites",
-        icon: MapPin,
-        activeMatch: "prefix",
-      },
-      {
-        title: "供应商",
-        href: "/master-data/vendors",
-        icon: Handshake,
-        activeMatch: "prefix",
-      },
-      {
-        title: "技能",
-        href: "/master-data/skills",
-        icon: Wrench,
-        activeMatch: "prefix",
-      },
+    title: "待办",
+    href: "/roster-change-governance",
+    icon: Inbox,
+    activePrefixes: [
+      "/roster-change-governance",
+      "/duty-requests",
+      "/data-quality/review-cases",
+      "/data-quality/comparison-runs",
     ],
   },
 ]
 
+const systemNav: NavItem = {
+  title: "系统管理",
+  href: "/master-data/agents",
+  icon: Settings,
+  activePrefixes: [
+    "/master-data",
+    "/master-data/agents",
+    "/master-data/organizations",
+    "/master-data/sites",
+    "/master-data/vendors",
+    "/master-data/skills",
+    "/actual-logs",
+    "/actual-logs/production",
+    "/data-quality",
+  ],
+  activeExcludePrefixes: [
+    "/data-quality/review-cases",
+    "/data-quality/comparison-runs",
+  ],
+}
+
 function isActivePath(pathname: string, item: NavItem) {
+  if (item.activeExcludePrefixes?.some((prefix) => pathname.startsWith(prefix))) {
+    return false
+  }
+
   if (item.activeMatch === "exact") {
     return pathname === item.href
+  }
+
+  if (item.activePrefixes?.some((prefix) => pathname.startsWith(prefix))) {
+    return true
   }
 
   return pathname.startsWith(item.href)
 }
 
-function NavList({
-  groupIcon,
-  items,
-}: {
-  groupIcon?: LucideIcon
-  items: NavItem[]
-}) {
+function NavList({ items }: { items: NavItem[] }) {
   const pathname = usePathname()
 
   return (
     <SidebarMenu>
       {items.map((item) => {
-        const Icon = item.icon ?? groupIcon ?? LayoutDashboard
+        const Icon = item.icon ?? LayoutDashboard
 
         return (
           <SidebarMenuItem key={item.title}>
@@ -253,24 +184,12 @@ export function AppSidebar({
       <SidebarContent className="px-4 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-4">
         <SidebarGroup className="p-0">
           <SidebarGroupContent>
-            {nav.map((group) => (
-              <div
-                key={group.title}
-                className="mb-3 last:mb-0 group-data-[collapsible=icon]:mb-2"
-              >
-                <div
-                  data-slot="sidebar-group-title"
-                  className="px-2 pb-1 text-xs font-medium text-muted-foreground group-data-[collapsible=icon]:hidden"
-                >
-                  {group.title}
-                </div>
-                <NavList groupIcon={group.icon} items={group.items} />
-              </div>
-            ))}
+            <NavList items={primaryNav} />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="px-4 py-3">
+        <NavList items={[systemNav]} />
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>

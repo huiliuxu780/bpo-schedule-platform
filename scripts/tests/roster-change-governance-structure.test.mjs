@@ -81,13 +81,15 @@ test("duty change request workbench uses request-first states and actions", () =
   assert.ok(!content.includes("批量导出"))
 })
 
-test("duty change request navigation is a distinct planning sidebar item", () => {
+test("duty change request route is owned by the slim task sidebar entry", () => {
   const content = readProjectFile("components/app-sidebar.tsx")
 
+  assert.ok(content.includes('title: "待办"'))
   assert.ok(content.includes("/roster-change-governance"))
-  assert.ok(content.includes("班务变更申请"))
+  assert.ok(content.includes("/duty-requests"))
   assert.ok(content.includes("/published-roster"))
   assert.ok(content.includes("/roster-drafts"))
+  assert.ok(!content.includes('title: "班务变更申请"'))
   assert.ok(!content.includes("正式班表变更治理"))
   assert.ok(!content.includes("班表变更中心"))
 })

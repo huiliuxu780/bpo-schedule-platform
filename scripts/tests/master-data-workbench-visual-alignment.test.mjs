@@ -6,14 +6,19 @@ function read(path) {
   return readFileSync(path, "utf8")
 }
 
-test("master data sidebar only exposes real master data entries", () => {
+test("master data routes roll up under the system management sidebar entry", () => {
   const source = read("components/app-sidebar.tsx")
 
-  assert.match(source, /title: "客服人员"[\s\S]+?href: "\/master-data\/agents"/)
-  assert.match(source, /title: "组织"[\s\S]+?href: "\/master-data\/organizations"/)
-  assert.match(source, /title: "职场"[\s\S]+?href: "\/master-data\/sites"/)
-  assert.match(source, /title: "供应商"[\s\S]+?href: "\/master-data\/vendors"/)
-  assert.match(source, /title: "技能"[\s\S]+?href: "\/master-data\/skills"/)
+  assert.match(source, /title: "系统管理"[\s\S]+?href: "\/master-data\/agents"/)
+  assert.match(source, /"\/master-data\/organizations"/)
+  assert.match(source, /"\/master-data\/sites"/)
+  assert.match(source, /"\/master-data\/vendors"/)
+  assert.match(source, /"\/master-data\/skills"/)
+  assert.doesNotMatch(source, /title: "客服人员"/)
+  assert.doesNotMatch(source, /title: "组织"/)
+  assert.doesNotMatch(source, /title: "职场"/)
+  assert.doesNotMatch(source, /title: "供应商"/)
+  assert.doesNotMatch(source, /title: "技能"/)
   assert.doesNotMatch(source, /title: "设置"[\s\S]+?href: "\/master-data\/agents"/)
   assert.doesNotMatch(source, /const navSecondary: NavItem\[\]/)
 })

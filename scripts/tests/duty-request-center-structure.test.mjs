@@ -54,11 +54,13 @@ test("duty request center uses list-detail result tracking without workflow acti
   assert.ok(!content.includes("diff"))
 })
 
-test("duty request center is a standalone planning sidebar item", () => {
+test("duty request routes are owned by the slim task sidebar entry", () => {
   const content = readProjectFile("components/app-sidebar.tsx")
 
+  assert.ok(content.includes('title: "待办"'))
   assert.ok(content.includes("/duty-requests"))
-  assert.ok(content.includes("班务申请中心"))
   assert.ok(content.includes("/roster-change-governance"))
-  assert.ok(content.includes("班务变更申请"))
+  assert.ok(content.includes("Inbox"))
+  assert.ok(!content.includes('title: "班务申请中心"'))
+  assert.ok(!content.includes('title: "班务变更申请"'))
 })

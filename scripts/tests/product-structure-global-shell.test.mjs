@@ -36,14 +36,21 @@ async function collectSourceFiles(directoryUrl) {
   return files;
 }
 
-test("sidebar follows dashboard baseline with flat workbench navigation", async () => {
+test("sidebar follows dashboard baseline with slim first-level navigation", async () => {
   const source = await readFile(appSidebarPath, "utf8");
 
   assert.match(
     source,
-    /title: "运营工作台"[\s\S]+?title: "经营总览",\s+href: "\/dashboard",[\s\S]+?activeMatch: "exact"/,
+    /const primaryNav: NavItem\[\][\s\S]+?title: "经营总览",\s+href: "\/dashboard",[\s\S]+?activeMatch: "exact"/,
     "dashboard should stay the first primary workbench entry",
   );
+  assert.match(source, /title: "排班"[\s\S]+?href: "\/roster-drafts"/);
+  assert.match(source, /title: "待办"[\s\S]+?href: "\/roster-change-governance"/);
+  assert.match(source, /title: "系统管理"[\s\S]+?href: "\/master-data\/agents"/);
+  assert.doesNotMatch(source, /title: "运营工作台"/);
+  assert.doesNotMatch(source, /title: "计划与排班"/);
+  assert.doesNotMatch(source, /title: "日志数据"/);
+  assert.doesNotMatch(source, /title: "主数据"/);
   assert.doesNotMatch(source, /href="\/schedule-plans\/new"/);
   assert.doesNotMatch(source, /快速新建/);
   assert.doesNotMatch(source, /待处理风险/);
@@ -110,7 +117,7 @@ test("global navigation defaults to a compact remembered icon rail", async () =>
   assert.match(uiSidebarSource, /window\.localStorage\.setItem\(SIDEBAR_STORAGE_KEY,\s*String\(openState\)\)/);
   assert.match(uiSidebarSource, /group-data-\[collapsible=icon\]:w-\(--sidebar-width-icon\)/);
 
-  assert.match(sidebarSource, /data-slot="sidebar-group-title"/);
+  assert.doesNotMatch(sidebarSource, /data-slot="sidebar-group-title"/);
   assert.match(sidebarSource, /group-data-\[collapsible=icon\]:hidden/);
   assert.match(sidebarSource, /group-data-\[collapsible=icon\]:items-center/);
   assert.match(sidebarSource, /group-data-\[collapsible=icon\]:px-4/);
@@ -134,10 +141,11 @@ test("sidebar icon rail keeps every visible entry on the same 32px grid", async 
   );
   assert.match(sidebarSource, /function BrandMark\(\)[\s\S]+?<CalendarCog/);
   assert.match(sidebarSource, /title: "经营总览"[\s\S]+?icon: Gauge/);
-  assert.match(sidebarSource, /title: "排班计划"[\s\S]+?icon: CalendarClock/);
-  assert.match(sidebarSource, /title: "月班表草稿"[\s\S]+?icon: CalendarRange/);
-  assert.doesNotMatch(sidebarSource, /title: "排班计划"[\s\S]+?icon: CalendarDays/);
-  assert.doesNotMatch(sidebarSource, /title: "月班表草稿"[\s\S]+?icon: CalendarDays/);
+  assert.match(sidebarSource, /title: "排班"[\s\S]+?icon: CalendarClock/);
+  assert.match(sidebarSource, /title: "待办"[\s\S]+?icon: Inbox/);
+  assert.match(sidebarSource, /title: "系统管理"[\s\S]+?icon: Settings/);
+  assert.doesNotMatch(sidebarSource, /title: "排班计划"/);
+  assert.doesNotMatch(sidebarSource, /title: "月班表草稿"/);
   assert.doesNotMatch(sidebarSource, /group-data-\[collapsible=icon\]:-mt-/);
 });
 

@@ -349,6 +349,17 @@
 - notes: PM 已确认参考成熟 WFM 产品后，一级导航收敛为 `经营总览 / 排班 / 待办 / 系统管理`；`需求计划 / 排班计划 / 月班表草稿 / 正式班表 / 履约风险` 归入 `排班`；`班务申请中心 / 班务变更申请 / 复核案例 / 风险处理 / 数据确认 / 发布确认` 归入 `待办`；`主数据 / 数据导入 / 业务版本 / 字段映射 / 状态日志 / 系统设置` 归入 `系统管理`。本 Gate 不授权改经营总览首屏、不授权后端/API/数据库/权限/审批/导出/批量/真实集成或生产口径。
 - focused verification: contract self-review found no TODO/TBD placeholders or implementation scope drift; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 891 Node tests (890 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
 
+- task_id: `NAV-SLIM-IMPL`
+- source_ids:
+  - `PM-DIRECT-20260708`
+- story_ids:
+  - `N/A`
+- action: 导航与功能入口瘦身实施。
+- status: `done`
+- notes: 侧边栏已收敛为 `经营总览 / 排班 / 待办` 三个业务入口，`系统管理` 放底部；`排班` 指向 `/roster-drafts` 并兼容需求、计划、正式班表、风险、班次明细和不可用路由；`待办` 指向 `/roster-change-governance` 并兼容 `/duty-requests`、复核案例和对比运行路由；`系统管理` 指向 `/master-data/agents` 并兼容主数据、导入、版本、字段映射和状态日志路由。未改 `/dashboard` 首屏，未删除现有路由，未动后端/API/数据库/依赖/权限/审批/导出/批量或生产口径。
+- focused verification: red focused navigation tests failed against the old sidebar group model; green after implementation passed 57 tests across navigation, global shell, dashboard shadcn alignment, roster, duty request, and master-data structure suites. `npm run lint` and `npm run typecheck` passed. Browser smoke via Playwright CLI on `http://localhost:3003/dashboard` showed visible sidebar links `经营总览 / 排班 / 待办 / 系统管理` only; in-app Browser webview connection timed out twice before CLI fallback.
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 891 Node tests (890 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
+
 - task_id: `IM308`
 - source_ids:
   - `R976`

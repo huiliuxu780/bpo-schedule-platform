@@ -6,42 +6,55 @@ const sidebar = readFileSync("components/app-sidebar.tsx", "utf8")
 const siteHeader = readFileSync("components/site-header.tsx", "utf8")
 const appShell = readFileSync("components/app-shell.tsx", "utf8")
 
-function assertPrefixNavItem(title, href) {
+function assertActivePrefix(title, href) {
   assert.match(
     sidebar,
     new RegExp(
-      `title: "${title}"[\\s\\S]+?href: "${href.replaceAll("/", "\\/")}"[\\s\\S]+?activeMatch: "prefix"`
+      `title: "${title}"[\\s\\S]+?"${href.replaceAll("/", "\\/")}"`
     ),
-    `${title} should use prefix matching for child routes`
+    `${title} should own ${href} as a compatible child route`
   )
 }
 
-test("sidebar keeps confirmed navigation modules and rejects generic data-quality modules", () => {
-  assert.match(sidebar, /const nav: NavGroup\[\] = \[/)
-  assert.match(sidebar, /title: "运营工作台"/)
-  assert.match(sidebar, /title: "计划与排班"/)
-  assert.match(sidebar, /title: "日志数据"/)
-  assert.match(sidebar, /title: "主数据"/)
+test("sidebar keeps the slim first-level product navigation", () => {
+  assert.match(sidebar, /const primaryNav: NavItem\[\] = \[/)
+  assert.match(sidebar, /title: "经营总览"[\s\S]+?href: "\/dashboard"/)
+  assert.match(sidebar, /title: "排班"[\s\S]+?href: "\/roster-drafts"/)
+  assert.match(sidebar, /title: "待办"[\s\S]+?href: "\/roster-change-governance"/)
+  assert.match(sidebar, /const systemNav: NavItem = \{[\s\S]+?title: "系统管理"[\s\S]+?href: "\/master-data\/agents"/)
+
+  assert.doesNotMatch(sidebar, /title: "运营工作台"/)
+  assert.doesNotMatch(sidebar, /title: "计划与排班"/)
+  assert.doesNotMatch(sidebar, /title: "日志数据"/)
+  assert.doesNotMatch(sidebar, /title: "主数据"/)
+  assert.doesNotMatch(sidebar, /data-slot="sidebar-group-title"/)
 
   assert.doesNotMatch(sidebar, /title: "质量中心"/)
   assert.doesNotMatch(sidebar, /title: "数据质量中心"/)
   assert.doesNotMatch(sidebar, /title: "导入中心"/)
-  assert.doesNotMatch(sidebar, /href: "\/data-quality"/)
 })
 
 test("sidebar does not expose legacy planning demo routes as product entries", () => {
   assert.doesNotMatch(sidebar, /title: "班次明细"/)
-  assert.doesNotMatch(sidebar, /href: "\/shift-details"/)
   assert.doesNotMatch(sidebar, /title: "不可用管理"/)
-  assert.doesNotMatch(sidebar, /href: "\/unavailability"/)
+  assert.doesNotMatch(sidebar, /title: "需求计划"/)
+  assert.doesNotMatch(sidebar, /title: "排班计划"/)
+  assert.doesNotMatch(sidebar, /title: "月班表草稿"/)
+  assert.doesNotMatch(sidebar, /title: "正式班表"/)
+  assert.doesNotMatch(sidebar, /title: "履约风险"/)
+  assert.doesNotMatch(sidebar, /title: "班务申请中心"/)
+  assert.doesNotMatch(sidebar, /title: "班务变更申请"/)
 })
 
-test("master-data detail create and edit pages use parent-path sidebar matching", () => {
-  assertPrefixNavItem("客服人员", "/master-data/agents")
-  assertPrefixNavItem("组织", "/master-data/organizations")
-  assertPrefixNavItem("职场", "/master-data/sites")
-  assertPrefixNavItem("供应商", "/master-data/vendors")
-  assertPrefixNavItem("技能", "/master-data/skills")
+test("compatible child routes still map to their slim parent entry", () => {
+  assertActivePrefix("排班", "/demand-plans")
+  assertActivePrefix("排班", "/schedule-plans")
+  assertActivePrefix("排班", "/published-roster")
+  assertActivePrefix("排班", "/schedule-risks")
+  assertActivePrefix("待办", "/duty-requests")
+  assertActivePrefix("待办", "/roster-change-governance")
+  assertActivePrefix("系统管理", "/master-data/skills")
+  assertActivePrefix("系统管理", "/actual-logs/production")
 })
 
 test("sidebar does not map placeholder settings to customer personnel", () => {

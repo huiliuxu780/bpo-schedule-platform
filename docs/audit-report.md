@@ -733,3 +733,21 @@
 #### 验证
 
 - documentation gate: contract self-review found no TODO/TBD placeholders or implementation scope drift; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 891 Node tests (890 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
+
+### 2026-07-08 - NAV-SLIM-IMPL 导航与功能入口瘦身实施
+
+#### 审计结论
+
+- 侧边栏已从旧分组和平铺入口收敛为 `经营总览 / 排班 / 待办`，底部保留 `系统管理`。
+- `排班` 是唯一可见排班入口，兼容需求计划、排班计划、月班表、正式班表、履约风险、班次明细和不可用记录路由。
+- `待办` 是唯一可见流程/人工处理入口，兼容班务申请处理、申请结果追踪、复核案例和对比运行路由。
+- `系统管理` 放在侧边栏底部，兼容主数据、导入、版本、字段映射和状态日志路由。
+- `/dashboard` 首屏未改；现有路由未删除；未新增后端/API/数据库/依赖/权限/审批/导出/批量或生产口径。
+- 旧入口词不再作为侧边栏业务入口：`运营工作台`、`计划与排班`、`日志数据`、`主数据`、`需求计划`、`排班计划`、`月班表草稿`、`正式班表`、`履约风险`、`班务申请中心`、`班务变更申请`。
+
+#### 验证
+
+- red/green: focused navigation tests first failed on the old sidebar group model, then passed after implementation with 57 tests.
+- focused gate: `npm run lint` and `npm run typecheck` passed. shadcn info confirmed Next.js / Tailwind v4 / `radix-nova` / lucide.
+- browser smoke: Playwright CLI snapshot on `http://localhost:3003/dashboard` showed visible sidebar links `经营总览 / 排班 / 待办 / 系统管理`, with system management in the footer. In-app Browser webview attach timed out twice, so CLI browser was used as fallback.
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 891 Node tests (890 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.

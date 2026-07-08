@@ -47,6 +47,27 @@
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
 
+### NAV-SLIM-IMPL Navigation Function Slimming Implementation
+
+- branch_name: `codex/im308-duty-change-adjustment-handoff`
+- base_main_commit: `stacked on local NAV-SLIM-GATE commit 7a057c0c`
+- stacked_on: `codex/im308-duty-change-adjustment-handoff`
+- remote_status: `not_pushed; local branch until PM push confirmation.`
+- scope: Frontend scaffold implementation for slim first-level navigation and compatible child-route ownership.
+- qoder_mode: `false`
+- allowed_files_check: `components/app-sidebar.tsx`, navigation/global-shell/sidebar structure tests, `docs/current/PROJECT_CONTEXT.md`, and traceability docs only.
+- scope_diff_check: expected sidebar navigation and tests only; no dashboard first-screen change, page deletion, backend API, migration, database persistence field, package/lockfile, dependency, auth, permissions, approval, notification, export, batch, external integration, forecasting, standard capacity, Excel, automatic scheduling, production formulas, settlement, or charge-factor changes.
+- focused_check_result: red focused navigation tests failed against the old grouped sidebar; green focused run passed 57 tests. `npm run lint` passed. `npm run typecheck` passed. shadcn info: Next.js, Tailwind v4, `radix-nova`, lucide.
+- browser_smoke: in-app Browser webview attach timed out twice; fallback Playwright CLI opened `http://localhost:3003/dashboard` and snapshot showed sidebar links `经营总览`, `排班`, `待办`, and footer `系统管理` only.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 891 Node tests (890 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`
+
 ### NAV-SLIM-GATE Navigation Function Slimming Gate
 
 - branch_name: `codex/im308-duty-change-adjustment-handoff`

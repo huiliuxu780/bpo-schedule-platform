@@ -27,7 +27,14 @@ test("app shell uses the compact global navigation rail frame", () => {
 })
 
 test("sidebar uses flat workbench navigation rather than expanded directory groups", () => {
-  assert.match(appSidebarSrc, /运营工作台/)
+  assert.match(appSidebarSrc, /经营总览/)
+  assert.match(appSidebarSrc, /title: "排班"/)
+  assert.match(appSidebarSrc, /title: "待办"/)
+  assert.match(appSidebarSrc, /title: "系统管理"/)
+  assert.doesNotMatch(appSidebarSrc, /运营工作台/)
+  assert.doesNotMatch(appSidebarSrc, /计划与排班/)
+  assert.doesNotMatch(appSidebarSrc, /日志数据/)
+  assert.doesNotMatch(appSidebarSrc, /title: "主数据"/)
   assert.doesNotMatch(appSidebarSrc, /快速新建/)
   assert.doesNotMatch(appSidebarSrc, /待处理风险/)
   assert.doesNotMatch(appSidebarSrc, /href="\/schedule-plans\/new"/)

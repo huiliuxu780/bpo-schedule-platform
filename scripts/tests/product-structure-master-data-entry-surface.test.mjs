@@ -88,8 +88,10 @@ test("master data product surface does not expose project as a maintenance objec
   const entitySource = await readFile(masterDataEntityPagePath, "utf8");
   const modelSource = await readFile(masterDataModelPath, "utf8");
 
-  assert.equal(sidebarSource.includes('title: "技能"'), true);
-  assert.equal(sidebarSource.includes('href: "/master-data/skills"'), true);
+  assert.equal(sidebarSource.includes('title: "系统管理"'), true);
+  assert.equal(sidebarSource.includes('href: "/master-data/agents"'), true);
+  assert.equal(sidebarSource.includes('"/master-data/skills"'), true);
+  assert.equal(sidebarSource.includes('title: "技能"'), false);
   assert.equal(sidebarSource.includes('title: "职场运营主体"'), false);
   assert.equal(sidebarSource.includes('href: "/master-data/site-operators"'), false);
   assert.equal(sidebarSource.includes('title: "绑定关系"'), false);
