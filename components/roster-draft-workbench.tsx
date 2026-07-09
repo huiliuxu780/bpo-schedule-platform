@@ -2165,7 +2165,7 @@ function DownstreamIssueWorkspacePanel({
                     {request.linked_revision_version_id ? (
                       <Button asChild variant="outline" size="sm" className="mt-2 w-fit">
                         <Link href={buildIssueGovernanceHref(request)}>
-                          查看变更治理
+                          查看待办
                         </Link>
                       </Button>
                     ) : null}

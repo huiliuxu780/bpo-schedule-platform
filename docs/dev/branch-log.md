@@ -727,3 +727,24 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
+
+### NAV-TODO-NAMING-FIX Todo Landing Naming Follow-Through
+
+- branch_name: `codex/im308-duty-change-adjustment-handoff`
+- base_main_commit: `stacked on pushed NAV-SLIM-IMPL commit d3dd10b5`
+- stacked_on: `codex/im308-duty-change-adjustment-handoff`
+- remote_status: `not_pushed; branch is ahead of origin until push.`
+- scope: Finish the missed visible naming chain for the slim `待办` navigation entry.
+- qoder_mode: `false; implemented directly after PM asked to finish quickly.`
+- allowed_files_check: app route titles/breadcrumbs, related workbench visible copy, focused structure tests, and traceability docs only.
+- scope_diff_check: expected copy/structure alignment only; no homepage first-screen change, package/lockfile, dependency, backend API, migration, database persistence field, auth, permissions, approval, notification, export, batch, external integration, forecasting, standard capacity, Excel, automatic scheduling, production formulas, settlement, or charge-factor changes.
+- focused_check_result: red focused tests failed on old `班务变更申请` / `班务申请中心` / `查看变更治理`; green after implementation passed 23 tests.
+- browser_smoke: local route was opened at `http://localhost:3003/roster-change-governance`; HTTP text probing did not produce a reliable body from the already-running dev process, so browser evidence is limited to route opening and the build/structure checks below.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 891 Node tests (890 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`

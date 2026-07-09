@@ -348,9 +348,9 @@ export function RosterChangeGovernanceWorkbench({
     >
       <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3">
         <div className="min-w-0">
-          <h1 className="text-sm font-semibold">班务变更申请</h1>
+          <h1 className="text-sm font-semibold">待办</h1>
           <p className="mt-1 text-xs text-muted-foreground">
-            处理班长和一线提交的请假、换班、异常修复、现场调配申请。
+            处理班长和一线提交的班务申请，优先跟进请假、换班、异常修复和现场调配。
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
@@ -1104,7 +1104,7 @@ function mapRosterRequestIntent(
     currentShift,
     currentShiftCode,
     requestText: requestTextLabels[intent.action_type],
-    reason: intent.note || "下游提交的班务变更申请",
+    reason: intent.note || "下游提交的班务申请",
     note: intent.scheduler_resolution_note ?? "",
     stage,
     currentState: mapRequestState(intent.status, resultType),

@@ -33,8 +33,8 @@ export default async function RosterChangeGovernancePage({
 
   return (
     <AppShell
-      title="班务变更申请"
-      breadcrumbItems={[{ label: "班务变更申请" }]}
+      title="待办"
+      breadcrumbItems={[{ label: "待办" }]}
     >
       <main className="@container/main flex h-[calc(100svh-var(--header-height))] min-h-0 flex-1 flex-col overflow-hidden bg-muted/40 p-0">
         <RosterChangeGovernanceWorkbench

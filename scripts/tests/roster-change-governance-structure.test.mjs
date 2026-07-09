@@ -9,7 +9,7 @@ function readProjectFile(path) {
   return readFileSync(join(projectRoot, path), "utf-8")
 }
 
-test("roster change governance route now presents the duty change request page", () => {
+test("roster change governance route now presents the todo workbench", () => {
   const pagePath = join(projectRoot, "app/roster-change-governance/page.tsx")
 
   assert.ok(existsSync(pagePath), "app/roster-change-governance/page.tsx must exist")
@@ -17,15 +17,18 @@ test("roster change governance route now presents the duty change request page",
   const content = readFileSync(pagePath, "utf-8")
   assert.ok(content.includes("RosterChangeGovernanceWorkbench"))
   assert.ok(content.includes("generateRosterDraftViewModel"))
-  assert.ok(content.includes("班务变更申请"))
+  assert.ok(content.includes('title="待办"'))
+  assert.ok(content.includes('breadcrumbItems={[{ label: "待办" }]}'))
   assert.ok(content.includes("initialCellId"))
   assert.ok(content.includes("initialIssueId"))
   assert.ok(content.includes("h-[calc(100svh-var(--header-height))]"))
+  assert.ok(!content.includes("班务变更申请"))
+  assert.ok(!content.includes("班务申请中心"))
   assert.ok(!content.includes("正式班表变更治理"))
   assert.ok(!content.includes("班表变更中心"))
 })
 
-test("duty change request workbench uses request-first states and actions", () => {
+test("todo workbench uses request-first states and actions", () => {
   const content = readProjectFile("components/roster-change-governance-workbench.tsx")
 
   assert.ok(content.includes('"use client"'))
@@ -37,7 +40,8 @@ test("duty change request workbench uses request-first states and actions", () =
   assert.ok(content.includes('data-slot="duty-change-handling-panel"'))
   assert.ok(content.includes('className="min-h-0 flex-1 flex-col gap-0"'))
   assert.ok(content.includes('data-slot="duty-change-request-list"'))
-  assert.ok(content.includes("班务变更申请"))
+  assert.ok(content.includes("待办"))
+  assert.ok(content.includes("班务申请"))
   assert.ok(content.includes("待处理"))
   assert.ok(content.includes("跟进中"))
   assert.ok(content.includes("已处理"))
@@ -64,6 +68,8 @@ test("duty change request workbench uses request-first states and actions", () =
   assert.ok(content.includes("已调整"))
   assert.ok(content.includes("已拒绝"))
   assert.ok(content.includes("已关闭"))
+  assert.ok(!content.includes("班务变更申请"))
+  assert.ok(!content.includes("班务申请中心"))
   assert.ok(!content.includes("initialRequests"))
   assert.ok(!content.includes("已完成班表调整"))
   assert.ok(!content.includes("确认变更"))

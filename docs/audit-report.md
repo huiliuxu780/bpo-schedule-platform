@@ -751,3 +751,18 @@
 - focused gate: `npm run lint` and `npm run typecheck` passed. shadcn info confirmed Next.js / Tailwind v4 / `radix-nova` / lucide.
 - browser smoke: Playwright CLI snapshot on `http://localhost:3003/dashboard` showed visible sidebar links `经营总览 / 排班 / 待办 / 系统管理`, with system management in the footer. In-app Browser webview attach timed out twice, so CLI browser was used as fallback.
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 891 Node tests (890 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
+
+### 2026-07-09 - NAV-TODO-NAMING-FIX 待办落地页命名补交
+
+#### 审计结论
+
+- NAV-SLIM-IMPL 只完成了侧边栏入口瘦身，但没有同步落地页标题、面包屑和页内入口文案，导致 `待办` 点击后仍出现旧名。
+- 本次补交把 `/roster-change-governance` 统一呈现为 `待办`，把 `/duty-requests` 统一呈现为 `待办 > 班务申请`，并把排班页回跳入口改为 `查看待办`。
+- 本轮只修正用户可见命名和结构测试，不新增流程能力，不改 `/dashboard` 首屏，不动后端/API/数据库/依赖/权限/审批/导出/批量或生产口径。
+- 旧页入口名继续废弃：`班务变更申请`、`班务申请中心`、`变更治理`。
+
+#### 验证
+
+- red/green: focused structure tests first failed on the old page-entry names and roster backlink, then passed after implementation with 23 tests.
+- focused gate: `bash scripts/check-state.sh --strict`, `git diff --check`, `npm run lint`, and `npm run typecheck` passed.
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 891 Node tests (890 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.

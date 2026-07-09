@@ -25,8 +25,11 @@ export default async function DutyRequestsPage({ searchParams }: PageProps) {
 
   return (
     <AppShell
-      title="班务申请中心"
-      breadcrumbItems={[{ label: "班务申请中心" }]}
+      title="班务申请"
+      breadcrumbItems={[
+        { label: "待办", href: "/roster-change-governance" },
+        { label: "班务申请" },
+      ]}
     >
       <main className="@container/main flex h-[calc(100svh-var(--header-height))] min-h-0 flex-1 flex-col overflow-hidden bg-muted/40 p-0">
         <DutyRequestCenterWorkbench

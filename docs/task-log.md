@@ -360,6 +360,17 @@
 - focused verification: red focused navigation tests failed against the old sidebar group model; green after implementation passed 57 tests across navigation, global shell, dashboard shadcn alignment, roster, duty request, and master-data structure suites. `npm run lint` and `npm run typecheck` passed. Browser smoke via Playwright CLI on `http://localhost:3003/dashboard` showed visible sidebar links `经营总览 / 排班 / 待办 / 系统管理` only; in-app Browser webview connection timed out twice before CLI fallback.
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 891 Node tests (890 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
 
+- task_id: `NAV-TODO-NAMING-FIX`
+- source_ids:
+  - `PM-DIRECT-20260709`
+- story_ids:
+  - `N/A`
+- action: 待办落地页命名补交。
+- status: `done`
+- notes: 补齐 NAV-SLIM-IMPL 漏掉的页面链路命名：`/roster-change-governance` 的 AppShell 和页内标题统一为 `待办`；`/duty-requests` 的 AppShell 和页内标题统一为 `班务申请`，面包屑为 `待办 > 班务申请`；排班工作台回跳文案从 `查看变更治理` 改为 `查看待办`。未改 `/dashboard` 首屏，未新增流程能力、后端/API、数据库字段、依赖、权限、审批、导出、批量或生产口径。
+- focused verification: red `node --test scripts/tests/roster-change-governance-structure.test.mjs scripts/tests/duty-request-center-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` first failed on old `班务变更申请` / `班务申请中心` / `查看变更治理` wording; green after implementation passed 23 tests.
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 891 Node tests (890 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
+
 - task_id: `IM308`
 - source_ids:
   - `R976`
