@@ -56,8 +56,23 @@ test("sidebar follows dashboard baseline with slim first-level navigation", asyn
   assert.doesNotMatch(source, /待处理风险/);
   assert.equal(source.includes("CollapsibleTrigger"), false);
   assert.equal(source.includes("CollapsibleContent"), false);
-  assert.equal(source.includes("SidebarMenuSub"), false);
+  assert.equal(source.includes("data-slot=\"sidebar-secondary-nav\""), true);
   assert.equal(source.includes("运营数据"), false);
+});
+
+test("sidebar keeps usable second-level entries under the slim first-level navigation", async () => {
+  const source = await readFile(appSidebarPath, "utf8");
+
+  assert.match(source, /children:\s*\[[\s\S]+?title: "月班表"[\s\S]+?href: "\/roster-drafts"/);
+  assert.match(source, /children:\s*\[[\s\S]+?title: "正式班表"[\s\S]+?href: "\/published-roster"/);
+  assert.match(source, /children:\s*\[[\s\S]+?title: "履约风险"[\s\S]+?href: "\/schedule-risks"/);
+  assert.match(source, /children:\s*\[[\s\S]+?title: "班务申请"[\s\S]+?href: "\/roster-change-governance"/);
+  assert.match(source, /children:\s*\[[\s\S]+?title: "申请结果"[\s\S]+?href: "\/duty-requests"/);
+  assert.match(source, /children:\s*\[[\s\S]+?title: "复核案例"[\s\S]+?href: "\/data-quality\/review-cases"/);
+  assert.match(source, /children:\s*\[[\s\S]+?title: "人员与主数据"[\s\S]+?href: "\/master-data\/agents"/);
+  assert.match(source, /children:\s*\[[\s\S]+?title: "数据导入"[\s\S]+?href: "\/data-quality"/);
+  assert.match(source, /children:\s*\[[\s\S]+?title: "状态日志"[\s\S]+?href: "\/actual-logs\/production"/);
+  assert.match(source, /group-data-\[collapsible=icon\]:hidden/);
 });
 
 test("global shell uses shadcn sidebar and header breadcrumb primitives", async () => {
@@ -76,7 +91,6 @@ test("global shell uses shadcn sidebar and header breadcrumb primitives", async 
   assert.equal(sidebarSource.includes("<Sidebar"), true);
   assert.equal(sidebarSource.includes("CollapsibleTrigger"), false);
   assert.equal(sidebarSource.includes("CollapsibleContent"), false);
-  assert.equal(sidebarSource.includes("SidebarMenuSub"), false);
   assert.equal(sidebarSource.includes("<aside"), false);
   assert.equal(sidebarSource.includes("SidebarGroupLabel asChild"), false);
   assert.equal(sidebarSource.includes('className="pl-7"'), false);
@@ -144,8 +158,6 @@ test("sidebar icon rail keeps every visible entry on the same 32px grid", async 
   assert.match(sidebarSource, /title: "排班"[\s\S]+?icon: CalendarClock/);
   assert.match(sidebarSource, /title: "待办"[\s\S]+?icon: Inbox/);
   assert.match(sidebarSource, /title: "系统管理"[\s\S]+?icon: Settings/);
-  assert.doesNotMatch(sidebarSource, /title: "排班计划"/);
-  assert.doesNotMatch(sidebarSource, /title: "月班表草稿"/);
   assert.doesNotMatch(sidebarSource, /group-data-\[collapsible=icon\]:-mt-/);
 });
 

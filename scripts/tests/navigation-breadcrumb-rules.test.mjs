@@ -38,12 +38,20 @@ test("sidebar does not expose legacy planning demo routes as product entries", (
   assert.doesNotMatch(sidebar, /title: "班次明细"/)
   assert.doesNotMatch(sidebar, /title: "不可用管理"/)
   assert.doesNotMatch(sidebar, /title: "需求计划"/)
-  assert.doesNotMatch(sidebar, /title: "排班计划"/)
   assert.doesNotMatch(sidebar, /title: "月班表草稿"/)
-  assert.doesNotMatch(sidebar, /title: "正式班表"/)
-  assert.doesNotMatch(sidebar, /title: "履约风险"/)
   assert.doesNotMatch(sidebar, /title: "班务申请中心"/)
   assert.doesNotMatch(sidebar, /title: "班务变更申请"/)
+})
+
+test("sidebar exposes second-level entries without reintroducing first-level sprawl", () => {
+  assert.match(sidebar, /data-slot="sidebar-secondary-nav"/)
+  assert.match(sidebar, /title: "排班"[\s\S]+?children: \[[\s\S]+?title: "月班表"[\s\S]+?href: "\/roster-drafts"/)
+  assert.match(sidebar, /title: "排班"[\s\S]+?children: \[[\s\S]+?title: "正式班表"[\s\S]+?href: "\/published-roster"/)
+  assert.match(sidebar, /title: "排班"[\s\S]+?children: \[[\s\S]+?title: "履约风险"[\s\S]+?href: "\/schedule-risks"/)
+  assert.match(sidebar, /title: "待办"[\s\S]+?children: \[[\s\S]+?title: "班务申请"[\s\S]+?href: "\/roster-change-governance"/)
+  assert.match(sidebar, /title: "待办"[\s\S]+?children: \[[\s\S]+?title: "申请结果"[\s\S]+?href: "\/duty-requests"/)
+  assert.match(sidebar, /title: "待办"[\s\S]+?children: \[[\s\S]+?title: "复核案例"[\s\S]+?href: "\/data-quality\/review-cases"/)
+  assert.match(sidebar, /title: "系统管理"[\s\S]+?children: \[[\s\S]+?title: "人员与主数据"[\s\S]+?href: "\/master-data\/agents"/)
 })
 
 test("compatible child routes still map to their slim parent entry", () => {

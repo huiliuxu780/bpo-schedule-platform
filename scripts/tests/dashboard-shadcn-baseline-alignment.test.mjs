@@ -26,11 +26,19 @@ test("app shell uses the compact global navigation rail frame", () => {
   assert.match(siteHeaderSrc, /h-\(--header-height\)/)
 })
 
-test("sidebar uses flat workbench navigation rather than expanded directory groups", () => {
+test("sidebar keeps slim primary navigation and visible secondary entries", () => {
   assert.match(appSidebarSrc, /经营总览/)
   assert.match(appSidebarSrc, /title: "排班"/)
   assert.match(appSidebarSrc, /title: "待办"/)
   assert.match(appSidebarSrc, /title: "系统管理"/)
+  assert.match(appSidebarSrc, /title: "月班表"/)
+  assert.match(appSidebarSrc, /title: "正式班表"/)
+  assert.match(appSidebarSrc, /title: "班务申请"/)
+  assert.match(appSidebarSrc, /title: "申请结果"/)
+  assert.match(appSidebarSrc, /title: "复核案例"/)
+  assert.match(appSidebarSrc, /title: "人员与主数据"/)
+  assert.match(appSidebarSrc, /title: "数据导入"/)
+  assert.match(appSidebarSrc, /title: "状态日志"/)
   assert.doesNotMatch(appSidebarSrc, /运营工作台/)
   assert.doesNotMatch(appSidebarSrc, /计划与排班/)
   assert.doesNotMatch(appSidebarSrc, /日志数据/)
@@ -40,7 +48,8 @@ test("sidebar uses flat workbench navigation rather than expanded directory grou
   assert.doesNotMatch(appSidebarSrc, /href="\/schedule-plans\/new"/)
   assert.doesNotMatch(appSidebarSrc, /运营数据/)
   assert.doesNotMatch(appSidebarSrc, /CollapsibleTrigger/)
-  assert.doesNotMatch(appSidebarSrc, /SidebarMenuSub/)
+  assert.match(appSidebarSrc, /SidebarMenuSub/)
+  assert.match(appSidebarSrc, /data-slot="sidebar-secondary-nav"/)
 })
 
 test("sidebar active interaction uses the dashboard-01 primary pill treatment", () => {

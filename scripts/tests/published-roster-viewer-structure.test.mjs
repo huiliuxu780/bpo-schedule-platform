@@ -95,14 +95,15 @@ test("published roster viewer shows downstream issue status without polluting th
   assert.ok(!content.includes("审批状态"))
 })
 
-test("published roster route is owned by the slim scheduling sidebar entry", () => {
+test("published roster route stays discoverable under the slim scheduling sidebar entry", () => {
   const content = readProjectFile("components/app-sidebar.tsx")
 
   assert.ok(content.includes('title: "排班"'))
   assert.ok(content.includes("/published-roster"))
   assert.ok(content.includes("/roster-drafts"))
   assert.ok(content.includes("CalendarClock"))
-  assert.ok(!content.includes('title: "正式班表"'))
+  assert.ok(content.includes('title: "正式班表"'))
+  assert.ok(content.includes('data-slot="sidebar-secondary-nav"'))
   assert.ok(!content.includes('title: "月班表草稿"'))
 })
 

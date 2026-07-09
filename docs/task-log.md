@@ -371,6 +371,17 @@
 - focused verification: red `node --test scripts/tests/roster-change-governance-structure.test.mjs scripts/tests/duty-request-center-structure.test.mjs scripts/tests/roster-draft-workbench-structure.test.mjs` first failed on old `班务变更申请` / `班务申请中心` / `查看变更治理` wording; green after implementation passed 23 tests.
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 891 Node tests (890 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
 
+- task_id: `NAV-SECONDARY-ENTRY-FIX`
+- source_ids:
+  - `PM-DIRECT-20260709`
+- story_ids:
+  - `N/A`
+- action: 瘦身导航二级入口可见性修复。
+- status: `done`
+- notes: 修复 NAV-SLIM 后一级入口过少但二级功能入口不可见的问题。侧边栏仍保留 `经营总览 / 排班 / 待办 / 系统管理` 作为一级入口；展开侧边栏后，`排班` 下常驻 `月班表 / 正式班表 / 履约风险`，`待办` 下常驻 `班务申请 / 申请结果 / 复核案例`，`系统管理` 下常驻 `人员与主数据 / 数据导入 / 状态日志`。collapsed 图标栏仍只显示一级图标。未改 `/dashboard` 首屏，未新增流程能力、后端/API、数据库字段、依赖、权限、审批、导出、批量或生产口径。
+- focused verification: red `node --test scripts/tests/product-structure-global-shell.test.mjs scripts/tests/navigation-breadcrumb-rules.test.mjs` first failed on missing second-level entries; green after implementation passed 12 tests. Existing baseline tests then exposed obsolete "no second-level menu" assertions, and the updated focused regression set passed 26 tests. Browser DOM verification on `http://localhost:3003/roster-change-governance` found all intended second-level links and sidebar state `open` after clicking the sidebar trigger. `npm run lint`, `npm run typecheck`, `npx shadcn@latest info --json`, and `git diff --check` passed.
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 894 Node tests (893 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
+
 - task_id: `IM308`
 - source_ids:
   - `R976`

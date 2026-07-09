@@ -35,6 +35,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
 
@@ -45,6 +48,7 @@ type NavItem = {
   activeMatch?: "exact" | "prefix"
   activePrefixes?: string[]
   activeExcludePrefixes?: string[]
+  children?: NavItem[]
 }
 
 const primaryNav: NavItem[] = [
@@ -58,6 +62,23 @@ const primaryNav: NavItem[] = [
     title: "排班",
     href: "/roster-drafts",
     icon: CalendarClock,
+    children: [
+      {
+        title: "月班表",
+        href: "/roster-drafts",
+        activePrefixes: ["/roster-drafts"],
+      },
+      {
+        title: "正式班表",
+        href: "/published-roster",
+        activePrefixes: ["/published-roster"],
+      },
+      {
+        title: "履约风险",
+        href: "/schedule-risks",
+        activePrefixes: ["/schedule-risks", "/unavailability"],
+      },
+    ],
     activePrefixes: [
       "/demand-plans",
       "/schedule-plans",
@@ -72,6 +93,23 @@ const primaryNav: NavItem[] = [
     title: "待办",
     href: "/roster-change-governance",
     icon: Inbox,
+    children: [
+      {
+        title: "班务申请",
+        href: "/roster-change-governance",
+        activePrefixes: ["/roster-change-governance"],
+      },
+      {
+        title: "申请结果",
+        href: "/duty-requests",
+        activePrefixes: ["/duty-requests"],
+      },
+      {
+        title: "复核案例",
+        href: "/data-quality/review-cases",
+        activePrefixes: ["/data-quality/review-cases"],
+      },
+    ],
     activePrefixes: [
       "/roster-change-governance",
       "/duty-requests",
@@ -85,6 +123,27 @@ const systemNav: NavItem = {
   title: "系统管理",
   href: "/master-data/agents",
   icon: Settings,
+  children: [
+    {
+      title: "人员与主数据",
+      href: "/master-data/agents",
+      activePrefixes: ["/master-data"],
+    },
+    {
+      title: "数据导入",
+      href: "/data-quality",
+      activePrefixes: ["/data-quality"],
+      activeExcludePrefixes: [
+        "/data-quality/review-cases",
+        "/data-quality/comparison-runs",
+      ],
+    },
+    {
+      title: "状态日志",
+      href: "/actual-logs/production",
+      activePrefixes: ["/actual-logs"],
+    },
+  ],
   activePrefixes: [
     "/master-data",
     "/master-data/agents",
@@ -138,6 +197,23 @@ function NavList({ items }: { items: NavItem[] }) {
                 <span>{item.title}</span>
               </Link>
             </SidebarMenuButton>
+            {item.children?.length ? (
+              <SidebarMenuSub data-slot="sidebar-secondary-nav">
+                {item.children.map((child) => (
+                  <SidebarMenuSubItem key={child.title}>
+                    <SidebarMenuSubButton
+                      asChild
+                      size="sm"
+                      isActive={isActivePath(pathname, child)}
+                    >
+                      <Link href={child.href}>
+                        <span>{child.title}</span>
+                      </Link>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                ))}
+              </SidebarMenuSub>
+            ) : null}
           </SidebarMenuItem>
         )
       })}

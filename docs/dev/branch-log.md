@@ -748,3 +748,24 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `not_pushed`
 - blocked_reason: `N/A`
+
+### NAV-SECONDARY-ENTRY-FIX Slim Navigation Secondary Entry Repair
+
+- branch_name: `codex/im308-duty-change-adjustment-handoff`
+- base_main_commit: `stacked on pushed NAV-TODO-NAMING-FIX commit 317714e3`
+- stacked_on: `codex/im308-duty-change-adjustment-handoff`
+- remote_status: `not_pushed; branch is ahead of origin until push.`
+- scope: Restore visible second-level entries under the slim first-level navigation without expanding first-level IA.
+- qoder_mode: `false; implemented directly after PM flagged missing second-level entry access.`
+- allowed_files_check: `components/app-sidebar.tsx`, focused navigation tests, and traceability docs only.
+- scope_diff_check: expected sidebar structure and tests only; no homepage first-screen change, package/lockfile, dependency, backend API, migration, database persistence field, auth, permissions, approval, notification, export, batch, external integration, forecasting, standard capacity, Excel, automatic scheduling, production formulas, settlement, or charge-factor changes.
+- focused_check_result: red focused tests failed on missing second-level entries; green after implementation passed 12 tests. Existing baseline tests then exposed obsolete "no second-level menu" assertions, and the updated focused regression set passed 26 tests. `npm run lint`, `npm run typecheck`, `npx shadcn@latest info --json`, and `git diff --check` passed.
+- browser_smoke: Browser DOM on `http://localhost:3003/roster-change-governance` showed primary and secondary links for 排班, 待办, and 系统管理; clicking the sidebar trigger set sidebar state to open and all second-level labels were present.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 894 Node tests (893 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `not_pushed`
+- blocked_reason: `N/A`

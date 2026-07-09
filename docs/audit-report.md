@@ -766,3 +766,19 @@
 - red/green: focused structure tests first failed on the old page-entry names and roster backlink, then passed after implementation with 23 tests.
 - focused gate: `bash scripts/check-state.sh --strict`, `git diff --check`, `npm run lint`, and `npm run typecheck` passed.
 - final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 891 Node tests (890 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
+
+### 2026-07-09 - NAV-SECONDARY-ENTRY-FIX 瘦身导航二级入口可见性修复
+
+#### 审计结论
+
+- 前一次导航瘦身把一级入口收住了，但没有保留可见二级入口，导致用户必须猜具体功能在哪。
+- 本次修复不扩大一级导航，只在展开侧边栏时常驻展示二级入口：`排班` 下 `月班表 / 正式班表 / 履约风险`，`待办` 下 `班务申请 / 申请结果 / 复核案例`，`系统管理` 下 `人员与主数据 / 数据导入 / 状态日志`。
+- collapsed 图标栏仍保持一级图标，不让窄栏堆文字；展开后具体入口可直接点击。
+- 本轮只修复导航可用性，不新增业务流程，不改 `/dashboard` 首屏，不动后端/API/数据库/依赖/权限/审批/导出/批量或生产口径。
+
+#### 验证
+
+- red/green: focused navigation tests first failed on missing second-level entries, then passed after implementation with 12 tests. Existing baseline tests then exposed obsolete "no second-level menu" assertions, and the updated focused regression set passed 26 tests.
+- browser smoke: `http://localhost:3003/roster-change-governance` DOM rendered all intended second-level links; sidebar trigger click produced `data-state="open"` and all second-level labels were present.
+- focused gate: `npm run lint`, `npm run typecheck`, `npx shadcn@latest info --json`, and `git diff --check` passed.
+- final verification: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, 894 Node tests (893 pass / 1 skip), shadcn convention check, lint, typecheck, Next build, 281 backend tests, and project Harness check.
