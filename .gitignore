@@ -43,3 +43,6 @@ Thumbs.db
 .turbo/
 .superpowers/
 *.tsbuildinfo
+
+# local runtime artifacts (sqlite db, seeds)
+.local/
