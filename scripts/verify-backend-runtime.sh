@@ -115,13 +115,15 @@ build_candidates() {
     fi
 
     candidates+=(
-      "/Users/mac/.local/bin/python3"
       "/opt/homebrew/bin/python3"
+      "/opt/homebrew/bin/python3.12"
     )
 
-    if command -v python3 >/dev/null 2>&1; then
-      candidates+=("$(command -v python3)")
-    fi
+    for name in python3.12 python3; do
+      if command -v "$name" >/dev/null 2>&1; then
+        candidates+=("$(command -v "$name")")
+      fi
+    done
 
     candidates+=("/usr/bin/python3")
   fi
