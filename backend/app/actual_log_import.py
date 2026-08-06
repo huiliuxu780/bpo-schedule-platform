@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 from backend.app.actual_log_persistence import ActualLogPersistenceRepository
@@ -11,6 +12,8 @@ from backend.app.models import (
     ImportBatchVersionRecord,
 )
 
+
+logger = logging.getLogger(__name__)
 
 ACTUAL_LOG_FILE_TYPES = {"login_log", "status_log"}
 
@@ -28,6 +31,12 @@ def apply_actual_log_import_batch(
         )
 
     selected_version = _select_import_version(detail, import_version_id)
+    logger.info(
+        "import version selected batch_id=%s version_id=%s file_type=%s",
+        detail.batch.batch_id,
+        selected_version.version_id,
+        detail.batch.file_type,
+    )
     skipped_rows = 0
     login_events: list[ActualLoginEventInput] = []
     dictionary_entries: list[ActualStatusDictionaryInput] = []

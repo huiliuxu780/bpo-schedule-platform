@@ -1,4 +1,5 @@
 import csv
+import logging
 from io import StringIO
 
 from backend.app.models import (
@@ -8,6 +9,8 @@ from backend.app.models import (
     ImportFileType,
 )
 
+
+logger = logging.getLogger(__name__)
 
 REQUIRED_FIELD_MISSING = "REQUIRED_FIELD_MISSING"
 
@@ -36,6 +39,7 @@ def build_import_batch_from_csv(
         business_date_to=business_date_to,
         rows=[
             _build_row_result(
+                batch_id=batch_id,
                 row_number=row_number,
                 original_columns=original_columns,
                 field_mapping=field_mapping,
@@ -88,6 +92,7 @@ def _parse_csv_rows(
 
 def _build_row_result(
     *,
+    batch_id: str,
     row_number: int,
     original_columns: dict[str, str],
     field_mapping: dict[str, str],
@@ -103,6 +108,13 @@ def _build_row_result(
     }
 
     if source_key is None:
+        logger.warning(
+            "import row validation failed batch_id=%s row_number=%s "
+            "error_field=source_key error_code=%s",
+            batch_id,
+            row_number,
+            REQUIRED_FIELD_MISSING,
+        )
         return ImportBatchRowResultInput(
             row_number=row_number,
             row_status="failed",

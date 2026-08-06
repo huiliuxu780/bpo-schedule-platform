@@ -437,6 +437,9 @@ class MasterDataEmployeeRecord(BaseModel):
     effective_from: str
     effective_to: str
     batch_id: str
+    night_shift_allowed: bool = True
+    cross_day_allowed: bool = True
+    unavailable_dates: list[str] = Field(default_factory=list)
 
 
 class MasterDataEmployeeMaintenanceRequest(BaseModel):
@@ -1098,3 +1101,307 @@ class ReviewCaseDetail(BaseModel):
 
 class ReviewCaseListResponse(BaseModel):
     items: list[ReviewCaseRecord]
+
+
+SchedulePeriodStatus = Literal["draft", "published"]
+ShiftActivityType = Literal["work", "rest", "meal", "training"]
+RuleCategory = Literal["scheduling", "attendance", "publish"]
+RuleScopeType = Literal["global", "dept", "team"]
+
+
+class SchedulePeriodWeek(BaseModel):
+    week_id: str
+    label: str
+    date_from: str
+    date_to: str
+
+
+class SchedulePeriodRecord(BaseModel):
+    period_id: str
+    month: str
+    status: SchedulePeriodStatus
+    date_from: str
+    date_to: str
+    version: int = Field(ge=0)
+    weeks: list[SchedulePeriodWeek] = Field(default_factory=list)
+
+
+class SchedulePeriodListResponse(BaseModel):
+    items: list[SchedulePeriodRecord]
+
+
+class SchedulePeriodCreateRequest(BaseModel):
+    month: str
+    source_batch_id: str
+
+
+class MatrixSegment(BaseModel):
+    shift_code: str | None = None
+    activity_type: ShiftActivityType = "work"
+    start_time: str
+    end_time: str
+    crosses_day: bool = False
+    skill_id: str | None = None
+    allocation_ratio: float = Field(default=1.0, ge=0.0)
+    # None 表示未配置，计算与发布快照均回退内置默认 1.0
+    skill_coefficient: float | None = Field(default=None, ge=0.0)
+    activity_coverage: float = Field(default=1.0, ge=0.0)
+
+
+class ScheduleMatrixCell(BaseModel):
+    employee_id: str
+    schedule_date: str
+    locked: bool = False
+    segments: list[MatrixSegment] = Field(default_factory=list)
+
+
+class ScheduleMatrixResponse(BaseModel):
+    period_id: str
+    version: int
+    date_from: str
+    date_to: str
+    week: SchedulePeriodWeek | None = None
+    employees: list[str] = Field(default_factory=list)
+    cells: list[ScheduleMatrixCell] = Field(default_factory=list)
+    total: int = Field(ge=0)
+    next_cursor: str | None = None
+
+
+class MatrixCellChange(BaseModel):
+    employee_id: str
+    schedule_date: str
+    segments: list[MatrixSegment] = Field(default_factory=list)
+
+
+class MatrixCellTarget(BaseModel):
+    employee_id: str
+    schedule_date: str
+
+
+class MatrixCopyOperation(BaseModel):
+    source_employee_id: str
+    source_date: str
+    targets: list[MatrixCellTarget] = Field(default_factory=list)
+
+
+class MatrixLockOperation(BaseModel):
+    employee_id: str
+    schedule_date: str
+    locked: bool = True
+
+
+class ScheduleMatrixBatchUpdateRequest(BaseModel):
+    base_version: int = Field(ge=0)
+    changes: list[MatrixCellChange] = Field(default_factory=list)
+    copies: list[MatrixCopyOperation] = Field(default_factory=list)
+    clears: list[MatrixCellTarget] = Field(default_factory=list)
+    locks: list[MatrixLockOperation] = Field(default_factory=list)
+
+
+class ScheduleMatrixConflict(BaseModel):
+    employee_id: str
+    schedule_date: str
+    reason: str
+
+
+class CoverageDeltaRow(BaseModel):
+    date: str
+    interval_start: str
+    planned_headcount: float
+    gap: float
+    coverage_rate: float | None = None
+
+
+class ScheduleMatrixBatchUpdateResponse(BaseModel):
+    version: int
+    accepted: int = Field(ge=0)
+    conflicts: list[ScheduleMatrixConflict] = Field(default_factory=list)
+    coverage_delta: list[CoverageDeltaRow] = Field(default_factory=list)
+
+
+class CoverageRecalculateRequest(BaseModel):
+    date_from: str
+    date_to: str
+
+
+class CoverageIntervalRow(BaseModel):
+    date: str
+    interval_start: str
+    demand_headcount: float
+    planned_headcount: float
+    gap: float
+    coverage_rate: float | None = None
+    # 一期标准人力口径字段预留：数值先与物理人数口径保持一致
+    std_demand_headcount: float
+    std_planned_headcount: float
+    std_gap: float
+    std_coverage_rate: float | None = None
+
+
+class CoverageRecalculateResponse(BaseModel):
+    period_id: str
+    date_from: str
+    date_to: str
+    intervals: list[CoverageIntervalRow] = Field(default_factory=list)
+
+
+class ScheduleValidateRequest(BaseModel):
+    org_scope: str = "*"
+    date_from: str
+    date_to: str
+
+
+class ScheduleValidationIssue(BaseModel):
+    employee_id: str
+    schedule_date: str
+    segment_index: int | None = None
+    rule_code: str
+    message: str
+
+
+class ScheduleValidateResponse(BaseModel):
+    errors: list[ScheduleValidationIssue] = Field(default_factory=list)
+    warnings: list[ScheduleValidationIssue] = Field(default_factory=list)
+
+
+class SchedulePublishRequest(BaseModel):
+    org_scope: str = "*"
+    date_from: str
+    date_to: str
+    note: str | None = None
+
+
+class SchedulePublishResponse(BaseModel):
+    publication_id: str
+    version_id: str
+    published_at: str
+
+
+class SkillCoefficientSnapshotRecord(BaseModel):
+    employee_id: str
+    skill_id: str
+    coefficient: float
+    default_source: str
+
+
+class SchedulePeriodVersionRecord(BaseModel):
+    version_id: str
+    publication_id: str
+    published_at: str
+    org_scope: str
+    date_from: str
+    date_to: str
+    note: str | None = None
+    cell_count: int = Field(ge=0)
+
+
+class SchedulePeriodVersionListResponse(BaseModel):
+    items: list[SchedulePeriodVersionRecord] = Field(default_factory=list)
+
+
+class ScheduleVersionCellDiff(BaseModel):
+    employee_id: str
+    schedule_date: str
+    before: list[MatrixSegment] | None = None
+    after: list[MatrixSegment] | None = None
+
+
+class ScheduleVersionDiffResponse(BaseModel):
+    version_id: str
+    compared_from_version_id: str | None = None
+    changed_cells: list[ScheduleVersionCellDiff] = Field(default_factory=list)
+
+
+class ShiftActivitySegment(BaseModel):
+    activity_type: ShiftActivityType
+    start_time: str
+    end_time: str
+
+
+class ShiftDefinitionCreateRequest(BaseModel):
+    shift_code: str
+    shift_name: str
+    effective_from: str
+    effective_to: str
+    segments: list[ShiftActivitySegment] = Field(default_factory=list)
+    is_cross_day: bool = False
+    # 夜班归属开始上班日期（CORN WFM V2.0 13.2）
+    night_attribution: Literal["start_date"] = "start_date"
+
+
+class ShiftDefinitionRecord(BaseModel):
+    shift_definition_id: str
+    shift_code: str
+    version_number: int = Field(ge=1)
+    shift_name: str
+    effective_from: str
+    effective_to: str
+    segments: list[ShiftActivitySegment] = Field(default_factory=list)
+    is_cross_day: bool
+    night_attribution: str = "start_date"
+    status: Literal["active", "archived"] = "active"
+    created_at: str
+
+
+class ShiftDefinitionListResponse(BaseModel):
+    items: list[ShiftDefinitionRecord] = Field(default_factory=list)
+
+
+class RuleConfigRecord(BaseModel):
+    rule_id: str
+    category: RuleCategory
+    scope_type: RuleScopeType
+    scope_id: str | None = None
+    fields: dict[str, float | bool | str] = Field(default_factory=dict)
+    effective_from: str
+    effective_to: str
+    default_source: str
+    updated_at: str
+
+
+class RuleConfigListResponse(BaseModel):
+    category: RuleCategory
+    items: list[RuleConfigRecord] = Field(default_factory=list)
+
+
+class RuleConfigPutRequest(BaseModel):
+    scope_type: RuleScopeType = "global"
+    scope_id: str | None = None
+    fields: dict[str, float | bool | str] = Field(default_factory=dict)
+    effective_from: str = "1970-01-01"
+    effective_to: str = "9999-12-31"
+
+
+class StatusMappingRecord(BaseModel):
+    status: str
+    sub_status: str
+    status_cd: str
+    activity_code: str
+    activity_name: str
+    counts_attendance: bool = False
+    counts_valid_hours: bool = False
+    counts_production_hours: bool = False
+    counts_coverage: bool = False
+    counts_rest: bool = False
+    counts_punctuality: bool = False
+
+
+class StatusMappingListResponse(BaseModel):
+    items: list[StatusMappingRecord] = Field(default_factory=list)
+
+
+class StatusMappingPutRequest(BaseModel):
+    items: list[StatusMappingRecord] = Field(default_factory=list)
+
+
+class EmployeeRestrictionsUpdateRequest(BaseModel):
+    night_shift_allowed: bool | None = None
+    cross_day_allowed: bool | None = None
+    unavailable_dates: list[str] | None = None
+
+
+class EmployeeRestrictionsRecord(BaseModel):
+    employee_id: str
+    night_shift_allowed: bool
+    cross_day_allowed: bool
+    unavailable_dates: list[str] = Field(default_factory=list)

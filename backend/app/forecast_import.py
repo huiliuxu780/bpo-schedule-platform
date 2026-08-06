@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 from backend.app.forecast_persistence import ForecastPersistenceRepository
@@ -8,6 +9,9 @@ from backend.app.models import (
     ImportBatchRowResultRecord,
     ImportBatchVersionRecord,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 def apply_forecast_import_batch(
@@ -26,6 +30,12 @@ def apply_forecast_import_batch(
         )
 
     selected_version = _select_import_version(detail, import_version_id)
+    logger.info(
+        "import version selected batch_id=%s version_id=%s file_type=%s",
+        detail.batch.batch_id,
+        selected_version.version_id if selected_version is not None else "-",
+        detail.batch.file_type,
+    )
     request = ForecastVersionRequest(
         forecast_version_id=forecast_version_id
         or f"{detail.batch.batch_id}::forecast",

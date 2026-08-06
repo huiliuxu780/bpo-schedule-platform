@@ -126,6 +126,10 @@ function buildUploadResultRedirectHref(
     return `${resultTarget}&${searchParams.toString()}`
   }
 
+  if (resultTarget === "/base-config?tab=employees&import_dialog=1") {
+    return `${resultTarget}&${searchParams.toString()}`
+  }
+
   if (resultTarget === "/demand-plans/production?import_dialog=1") {
     return `${resultTarget}&${searchParams.toString()}`
   }
@@ -139,6 +143,18 @@ function buildUploadResultRedirectHref(
   }
 
   if (resultTarget === "/actual-logs/production?import_dialog=1&log_type=status") {
+    return `${resultTarget}&${searchParams.toString()}`
+  }
+
+  if (resultTarget === "/execution?import_dialog=1&log_type=login") {
+    return `${resultTarget}&${searchParams.toString()}`
+  }
+
+  if (resultTarget === "/execution?import_dialog=1&log_type=status") {
+    return `${resultTarget}&${searchParams.toString()}`
+  }
+
+  if (resultTarget === "/schedule-desk?import_dialog=1") {
     return `${resultTarget}&${searchParams.toString()}`
   }
 

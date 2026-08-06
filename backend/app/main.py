@@ -1,6 +1,8 @@
 import json
 
 from fastapi import Body, FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from backend.app.actual_log_import import apply_actual_log_import_batch
 from backend.app.actual_log_persistence import ActualLogPersistenceRepository
@@ -15,6 +17,12 @@ from backend.app.import_mapping_persistence import (
 from backend.app.import_readiness import build_import_apply_readiness
 from backend.app.import_upload import build_import_batch_from_csv
 from backend.app.import_persistence import get_import_persistence_repository
+from backend.app.list_pagination import (
+    ListCursorInvalidError,
+    ListPage,
+    clamp_page_limit,
+    paginate_sorted_rows,
+)
 from backend.app.master_data_import import apply_master_data_import_batch
 from backend.app.master_data_maintenance import (
     maintain_employee,
@@ -31,6 +39,21 @@ from backend.app.review_closure import write_review_closure
 from backend.app.review_conclusion import write_review_conclusion
 from backend.app.review_evidence import write_review_evidence
 from backend.app.review_persistence import ReviewPersistenceRepository
+from backend.app.rule_config import RuleConfigRepository, get_rule_config_list
+from backend.app.schedule_period import (
+    MatrixVersionConflictError,
+    SchedulePeriodRepository,
+    apply_matrix_batch,
+    create_schedule_period_from_batch,
+    get_schedule_matrix,
+    get_version_diff,
+    list_period_versions,
+    publish_schedule_period,
+    recalculate_coverage,
+    validate_schedule_period,
+)
+from backend.app.shift_definition import ShiftDefinitionRepository
+from backend.app.status_mapping import StatusMappingRepository
 from backend.app.models import (
     ActualLogImportApplyResponse,
     ComparisonCalculationRequest,
@@ -38,8 +61,12 @@ from backend.app.models import (
     ComparisonRunListResponse,
     ComparisonRunStatus,
     ComparisonType,
+    CoverageRecalculateRequest,
+    CoverageRecalculateResponse,
     DemandForecastProductionDetail,
     DemandPlanListResponse,
+    EmployeeRestrictionsRecord,
+    EmployeeRestrictionsUpdateRequest,
     ForecastImportApplyResponse,
     ImportBatchApplicationSummary,
     ImportBatchCreateRequest,
@@ -82,12 +109,33 @@ from backend.app.models import (
     ReviewConclusionInput,
     ReviewEvidenceInput,
     ReviewSourceResultType,
+    RuleCategory,
+    RuleConfigListResponse,
+    RuleConfigPutRequest,
+    RuleConfigRecord,
+    ScheduleMatrixBatchUpdateRequest,
+    ScheduleMatrixBatchUpdateResponse,
+    ScheduleMatrixResponse,
+    SchedulePeriodCreateRequest,
+    SchedulePeriodListResponse,
+    SchedulePeriodRecord,
+    SchedulePeriodVersionListResponse,
+    SchedulePublishRequest,
+    SchedulePublishResponse,
     ScheduleRiskListResponse,
     SchedulePlanDetail,
     SchedulePlanDraftRequest,
     SchedulePlanListResponse,
     SchedulePlanStatus,
+    ScheduleValidateRequest,
+    ScheduleValidateResponse,
+    ScheduleVersionDiffResponse,
+    ShiftDefinitionCreateRequest,
+    ShiftDefinitionListResponse,
+    ShiftDefinitionRecord,
     ShiftDetailListResponse,
+    StatusMappingListResponse,
+    StatusMappingPutRequest,
     UnavailabilityListResponse,
     UnavailabilityStatus,
 )
@@ -101,12 +149,56 @@ from backend.app.repository import (
     list_unavailability_rows,
     update_plan_draft,
 )
+from backend.app.request_logging import (
+    RequestCorrelationMiddleware,
+    configure_request_logging,
+)
+
+configure_request_logging()
 
 app = FastAPI(
     title="BPO Schedule Platform API",
     version="0.1.0",
     description="Local API for BPO WFM schedule plans.",
 )
+app.add_middleware(RequestCorrelationMiddleware)
+
+# 本地联调跨源放行：前端（dev 3000 / e2e 3310）在浏览器内直连本 API 执行
+# 排班写路径，非简单请求需要预检；仅放行本地 origin，方法与头最小化。
+# 后注册者位于中间件栈最外层，保证预检先于其它中间件返回。
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:3310",
+        "http://127.0.0.1:3310",
+    ],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Accept", "Content-Type", "X-Request-ID"],
+)
+
+
+def _paginated_list_json(page: ListPage) -> JSONResponse:
+    return JSONResponse(
+        content={
+            "items": [item.model_dump(mode="json") for item in page.items],
+            "total": page.total,
+            "next_cursor": page.next_cursor,
+        }
+    )
+
+
+def _list_cursor_http_error(exc: ListCursorInvalidError) -> HTTPException:
+    return HTTPException(
+        status_code=400,
+        detail={
+            "error": {
+                "code": "LIST_CURSOR_INVALID",
+                "message": "分页游标无效",
+            }
+        },
+    )
 
 
 @app.get("/api/v1/schedule-plans", response_model=SchedulePlanListResponse)
@@ -173,7 +265,9 @@ def list_import_batches(
     processing_status: ImportProcessingStatus | None = None,
     uploaded_by: str | None = None,
     application_status: ImportApplicationStatus | None = None,
-) -> ImportBatchListResponse:
+    limit: int | None = None,
+    cursor: str | None = None,
+) -> ImportBatchListResponse | JSONResponse:
     import_repository = get_import_persistence_repository()
     details = import_repository.list_import_batches(
         file_type=file_type,
@@ -221,7 +315,20 @@ def list_import_batches(
                 applied_record_count=summary.applied_record_count,
             )
         )
-    return ImportBatchListResponse(items=rows)
+    page_limit = clamp_page_limit(limit)
+    if page_limit is None:
+        return ImportBatchListResponse(items=rows)
+    try:
+        page = paginate_sorted_rows(
+            rows,
+            limit=page_limit,
+            cursor=cursor,
+            sort_key=lambda row: (row.uploaded_at, row.batch_id),
+            directions=("desc", "asc"),
+        )
+    except ListCursorInvalidError as exc:
+        raise _list_cursor_http_error(exc) from exc
+    return _paginated_list_json(page)
 
 
 @app.get(
@@ -545,11 +652,21 @@ def upload_import_batch_csv(
         return get_import_persistence_repository().create_import_batch(request)
     except ValueError as exc:
         message = str(exc)
-        code = (
-            "IMPORT_BATCH_ALREADY_EXISTS"
-            if "already exists" in message
-            else "IMPORT_CSV_UPLOAD_INVALID"
-        )
+        if "already exists" in message:
+            # 幂等处理：同一批次重复提交（客户端重放/双击）时，若关键属性一致则返回已有批次，
+            # 避免第二次提交以 409 覆盖第一次的成功结果；属性不一致仍视为冲突。
+            existing = get_import_persistence_repository().get_import_batch(batch_id)
+            if existing is not None and (
+                existing.batch.file_name == file_name
+                and existing.batch.file_type == file_type
+                and existing.batch.uploaded_by == uploaded_by
+                and existing.batch.business_date_from == business_date_from
+                and existing.batch.business_date_to == business_date_to
+            ):
+                return existing
+            code = "IMPORT_BATCH_ALREADY_EXISTS"
+        else:
+            code = "IMPORT_CSV_UPLOAD_INVALID"
         raise HTTPException(
             status_code=409 if code == "IMPORT_BATCH_ALREADY_EXISTS" else 400,
             detail={
@@ -707,9 +824,26 @@ def maintain_master_data_employee_skills(
     "/api/v1/master-data/employees",
     response_model=MasterDataEmployeeListResponse,
 )
-def list_master_data_employees() -> MasterDataEmployeeListResponse:
+def list_master_data_employees(
+    limit: int | None = None,
+    cursor: str | None = None,
+) -> MasterDataEmployeeListResponse | JSONResponse:
     repository = MasterDataPersistenceRepository()
-    return MasterDataEmployeeListResponse(items=repository.list_employees())
+    rows = repository.list_employees()
+    page_limit = clamp_page_limit(limit)
+    if page_limit is None:
+        return MasterDataEmployeeListResponse(items=rows)
+    try:
+        page = paginate_sorted_rows(
+            rows,
+            limit=page_limit,
+            cursor=cursor,
+            sort_key=lambda row: (row.employee_id,),
+            directions=("asc",),
+        )
+    except ListCursorInvalidError as exc:
+        raise _list_cursor_http_error(exc) from exc
+    return _paginated_list_json(page)
 
 
 @app.get(
@@ -1185,14 +1319,28 @@ def list_comparison_runs_api(
     comparison_type: ComparisonType | None = None,
     status: ComparisonRunStatus | None = None,
     business_date: str | None = None,
-) -> ComparisonRunListResponse:
-    return ComparisonRunListResponse(
-        items=ComparisonPersistenceRepository().list_comparison_runs(
-            comparison_type=comparison_type,
-            status=status,
-            business_date=business_date,
-        )
+    limit: int | None = None,
+    cursor: str | None = None,
+) -> ComparisonRunListResponse | JSONResponse:
+    records = ComparisonPersistenceRepository().list_comparison_runs(
+        comparison_type=comparison_type,
+        status=status,
+        business_date=business_date,
     )
+    page_limit = clamp_page_limit(limit)
+    if page_limit is None:
+        return ComparisonRunListResponse(items=records)
+    try:
+        page = paginate_sorted_rows(
+            records,
+            limit=page_limit,
+            cursor=cursor,
+            sort_key=lambda record: (record.business_date_from, record.run_id),
+            directions=("asc", "asc"),
+        )
+    except ListCursorInvalidError as exc:
+        raise _list_cursor_http_error(exc) from exc
+    return _paginated_list_json(page)
 
 
 @app.get(
@@ -1297,16 +1445,30 @@ def list_review_cases_api(
     status: str | None = None,
     severity: str | None = None,
     source_result_type: ReviewSourceResultType | None = None,
-) -> ReviewCaseListResponse:
-    return ReviewCaseListResponse(
-        items=ReviewPersistenceRepository().list_review_cases(
-            business_date=business_date,
-            owner_id=owner_id,
-            status=status,
-            severity=severity,
-            source_result_type=source_result_type,
-        )
+    limit: int | None = None,
+    cursor: str | None = None,
+) -> ReviewCaseListResponse | JSONResponse:
+    records = ReviewPersistenceRepository().list_review_cases(
+        business_date=business_date,
+        owner_id=owner_id,
+        status=status,
+        severity=severity,
+        source_result_type=source_result_type,
     )
+    page_limit = clamp_page_limit(limit)
+    if page_limit is None:
+        return ReviewCaseListResponse(items=records)
+    try:
+        page = paginate_sorted_rows(
+            records,
+            limit=page_limit,
+            cursor=cursor,
+            sort_key=lambda record: (record.business_date, record.case_id),
+            directions=("asc", "asc"),
+        )
+    except ListCursorInvalidError as exc:
+        raise _list_cursor_http_error(exc) from exc
+    return _paginated_list_json(page)
 
 
 @app.get(
@@ -1381,3 +1543,285 @@ def update_schedule_plan_draft(
         )
 
     return updated
+
+
+def _schedule_core_http_error(exc: ValueError) -> HTTPException:
+    message = str(exc)
+    code = message.split(":", maxsplit=1)[0]
+    not_found_codes = {
+        "SCHEDULE_PERIOD_NOT_FOUND",
+        "SOURCE_BATCH_NOT_FOUND",
+        "SCHEDULE_WEEK_NOT_FOUND",
+        "SCHEDULE_VERSION_NOT_FOUND",
+        "EMPLOYEE_NOT_FOUND",
+    }
+    conflict_codes = {"SCHEDULE_PERIOD_ALREADY_EXISTS"}
+    status_code = (
+        404 if code in not_found_codes else 409 if code in conflict_codes else 400
+    )
+    return HTTPException(
+        status_code=status_code,
+        detail={
+            "error": {
+                "code": code,
+                "message": message,
+            }
+        },
+    )
+
+
+@app.get("/api/v1/schedule-periods", response_model=SchedulePeriodListResponse)
+def list_schedule_periods(month: str | None = None) -> SchedulePeriodListResponse:
+    return SchedulePeriodListResponse(
+        items=SchedulePeriodRepository().list_periods(month)
+    )
+
+
+@app.post("/api/v1/schedule-periods", response_model=SchedulePeriodRecord)
+def create_schedule_period(
+    request: SchedulePeriodCreateRequest,
+) -> SchedulePeriodRecord:
+    try:
+        return create_schedule_period_from_batch(
+            request,
+            SchedulePeriodRepository(),
+            import_repository=get_import_persistence_repository(),
+            schedule_repository=PersonnelSchedulePersistenceRepository(),
+        )
+    except ValueError as exc:
+        raise _schedule_core_http_error(exc) from exc
+
+
+@app.get(
+    "/api/v1/schedule-periods/{period_id}/matrix",
+    response_model=ScheduleMatrixResponse,
+)
+def get_schedule_period_matrix(
+    period_id: str,
+    week: str | None = None,
+    limit: int | None = None,
+    cursor: str | None = None,
+) -> ScheduleMatrixResponse:
+    try:
+        return get_schedule_matrix(
+            SchedulePeriodRepository(),
+            period_id,
+            week_id=week,
+            limit=limit,
+            cursor=cursor,
+        )
+    except ListCursorInvalidError as exc:
+        raise _list_cursor_http_error(exc) from exc
+    except ValueError as exc:
+        raise _schedule_core_http_error(exc) from exc
+
+
+@app.patch(
+    "/api/v1/schedule-periods/{period_id}/matrix/batch",
+    response_model=ScheduleMatrixBatchUpdateResponse,
+)
+def update_schedule_period_matrix_batch(
+    period_id: str,
+    request: ScheduleMatrixBatchUpdateRequest,
+) -> ScheduleMatrixBatchUpdateResponse:
+    try:
+        return apply_matrix_batch(
+            SchedulePeriodRepository(),
+            period_id,
+            request,
+            forecast_repository=ForecastPersistenceRepository(),
+        )
+    except MatrixVersionConflictError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": {
+                    "code": "SCHEDULE_MATRIX_VERSION_CONFLICT",
+                    "message": "排班矩阵版本已更新，请刷新后重试",
+                    "current_version": exc.current_version,
+                    "conflicts": [conflict.model_dump() for conflict in exc.conflicts],
+                }
+            },
+        ) from exc
+    except ValueError as exc:
+        raise _schedule_core_http_error(exc) from exc
+
+
+@app.post(
+    "/api/v1/schedule-periods/{period_id}/coverage/recalculate",
+    response_model=CoverageRecalculateResponse,
+)
+def recalculate_schedule_period_coverage(
+    period_id: str,
+    request: CoverageRecalculateRequest,
+) -> CoverageRecalculateResponse:
+    try:
+        return recalculate_coverage(
+            SchedulePeriodRepository(),
+            period_id,
+            request,
+            forecast_repository=ForecastPersistenceRepository(),
+        )
+    except ValueError as exc:
+        raise _schedule_core_http_error(exc) from exc
+
+
+@app.post(
+    "/api/v1/schedule-periods/{period_id}/validate",
+    response_model=ScheduleValidateResponse,
+)
+def validate_schedule_period_api(
+    period_id: str,
+    request: ScheduleValidateRequest,
+) -> ScheduleValidateResponse:
+    try:
+        return validate_schedule_period(
+            SchedulePeriodRepository(),
+            MasterDataPersistenceRepository(),
+            RuleConfigRepository().resolve_rule_fields("scheduling"),
+            period_id,
+            request,
+        )
+    except ValueError as exc:
+        raise _schedule_core_http_error(exc) from exc
+
+
+@app.post(
+    "/api/v1/schedule-periods/{period_id}/publish",
+    response_model=SchedulePublishResponse,
+)
+def publish_schedule_period_api(
+    period_id: str,
+    request: SchedulePublishRequest,
+) -> SchedulePublishResponse:
+    try:
+        return publish_schedule_period(
+            SchedulePeriodRepository(),
+            MasterDataPersistenceRepository(),
+            period_id,
+            request,
+        )
+    except ValueError as exc:
+        raise _schedule_core_http_error(exc) from exc
+
+
+@app.get(
+    "/api/v1/schedule-periods/{period_id}/versions",
+    response_model=SchedulePeriodVersionListResponse,
+)
+def list_schedule_period_versions(
+    period_id: str,
+) -> SchedulePeriodVersionListResponse:
+    try:
+        return list_period_versions(SchedulePeriodRepository(), period_id)
+    except ValueError as exc:
+        raise _schedule_core_http_error(exc) from exc
+
+
+@app.get(
+    "/api/v1/schedule-periods/{period_id}/versions/{version_id}/diff",
+    response_model=ScheduleVersionDiffResponse,
+)
+def get_schedule_period_version_diff(
+    period_id: str,
+    version_id: str,
+) -> ScheduleVersionDiffResponse:
+    try:
+        return get_version_diff(SchedulePeriodRepository(), period_id, version_id)
+    except ValueError as exc:
+        raise _schedule_core_http_error(exc) from exc
+
+
+@app.get("/api/v1/shift-definitions", response_model=ShiftDefinitionListResponse)
+def list_shift_definitions_api(
+    shift_code: str | None = None,
+) -> ShiftDefinitionListResponse:
+    return ShiftDefinitionRepository().list_shift_definitions(shift_code)
+
+
+@app.post("/api/v1/shift-definitions", response_model=ShiftDefinitionRecord)
+def create_shift_definition(
+    request: ShiftDefinitionCreateRequest,
+) -> ShiftDefinitionRecord:
+    try:
+        return ShiftDefinitionRepository().create_shift_version(request)
+    except ValueError as exc:
+        raise _schedule_core_http_error(exc) from exc
+
+
+@app.put(
+    "/api/v1/shift-definitions/{shift_code}",
+    response_model=ShiftDefinitionRecord,
+)
+def revise_shift_definition(
+    shift_code: str,
+    request: ShiftDefinitionCreateRequest,
+) -> ShiftDefinitionRecord:
+    # 班次变更产生新版本，不覆写历史（13.2）
+    if request.shift_code != shift_code:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "code": "SHIFT_CODE_MISMATCH",
+                    "message": "请求体班次码与路径班次码不一致",
+                }
+            },
+        )
+    try:
+        return ShiftDefinitionRepository().create_shift_version(request)
+    except ValueError as exc:
+        raise _schedule_core_http_error(exc) from exc
+
+
+@app.get("/api/v1/rules/{category}", response_model=RuleConfigListResponse)
+def get_rule_config(category: RuleCategory) -> RuleConfigListResponse:
+    return get_rule_config_list(RuleConfigRepository(), category)
+
+
+@app.put("/api/v1/rules/{category}", response_model=RuleConfigRecord)
+def put_rule_config(
+    category: RuleCategory,
+    request: RuleConfigPutRequest,
+) -> RuleConfigRecord:
+    try:
+        return RuleConfigRepository().upsert_rule(category, request)
+    except ValueError as exc:
+        raise _schedule_core_http_error(exc) from exc
+
+
+@app.get("/api/v1/status-mappings", response_model=StatusMappingListResponse)
+def list_status_mappings() -> StatusMappingListResponse:
+    return StatusMappingRepository().list_mappings()
+
+
+@app.put("/api/v1/status-mappings", response_model=StatusMappingListResponse)
+def put_status_mappings(
+    request: StatusMappingPutRequest,
+) -> StatusMappingListResponse:
+    return StatusMappingRepository().upsert_mappings(request)
+
+
+@app.patch(
+    "/api/v1/master-data/employees/{employee_id}/restrictions",
+    response_model=EmployeeRestrictionsRecord,
+)
+def update_employee_restrictions(
+    employee_id: str,
+    request: EmployeeRestrictionsUpdateRequest,
+) -> EmployeeRestrictionsRecord:
+    try:
+        record = MasterDataPersistenceRepository().update_employee_restrictions(
+            employee_id,
+            night_shift_allowed=request.night_shift_allowed,
+            cross_day_allowed=request.cross_day_allowed,
+            unavailable_dates=request.unavailable_dates,
+        )
+    except ValueError as exc:
+        raise _schedule_core_http_error(exc) from exc
+    return EmployeeRestrictionsRecord(
+        employee_id=record.employee_id,
+        night_shift_allowed=record.night_shift_allowed,
+        cross_day_allowed=record.cross_day_allowed,
+        unavailable_dates=record.unavailable_dates,
+    )

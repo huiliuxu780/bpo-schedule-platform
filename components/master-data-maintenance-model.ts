@@ -505,6 +505,10 @@ export type MasterDataEmployeeListRow = {
   effective_to: string
   batch_id: string
   skills: MasterDataEmployeeListSkill[]
+  // 排班限制三字段（后端恒返回，可选以兼容旧调用方）
+  night_shift_allowed?: boolean
+  cross_day_allowed?: boolean
+  unavailable_dates?: string[]
 }
 
 export type MasterDataEmployeeListDisplay = {
@@ -647,6 +651,8 @@ export type MasterDataAgentManagementColumn = {
 export type MasterDataAgentManagementSummary = MasterDataEmployeeListSummary & {
   title: "客服人员"
   createHref: string
+  // 宿主页列表路径：冻结/导入关闭/维护提交后的回跳目标（旧页面为 /master-data/agents）。
+  returnPath: string
   importDialog: MasterDataAgentImportDialogSummary
   activeFilters: MasterDataAgentManagementFilters
   filterFields: MasterDataAgentManagementFilterField[]
@@ -990,8 +996,41 @@ export function buildMasterDataWorkplaceServiceTeamMaintenancePayload(
   })
 }
 
+const MASTER_DATA_AGENT_DEFAULT_LIST_PATH = "/master-data/agents"
+
+// 人员列表页回跳目标白名单（表单隐藏域 return_path 与宿主页注入的 hostListPath 共用）；
+// 未知值一律兜底旧路由，杜绝开放重定向。
+const MASTER_DATA_AGENT_RETURN_PATHS = new Set([
+  MASTER_DATA_AGENT_DEFAULT_LIST_PATH,
+  "/base-config?tab=employees",
+])
+
+export function resolveMasterDataAgentReturnPath(
+  value: string | null | undefined
+): string {
+  return typeof value === "string" && MASTER_DATA_AGENT_RETURN_PATHS.has(value)
+    ? value
+    : MASTER_DATA_AGENT_DEFAULT_LIST_PATH
+}
+
+// 给可能已携带 query 的 href（如 /base-config?tab=employees）追加 search params。
+export function appendHrefSearchParams(
+  href: string,
+  params: Record<string, string>
+): string {
+  const [pathname, existingQuery = ""] = href.split("?")
+  const searchParams = new URLSearchParams(existingQuery)
+
+  for (const [key, value] of Object.entries(params)) {
+    searchParams.set(key, value)
+  }
+
+  return `${pathname}?${searchParams.toString()}`
+}
+
 export function summarizeMasterDataEmployeeList(
-  employees: MasterDataEmployeeListRow[]
+  employees: MasterDataEmployeeListRow[],
+  hostListPath: string = MASTER_DATA_AGENT_DEFAULT_LIST_PATH
 ): MasterDataEmployeeListSummary {
   const rows = employees.map((employee) => ({
     ...employee,
@@ -1009,7 +1048,9 @@ export function summarizeMasterDataEmployeeList(
       sourceBatchLabel: formatImportBatchDisplayLabel(employee.batch_id),
       detailHref: `/master-data/agents/${encodeURIComponent(employee.employee_id)}`,
       editHref: `/master-data/agents/${encodeURIComponent(employee.employee_id)}/edit`,
-      freezeHref: `/master-data/agents?freeze_employee_id=${encodeURIComponent(employee.employee_id)}`,
+      freezeHref: appendHrefSearchParams(hostListPath, {
+        freeze_employee_id: employee.employee_id,
+      }),
       skillsEditHref: `/master-data/agents/${encodeURIComponent(employee.employee_id)}/skills/edit`,
     },
   }))
@@ -1134,8 +1175,13 @@ export function summarizeMasterDataAgentManagement(
     uploadStatus?: string | null
     uploadReason?: string | null
     uploadBatchId?: string | null
+  } = {},
+  options: {
+    // 宿主页列表路径；base-config 传 /base-config?tab=employees，旧 master-data 页面用默认值。
+    hostListPath?: string
   } = {}
 ): MasterDataAgentManagementSummary {
+  const hostListPath = resolveMasterDataAgentReturnPath(options.hostListPath)
   const normalizedFilters = normalizeMasterDataAgentManagementFilters(filters)
   const filterOptions = buildMasterDataAgentManagementFilterOptions(employees)
   const filteredEmployees = employees.filter((employee) =>
@@ -1143,15 +1189,22 @@ export function summarizeMasterDataAgentManagement(
   )
 
   return {
-    ...summarizeMasterDataEmployeeList(filteredEmployees),
+    ...summarizeMasterDataEmployeeList(filteredEmployees, hostListPath),
     title: "客服人员",
-    createHref: "/master-data/agents/new",
+    returnPath: hostListPath,
+    createHref:
+      hostListPath === MASTER_DATA_AGENT_DEFAULT_LIST_PATH
+        ? "/master-data/agents/new"
+        : appendHrefSearchParams("/master-data/agents/new", {
+            return_path: hostListPath,
+          }),
     importDialog: summarizeMasterDataAgentImportDialog({
       batches: importDialogInput.batches ?? [],
       templates: importDialogInput.templates ?? [],
       uploadStatus: importDialogInput.uploadStatus,
       uploadReason: importDialogInput.uploadReason,
       uploadBatchId: importDialogInput.uploadBatchId,
+      hostListPath,
     }),
     activeFilters: normalizedFilters,
     filterFields: [
@@ -1240,12 +1293,14 @@ export function summarizeMasterDataAgentImportDialog({
   uploadStatus,
   uploadReason,
   uploadBatchId,
+  hostListPath = MASTER_DATA_AGENT_DEFAULT_LIST_PATH,
 }: {
   batches: ImportBatchListRow[]
   templates: ImportFieldMappingTemplate[]
   uploadStatus?: string | null
   uploadReason?: string | null
   uploadBatchId?: string | null
+  hostListPath?: string
 }): MasterDataAgentImportDialogSummary {
   const activeTemplates = templates
     .filter((template) => template.file_type === "master_data" && template.is_active)
@@ -1254,10 +1309,12 @@ export function summarizeMasterDataAgentImportDialog({
     ? batches.find((batch) => batch.batch_id === uploadBatchId) ?? null
     : null
 
+  const openHref = appendHrefSearchParams(hostListPath, { import_dialog: "1" })
+
   return {
-    openHref: "/master-data/agents?import_dialog=1",
-    closeHref: "/master-data/agents",
-    resultRedirectTo: "/master-data/agents?import_dialog=1",
+    openHref,
+    closeHref: hostListPath,
+    resultRedirectTo: openHref,
     fileType: "master_data",
     templateDownloadHref: buildMasterDataAgentImportTemplateHref(),
     templateDownloadName: "customer-service-agents-template.csv",

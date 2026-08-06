@@ -15,6 +15,7 @@ import {
   type ActualLogImportDialogLogType,
   summarizeActualLogImportDialog,
 } from "@/components/actual-log-production-model"
+import { summarizeImportTaskDialog } from "@/lib/import-task-model"
 
 export const dynamic = "force-dynamic"
 
@@ -41,6 +42,7 @@ export default async function ActualLogProductionPage({ searchParams }: PageProp
     uploadStatus: logType === "login" ? getSingleSearchParam(resolvedSearchParams.upload) : null,
     uploadReason: logType === "login" ? getSingleSearchParam(resolvedSearchParams.reason) : null,
     uploadBatchId: logType === "login" ? getSingleSearchParam(resolvedSearchParams.batch) : null,
+    routePrefix: "/actual-logs/production",
   })
   const statusDialog = summarizeActualLogImportDialog({
     logType: "status",
@@ -49,11 +51,28 @@ export default async function ActualLogProductionPage({ searchParams }: PageProp
     uploadStatus: logType === "status" ? getSingleSearchParam(resolvedSearchParams.upload) : null,
     uploadReason: logType === "status" ? getSingleSearchParam(resolvedSearchParams.reason) : null,
     uploadBatchId: logType === "status" ? getSingleSearchParam(resolvedSearchParams.batch) : null,
+    routePrefix: "/actual-logs/production",
   })
   const activeDialog = logType === "status" ? statusDialog : loginDialog
   const importDialogOpen =
     getSingleSearchParam(resolvedSearchParams.import_dialog) === "1" ||
     Boolean(getSingleSearchParam(resolvedSearchParams.upload))
+  // 顶栏按钮使用统一导入向导摘要（openHref 与旧摘要一致），
+  // 对话框仍保留旧 ActualLogImportDialog 至旧路由退役。
+  const actionLoginDialog = summarizeImportTaskDialog({
+    variant: "actual-log",
+    routePrefix: "/actual-logs/production",
+    logType: "login",
+    batches: batchResult.data ?? [],
+    templates: templateResult.data ?? [],
+  })
+  const actionStatusDialog = summarizeImportTaskDialog({
+    variant: "actual-log",
+    routePrefix: "/actual-logs/production",
+    logType: "status",
+    batches: batchResult.data ?? [],
+    templates: templateResult.data ?? [],
+  })
 
   return (
     <AppShell
@@ -61,8 +80,8 @@ export default async function ActualLogProductionPage({ searchParams }: PageProp
       breadcrumbItems={[{ label: "登录/状态日志" }]}
       actions={
         <ActualLogProductionPageActions
-          loginDialog={loginDialog}
-          statusDialog={statusDialog}
+          loginDialog={actionLoginDialog}
+          statusDialog={actionStatusDialog}
         />
       }
     >

@@ -5,9 +5,14 @@ import test from "node:test";
 const appRootPath = new URL("../../app/", import.meta.url);
 const componentsRootPath = new URL("../../components/", import.meta.url);
 const dashboardPagePath = new URL("../../app/dashboard/page.tsx", import.meta.url);
+const rootPagePath = new URL("../../app/page.tsx", import.meta.url);
 const appSidebarPath = new URL("../../components/app-sidebar.tsx", import.meta.url);
+const topNavPath = new URL("../../components/top-nav.tsx", import.meta.url);
 const appShellPath = new URL("../../components/app-shell.tsx", import.meta.url);
 const siteHeaderPath = new URL("../../components/site-header.tsx", import.meta.url);
+const scheduleDeskPagePath = new URL("../../app/schedule-desk/page.tsx", import.meta.url);
+const executionPagePath = new URL("../../app/execution/page.tsx", import.meta.url);
+const baseConfigPagePath = new URL("../../app/base-config/page.tsx", import.meta.url);
 const masterDataIndexPagePath = new URL("../../app/master-data/page.tsx", import.meta.url);
 const masterDataEntityPagePath = new URL("../../app/master-data/[entityKey]/page.tsx", import.meta.url);
 const masterDataAgentCreatePagePath = new URL("../../app/master-data/agents/new/page.tsx", import.meta.url);
@@ -70,10 +75,11 @@ const globalsCssPath = new URL("../../app/globals.css", import.meta.url);
 const uiAlertPath = new URL("../../components/ui/alert.tsx", import.meta.url);
 const uiAvatarPath = new URL("../../components/ui/avatar.tsx", import.meta.url);
 const uiBreadcrumbPath = new URL("../../components/ui/breadcrumb.tsx", import.meta.url);
-const uiCollapsiblePath = new URL("../../components/ui/collapsible.tsx", import.meta.url);
 const uiDialogPath = new URL("../../components/ui/dialog.tsx", import.meta.url);
 const uiButtonPath = new URL("../../components/ui/button.tsx", import.meta.url);
 const uiTablePath = new URL("../../components/ui/table.tsx", import.meta.url);
+const nextConfigPath = new URL("../../next.config.mjs", import.meta.url);
+const legacyDeepLinkMiddlewarePath = new URL("../../middleware.ts", import.meta.url);
 
 async function collectSourceFiles(directoryUrl) {
   const entries = await readdir(directoryUrl, { withFileTypes: true });
@@ -98,11 +104,20 @@ async function collectSourceFiles(directoryUrl) {
   return files;
 }
 
-test("dashboard overview does not expose data ingestion status panel", async () => {
+test("dashboard overview redirects to the schedule desk entry", async () => {
   const source = await readFile(dashboardPagePath, "utf8");
 
+  assert.equal(source.includes('redirect("/schedule-desk")'), true);
   assert.equal(source.includes("DataSyncStatus"), false);
   assert.equal(source.includes("data-sync-status"), false);
+});
+
+test("root route lands on the schedule desk entry without deep links", async () => {
+  const rootSource = await readFile(rootPagePath, "utf8");
+  const topNavSource = await readFile(topNavPath, "utf8");
+
+  assert.equal(rootSource.includes('redirect("/schedule-desk")'), true);
+  assert.equal(topNavSource.includes('href="/schedule-desk"'), true);
 });
 
 test("ui typography and density baseline is not overridden by component drift", async () => {
@@ -170,8 +185,8 @@ test("application source does not retain rejected center-first visible wording",
   }
 });
 
-test("sidebar does not expose placeholder or deferred product capabilities", async () => {
-  const source = await readFile(appSidebarPath, "utf8");
+test("top navigation exposes exactly three workspace entries and drops the legacy sidebar", async () => {
+  const source = await readFile(topNavPath, "utf8");
   const forbiddenLabels = [
     "今日履约",
     "异常预警",
@@ -203,33 +218,45 @@ test("sidebar does not expose placeholder or deferred product capabilities", asy
     "规则配置",
     "权限管理",
     "操作审计",
+    "需求计划",
+    "排班计划",
+    "班次明细",
+    "不可用管理",
+    "复核案例",
+    "登录/状态日志",
+    "客服人员",
   ];
+
+  assert.equal(source.includes('title: "排班计划台"'), true);
+  assert.equal(source.includes('href: "/schedule-desk"'), true);
+  assert.equal(source.includes('title: "实际执行"'), true);
+  assert.equal(source.includes('href: "/execution"'), true);
+  assert.equal(source.includes('title: "基础配置"'), true);
+  assert.equal(source.includes('href: "/base-config"'), true);
 
   for (const label of forbiddenLabels) {
     assert.equal(source.includes(`title: "${label}"`), false, label);
   }
 
   assert.equal(
-    source.includes('href: "/demand-plans/production"'),
-    false,
-    "demand production route should not be exposed as its own sidebar item",
+    [...source.matchAll(/href="\/dashboard"/g)].length,
+    0,
+    "top navigation must not expose a dashboard navigation entry",
   );
-  assert.equal(
-    source.includes('href: "/schedule-plans/production"'),
-    false,
-    "schedule production route should not be exposed as its own sidebar item",
-  );
-  assert.equal(
-    source.includes('excludePrefixes: ["/schedule-plans/production"]'),
-    false,
-    "schedule parent navigation should own production child routes",
-  );
-
   assert.equal(
     [...source.matchAll(/href: "\/dashboard"/g)].length,
-    1,
-    "only the business overview entry may point to the dashboard route",
+    0,
+    "top navigation must not expose a dashboard navigation entry",
   );
+
+  await assert.rejects(
+    access(appSidebarPath),
+    "legacy app-sidebar.tsx should be removed by the top navigation shell cut-over",
+  );
+
+  await access(scheduleDeskPagePath);
+  await access(executionPagePath);
+  await access(baseConfigPagePath);
 });
 
 test("production child routes use business object wording instead of production module wording", async () => {
@@ -281,6 +308,9 @@ test("production child routes use business object wording instead of production 
 
 test("business pages pass breadcrumbs through AppShell", async () => {
   const pagePaths = [
+    scheduleDeskPagePath,
+    executionPagePath,
+    baseConfigPagePath,
     demandPlansPagePath,
     demandForecastProductionPagePath,
     demandForecastProductionDetailPagePath,
@@ -312,6 +342,9 @@ test("business pages pass breadcrumbs through AppShell", async () => {
 
 test("business content surfaces do not duplicate page identity h1 headings", async () => {
   const contentPaths = [
+    scheduleDeskPagePath,
+    executionPagePath,
+    baseConfigPagePath,
     demandPlansPagePath,
     schedulePlansPagePath,
     schedulePlanCreatePagePath,
@@ -383,18 +416,9 @@ test("master data entry redirects to agents and entity pages do not use the old 
 });
 
 test("master data product surface does not expose project as a maintenance object", async () => {
-  const sidebarSource = await readFile(appSidebarPath, "utf8");
   const entitySource = await readFile(masterDataEntityPagePath, "utf8");
   const modelSource = await readFile(masterDataModelPath, "utf8");
 
-  assert.equal(sidebarSource.includes('title: "技能"'), true);
-  assert.equal(sidebarSource.includes('href: "/master-data/skills"'), true);
-  assert.equal(sidebarSource.includes('title: "职场运营主体"'), false);
-  assert.equal(sidebarSource.includes('href: "/master-data/site-operators"'), false);
-  assert.equal(sidebarSource.includes('title: "绑定关系"'), false);
-  assert.equal(sidebarSource.includes('href: "/master-data/bindings"'), false);
-  assert.equal(sidebarSource.includes('title: "项目"'), false);
-  assert.equal(sidebarSource.includes('href: "/master-data/projects"'), false);
   assert.equal(modelSource.includes('key: "projects"'), false);
   assert.equal(modelSource.includes('key: "site-operators"'), false);
   assert.equal(modelSource.includes('key: "bindings"'), false);
@@ -557,53 +581,32 @@ test("vendor service context stays nested under vendor detail", async () => {
   }
 });
 
-test("sidebar expands all groups by default and inherits master data detail state", async () => {
-  const source = await readFile(appSidebarPath, "utf8");
-
-  assert.equal(
-    source.includes("new Set(nav.map((group) => group.title))"),
-    true,
-    "sidebar should default all nav groups to expanded",
-  );
-  assert.match(
-    source,
-    /title: "职场",\s+href: "\/master-data\/sites",\s+activeMatch: "prefix"/,
-    "workplace detail routes should inherit the workplace nav item",
-  );
-  assert.match(
-    source,
-    /title: "供应商",\s+href: "\/master-data\/vendors",\s+activeMatch: "prefix"/,
-    "vendor detail routes should inherit the vendor nav item",
-  );
-});
-
-test("global shell uses shadcn sidebar and header breadcrumb primitives", async () => {
+test("global shell uses top navigation and header breadcrumb primitives", async () => {
   await access(uiAlertPath);
   await access(uiAvatarPath);
   await access(uiBreadcrumbPath);
-  await access(uiCollapsiblePath);
   await access(uiDialogPath);
 
   const shellSource = await readFile(appShellPath, "utf8");
-  const sidebarSource = await readFile(appSidebarPath, "utf8");
+  const topNavSource = await readFile(topNavPath, "utf8");
   const headerSource = await readFile(siteHeaderPath, "utf8");
 
-  assert.equal(shellSource.includes("SidebarProvider"), true);
-  assert.equal(shellSource.includes("SidebarInset"), true);
+  assert.equal(shellSource.includes("SidebarProvider"), false);
+  assert.equal(shellSource.includes("SidebarInset"), false);
+  assert.equal(shellSource.includes("AppSidebar"), false);
+  assert.equal(shellSource.includes("@/components/ui/sidebar"), false);
   assert.equal(shellSource.includes("sidebarCollapsed"), false);
-  assert.equal(sidebarSource.includes("@/components/ui/sidebar"), true);
-  assert.equal(sidebarSource.includes("@/components/ui/collapsible"), true);
-  assert.equal(sidebarSource.includes("<Sidebar"), true);
-  assert.equal(sidebarSource.includes("CollapsibleTrigger"), true);
-  assert.equal(sidebarSource.includes("CollapsibleContent"), true);
-  assert.equal(sidebarSource.includes("SidebarMenuSub"), true);
-  assert.equal(sidebarSource.includes("SidebarMenuSubButton"), true);
-  assert.equal(sidebarSource.includes("SidebarMenuSubItem"), true);
-  assert.equal(sidebarSource.includes("<aside"), false);
-  assert.equal(sidebarSource.includes("collapsed"), false);
-  assert.equal(sidebarSource.includes("SidebarGroupLabel asChild"), false);
-  assert.equal(sidebarSource.includes('className="pl-7"'), false);
-  assert.equal(headerSource.includes("SidebarTrigger"), true);
+  assert.equal(shellSource.includes("TopNav"), true);
+  assert.equal(shellSource.includes("searchPlaceholder"), false);
+  assert.equal(topNavSource.includes("DropdownMenu"), true);
+  assert.equal(topNavSource.includes("@/components/ui/avatar"), true);
+  assert.equal(topNavSource.includes("AvatarImage"), true);
+  assert.equal(topNavSource.includes("/shadcn-avatar.jpg"), true);
+  assert.equal(topNavSource.includes("<AvatarFallback"), true);
+  assert.equal(topNavSource.includes("切换为"), true);
+  assert.equal(topNavSource.includes("退出登录"), true);
+  assert.equal(topNavSource.includes("usePathname"), true);
+  assert.equal(headerSource.includes("SidebarTrigger"), false);
   assert.equal(headerSource.includes("Breadcrumb"), true);
   assert.equal(headerSource.includes("breadcrumbItems"), true);
   assert.equal(headerSource.includes("parentBreadcrumbItems"), false);
@@ -615,14 +618,6 @@ test("global shell uses shadcn sidebar and header breadcrumb primitives", async 
   assert.equal(headerSource.includes("CalendarRange"), false);
   assert.equal(headerSource.includes("Bell"), false);
   assert.equal(headerSource.includes("ThemeToggle"), false);
-  assert.equal(sidebarSource.includes("SidebarFooter"), true);
-  assert.equal(sidebarSource.includes("@/components/ui/avatar"), true);
-  assert.equal(sidebarSource.includes("AvatarImage"), true);
-  assert.equal(sidebarSource.includes("/shadcn-avatar.jpg"), true);
-  assert.equal(sidebarSource.includes("<AvatarFallback"), true);
-  assert.equal(sidebarSource.includes("DropdownMenu"), true);
-  assert.equal(sidebarSource.includes("切换为"), true);
-  assert.equal(sidebarSource.includes("退出登录"), true);
 });
 
 test("global header shell does not retain the removed search placeholder API", async () => {
@@ -1354,6 +1349,70 @@ test("actual log import dialog uses the strict step-by-step upload flow", async 
     true,
     "upload action should return status-log results to the page-local Dialog",
   );
+});
+
+test("legacy list routes are mapped through temporary 307 redirects", async () => {
+  const { default: nextConfig } = await import(nextConfigPath.href);
+  const redirects =
+    typeof nextConfig.redirects === "function"
+      ? await nextConfig.redirects()
+      : nextConfig.redirects;
+  const expectedEntries = [
+    { source: "/dashboard", destination: "/schedule-desk" },
+    { source: "/schedule-plans", destination: "/schedule-desk" },
+    { source: "/actual-logs", destination: "/execution" },
+    { source: "/actual-logs/production", destination: "/execution" },
+    { source: "/unavailability", destination: "/base-config?tab=employees" },
+    { source: "/master-data", destination: "/base-config?tab=employees" },
+    { source: "/master-data/agents", destination: "/base-config?tab=employees" },
+    { source: "/master-data/skills", destination: "/base-config?tab=employees" },
+    { source: "/master-data/organizations", destination: "/base-config" },
+    { source: "/master-data/sites", destination: "/base-config" },
+    { source: "/master-data/vendors", destination: "/base-config" },
+  ];
+
+  assert.equal(Array.isArray(redirects), true, "next.config redirects must resolve to a list");
+
+  for (const expected of expectedEntries) {
+    const match = redirects.find((entry) => entry.source === expected.source);
+
+    assert.ok(match, `${expected.source} redirect entry missing`);
+    assert.equal(match.destination, expected.destination, expected.source);
+    assert.equal(
+      match.permanent,
+      false,
+      `${expected.source} must stay a temporary 307 redirect until legacy routes retire`,
+    );
+  }
+
+  // 目标内容尚未迁移的映射必须保持暂缓，避免重定向到空落地或打断现役 E2E。
+  const deferredSources = [
+    "/demand-plans",
+    "/shift-details",
+    "/schedule-risks",
+    "/data-quality",
+    "/data-quality/versions",
+    "/data-quality/review-cases",
+    "/data-quality/uploads/new",
+    "/schedule-plans/new",
+  ];
+
+  for (const source of deferredSources) {
+    assert.equal(
+      redirects.some((entry) => entry.source === source),
+      false,
+      `${source} redirect must stay deferred until the target content is migrated`,
+    );
+  }
+});
+
+test("legacy dynamic deep links fall back to the 307 middleware", async () => {
+  const source = await readFile(legacyDeepLinkMiddlewarePath, "utf8");
+
+  assert.equal(source.includes("/schedule-plans/"), true, "middleware must scope to the schedule-plan deep links");
+  assert.equal(source.includes('"/schedule-desk"'), true, "schedule-plan detail must map onto the schedule desk");
+  assert.equal(source.includes("307"), true, "middleware mappings must use temporary 307 redirects");
+  assert.equal(source.includes("matcher"), true, "middleware must restrict itself to the explicit deep-link list");
 });
 
 test("result chain pages do not present import batches as their parent module", async () => {

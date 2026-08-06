@@ -16,6 +16,7 @@ import {
   buildMasterDataWorkplaceMaintenanceApiPath,
   buildMasterDataWorkplaceMaintenancePayload,
   getMasterDataMaintenanceEntity,
+  resolveMasterDataAgentReturnPath,
   summarizeMasterDataAgentManagement,
   summarizeMasterDataAgentDetail,
   summarizeMasterDataAgentImportDialog,
@@ -259,6 +260,7 @@ test("agent management page exposes customer service list layout contract", () =
   ]);
 
   assert.equal(summary.title, "客服人员");
+  assert.equal(summary.returnPath, "/master-data/agents");
   assert.equal(summary.createHref, "/master-data/agents/new");
   assert.deepEqual(
     summary.filterFields.map((field) => field.label),
@@ -289,6 +291,66 @@ test("agent management page exposes customer service list layout contract", () =
     summary.rows[0].display.skillsEditHref,
     "/master-data/agents/A-2001/skills/edit",
   );
+});
+
+test("agent management summary injects host list path for base-config host page", () => {
+  const summary = summarizeMasterDataAgentManagement(
+    [
+      {
+        employee_id: "A-2001",
+        employee_name: "刘晓晓",
+        status: "active",
+        employee_type: "internal",
+        organization_id: "ORG-RETURN",
+        organization_path: "CC / CCO / 集中退换小组",
+        workplace_id: "NJ-01",
+        workplace_name: "南京职场",
+        effective_from: "2026-05-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        skills: [],
+      },
+    ],
+    {},
+    {},
+    { hostListPath: "/base-config?tab=employees" },
+  );
+
+  assert.equal(summary.returnPath, "/base-config?tab=employees");
+  assert.equal(
+    summary.rows[0].display.freezeHref,
+    "/base-config?tab=employees&freeze_employee_id=A-2001",
+  );
+  assert.equal(
+    summary.createHref,
+    "/master-data/agents/new?return_path=%2Fbase-config%3Ftab%3Demployees",
+  );
+  assert.equal(
+    summary.importDialog.openHref,
+    "/base-config?tab=employees&import_dialog=1",
+  );
+  assert.equal(summary.importDialog.closeHref, "/base-config?tab=employees");
+  assert.equal(
+    summary.importDialog.resultRedirectTo,
+    "/base-config?tab=employees&import_dialog=1",
+  );
+});
+
+test("agent return path only accepts whitelisted values", () => {
+  assert.equal(
+    resolveMasterDataAgentReturnPath("/base-config?tab=employees"),
+    "/base-config?tab=employees",
+  );
+  assert.equal(
+    resolveMasterDataAgentReturnPath("/master-data/agents"),
+    "/master-data/agents",
+  );
+  assert.equal(
+    resolveMasterDataAgentReturnPath("https://evil.example.com"),
+    "/master-data/agents",
+  );
+  assert.equal(resolveMasterDataAgentReturnPath(""), "/master-data/agents");
+  assert.equal(resolveMasterDataAgentReturnPath(null), "/master-data/agents");
 });
 
 test("organization detail summarizes direct child organizations and current people", () => {

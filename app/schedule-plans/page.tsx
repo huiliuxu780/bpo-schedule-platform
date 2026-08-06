@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
-import { MvpFlowSummary } from "@/components/mvp-flow-summary"
+import { BackendErrorAlert } from "@/components/backend-error-alert"
 import { SchedulePlanTable } from "@/components/schedule-plan-table"
 import { ScheduleRiskTable } from "@/components/schedule-risk-table"
 import {
@@ -68,8 +68,25 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
   const params = await searchParams
   const query = params.query?.trim() ?? ""
   const status = parseStatus(params.status)
-  const plans = await getSchedulePlansWithFilters({ query, status })
-  const risks = await getScheduleRisks(query)
+  const plansResult = await getSchedulePlansWithFilters({ query, status })
+  const risksResult = await getScheduleRisks(query)
+  const error = plansResult.error ?? risksResult.error
+
+  if (error) {
+    return (
+      <AppShell
+        title="排班计划"
+        breadcrumbItems={[{ label: "排班计划" }]}
+      >
+        <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+          <BackendErrorAlert error={error} />
+        </main>
+      </AppShell>
+    )
+  }
+
+  const plans = plansResult.data ?? []
+  const risks = risksResult.data ?? []
   const totalForecast = plans.reduce((sum, plan) => sum + plan.forecast_agents, 0)
   const totalScheduled = plans.reduce(
     (sum, plan) => sum + plan.scheduled_agents,
@@ -146,11 +163,6 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
             description={`缺口 ${totalGap} 人次`}
           />
         </section>
-        <MvpFlowSummary
-          planCount={plans.length}
-          highRiskCount={highRiskCount}
-          totalGap={totalGap}
-        />
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-4">
             <div>

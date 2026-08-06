@@ -1,7 +1,11 @@
+import random
+import time
 from typing import TypeVar
 
-from sqlalchemy import ForeignKey, String, delete, inspect as inspect_schema, select, text
+from sqlalchemy import Boolean, ForeignKey, String, delete, inspect as inspect_schema, select, text
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Mapped, Session, mapped_column, sessionmaker
+from sqlalchemy.types import JSON
 
 from backend.app.import_persistence import Base, ImportBatchEntity, build_engine
 from backend.app.models import (
@@ -119,6 +123,9 @@ class EmployeeEntity(Base):
     )
     effective_from: Mapped[str] = mapped_column(String(20), nullable=False)
     effective_to: Mapped[str] = mapped_column(String(20), nullable=False)
+    night_shift_allowed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    cross_day_allowed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    unavailable_dates: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
     batch_id: Mapped[str] = mapped_column(
         ForeignKey("import_batches.batch_id"),
         nullable=False,
@@ -288,7 +295,9 @@ class MasterDataPersistenceRepository:
 
             for employee in request.employees:
                 self._validate_employee(session, employee)
-                session.merge(_employee_entity(employee, request.batch_id))
+                entity = _employee_entity(employee, request.batch_id)
+                _preserve_employee_restrictions(session, entity)
+                session.merge(entity)
             session.flush()
 
             for employee_skill in request.employee_skills:
@@ -430,12 +439,34 @@ class MasterDataPersistenceRepository:
     ) -> MasterDataEmployeeRecord:
         with self.session_factory.begin() as session:
             entity = _employee_entity(employee, batch_id)
+            _preserve_employee_restrictions(session, entity)
             session.merge(entity)
             session.flush()
             stored = session.get(EmployeeEntity, employee.employee_id)
             if stored is None:
                 raise ValueError(f"EMPLOYEE_WRITE_FAILED: {employee.employee_id}")
             return _employee_record(stored)
+
+    def update_employee_restrictions(
+        self,
+        employee_id: str,
+        *,
+        night_shift_allowed: bool | None = None,
+        cross_day_allowed: bool | None = None,
+        unavailable_dates: list[str] | None = None,
+    ) -> MasterDataEmployeeRecord:
+        with self.session_factory.begin() as session:
+            employee = session.get(EmployeeEntity, employee_id)
+            if employee is None:
+                raise ValueError(f"EMPLOYEE_NOT_FOUND: {employee_id}")
+            if night_shift_allowed is not None:
+                employee.night_shift_allowed = night_shift_allowed
+            if cross_day_allowed is not None:
+                employee.cross_day_allowed = cross_day_allowed
+            if unavailable_dates is not None:
+                employee.unavailable_dates = list(unavailable_dates)
+            session.flush()
+            return _employee_record(employee)
 
     def upsert_employee_binding(
         self,
@@ -833,7 +864,20 @@ def _employee_record(employee: EmployeeEntity) -> MasterDataEmployeeRecord:
         effective_from=employee.effective_from,
         effective_to=employee.effective_to,
         batch_id=employee.batch_id,
+        night_shift_allowed=bool(getattr(employee, "night_shift_allowed", True)),
+        cross_day_allowed=bool(getattr(employee, "cross_day_allowed", True)),
+        unavailable_dates=list(getattr(employee, "unavailable_dates", None) or []),
     )
+
+
+def _preserve_employee_restrictions(session: Session, entity: EmployeeEntity) -> None:
+    """Keep scheduling restrictions when re-importing employee master data."""
+    existing = session.get(EmployeeEntity, entity.employee_id)
+    if existing is None:
+        return
+    entity.night_shift_allowed = existing.night_shift_allowed
+    entity.cross_day_allowed = existing.cross_day_allowed
+    entity.unavailable_dates = list(existing.unavailable_dates or [])
 
 
 def _has_enriched_employee_list_schema(session: Session) -> bool:
@@ -844,9 +888,14 @@ def _has_enriched_employee_list_schema(session: Session) -> bool:
     skill_columns = {
         column["name"] for column in inspector.get_columns("master_data_skills")
     }
-    return {"employee_type", "organization_id", "workplace_id"}.issubset(
-        employee_columns
-    ) and "skill_category" in skill_columns
+    return {
+        "employee_type",
+        "organization_id",
+        "workplace_id",
+        "night_shift_allowed",
+        "cross_day_allowed",
+        "unavailable_dates",
+    }.issubset(employee_columns) and "skill_category" in skill_columns
 
 
 def _has_skill_category_schema(session: Session) -> bool:
@@ -858,6 +907,26 @@ def _has_skill_category_schema(session: Session) -> bool:
 
 
 def _ensure_sqlite_master_data_schema(engine) -> None:
+    # 并发首请竞态：多个连接同时通过 check-first / 列存在判断后各自执行 DDL，
+    # 后到连接报 "already exists / duplicate column"。N>2 线程时重试窗口内
+    # 可能再次竞态，因此做有限次带抖动的退避重试；重跑时 check-first 与列
+    # 存在判断会跳过已完成的 DDL，最终收敛为幂等。
+    attempts = 5
+    for attempt in range(attempts):
+        try:
+            _apply_sqlite_master_data_schema(engine)
+            return
+        except OperationalError as exc:
+            message = str(exc.orig) if exc.orig is not None else str(exc)
+            race_markers = ("already exists", "duplicate column name")
+            if not any(marker in message.lower() for marker in race_markers):
+                raise
+            if attempt == attempts - 1:
+                raise
+            time.sleep(0.02 * (attempt + 1) + random.uniform(0.0, 0.02))
+
+
+def _apply_sqlite_master_data_schema(engine) -> None:
     Base.metadata.create_all(engine)
     with engine.begin() as connection:
         inspector = inspect_schema(connection)
@@ -887,6 +956,29 @@ def _ensure_sqlite_master_data_schema(engine) -> None:
                     text(
                         "ALTER TABLE master_data_employees "
                         "ADD COLUMN workplace_id VARCHAR(80)"
+                    )
+                )
+            # 与 alembic 迁移 20260804_0011 组6 完全一致：旧版运行时建表、
+            # 未跑该迁移的库在此补齐员工排班限制三列（默认值回填存量行）。
+            if "night_shift_allowed" not in employee_columns:
+                connection.execute(
+                    text(
+                        "ALTER TABLE master_data_employees "
+                        "ADD COLUMN night_shift_allowed BOOLEAN NOT NULL DEFAULT 1"
+                    )
+                )
+            if "cross_day_allowed" not in employee_columns:
+                connection.execute(
+                    text(
+                        "ALTER TABLE master_data_employees "
+                        "ADD COLUMN cross_day_allowed BOOLEAN NOT NULL DEFAULT 1"
+                    )
+                )
+            if "unavailable_dates" not in employee_columns:
+                connection.execute(
+                    text(
+                        "ALTER TABLE master_data_employees "
+                        "ADD COLUMN unavailable_dates JSON NOT NULL DEFAULT '[]'"
                     )
                 )
 
@@ -982,6 +1074,9 @@ def _employee_list_row(
         effective_from=employee.effective_from,
         effective_to=employee.effective_to,
         batch_id=employee.batch_id,
+        night_shift_allowed=bool(getattr(employee, "night_shift_allowed", True)),
+        cross_day_allowed=bool(getattr(employee, "cross_day_allowed", True)),
+        unavailable_dates=list(getattr(employee, "unavailable_dates", None) or []),
         skills=skills,
     )
 

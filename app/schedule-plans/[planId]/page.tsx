@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
+import { BackendErrorAlert } from "@/components/backend-error-alert"
 import { SchedulePlanIntervalTable } from "@/components/schedule-plan-interval-table"
 import {
   formatCoverageRate,
@@ -28,16 +29,54 @@ type PageProps = {
 
 export default async function SchedulePlanDetailPage({ params }: PageProps) {
   const { planId } = await params
-  const plan = await getSchedulePlan(planId)
+  const planResult = await getSchedulePlan(planId)
+
+  if (planResult.error) {
+    return (
+      <AppShell
+        title="排班计划详情"
+        breadcrumbItems={[
+          { label: "排班计划", href: "/schedule-plans" },
+          { label: "排班计划详情" },
+        ]}
+      >
+        <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+          <BackendErrorAlert error={planResult.error} />
+        </main>
+      </AppShell>
+    )
+  }
+
+  const plan = planResult.data
 
   if (!plan) {
     notFound()
   }
 
-  const [risks, activeUnavailability] = await Promise.all([
+  const [risksResult, activeUnavailabilityResult] = await Promise.all([
     getScheduleRisks(plan.summary.id),
     getUnavailability({ query: plan.summary.site_name, status: "active" }),
   ])
+  const relatedError = risksResult.error ?? activeUnavailabilityResult.error
+
+  if (relatedError) {
+    return (
+      <AppShell
+        title="排班计划详情"
+        breadcrumbItems={[
+          { label: "排班计划", href: "/schedule-plans" },
+          { label: "排班计划详情" },
+        ]}
+      >
+        <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+          <BackendErrorAlert error={relatedError} />
+        </main>
+      </AppShell>
+    )
+  }
+
+  const risks = risksResult.data ?? []
+  const activeUnavailability = activeUnavailabilityResult.data ?? []
   const gapIntervals = plan.intervals.filter((item) => item.gap_agents > 0)
   const relatedRisks = risks.filter(
     (risk) =>

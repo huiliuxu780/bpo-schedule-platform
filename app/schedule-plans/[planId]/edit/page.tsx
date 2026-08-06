@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 
 import { updateDraftAction } from "./actions"
 import { AppShell } from "@/components/app-shell"
+import { BackendErrorAlert } from "@/components/backend-error-alert"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -22,7 +23,25 @@ type PageProps = {
 
 export default async function EditSchedulePlanPage({ params }: PageProps) {
   const { planId } = await params
-  const plan = await getSchedulePlan(planId)
+  const planResult = await getSchedulePlan(planId)
+
+  if (planResult.error) {
+    return (
+      <AppShell
+        title="编辑排班草稿"
+        breadcrumbItems={[
+          { label: "排班计划", href: "/schedule-plans" },
+          { label: "编辑排班草稿" },
+        ]}
+      >
+        <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+          <BackendErrorAlert error={planResult.error} />
+        </main>
+      </AppShell>
+    )
+  }
+
+  const plan = planResult.data
 
   if (!plan) {
     notFound()

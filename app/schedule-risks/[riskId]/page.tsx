@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
+import { BackendErrorAlert } from "@/components/backend-error-alert"
 import { ScheduleRiskShiftTable } from "@/components/schedule-risk-shift-table"
 import { ScheduleRiskUnavailabilityTable } from "@/components/schedule-risk-unavailability-table"
 import { Badge } from "@/components/ui/badge"
@@ -30,16 +31,42 @@ type PageProps = {
 
 export default async function ScheduleRiskDetailPage({ params }: PageProps) {
   const { riskId } = await params
-  const risk = await getScheduleRisk(decodeURIComponent(riskId))
+  const riskResult = await getScheduleRisk(decodeURIComponent(riskId))
+
+  if (riskResult.error) {
+    return (
+      <AppShell title="风险明细">
+        <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+          <BackendErrorAlert error={riskResult.error} />
+        </main>
+      </AppShell>
+    )
+  }
+
+  const risk = riskResult.data
 
   if (!risk) {
     notFound()
   }
 
-  const [shiftDetails, unavailabilityRows] = await Promise.all([
+  const [shiftDetailsResult, unavailabilityResult] = await Promise.all([
     getShiftDetails({ query: risk.site_name }),
     getUnavailability({ query: risk.site_name, status: "active" }),
   ])
+  const relatedError = shiftDetailsResult.error ?? unavailabilityResult.error
+
+  if (relatedError) {
+    return (
+      <AppShell title="风险明细">
+        <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+          <BackendErrorAlert error={relatedError} />
+        </main>
+      </AppShell>
+    )
+  }
+
+  const shiftDetails = shiftDetailsResult.data ?? []
+  const unavailabilityRows = unavailabilityResult.data ?? []
   const relatedShiftDetails = shiftDetails.filter(
     (row) =>
       row.plan_id === risk.plan_id &&

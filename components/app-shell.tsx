@@ -1,13 +1,7 @@
-"use client"
-
 import * as React from "react"
 
-import { AppSidebar } from "@/components/app-sidebar"
 import { type AppBreadcrumbItem, SiteHeader } from "@/components/site-header"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
+import { TopNav } from "@/components/top-nav"
 import { TooltipProvider } from "@/components/ui/tooltip"
 
 type AppShellProps = {
@@ -25,17 +19,15 @@ export function AppShell({
 }: AppShellProps) {
   return (
     <TooltipProvider>
-      <SidebarProvider defaultOpen>
-        <AppSidebar />
-        <SidebarInset className="h-svh overflow-hidden">
-          <SiteHeader
-            title={title}
-            breadcrumbItems={breadcrumbItems}
-            actions={actions}
-          />
-          {children}
-        </SidebarInset>
-      </SidebarProvider>
+      <div className="flex h-svh flex-col overflow-hidden">
+        <TopNav />
+        <SiteHeader
+          title={title}
+          breadcrumbItems={breadcrumbItems}
+          actions={actions}
+        />
+        <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+      </div>
     </TooltipProvider>
   )
 }

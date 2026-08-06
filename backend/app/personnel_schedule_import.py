@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 from backend.app.models import (
@@ -9,6 +10,9 @@ from backend.app.models import (
     ShiftTypeInput,
 )
 from backend.app.personnel_schedule_persistence import PersonnelSchedulePersistenceRepository
+
+
+logger = logging.getLogger(__name__)
 
 
 def apply_personnel_schedule_import_batch(
@@ -25,6 +29,12 @@ def apply_personnel_schedule_import_batch(
         )
 
     selected_version = _select_import_version(detail, import_version_id)
+    logger.info(
+        "import version selected batch_id=%s version_id=%s file_type=%s",
+        detail.batch.batch_id,
+        selected_version.version_id if selected_version is not None else "-",
+        detail.batch.file_type,
+    )
     request = PersonnelScheduleVersionRequest(
         schedule_version_id=schedule_version_id
         or f"{detail.batch.batch_id}::schedule",

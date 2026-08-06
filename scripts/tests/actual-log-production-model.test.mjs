@@ -190,6 +190,28 @@ test("actual log import dialog summary keeps login and status upload flows in ac
   assert.equal(loginDialog.result?.batchHref, "/data-quality/import-batches/BATCH-LOGIN-IMPORT-001");
 });
 
+test("actual log import dialog summary supports execution host route prefix", () => {
+  const loginDialog = summarizeActualLogImportDialog({
+    logType: "login",
+    batches: [],
+    templates: [],
+    routePrefix: "/execution",
+  });
+  const statusDialog = summarizeActualLogImportDialog({
+    logType: "status",
+    batches: [],
+    templates: [],
+    routePrefix: "/execution",
+  });
+
+  assert.equal(loginDialog.openHref, "/execution?import_dialog=1&log_type=login");
+  assert.equal(statusDialog.openHref, "/execution?import_dialog=1&log_type=status");
+  assert.equal(loginDialog.closeHref, "/execution");
+  assert.equal(statusDialog.closeHref, "/execution");
+  assert.equal(loginDialog.resultRedirectTo, "/execution?import_dialog=1&log_type=login");
+  assert.equal(statusDialog.resultRedirectTo, "/execution?import_dialog=1&log_type=status");
+});
+
 test("actual log processing detail explains cross-day status interval rows", () => {
   const detail = summarizeActualLogProcessingDetail(
     [baseStatusBatch],

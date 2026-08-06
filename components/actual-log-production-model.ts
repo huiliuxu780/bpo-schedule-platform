@@ -197,6 +197,7 @@ export function summarizeActualLogImportDialog({
   uploadStatus,
   uploadReason,
   uploadBatchId,
+  routePrefix = "/actual-logs/production",
 }: {
   logType: ActualLogImportDialogLogType
   batches: ImportBatchListRow[]
@@ -204,6 +205,8 @@ export function summarizeActualLogImportDialog({
   uploadStatus?: string | null
   uploadReason?: string | null
   uploadBatchId?: string | null
+  // 宿主页路由前缀：/execution 页传 /execution，旧页面用默认值。
+  routePrefix?: string
 }): ActualLogImportDialogSummary {
   const fileType = logType === "status" ? "status_log" : "login_log"
   const activeTemplates = templates
@@ -212,13 +215,13 @@ export function summarizeActualLogImportDialog({
   const resultBatch = uploadBatchId
     ? batches.find((batch) => batch.batch_id === uploadBatchId) ?? null
     : null
-  const openHref = `/actual-logs/production?import_dialog=1&log_type=${logType}`
+  const openHref = `${routePrefix}?import_dialog=1&log_type=${logType}`
 
   return {
     logType,
     title: logType === "status" ? "状态日志导入" : "登录日志导入",
     openHref,
-    closeHref: "/actual-logs/production",
+    closeHref: routePrefix,
     resultRedirectTo: openHref,
     fileType,
     templateDownloadHref: buildActualLogImportTemplateHref(logType),

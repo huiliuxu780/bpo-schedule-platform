@@ -117,6 +117,89 @@ class ImportUploadApiTest(unittest.TestCase):
         self.assertEqual(detail.rows[0].source_key, "A-1001")
         self.assertEqual(detail.rows[0].raw_data["standard_fields"]["employee_name"], "张三")
 
+    def test_upload_csv_repeat_same_batch_returns_existing_batch(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'import-upload.db'}"
+            repository = ImportPersistenceRepository(database_url)
+            repository.init_schema()
+
+            with patch(
+                "backend.app.main.get_import_persistence_repository",
+                return_value=repository,
+            ):
+                first = upload_import_batch_csv(
+                    batch_id="BATCH-UPLOAD-RETRY-001",
+                    file_name="employees.csv",
+                    file_type="master_data",
+                    uploaded_by="数据管理员",
+                    business_date_from="2026-05-11",
+                    business_date_to="2026-05-11",
+                    field_mapping=json.dumps(
+                        {"员工编号": "source_key", "姓名": "employee_name"}
+                    ),
+                    csv_body="员工编号,姓名\nA-1001,张三\n",
+                )
+                # 客户端重放/双击导致同一批次重复提交：关键属性一致时返回已有批次而非 409。
+                retry = upload_import_batch_csv(
+                    batch_id="BATCH-UPLOAD-RETRY-001",
+                    file_name="employees.csv",
+                    file_type="master_data",
+                    uploaded_by="数据管理员",
+                    business_date_from="2026-05-11",
+                    business_date_to="2026-05-11",
+                    field_mapping=json.dumps(
+                        {"员工编号": "source_key", "姓名": "employee_name"}
+                    ),
+                    csv_body="员工编号,姓名\nA-1001,张三\n",
+                )
+
+        self.assertEqual(first.batch.batch_id, retry.batch.batch_id)
+        self.assertEqual(retry.batch.total_rows, 1)
+        self.assertEqual(retry.batch.success_rows, 1)
+
+    def test_upload_csv_same_batch_different_attributes_still_conflicts(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'import-upload.db'}"
+            repository = ImportPersistenceRepository(database_url)
+            repository.init_schema()
+
+            with patch(
+                "backend.app.main.get_import_persistence_repository",
+                return_value=repository,
+            ):
+                upload_import_batch_csv(
+                    batch_id="BATCH-UPLOAD-CONFLICT-001",
+                    file_name="employees.csv",
+                    file_type="master_data",
+                    uploaded_by="数据管理员",
+                    business_date_from="2026-05-11",
+                    business_date_to="2026-05-11",
+                    field_mapping=json.dumps(
+                        {"员工编号": "source_key", "姓名": "employee_name"}
+                    ),
+                    csv_body="员工编号,姓名\nA-1001,张三\n",
+                )
+
+                with self.assertRaises(HTTPException) as raised:
+                    upload_import_batch_csv(
+                        batch_id="BATCH-UPLOAD-CONFLICT-001",
+                        file_name="other-upload.csv",
+                        file_type="master_data",
+                        uploaded_by="其他用户",
+                        business_date_from="2026-05-11",
+                        business_date_to="2026-05-11",
+                        field_mapping=json.dumps(
+                            {"员工编号": "source_key", "姓名": "employee_name"}
+                        ),
+                        csv_body="员工编号,姓名\nA-1001,张三\n",
+                    )
+
+        self.assertEqual(raised.exception.status_code, 409)
+        self.assertEqual(
+            raised.exception.detail["error"]["code"],
+            "IMPORT_BATCH_ALREADY_EXISTS",
+        )
+
     def test_upload_csv_returns_404_for_missing_field_mapping_template(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'import-upload.db'}"

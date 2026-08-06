@@ -9,7 +9,6 @@
     "start": "next start",
     "lint": "eslint",
     "verify:dev-runtime": "node scripts/verify-frontend-native-runtime.mjs",
-    "test:dev-runtime": "node --test scripts/tests/verify-frontend-native-runtime.test.mjs",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit"
   },
@@ -20,6 +19,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@tabler/icons-react": "^3.44.0",
     "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-virtual": "^3.14.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.468.0",
@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4.2.1",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",

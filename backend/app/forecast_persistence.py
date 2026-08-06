@@ -186,6 +186,29 @@ class ForecastPersistenceRepository:
             return None
         return self.get_forecast_version(forecast_version_id)
 
+    def get_latest_forecast_version(self) -> ForecastVersionDetail | None:
+        """Return the most recently imported demand forecast version.
+
+        Ordering follows the import version creation time so coverage
+        calculation always reads the newest demand caliber.
+        """
+        with self.session_factory() as session:
+            forecast_version_id = session.scalar(
+                select(ForecastVersionEntity.forecast_version_id)
+                .join(
+                    ImportVersionEntity,
+                    ForecastVersionEntity.import_version_id
+                    == ImportVersionEntity.version_id,
+                )
+                .order_by(
+                    ImportVersionEntity.created_at.desc(),
+                    ForecastVersionEntity.forecast_version_id.desc(),
+                )
+            )
+        if forecast_version_id is None:
+            return None
+        return self.get_forecast_version(forecast_version_id)
+
     def _validate_import_version(self, session: Session, import_version_id: str) -> None:
         version = session.get(ImportVersionEntity, import_version_id)
         if version is None:

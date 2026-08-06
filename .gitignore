@@ -37,12 +37,17 @@ logs/
 Thumbs.db
 .vscode/
 .idea/
+.qoder/
 
 # caches
 .cache/
 .turbo/
-.superpowers/
 *.tsbuildinfo
 
 # local runtime artifacts (sqlite db, seeds)
 .local/
+
+# playwright
+test-results/
+playwright-report/
+

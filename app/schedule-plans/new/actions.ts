@@ -38,9 +38,11 @@ export async function createDraftAction(formData: FormData) {
 
   const created = await createSchedulePlanDraft(payload)
 
-  if (!created) {
-    redirect("/schedule-plans?draft=failed")
+  if (!created.data) {
+    // 直接落到排班计划台并由其消费 draft 反馈参数：
+    // /schedule-plans 列表级路由已被过渡期重定向，落到旧路由只会被二次跳转且无人消费。
+    redirect("/schedule-desk?draft=failed")
   }
 
-  redirect(`/schedule-plans/${created.summary.id}`)
+  redirect("/schedule-desk?draft=created")
 }

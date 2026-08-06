@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
+import { BackendErrorAlert } from "@/components/backend-error-alert"
 import { UnavailabilityImpactRiskTable } from "@/components/unavailability-impact-risk-table"
 import { UnavailabilityImpactShiftTable } from "@/components/unavailability-impact-shift-table"
 import { Badge } from "@/components/ui/badge"
@@ -30,16 +31,44 @@ type PageProps = {
 
 export default async function UnavailabilityImpactPage({ params }: PageProps) {
   const { unavailabilityId } = await params
-  const record = await getUnavailabilityRecord(decodeURIComponent(unavailabilityId))
+  const recordResult = await getUnavailabilityRecord(
+    decodeURIComponent(unavailabilityId)
+  )
+
+  if (recordResult.error) {
+    return (
+      <AppShell title="不可用影响定位">
+        <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+          <BackendErrorAlert error={recordResult.error} />
+        </main>
+      </AppShell>
+    )
+  }
+
+  const record = recordResult.data
 
   if (!record) {
     notFound()
   }
 
-  const [shiftDetails, risks] = await Promise.all([
+  const [shiftDetailsResult, risksResult] = await Promise.all([
     getShiftDetails({ query: record.site_name }),
     getScheduleRisks(record.site_name),
   ])
+  const relatedError = shiftDetailsResult.error ?? risksResult.error
+
+  if (relatedError) {
+    return (
+      <AppShell title="不可用影响定位">
+        <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+          <BackendErrorAlert error={relatedError} />
+        </main>
+      </AppShell>
+    )
+  }
+
+  const shiftDetails = shiftDetailsResult.data ?? []
+  const risks = risksResult.data ?? []
   const impactedShiftDetails = shiftDetails.filter(
     (row) =>
       row.project_name === record.project_name &&

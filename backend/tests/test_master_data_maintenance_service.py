@@ -2,6 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from sqlalchemy import inspect as inspect_schema
 from sqlalchemy import text
 
 from backend.app.import_persistence import ImportPersistenceRepository, build_engine
@@ -189,6 +190,101 @@ class MasterDataMaintenanceServiceTest(unittest.TestCase):
             self.assertIsNone(created_employee.employee.workplace_id)
             self.assertEqual(created_skill.reference.skill_category, "ticket")
             self.assertEqual(created_organization.organization.organization_path, "旧库组织")
+
+    def test_pre_restrictions_legacy_schema_backfills_columns_and_keeps_paths(self) -> None:
+        """alembic 20260804_0011 之前的旧表：运行时 ensure 补齐限制三列。
+
+        覆盖：补列幂等、存量行默认值回填、员工列表走 enriched 投影、
+        restrictions 读写正常、重导入保留既有约束。
+        """
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'pre-restrictions.db'}"
+            _create_legacy_master_data_schema(
+                database_url, "BATCH-MD-PRE-RESTRICT", include_restrictions=False
+            )
+            engine = build_engine(database_url)
+            # 补列前写入的存量行：用于验证 ALTER 默认值回填与 0011 一致。
+            with engine.begin() as connection:
+                connection.execute(
+                    text(
+                        """
+                        INSERT INTO master_data_employees (
+                            employee_id, employee_name, status,
+                            effective_from, effective_to, batch_id
+                        )
+                        VALUES ('A-OLD-001', '张三', 'active',
+                                '2026-06-01', '2026-12-31', 'BATCH-MD-PRE-RESTRICT')
+                        """
+                    )
+                )
+
+            repository = MasterDataPersistenceRepository(database_url)
+
+            employee_columns = {
+                column["name"]
+                for column in inspect_schema(engine).get_columns("master_data_employees")
+            }
+            for column in (
+                "night_shift_allowed",
+                "cross_day_allowed",
+                "unavailable_dates",
+            ):
+                self.assertIn(column, employee_columns)
+            with engine.connect() as connection:
+                stored = connection.execute(
+                    text(
+                        "SELECT night_shift_allowed, cross_day_allowed, unavailable_dates "
+                        "FROM master_data_employees WHERE employee_id = 'A-OLD-001'"
+                    )
+                ).one()
+            self.assertEqual(stored[0], 1)
+            self.assertEqual(stored[1], 1)
+            self.assertEqual(stored[2], "[]")
+
+            updated = repository.update_employee_restrictions(
+                "A-OLD-001",
+                night_shift_allowed=False,
+                cross_day_allowed=False,
+                unavailable_dates=["2026-08-10"],
+            )
+            self.assertFalse(updated.night_shift_allowed)
+            self.assertFalse(updated.cross_day_allowed)
+            self.assertEqual(updated.unavailable_dates, ["2026-08-10"])
+
+            # 限制值为 False 只可能来自 enriched 投影（legacy 投影恒为默认 True）。
+            rows = repository.list_employees()
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0].employee_id, "A-OLD-001")
+            self.assertEqual(rows[0].employee_type, "internal")
+            self.assertFalse(rows[0].night_shift_allowed)
+            self.assertFalse(rows[0].cross_day_allowed)
+            self.assertEqual(rows[0].unavailable_dates, ["2026-08-10"])
+
+            repository.create_snapshot(
+                MasterDataSnapshotRequest(
+                    batch_id="BATCH-MD-PRE-RESTRICT",
+                    employees=[
+                        EmployeeMasterDataInput(
+                            employee_id="A-OLD-001",
+                            employee_name="张三（改）",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                )
+            )
+            reimported = repository.get_employee("A-OLD-001")
+            self.assertIsNotNone(reimported)
+            assert reimported is not None
+            self.assertEqual(reimported.employee_name, "张三（改）")
+            self.assertFalse(reimported.night_shift_allowed)
+            self.assertFalse(reimported.cross_day_allowed)
+            self.assertEqual(reimported.unavailable_dates, ["2026-08-10"])
+
+            # 再次构造 repository（ensure 重跑）：列已存在时 ALTER 被跳过。
+            MasterDataPersistenceRepository(database_url)
+            engine.dispose()
 
     def test_create_edit_and_freeze_organization_writes_hierarchy_record(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -737,7 +833,17 @@ def _create_import_batch(database_url: str, batch_id: str) -> None:
     )
 
 
-def _create_legacy_master_data_schema(database_url: str, batch_id: str) -> None:
+def _create_legacy_master_data_schema(
+    database_url: str,
+    batch_id: str,
+    *,
+    include_restrictions: bool = True,
+) -> None:
+    """旧版运行时建表形态的 fixture。
+
+    include_restrictions=False 还原 alembic 20260804_0011 之前的真实旧表：
+    master_data_employees 不含员工排班限制三列。
+    """
     engine = build_engine(database_url)
     with engine.begin() as connection:
         connection.execute(
@@ -795,6 +901,15 @@ def _create_legacy_master_data_schema(database_url: str, batch_id: str) -> None:
             ),
             {"batch_id": batch_id, "file_name": f"{batch_id}.csv"},
         )
+        restriction_columns = (
+            """
+                    night_shift_allowed BOOLEAN NOT NULL DEFAULT 1,
+                    cross_day_allowed BOOLEAN NOT NULL DEFAULT 1,
+                    unavailable_dates JSON NOT NULL DEFAULT '[]',
+"""
+            if include_restrictions
+            else ""
+        )
         connection.execute(
             text(
                 """
@@ -804,6 +919,9 @@ def _create_legacy_master_data_schema(database_url: str, batch_id: str) -> None:
                     status VARCHAR(20) NOT NULL,
                     effective_from VARCHAR(20) NOT NULL,
                     effective_to VARCHAR(20) NOT NULL,
+"""
+                + restriction_columns
+                + """
                     batch_id VARCHAR(80) NOT NULL
                 )
                 """

@@ -2,7 +2,11 @@ import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
 import { MasterDataAgentDetailPage } from "@/components/master-data-maintenance-workbench"
-import { summarizeMasterDataAgentDetail } from "@/components/master-data-maintenance-model"
+import {
+  summarizeMasterDataAgentDetail,
+  summarizeMasterDataMaintenanceFeedback,
+} from "@/components/master-data-maintenance-model"
+import { submitEmployeeRestrictions } from "@/app/master-data/agents/[employeeId]/actions"
 import {
   fetchMasterDataEmployees,
   fetchMasterDataWorkplaceBindings,
@@ -15,11 +19,16 @@ type PageProps = {
   params: Promise<{
     employeeId: string
   }>
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
 }
 
-export default async function MasterDataAgentDetailRoute({ params }: PageProps) {
+export default async function MasterDataAgentDetailRoute({
+  params,
+  searchParams,
+}: PageProps) {
   const { employeeId } = await params
   const decodedEmployeeId = decodeURIComponent(employeeId)
+  const resolvedSearchParams = searchParams ? await searchParams : {}
   const [employeeResult, bindingResult, serviceTeamResult] = await Promise.all([
     fetchMasterDataEmployees(),
     fetchMasterDataWorkplaceBindings(),
@@ -48,6 +57,8 @@ export default async function MasterDataAgentDetailRoute({ params }: PageProps) 
       <MasterDataAgentDetailPage
         detailSummary={detailSummary}
         error={employeeResult.error ?? bindingResult.error ?? serviceTeamResult.error}
+        feedback={summarizeMasterDataMaintenanceFeedback(resolvedSearchParams)}
+        restrictionsAction={submitEmployeeRestrictions}
       />
     </AppShell>
   )

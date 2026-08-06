@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
+import { BackendErrorAlert } from "@/components/backend-error-alert"
 import { DemandPlanTable } from "@/components/demand-plan-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -24,7 +25,22 @@ type PageProps = {
 export default async function DemandPlansPage({ searchParams }: PageProps) {
   const params = await searchParams
   const query = params.query?.trim() ?? ""
-  const rows = await getDemandPlans(query)
+  const result = await getDemandPlans(query)
+
+  if (result.error) {
+    return (
+      <AppShell
+        title="需求计划"
+        breadcrumbItems={[{ label: "需求计划" }]}
+      >
+        <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+          <BackendErrorAlert error={result.error} />
+        </main>
+      </AppShell>
+    )
+  }
+
+  const rows = result.data ?? []
   const totalForecast = rows.reduce((sum, row) => sum + row.forecast_agents, 0)
   const peak = rows.reduce<DemandPlanRow | null>(
     (current, row) =>

@@ -14,10 +14,10 @@ import {
 
 import {
   summarizeActualLogProcessingDetail,
-  type ActualLogImportDialogSummary,
   type ActualLogProductionTone,
   summarizeActualLogProductionWorkbench,
 } from "@/components/actual-log-production-model"
+import type { ImportTaskDialogSummary } from "@/lib/import-task-model"
 import type {
   ImportBatchListRow,
   ImportBatchPersistenceDetail,
@@ -51,8 +51,8 @@ export function ActualLogProductionPageActions({
   loginDialog,
   statusDialog,
 }: {
-  loginDialog: ActualLogImportDialogSummary
-  statusDialog: ActualLogImportDialogSummary
+  loginDialog: ImportTaskDialogSummary
+  statusDialog: ImportTaskDialogSummary
 }) {
   return (
     <>

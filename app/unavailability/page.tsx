@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
+import { BackendErrorAlert } from "@/components/backend-error-alert"
 import { UnavailabilityTable } from "@/components/unavailability-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -59,7 +60,19 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
   const params = await searchParams
   const query = params.query?.trim() ?? ""
   const status = parseStatus(params.status)
-  const rows = await getUnavailability({ query, status })
+  const result = await getUnavailability({ query, status })
+
+  if (result.error) {
+    return (
+      <AppShell title="不可用管理">
+        <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+          <BackendErrorAlert error={result.error} />
+        </main>
+      </AppShell>
+    )
+  }
+
+  const rows = result.data ?? []
   const activeRows = rows.filter((row) => row.status === "active")
   const affectedIntervals = rows.reduce(
     (sum, row) => sum + row.affected_intervals,

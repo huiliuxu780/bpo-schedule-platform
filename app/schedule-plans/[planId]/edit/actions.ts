@@ -41,9 +41,9 @@ export async function updateDraftAction(formData: FormData) {
 
   const updated = await updateSchedulePlanDraft(planId, payload)
 
-  if (!updated) {
+  if (!updated.data) {
     redirect(`/schedule-plans/${planId}?draft=failed`)
   }
 
-  redirect(`/schedule-plans/${updated.summary.id}`)
+  redirect(`/schedule-plans/${updated.data.summary.id}`)
 }

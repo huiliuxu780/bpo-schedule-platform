@@ -1,6 +1,7 @@
 import { AppShell } from "@/components/app-shell"
 import { MasterDataAgentCreatePage } from "@/components/master-data-maintenance-workbench"
 import {
+  resolveMasterDataAgentReturnPath,
   summarizeMasterDataMaintenanceFeedback,
   summarizeMasterDataEntitySourceContext,
 } from "@/components/master-data-maintenance-model"
@@ -23,6 +24,10 @@ export default async function NewMasterDataAgentPage({
     batchResult.data ?? []
   )
   const feedback = summarizeMasterDataMaintenanceFeedback(resolvedSearchParams)
+  // 宿主页回跳目标：仅接受白名单值（model 内校验），未知值兜底旧路由。
+  const returnPath = resolveMasterDataAgentReturnPath(
+    getSingleSearchParam(resolvedSearchParams.return_path)
+  )
 
   return (
     <AppShell
@@ -38,7 +43,16 @@ export default async function NewMasterDataAgentPage({
         error={batchResult.error}
         feedback={feedback}
         action={submitMasterDataAgentMaintenance}
+        returnPath={returnPath}
       />
     </AppShell>
   )
+}
+
+function getSingleSearchParam(value: string | string[] | undefined): string {
+  if (Array.isArray(value)) {
+    return value[0] ?? ""
+  }
+
+  return value ?? ""
 }

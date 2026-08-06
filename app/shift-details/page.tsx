@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
+import { BackendErrorAlert } from "@/components/backend-error-alert"
 import { ShiftDetailsTable } from "@/components/shift-details-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -65,7 +66,19 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
   const params = await searchParams
   const query = params.query?.trim() ?? ""
   const status = parseStatus(params.status)
-  const rows = await getShiftDetails({ query, status })
+  const result = await getShiftDetails({ query, status })
+
+  if (result.error) {
+    return (
+      <AppShell title="班次明细">
+        <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+          <BackendErrorAlert error={result.error} />
+        </main>
+      </AppShell>
+    )
+  }
+
+  const rows = result.data ?? []
   const totalGap = rows.reduce((sum, row) => sum + row.gap_agents, 0)
   const gapRows = rows.filter((row) => row.gap_agents > 0)
   const maxGap = rows.reduce((max, row) => Math.max(max, row.gap_agents), 0)

@@ -25,6 +25,7 @@ import {
   buildMasterDataVendorMaintenancePayload,
   buildMasterDataWorkplaceMaintenanceApiPath,
   buildMasterDataWorkplaceMaintenancePayload,
+  resolveMasterDataAgentReturnPath,
 } from "@/components/master-data-maintenance-model"
 
 const AGENT_ACTIONS = new Set<MasterDataAgentMaintenanceActionKey>([
@@ -76,6 +77,10 @@ export async function submitMasterDataAgentMaintenance(
   formData: FormData
 ): Promise<void> {
   let redirectHref: string
+  // 回跳目标由隐藏域 return_path 决定，经白名单校验；未知值兜底旧路由。
+  const returnPath = resolveMasterDataAgentReturnPath(
+    getFormValue(formData, "return_path")
+  )
 
   try {
     const action = parseAction(formData.get("action"))
@@ -83,11 +88,15 @@ export async function submitMasterDataAgentMaintenance(
     const sourceBatchId = getFormValue(formData, "source_batch_id")
 
     if (!employeeId || !sourceBatchId) {
-      redirectHref = buildMaintenanceRedirect("agents", {
-        maintenance_status: "error",
-        maintenance_code: "MISSING_REQUIRED_FIELD",
-        maintenance_message: "人员 ID 和来源批次不能为空",
-      })
+      redirectHref = buildMaintenanceRedirect(
+        "agents",
+        {
+          maintenance_status: "error",
+          maintenance_code: "MISSING_REQUIRED_FIELD",
+          maintenance_message: "人员 ID 和来源批次不能为空",
+        },
+        returnPath
+      )
     } else {
       const payload = buildMasterDataAgentMaintenancePayload({
         action,
@@ -115,11 +124,15 @@ export async function submitMasterDataAgentMaintenance(
 
       if (!response.ok) {
         const error = await readMaintenanceApiError(response)
-        redirectHref = buildMaintenanceRedirect("agents", {
-          maintenance_status: "error",
-          maintenance_code: error.code,
-          maintenance_message: error.message,
-        })
+        redirectHref = buildMaintenanceRedirect(
+          "agents",
+          {
+            maintenance_status: "error",
+            maintenance_code: error.code,
+            maintenance_message: error.message,
+          },
+          returnPath
+        )
       } else {
         const result = (await response.json()) as {
           action_status?: string
@@ -129,21 +142,29 @@ export async function submitMasterDataAgentMaintenance(
             status?: string
           }
         }
-        redirectHref = buildMaintenanceRedirect("agents", {
-          maintenance_status: "success",
-          action_status: result.action_status ?? "submitted",
-          record_id: result.employee?.employee_id ?? employeeId,
-          record_name: result.employee?.employee_name ?? "未返回姓名",
-          record_status: result.employee?.status ?? "unknown",
-        })
+        redirectHref = buildMaintenanceRedirect(
+          "agents",
+          {
+            maintenance_status: "success",
+            action_status: result.action_status ?? "submitted",
+            record_id: result.employee?.employee_id ?? employeeId,
+            record_name: result.employee?.employee_name ?? "未返回姓名",
+            record_status: result.employee?.status ?? "unknown",
+          },
+          returnPath
+        )
       }
     }
   } catch (error) {
-    redirectHref = buildMaintenanceRedirect("agents", {
-      maintenance_status: "error",
-      maintenance_code: "MASTER_DATA_AGENT_SUBMIT_FAILED",
-      maintenance_message: formatMaintenanceError(error),
-    })
+    redirectHref = buildMaintenanceRedirect(
+      "agents",
+      {
+        maintenance_status: "error",
+        maintenance_code: "MASTER_DATA_AGENT_SUBMIT_FAILED",
+        maintenance_message: formatMaintenanceError(error),
+      },
+      returnPath
+    )
   }
 
   redirect(redirectHref)
@@ -751,10 +772,19 @@ async function readMaintenanceApiError(response: Response) {
 
 function buildMaintenanceRedirect(
   entityKey: MasterDataMaintenanceEntityKey,
-  params: Record<string, string>
+  params: Record<string, string>,
+  basePath?: string
 ) {
-  const searchParams = new URLSearchParams(params)
-  return `/master-data/${entityKey}?${searchParams.toString()}`
+  // basePath 可能已携带 query（如 /base-config?tab=employees），需 merge 而非直接拼 ?。
+  const target = basePath ?? `/master-data/${entityKey}`
+  const [pathname, existingQuery = ""] = target.split("?")
+  const searchParams = new URLSearchParams(existingQuery)
+
+  for (const [key, value] of Object.entries(params)) {
+    searchParams.set(key, value)
+  }
+
+  return `${pathname}?${searchParams.toString()}`
 }
 
 function formatMaintenanceError(error: unknown): string {

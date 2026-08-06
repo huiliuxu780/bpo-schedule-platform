@@ -15,6 +15,7 @@ import {
 } from "lucide-react"
 
 import { uploadImportCsvAction } from "@/app/data-quality/actions"
+import { EmployeeRestrictionsForm } from "@/components/employee-restrictions-form"
 import { AgentImportDialog } from "@/components/master-data-agent-import-dialog"
 import {
   type MasterDataAgentMaintenanceFeedback,
@@ -196,6 +197,7 @@ export function MasterDataAgentManagementPage({
   importDialogOpen,
   selectedFreezeEmployeeId,
   agentSubmitAction,
+  importDialogOverride,
 }: {
   summary: MasterDataEntitySourceContext
   managementSummary: MasterDataAgentManagementSummary
@@ -206,6 +208,9 @@ export function MasterDataAgentManagementPage({
   importDialogOpen?: boolean
   selectedFreezeEmployeeId: string
   agentSubmitAction: (formData: FormData) => Promise<void>
+  // 统一导入向导覆盖：新三页（/base-config）传参后替换旧主数据导入对话框，
+  // 旧页面（/master-data/agents）不传则保持原行为。
+  importDialogOverride?: React.ReactNode
 }) {
   const freezeEmployee =
     managementSummary.rows.find(
@@ -232,15 +237,18 @@ export function MasterDataAgentManagementPage({
           summary={summary}
           employee={freezeEmployee}
           action={agentSubmitAction}
+          returnPath={managementSummary.returnPath}
         />
       ) : null}
 
       {importDialogOpen ? (
-        <AgentImportDialog
-          dialog={managementSummary.importDialog}
-          templateError={templateError ?? null}
-          action={uploadImportCsvAction}
-        />
+        importDialogOverride ?? (
+          <AgentImportDialog
+            dialog={managementSummary.importDialog}
+            templateError={templateError ?? null}
+            action={uploadImportCsvAction}
+          />
+        )
       ) : null}
     </main>
   )
@@ -2282,15 +2290,21 @@ function AgentManagementTablePanel({
 export function MasterDataAgentDetailPage({
   detailSummary,
   error,
+  feedback = null,
+  restrictionsAction,
 }: {
   detailSummary: MasterDataAgentDetailSummary
   error: string | null
+  feedback?: MasterDataAgentMaintenanceFeedback | null
+  restrictionsAction?: (formData: FormData) => Promise<void>
 }) {
   const employee = detailSummary.employee
 
   return (
     <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
       {error ? <MasterDataListError title="客服人员详情读取失败" error={error} /> : null}
+
+      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
 
       {employee ? (
         <>
@@ -2341,6 +2355,24 @@ export function MasterDataAgentDetailPage({
               {employee.display.skillSummary}
             </div>
           </section>
+
+          {restrictionsAction ? (
+            <section className="rounded-lg border bg-background p-4">
+              <div className="mb-3 grid gap-1">
+                <h2 className="text-base font-semibold tracking-normal">排班限制</h2>
+                <p className="text-sm text-muted-foreground">
+                  维护夜班/跨日班开关与不可排班日期，供排班矩阵校验引用。
+                </p>
+              </div>
+              <EmployeeRestrictionsForm
+                action={restrictionsAction}
+                employeeId={employee.employee_id}
+                nightShiftAllowed={employee.night_shift_allowed ?? true}
+                crossDayAllowed={employee.cross_day_allowed ?? true}
+                unavailableDates={employee.unavailable_dates ?? []}
+              />
+            </section>
+          ) : null}
 
           <section className="rounded-lg border bg-background p-4">
             <div className="mb-3 flex items-center justify-between gap-3">
@@ -2430,10 +2462,12 @@ function AgentFreezeDialog({
   summary,
   employee,
   action,
+  returnPath,
 }: {
   summary: MasterDataEntitySourceContext
   employee: MasterDataAgentManagementSummary["rows"][number]
   action: (formData: FormData) => Promise<void>
+  returnPath: string
 }) {
   return (
     <Dialog open>
@@ -2467,9 +2501,10 @@ function AgentFreezeDialog({
               name="employee_id"
               value={employee.employee_id}
             />
+            <input type="hidden" name="return_path" value={returnPath} />
             <DialogFooter>
               <Button asChild size="sm" variant="outline">
-                <Link href="/master-data/agents">取消</Link>
+                <Link href={returnPath}>取消</Link>
               </Button>
               <Button type="submit" size="sm" variant="destructive">
                 确认冻结
@@ -2479,7 +2514,7 @@ function AgentFreezeDialog({
         ) : (
           <DialogFooter>
             <Button asChild size="sm" variant="outline">
-              <Link href="/master-data/agents">关闭</Link>
+              <Link href={returnPath}>关闭</Link>
             </Button>
           </DialogFooter>
         )}
@@ -2493,11 +2528,13 @@ export function MasterDataAgentCreatePage({
   error,
   feedback,
   action,
+  returnPath,
 }: {
   summary: MasterDataEntitySourceContext
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
   action: (formData: FormData) => Promise<void>
+  returnPath?: string
 }) {
   return (
     <AgentFormPageShell error={error} feedback={feedback}>
@@ -2509,6 +2546,7 @@ export function MasterDataAgentCreatePage({
           title="人员信息"
           description="填写人员账号、姓名、状态、人员类型、组织、职场和有效期。"
           submitLabel="提交新增"
+          hiddenFields={returnPath ? { return_path: returnPath } : {}}
           fields={[
             "employee_id",
             "employee_name",

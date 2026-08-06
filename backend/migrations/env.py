@@ -11,11 +11,18 @@ from backend.app import forecast_persistence  # noqa: F401
 from backend.app import master_data_persistence  # noqa: F401
 from backend.app import personnel_schedule_persistence  # noqa: F401
 from backend.app import review_persistence  # noqa: F401
+from backend.app import rule_config  # noqa: F401
+from backend.app import schedule_period  # noqa: F401
+from backend.app import shift_definition  # noqa: F401
+from backend.app import status_mapping  # noqa: F401
 
 config = context.config
 
 if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+    # Keep application loggers (backend.app.*) enabled: fileConfig defaults to
+    # disabling every pre-existing logger, which would silence request
+    # correlation logs after migrations run in-process.
+    fileConfig(config.config_file_name, disable_existing_loggers=False)
 
 target_metadata = Base.metadata
 

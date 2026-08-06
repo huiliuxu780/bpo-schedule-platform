@@ -9,7 +9,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { SidebarTrigger } from "@/components/ui/sidebar"
 
 export type AppBreadcrumbItem = {
   label: string
@@ -28,8 +27,7 @@ export function SiteHeader({
   actions,
 }: SiteHeaderProps) {
   return (
-    <header className="sticky top-0 z-20 flex min-h-12 shrink-0 items-center gap-3 border-b bg-background/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:px-6">
-      <SidebarTrigger aria-label="切换导航栏" className="hidden md:inline-flex" />
+    <header className="flex min-h-12 shrink-0 items-center gap-3 border-b bg-background/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:px-6">
       <div className="flex min-w-0 flex-1 items-center">
         {breadcrumbItems.length > 0 ? (
           <>
